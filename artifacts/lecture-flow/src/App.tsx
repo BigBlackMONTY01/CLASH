@@ -34,6 +34,8 @@ type Theme = typeof darkTheme;
 
 const S = {
   onboarding: "onboarding",
+  lecturerAuth: "lecturerAuth",
+  studentAuth: "studentAuth",
   lecturerHome: "lecturerHome",
   lecturerSchemes: "lecturerSchemes",
   schemeBreakdown: "schemeBreakdown",
@@ -116,15 +118,199 @@ function OnboardingScreen({ nav, t }: { nav: Nav; t: Theme }) {
       </div>
       <div>
         <div style={{ color: t.muted, fontSize: 12, fontWeight: 600, marginBottom: 16, textAlign: "center", letterSpacing: "0.06em", textTransform: "uppercase" }}>I am a...</div>
-        <div onClick={() => nav(S.lecturerHome)} style={{ background: `${t.lecturer}18`, border: `1.5px solid ${t.lecturer}40`, borderRadius: 16, padding: "20px 22px", marginBottom: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 16 }}>
+        <div onClick={() => nav(S.lecturerAuth)} style={{ background: `${t.lecturer}18`, border: `1.5px solid ${t.lecturer}40`, borderRadius: 16, padding: "20px 22px", marginBottom: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ fontSize: 32 }}>👨‍🏫</div>
           <div><div style={{ color: t.lecturer, fontWeight: 700 }}>Lecturer</div><div style={{ color: t.muted, fontSize: 13 }}>Upload & structure course content</div></div>
           <div style={{ marginLeft: "auto", color: t.lecturer }}>→</div>
         </div>
-        <div onClick={() => nav(S.studentHome)} style={{ background: `${t.student}18`, border: `1.5px solid ${t.student}40`, borderRadius: 16, padding: "20px 22px", cursor: "pointer", display: "flex", alignItems: "center", gap: 16 }}>
+        <div onClick={() => nav(S.studentAuth)} style={{ background: `${t.student}18`, border: `1.5px solid ${t.student}40`, borderRadius: 16, padding: "20px 22px", cursor: "pointer", display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ fontSize: 32 }}>🎓</div>
           <div><div style={{ color: t.student, fontWeight: 700 }}>Student</div><div style={{ color: t.muted, fontSize: 13 }}>Turn lectures into study notes</div></div>
           <div style={{ marginLeft: "auto", color: t.student }}>→</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AuthInput({ label, placeholder, type = "text", value, onChange, t }: { label: string; placeholder: string; type?: string; value: string; onChange: (v: string) => void; t: Theme }) {
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <div style={{ color: t.muted, fontSize: 12, fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</div>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        style={{ width: "100%", background: t.inputBg, border: `1px solid ${t.border}`, borderRadius: 12, padding: "14px 16px", color: t.text, fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" as const }}
+      />
+    </div>
+  );
+}
+
+function AuthSelect({ label, options, value, onChange, t }: { label: string; options: string[]; value: string; onChange: (v: string) => void; t: Theme }) {
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <div style={{ color: t.muted, fontSize: 12, fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</div>
+      <select value={value} onChange={(e) => onChange(e.target.value)} style={{ width: "100%", background: t.inputBg, border: `1px solid ${t.border}`, borderRadius: 12, padding: "14px 16px", color: t.text, fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" as const, appearance: "none" as const }}>
+        {options.map((o) => <option key={o}>{o}</option>)}
+      </select>
+    </div>
+  );
+}
+
+function LecturerAuthScreen({ nav, t }: { nav: Nav; t: Theme }) {
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [name, setName] = useState("");
+  const [staffId, setStaffId] = useState("");
+  const [dept, setDept] = useState("Computer Science");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const color = t.lecturer;
+
+  const canSubmit = mode === "signin"
+    ? email.length > 3 && password.length >= 6
+    : name.length > 2 && staffId.length > 2 && email.length > 3 && password.length >= 6 && confirm === password;
+
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto" }}>
+      <div style={{ padding: "8px 24px 0" }}>
+        <BackButton to={S.onboarding} nav={nav} t={t} />
+      </div>
+
+      <div style={{ padding: "0 24px 40px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 14, background: `${color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>👨‍🏫</div>
+          <div>
+            <div style={{ color: t.text, fontWeight: 800, fontSize: 20 }}>Lecturer Portal</div>
+            <div style={{ color: t.muted, fontSize: 13 }}>Welcome back, educator</div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", background: t.card, borderRadius: 12, padding: 4, marginBottom: 28, border: `1px solid ${t.border}` }}>
+          {(["signin", "signup"] as const).map((m) => (
+            <button key={m} onClick={() => setMode(m)} style={{ flex: 1, background: mode === m ? color : "transparent", color: mode === m ? t.bg : t.muted, border: "none", borderRadius: 9, padding: "9px 0", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all 0.2s" }}>
+              {m === "signin" ? "Sign In" : "Create Account"}
+            </button>
+          ))}
+        </div>
+
+        {mode === "signup" && (
+          <>
+            <AuthInput label="Full Name" placeholder="e.g. Dr. Amara Okonkwo" value={name} onChange={setName} t={t} />
+            <AuthInput label="Staff ID" placeholder="e.g. STF/2019/0042" value={staffId} onChange={setStaffId} t={t} />
+            <AuthSelect label="Department" options={["Computer Science", "Mathematics", "Physics", "Engineering", "Economics", "Medicine"]} value={dept} onChange={setDept} t={t} />
+          </>
+        )}
+
+        <AuthInput label="Institutional Email" placeholder="yourname@university.edu" type="email" value={email} onChange={setEmail} t={t} />
+        <AuthInput label="Password" placeholder={mode === "signin" ? "Enter your password" : "Min. 6 characters"} type="password" value={password} onChange={setPassword} t={t} />
+
+        {mode === "signup" && (
+          <AuthInput label="Confirm Password" placeholder="Re-enter password" type="password" value={confirm} onChange={setConfirm} t={t} />
+        )}
+
+        {mode === "signin" && (
+          <div style={{ color: color, fontSize: 13, fontWeight: 600, textAlign: "right", marginBottom: 24, cursor: "pointer", marginTop: -4 }}>Forgot password?</div>
+        )}
+
+        <div style={{ height: mode === "signin" ? 8 : 0 }} />
+
+        <div
+          onClick={() => canSubmit && nav(S.lecturerHome)}
+          style={{ background: canSubmit ? color : t.border, color: canSubmit ? t.bg : t.muted, borderRadius: 14, padding: 16, textAlign: "center", fontWeight: 700, fontSize: 15, cursor: canSubmit ? "pointer" : "default", transition: "all 0.2s", marginBottom: 20 }}
+        >
+          {mode === "signin" ? "Sign In →" : "Create Account →"}
+        </div>
+
+        <div style={{ textAlign: "center", color: t.muted, fontSize: 13 }}>
+          {mode === "signin" ? "New here? " : "Already have an account? "}
+          <span onClick={() => setMode(mode === "signin" ? "signup" : "signin")} style={{ color, fontWeight: 700, cursor: "pointer" }}>
+            {mode === "signin" ? "Create an account" : "Sign in"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StudentAuthScreen({ nav, t }: { nav: Nav; t: Theme }) {
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [name, setName] = useState("");
+  const [matric, setMatric] = useState("");
+  const [level, setLevel] = useState("200 Level");
+  const [dept, setDept] = useState("Computer Science");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const color = t.student;
+
+  const canSubmit = mode === "signin"
+    ? (email.length > 3 || matric.length > 3) && password.length >= 6
+    : name.length > 2 && matric.length > 3 && email.length > 3 && password.length >= 6 && confirm === password;
+
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto" }}>
+      <div style={{ padding: "8px 24px 0" }}>
+        <BackButton to={S.onboarding} nav={nav} t={t} />
+      </div>
+
+      <div style={{ padding: "0 24px 40px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 14, background: `${color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>🎓</div>
+          <div>
+            <div style={{ color: t.text, fontWeight: 800, fontSize: 20 }}>Student Portal</div>
+            <div style={{ color: t.muted, fontSize: 13 }}>Your campus, smarter</div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", background: t.card, borderRadius: 12, padding: 4, marginBottom: 28, border: `1px solid ${t.border}` }}>
+          {(["signin", "signup"] as const).map((m) => (
+            <button key={m} onClick={() => setMode(m)} style={{ flex: 1, background: mode === m ? color : "transparent", color: mode === m ? t.bg : t.muted, border: "none", borderRadius: 9, padding: "9px 0", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all 0.2s" }}>
+              {m === "signin" ? "Sign In" : "Create Account"}
+            </button>
+          ))}
+        </div>
+
+        {mode === "signup" && (
+          <>
+            <AuthInput label="Full Name" placeholder="e.g. Toluwani Adebayo" value={name} onChange={setName} t={t} />
+            <AuthSelect label="Level" options={["100 Level", "200 Level", "300 Level", "400 Level", "500 Level", "Postgraduate"]} value={level} onChange={setLevel} t={t} />
+            <AuthSelect label="Department" options={["Computer Science", "Mathematics", "Physics", "Engineering", "Economics", "Medicine"]} value={dept} onChange={setDept} t={t} />
+          </>
+        )}
+
+        <AuthInput label={mode === "signin" ? "Matric Number or Email" : "Matric Number"} placeholder={mode === "signin" ? "e.g. 21/CSC/042 or email" : "e.g. 21/CSC/042"} value={matric} onChange={setMatric} t={t} />
+
+        {mode === "signup" && (
+          <AuthInput label="University Email" placeholder="yourmatric@students.university.edu" type="email" value={email} onChange={setEmail} t={t} />
+        )}
+
+        <AuthInput label="Password" placeholder={mode === "signin" ? "Enter your password" : "Min. 6 characters"} type="password" value={password} onChange={setPassword} t={t} />
+
+        {mode === "signup" && (
+          <AuthInput label="Confirm Password" placeholder="Re-enter password" type="password" value={confirm} onChange={setConfirm} t={t} />
+        )}
+
+        {mode === "signin" && (
+          <div style={{ color: color, fontSize: 13, fontWeight: 600, textAlign: "right", marginBottom: 24, cursor: "pointer", marginTop: -4 }}>Forgot password?</div>
+        )}
+
+        <div style={{ height: mode === "signin" ? 8 : 16 }} />
+
+        <div
+          onClick={() => canSubmit && nav(S.studentHome)}
+          style={{ background: canSubmit ? color : t.border, color: canSubmit ? t.bg : t.muted, borderRadius: 14, padding: 16, textAlign: "center", fontWeight: 700, fontSize: 15, cursor: canSubmit ? "pointer" : "default", transition: "all 0.2s", marginBottom: 20 }}
+        >
+          {mode === "signin" ? "Sign In →" : "Create Account →"}
+        </div>
+
+        <div style={{ textAlign: "center", color: t.muted, fontSize: 13 }}>
+          {mode === "signin" ? "New student? " : "Already registered? "}
+          <span onClick={() => setMode(mode === "signin" ? "signup" : "signin")} style={{ color, fontWeight: 700, cursor: "pointer" }}>
+            {mode === "signin" ? "Create an account" : "Sign in"}
+          </span>
         </div>
       </div>
     </div>
@@ -670,6 +856,8 @@ export default function App() {
 
         <div key={animKey} style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", ...slideIn }}>
           {screen === S.onboarding && <OnboardingScreen nav={nav} t={t} />}
+          {screen === S.lecturerAuth && <LecturerAuthScreen nav={nav} t={t} />}
+          {screen === S.studentAuth && <StudentAuthScreen nav={nav} t={t} />}
           {screen === S.lecturerHome && <LecturerHomeScreen nav={nav} screen={screen} t={t} />}
           {screen === S.lecturerSchemes && <LecturerSchemesScreen nav={nav} screen={screen} t={t} />}
           {screen === S.schemeBreakdown && <SchemeBreakdownScreen nav={nav} screen={screen} t={t} />}
