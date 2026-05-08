@@ -40,9 +40,11 @@ const S = {
   lecturerSchemes: "lecturerSchemes",
   schemeBreakdown: "schemeBreakdown",
   weekDetail: "weekDetail",
+  quizScreen: "quizScreen",
   createScheme: "createScheme",
   uploadSyllabus: "uploadSyllabus",
   lecturerSettings: "lecturerSettings",
+  notifications: "notifications",
   studentHome: "studentHome",
   studentLectures: "studentLectures",
   courseDetail: "courseDetail",
@@ -71,13 +73,21 @@ function BackButton({ to, nav, t }: { to: string; nav: Nav; t: Theme }) {
   );
 }
 
-function StatusBar({ t, isDark, setIsDark }: { t: Theme; isDark: boolean; setIsDark: (v: boolean) => void }) {
+function StatusBar({ t, isDark, setIsDark, onNotif }: { t: Theme; isDark: boolean; setIsDark: (v: boolean) => void; onNotif?: () => void }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 24px 8px", fontSize: 12, color: t.muted, flexShrink: 0 }}>
       <span style={{ fontWeight: 600 }}>9:41</span>
-      <button onClick={() => setIsDark(!isDark)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, padding: "2px 6px", borderRadius: 8, color: t.muted }}>
-        {isDark ? "☀" : "🌙"}
-      </button>
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        {onNotif && (
+          <button onClick={onNotif} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, padding: "2px 6px", borderRadius: 8, color: t.muted, position: "relative" }}>
+            🔔
+            <span style={{ position: "absolute", top: 0, right: 2, width: 7, height: 7, borderRadius: "50%", background: "#EF4444", border: `1.5px solid ${t.bg}` }} />
+          </button>
+        )}
+        <button onClick={() => setIsDark(!isDark)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, padding: "2px 6px", borderRadius: 8, color: t.muted }}>
+          {isDark ? "☀" : "🌙"}
+        </button>
+      </div>
     </div>
   );
 }
@@ -106,17 +116,49 @@ function Screen({ children }: { children: React.ReactNode }) {
   return <div style={{ flex: 1, overflowY: "auto", padding: "0 24px 20px" }}>{children}</div>;
 }
 
+function EmojiRain() {
+  const items = Array.from({ length: 16 }, (_, i) => ({
+    emoji: i % 2 === 0 ? "📚" : "🎓",
+    left: (i * 6.25) % 95,
+    delay: i * 0.45,
+    duration: 5 + (i % 4),
+    size: 14 + (i % 3) * 5,
+    drift: (i % 2 === 0 ? 1 : -1) * (10 + (i % 3) * 8),
+  }));
+  return (
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+      {items.map((item, i) => (
+        <div
+          key={i}
+          style={{
+            position: "absolute",
+            left: `${item.left}%`,
+            top: "-8%",
+            fontSize: item.size,
+            opacity: 0.13,
+            animation: `emojiRain ${item.duration}s ${item.delay}s infinite linear`,
+            ["--drift" as string]: `${item.drift}px`,
+          }}
+        >
+          {item.emoji}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function OnboardingScreen({ nav, t }: { nav: Nav; t: Theme }) {
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "48px 32px 40px" }}>
-      <div>
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "48px 32px 40px", position: "relative", overflow: "hidden" }}>
+      <EmojiRain />
+      <div style={{ position: "relative", zIndex: 1 }}>
         <div style={{ width: 56, height: 56, background: t.accent, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, marginBottom: 48 }}>✦</div>
         <div style={{ color: t.muted, fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>Welcome to</div>
         <div style={{ fontSize: 42, fontWeight: 800, color: t.text, lineHeight: 1.1 }}>LectureFlow</div>
         <div style={{ fontSize: 42, fontWeight: 800, color: t.accent, lineHeight: 1.1 }}>Studio</div>
         <p style={{ color: t.muted, fontSize: 15, lineHeight: 1.6, marginTop: 16 }}>Lecturers break down schemes. Students build smarter notes. One platform, two superpowers.</p>
       </div>
-      <div>
+      <div style={{ position: "relative", zIndex: 1 }}>
         <div style={{ color: t.muted, fontSize: 12, fontWeight: 600, marginBottom: 16, textAlign: "center", letterSpacing: "0.06em", textTransform: "uppercase" }}>I am a...</div>
         <div onClick={() => nav(S.lecturerAuth)} style={{ background: `${t.lecturer}18`, border: `1.5px solid ${t.lecturer}40`, borderRadius: 16, padding: "20px 22px", marginBottom: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ fontSize: 32 }}>👨‍🏫</div>
@@ -432,7 +474,7 @@ function WeekDetailScreen({ nav, screen, t }: { nav: Nav; screen: string; t: The
           <div style={{ color: t.muted, fontSize: 11, marginBottom: 8 }}>ASSESSMENT</div>
           <div style={{ color: t.text, fontWeight: 700 }}>Week 4 Quiz</div>
           <div style={{ color: t.muted, fontSize: 12, marginTop: 4 }}>10 MCQs · 20 minutes · 5% of grade</div>
-          <div style={{ marginTop: 12, background: t.lecturer, color: t.bg, borderRadius: 10, padding: "10px 16px", textAlign: "center", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>View Quiz</div>
+          <div onClick={() => nav(S.quizScreen)} style={{ marginTop: 12, background: t.lecturer, color: t.bg, borderRadius: 10, padding: "10px 16px", textAlign: "center", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>View Quiz →</div>
         </div>
       </Screen>
       <NavBar role="lecturer" screen={screen} nav={nav} t={t} />
@@ -590,7 +632,7 @@ function StudentLecturesScreen({ nav, screen, t }: { nav: Nav; screen: string; t
           ))}
         </div>
         {filtered.map((l, i) => (
-          <div key={i} onClick={() => nav(S.studyNotes)} style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 14, padding: 16, marginBottom: 10, cursor: "pointer", display: "flex", gap: 12, alignItems: "flex-start" }}>
+          <div key={i} onClick={() => i % 3 === 0 ? nav(S.courseDetail) : nav(S.studyNotes)} style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 14, padding: 16, marginBottom: 10, cursor: "pointer", display: "flex", gap: 12, alignItems: "flex-start" }}>
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}><Tag color={t.student} t={t}>{l.course}</Tag><span style={{ color: t.muted, fontSize: 11 }}>{l.date}</span></div>
               <div style={{ color: t.text, fontWeight: 600, fontSize: 13 }}>{l.title}</div>
@@ -812,6 +854,94 @@ function StudentSettingsScreen({ nav, screen, t }: { nav: Nav; screen: string; t
   );
 }
 
+function NotificationsScreen({ nav, screen, t }: { nav: Nav; screen: string; t: Theme }) {
+  const role = [S.lecturerHome, S.lecturerSchemes, S.schemeBreakdown, S.weekDetail, S.createScheme, S.uploadSyllabus, S.lecturerSettings, S.quizScreen].includes(screen) ? "lecturer" : "student";
+  const notifs = role === "lecturer"
+    ? [{ icon: "📋", title: "New scheme submission", body: "CSC 401 scheme is ready for review", time: "2 min ago", unread: true }, { icon: "🔔", title: "Student question flagged", body: "Question on Week 3 materials needs response", time: "1 hr ago", unread: true }, { icon: "📊", title: "Engagement report ready", body: "Weekly analytics for your 3 courses", time: "3 hr ago", unread: false }, { icon: "✅", title: "Syllabus approved", body: "MTH 301 scheme approved by HOD", time: "Yesterday", unread: false }, { icon: "🔔", title: "New enrolment", body: "47 students enrolled in CSC 301", time: "2 days ago", unread: false }]
+    : [{ icon: "🎓", title: "New lecture uploaded", body: "Dr. Adeyemi posted Stacks & Queues notes", time: "5 min ago", unread: true }, { icon: "⏰", title: "Quiz reminder", body: "CSC 301 Week 4 Quiz starts in 2 hours", time: "2 hr ago", unread: true }, { icon: "🤖", title: "AI notes ready", body: "Your MTH 201 study notes are generated", time: "4 hr ago", unread: false }, { icon: "🃏", title: "Flashcard streak!", body: "7-day streak on Data Structures deck", time: "Yesterday", unread: false }, { icon: "📢", title: "Course announcement", body: "PHY 201 exam date moved to 20th May", time: "2 days ago", unread: false }];
+  const navRole = role as "lecturer" | "student";
+  const backTo = role === "lecturer" ? S.lecturerHome : S.studentHome;
+  return (
+    <>
+      <Screen>
+        <BackButton to={backTo} nav={nav} t={t} />
+        <div style={{ color: t.text, fontWeight: 800, fontSize: 20, marginBottom: 6 }}>Notifications</div>
+        <div style={{ color: t.muted, fontSize: 13, marginBottom: 24 }}>{notifs.filter(n => n.unread).length} unread</div>
+        {notifs.map((n, i) => (
+          <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start", padding: "14px 0", borderBottom: `1px solid ${t.border}`, position: "relative" }}>
+            {n.unread && <div style={{ position: "absolute", top: 18, left: -2, width: 6, height: 6, borderRadius: "50%", background: role === "lecturer" ? t.lecturer : t.student }} />}
+            <div style={{ width: 44, height: 44, borderRadius: 14, background: t.card, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{n.icon}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ color: t.text, fontWeight: n.unread ? 700 : 500, fontSize: 13, marginBottom: 2 }}>{n.title}</div>
+              <div style={{ color: t.muted, fontSize: 12, lineHeight: 1.5 }}>{n.body}</div>
+              <div style={{ color: t.muted, fontSize: 11, marginTop: 4 }}>{n.time}</div>
+            </div>
+          </div>
+        ))}
+      </Screen>
+      <NavBar role={navRole} screen={backTo} nav={nav} t={t} />
+    </>
+  );
+}
+
+function QuizScreen({ nav, screen, t }: { nav: Nav; screen: string; t: Theme }) {
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [answered, setAnswered] = useState(false);
+  const questions = [
+    { q: "Which data structure follows Last In, First Out (LIFO)?", opts: ["Queue", "Stack", "Linked List", "Tree"], correct: 1 },
+    { q: "What is the time complexity of pushing to a stack?", opts: ["O(n)", "O(log n)", "O(1)", "O(n²)"], correct: 2 },
+    { q: "Which operation removes the front element of a Queue?", opts: ["Pop", "Push", "Dequeue", "Delete"], correct: 2 },
+  ];
+  const q = questions[current];
+  const isLast = current === questions.length - 1;
+  const handleSelect = (i: number) => { if (answered) return; setSelected(i); setAnswered(true); };
+  const handleNext = () => { if (isLast) { nav(S.weekDetail, "back"); } else { setCurrent(c => c + 1); setSelected(null); setAnswered(false); } };
+  return (
+    <>
+      <Screen>
+        <BackButton to={S.weekDetail} nav={nav} t={t} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <div><Tag color={t.lecturer} t={t}>CSC 301 · Week 4</Tag></div>
+          <div style={{ color: t.muted, fontSize: 13, fontWeight: 600 }}>{current + 1} / {questions.length}</div>
+        </div>
+        <div style={{ background: t.card, borderRadius: 14, height: 4, marginBottom: 24 }}>
+          <div style={{ background: t.lecturer, width: `${((current + 1) / questions.length) * 100}%`, height: "100%", borderRadius: 14, transition: "width 0.4s ease" }} />
+        </div>
+        <div style={{ color: t.text, fontWeight: 700, fontSize: 16, lineHeight: 1.5, marginBottom: 28 }}>{q.q}</div>
+        {q.opts.map((opt, i) => {
+          const isCorrect = i === q.correct;
+          const isChosen = i === selected;
+          let bg = t.card, border = t.border, col = t.text;
+          if (answered) {
+            if (isCorrect) { bg = `${t.lecturer}25`; border = t.lecturer; col = t.lecturer; }
+            else if (isChosen) { bg = "#EF444422"; border = "#EF4444"; col = "#EF4444"; }
+          }
+          return (
+            <div key={i} onClick={() => handleSelect(i)} style={{ background: bg, border: `1.5px solid ${border}`, borderRadius: 14, padding: "14px 18px", marginBottom: 10, cursor: answered ? "default" : "pointer", color: col, fontWeight: 600, fontSize: 14, transition: "all 0.2s" }}>
+              <span style={{ color: t.muted, marginRight: 10, fontSize: 13 }}>{String.fromCharCode(65 + i)}.</span>{opt}
+              {answered && isCorrect && <span style={{ float: "right" }}>✓</span>}
+              {answered && isChosen && !isCorrect && <span style={{ float: "right", color: "#EF4444" }}>✗</span>}
+            </div>
+          );
+        })}
+        {answered && (
+          <div style={{ background: selected === q.correct ? `${t.lecturer}15` : "#EF444415", border: `1px solid ${selected === q.correct ? t.lecturer : "#EF444460"}`, borderRadius: 14, padding: 14, marginTop: 8 }}>
+            <div style={{ color: selected === q.correct ? t.lecturer : "#EF4444", fontWeight: 700, fontSize: 13, marginBottom: 4 }}>{selected === q.correct ? "Correct! 🎉" : "Not quite!"}</div>
+            <div style={{ color: t.muted, fontSize: 12 }}>The correct answer is <strong>{q.opts[q.correct]}</strong>.</div>
+          </div>
+        )}
+      </Screen>
+      {answered && (
+        <div style={{ padding: "12px 24px 28px", background: t.surface, borderTop: `1px solid ${t.border}` }}>
+          <div onClick={handleNext} style={{ background: t.lecturer, color: t.bg, borderRadius: 14, padding: 16, textAlign: "center", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>{isLast ? "Finish Quiz ✓" : "Next Question →"}</div>
+        </div>
+      )}
+      {!answered && <NavBar role="lecturer" screen={screen} nav={nav} t={t} />}
+    </>
+  );
+}
+
 const ANIM_DURATION = 280;
 
 export default function App() {
@@ -827,9 +957,11 @@ export default function App() {
     setScreen(nextScreen);
   };
 
-  const lecturerScreens = new Set([S.lecturerHome, S.lecturerSchemes, S.schemeBreakdown, S.weekDetail, S.createScheme, S.uploadSyllabus, S.lecturerSettings]);
+  const lecturerScreens = new Set([S.lecturerHome, S.lecturerSchemes, S.schemeBreakdown, S.weekDetail, S.quizScreen, S.createScheme, S.uploadSyllabus, S.lecturerSettings]);
   const studentScreens = new Set([S.studentHome, S.studentLectures, S.courseDetail, S.studyNotes, S.generateNotes, S.flashcardPractice, S.studentSettings]);
   const role = lecturerScreens.has(screen) ? "lecturer" : studentScreens.has(screen) ? "student" : null;
+  const hasNotif = role !== null;
+  const handleNotif = () => nav(S.notifications);
 
   const slideIn = animDir === "forward"
     ? { animation: `slideInRight ${ANIM_DURATION}ms cubic-bezier(0.4,0,0.2,1) both` }
@@ -849,10 +981,17 @@ export default function App() {
           from { transform: translateX(-100%); opacity: 0; }
           to   { transform: translateX(0);     opacity: 1; }
         }
+        @keyframes emojiRain {
+          0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+          5%   { opacity: 0.15; }
+          50%  { transform: translateY(50vh) translateX(var(--drift, 12px)) rotate(10deg); }
+          95%  { opacity: 0.15; }
+          100% { transform: translateY(110vh) translateX(calc(var(--drift, 12px) * 2)) rotate(20deg); opacity: 0; }
+        }
       `}</style>
 
       <div style={{ width: "min(430px, 100vw)", height: "min(900px, 100vh)", background: t.bg, display: "flex", flexDirection: "column", overflow: "hidden", position: "relative", borderRadius: "clamp(0px, 2vw, 40px)", boxShadow: "0 32px 80px rgba(0,0,0,0.5)" }}>
-        <StatusBar t={t} isDark={isDark} setIsDark={setIsDark} />
+        <StatusBar t={t} isDark={isDark} setIsDark={setIsDark} onNotif={hasNotif ? handleNotif : undefined} />
 
         <div key={animKey} style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", ...slideIn }}>
           {screen === S.onboarding && <OnboardingScreen nav={nav} t={t} />}
@@ -862,6 +1001,8 @@ export default function App() {
           {screen === S.lecturerSchemes && <LecturerSchemesScreen nav={nav} screen={screen} t={t} />}
           {screen === S.schemeBreakdown && <SchemeBreakdownScreen nav={nav} screen={screen} t={t} />}
           {screen === S.weekDetail && <WeekDetailScreen nav={nav} screen={screen} t={t} />}
+          {screen === S.quizScreen && <QuizScreen nav={nav} screen={screen} t={t} />}
+          {screen === S.notifications && <NotificationsScreen nav={nav} screen={screen} t={t} />}
           {screen === S.createScheme && <CreateSchemeScreen nav={nav} screen={screen} t={t} />}
           {screen === S.uploadSyllabus && <UploadSyllabusScreen nav={nav} screen={screen} t={t} />}
           {screen === S.lecturerSettings && <LecturerSettingsScreen nav={nav} screen={screen} t={t} />}
