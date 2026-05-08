@@ -1025,10 +1025,43 @@ function StudentSettingsScreen({ setScreen, screen, t }: { setScreen: (s: string
   );
 }
 
+const ROLE_GROUPS = {
+  onboarding: { label: "Start", screens: { onboarding: "Role Select" } },
+  lecturer: {
+    label: "👨‍🏫 Lecturer",
+    screens: {
+      lecturerHome: "Home",
+      lecturerSchemes: "All Schemes",
+      schemeBreakdown: "Scheme Detail",
+      weekDetail: "Week Detail",
+      createScheme: "Create Scheme",
+      uploadSyllabus: "Upload Syllabus",
+      lecturerSettings: "Settings",
+    },
+  },
+  student: {
+    label: "🎓 Student",
+    screens: {
+      studentHome: "Home",
+      studentLectures: "All Lectures",
+      courseDetail: "Course Detail",
+      studyNotes: "Study Notes",
+      generateNotes: "Generate Notes",
+      flashcardPractice: "Flashcards",
+      studentSettings: "Settings",
+    },
+  },
+};
+
 export default function App() {
   const [screen, setScreen] = useState(SCREENS.onboarding);
   const [isDark, setIsDark] = useState(true);
   const t = isDark ? darkTheme : lightTheme;
+
+  const activeGroup =
+    Object.entries(ROLE_GROUPS).find(([, g]) =>
+      Object.keys(g.screens).includes(screen)
+    )?.[0] ?? "onboarding";
 
   const phoneStyle = {
     width: 375,
@@ -1072,27 +1105,57 @@ export default function App() {
         </button>
       </div>
 
-      <div style={{ display: "flex", gap: 6, marginBottom: 28, flexWrap: "wrap", justifyContent: "center", maxWidth: 700 }}>
-        {Object.entries(SCREEN_LABELS).map(([key, label]) => (
-          <button
-            key={key}
-            onClick={() => setScreen(key)}
-            style={{
-              background: screen === key ? t.accent : t.card,
-              color: screen === key ? (isDark ? "#0D0D0D" : "#0D0D0D") : t.muted,
-              border: `1px solid ${screen === key ? t.accent : t.border}`,
-              borderRadius: 100,
-              padding: "7px 14px",
-              fontSize: 11,
-              fontWeight: 700,
-              cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif",
-              transition: "all 0.15s",
-            }}
-          >
-            {label}
-          </button>
-        ))}
+      <div style={{ marginBottom: 24, width: "100%", maxWidth: 700 }}>
+        <div style={{ display: "flex", gap: 6, marginBottom: 10, justifyContent: "center" }}>
+          {Object.entries(ROLE_GROUPS).map(([key, group]) => {
+            const isActive = activeGroup === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setScreen(Object.keys(group.screens)[0])}
+                style={{
+                  background: isActive ? t.accent : t.card,
+                  color: isActive ? "#0D0D0D" : t.muted,
+                  border: `1px solid ${isActive ? t.accent : t.border}`,
+                  borderRadius: 100,
+                  padding: "9px 20px",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  fontFamily: "'DM Sans', sans-serif",
+                  transition: "all 0.15s",
+                }}
+              >
+                {group.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {activeGroup !== "onboarding" && (
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
+            {Object.entries(ROLE_GROUPS[activeGroup as "lecturer" | "student"].screens).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setScreen(key)}
+                style={{
+                  background: screen === key ? t.card : "transparent",
+                  color: screen === key ? t.text : t.muted,
+                  border: `1px solid ${screen === key ? t.border : "transparent"}`,
+                  borderRadius: 100,
+                  padding: "5px 12px",
+                  fontSize: 11,
+                  fontWeight: screen === key ? 700 : 500,
+                  cursor: "pointer",
+                  fontFamily: "'DM Sans', sans-serif",
+                  transition: "all 0.15s",
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div style={phoneStyle}>
