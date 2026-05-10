@@ -339,6 +339,31 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .replay-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);}
 .replay-sub span{color:var(--text);}
 
+/* === TABLET (520-900px) === */
+@media (min-width:520px) and (max-width:900px){
+  .app{max-width:680px;padding:32px 24px 28px;}
+  .featured-card{padding:18px 22px;}
+  .featured-topic-text{font-size:16px;}
+  .live-feed{gap:7px;}
+  .feed-text{font-size:13px;}
+}
+
+/* === DESKTOP (>900px) === */
+@media (min-width:900px){
+  .app{max-width:900px;padding:44px 32px 40px;}
+  .home-hero{padding:28px 0 52px;}
+  .home-title{font-size:clamp(80px,10vw,112px);}
+  .home-cta .btn{font-size:16px;padding:16px 40px;letter-spacing:4px;}
+  .gauntlet-btn{font-size:15px;padding:16px 32px;max-width:460px;}
+  .featured-card{padding:20px 24px;}
+  .featured-topic-text{font-size:16px;}
+  .feed-text{font-size:13px;}
+  .arena-stat .as-val{font-size:26px;}
+  .arena-stat{padding:16px 12px;}
+  .home-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+  .home-bottom-row .live-feed-wrap{margin-top:0;}
+}
+
 /* === MOBILE === */
 @media (max-width:520px){
   .app{padding:max(12px,env(safe-area-inset-top,12px)) 14px max(16px,env(safe-area-inset-bottom,16px));display:flex;flex-direction:column;}
@@ -428,12 +453,20 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   .lb-score{font-size:20px;}
 
   .share-toast{font-size:11px;padding:8px 16px;bottom:16px;}
+  .featured-card{padding:14px 16px;gap:12px;margin-top:16px;}
+  .featured-topic-text{font-size:14px;}
+  .featured-cta{font-size:12px;}
+  .feed-item{padding:8px 12px;}
+  .feed-text{font-size:12px;}
+  .live-feed-wrap{margin-top:18px;}
+  .home-cta .btn{min-height:48px;}
 }
 @media (max-width:360px){
   .ai-grid{grid-template-columns:1fr 1fr;}
   .gauntlet-bots{grid-template-columns:repeat(2,1fr);}
   .mf-vs-card{padding:10px 12px;}
   .messages{max-height:240px;}
+  .featured-topic-text{font-size:13px;}
 }
 
 /* === GAUNTLET === */
@@ -468,24 +501,59 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .gf-score{font-family:'Bebas Neue',sans-serif;font-size:18px;}
 
 /* Glow behind WIN */
+@keyframes winGlowPulse{0%,100%{opacity:0.25;transform:scale(1);}50%{opacity:0.65;transform:scale(1.12);}}
 .home-title .line2{position:relative;}
-.home-title .line2::before{content:'';position:absolute;inset:-30% -10%;background:radial-gradient(ellipse at center,rgba(230,57,70,0.2) 0%,transparent 60%);z-index:-1;pointer-events:none;}
+.home-title .line2::before{content:'';position:absolute;inset:-40% -15%;background:radial-gradient(ellipse at center,rgba(230,57,70,0.35) 0%,rgba(230,57,70,0.08) 45%,transparent 70%);z-index:-1;pointer-events:none;animation:winGlowPulse 2.8s ease-in-out infinite;}
 
-/* Taunt */
-.taunt-line{font-size:13px;color:var(--text-dim);opacity:0.45;font-style:italic;text-align:center;min-height:22px;margin-top:6px;margin-bottom:20px;}
-.taunt-who{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-right:5px;font-style:normal;opacity:0.8;}
+/* Taunt / Status line */
+@keyframes tauntIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+.taunt-line{font-size:13px;color:var(--text-mid);text-align:center;min-height:22px;margin-top:8px;margin-bottom:20px;animation:tauntIn 0.5s ease;font-style:normal;letter-spacing:0.5px;}
+.taunt-who{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-right:6px;color:var(--text-dim);}
 
-/* Gauntlet button */
-.gauntlet-btn{display:block;background:transparent;border:1px solid rgba(244,197,66,0.35);color:rgba(244,197,66,0.75);border-radius:var(--radius);padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;width:100%;max-width:340px;transition:all 0.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
-.gauntlet-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(244,197,66,0.04);}
-.gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.5;margin-top:5px;}
+/* Gauntlet button — upgraded */
+@keyframes goldPulse{0%,100%{box-shadow:0 0 0 0 rgba(244,197,66,0);border-color:rgba(244,197,66,0.45);color:rgba(244,197,66,0.8);}50%{box-shadow:0 0 18px 3px rgba(244,197,66,0.18);border-color:rgba(244,197,66,0.75);color:var(--gold);}}
+.gauntlet-btn{display:block;background:rgba(244,197,66,0.03);border:1.5px solid rgba(244,197,66,0.45);color:rgba(244,197,66,0.8);border-radius:var(--radius);padding:14px 24px;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;width:100%;max-width:400px;transition:all 0.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;animation:goldPulse 2.4s ease-in-out infinite;}
+.gauntlet-btn:hover{background:rgba(244,197,66,0.07);color:var(--gold);transform:translateY(-1px);}
+.gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;margin-top:6px;}
+
+/* Featured topic card */
+@keyframes featuredSlide{from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:translateX(0);}}
+.featured-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-top:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;animation:featuredSlide 0.4s ease;}
+.featured-card:hover{border-color:rgba(230,57,70,0.5);background:rgba(230,57,70,0.04);transform:translateY(-1px);}
+.featured-left{flex:1;min-width:0;}
+.featured-badge{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--red);background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);border-radius:3px;padding:2px 8px;margin-bottom:8px;}
+.featured-topic-text{font-size:15px;font-weight:500;line-height:1.4;color:var(--text);}
+.featured-cat{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:6px;}
+.featured-cta{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--red);white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:4px;}
+.featured-dots{display:flex;gap:4px;margin-top:14px;}
+.featured-dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:background 0.3s;}
+.featured-dot.active{background:var(--red);}
+
+/* Live activity feed */
+.live-feed-wrap{margin-top:24px;}
+.live-feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px;animation:liveBlink 1.6s ease-in-out infinite;}
+@keyframes liveBlink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.live-feed{display:flex;flex-direction:column;gap:6px;}
+@keyframes feedItemIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.feed-item{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);animation:feedItemIn 0.35s ease;}
+.feed-icon{font-size:14px;flex-shrink:0;}
+.feed-text{flex:1;font-size:13px;color:var(--text-mid);line-height:1.35;}
+.feed-text strong{color:var(--text);font-weight:600;}
+.feed-time{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;color:var(--text-dim);white-space:nowrap;flex-shrink:0;}
+.feed-badge{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:1px 5px;border-radius:2px;flex-shrink:0;}
+.feed-win{background:rgba(34,197,94,0.1);color:var(--green);}
+.feed-loss{background:rgba(230,57,70,0.1);color:var(--red);}
+.feed-streak{background:rgba(244,197,66,0.1);color:var(--gold);}
+.feed-rank{background:rgba(168,85,247,0.1);color:#a855f7;}
 
 /* Arena stats strip */
-.arena-stats{display:flex;justify-content:center;margin-top:28px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.arena-stat{flex:1;text-align:center;padding:11px 8px;}
+@keyframes statCount{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.arena-stats{display:flex;justify-content:center;margin-top:24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.arena-stat{flex:1;text-align:center;padding:13px 8px;}
 .arena-stat+.arena-stat{border-left:1px solid var(--border);}
-.arena-stat .as-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text-dim);display:block;}
-.arena-stat .as-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.5;}
+.arena-stat .as-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);display:block;animation:statCount 0.6s ease;}
+.arena-stat .as-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;}
 
 /* Personal record */
 .nemesis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-top:10px;}
@@ -640,13 +708,50 @@ const FAKE_LEADERBOARD = [
 ];
 
 const TAUNTS = [
-  { icon: "🎓", text: "Most people can't argue their way out of a paper bag." },
-  { icon: "😈", text: "Every opinion you hold is probably wrong." },
-  { icon: "⚖️", text: "Your argument has at least three logical fallacies." },
-  { icon: "🔮", text: "But what does 'winning' even mean to you?" },
-  { icon: "🏛️", text: "I hear you. Let me reframe that completely." },
-  { icon: "🔬", text: "Interesting claim. Where are your sources?" },
+  { icon: "⚖️", text: "The Prosecutor is waiting." },
+  { icon: "💀", text: "87 players lost today. You're next." },
+  { icon: "📊", text: "Your logic rating is unranked." },
+  { icon: "🔥", text: "3 players are in Gauntlet Mode right now." },
+  { icon: "🎓", text: "The Professor hasn't lost in 11 debates." },
+  { icon: "⚡", text: "Last match lasted 4 rounds." },
+  { icon: "🔬", text: "The Debunker demands evidence." },
+  { icon: "🏛️", text: "The Politician is ready to reframe your point." },
+  { icon: "🎯", text: "KINGDEBATE just hit rank #1." },
+  { icon: "🔮", text: "The Philosopher questioned someone's entire worldview." },
 ];
+
+const FEATURED_TOPICS = [
+  { cat: "Ethics", text: "Billionaires should not exist", heat: "Minefield" },
+  { cat: "Society", text: "The four-day work week should be standard", heat: "Contested" },
+  { cat: "Tech", text: "AI will do more good than harm to humanity", heat: "Contested" },
+  { cat: "Philosophy", text: "Free will is an illusion", heat: "Contested" },
+  { cat: "Society", text: "Cancel culture has gone too far", heat: "Minefield" },
+  { cat: "Tech", text: "AI-generated art is not real art", heat: "Contested" },
+  { cat: "Ethics", text: "The death penalty should be abolished worldwide", heat: "Minefield" },
+  { cat: "Philosophy", text: "Money can buy happiness", heat: "Casual" },
+];
+
+interface FeedItem { icon: string; text: string; time: string; badge: string; badgeClass: string; }
+
+function buildFeedItems(): FeedItem[] {
+  const players = ["LOGICWOLF", "FOXFIRE99", "SHARPTAKE", "VOLTIX", "BLAZELOGIC", "BIGBRAIN47", "GHOSTLOGIC", "IRONMIND", "SHADOWTAKE", "REDCLASH"];
+  const opponents = ["The Prosecutor", "The Professor", "The Philosopher", "The Debunker", "The Politician", "The Devil"];
+  const topics = ["Free will is an illusion", "AI will do more good than harm", "Cancel culture has gone too far", "Billionaires should not exist", "The death penalty should be abolished"];
+  const times = ["just now", "1m ago", "2m ago", "3m ago", "5m ago", "7m ago", "9m ago", "11m ago"];
+  const pool: FeedItem[] = [
+    { icon: "🏆", text: `<strong>${players[0]}</strong> won against ${opponents[0]} · 91 pts`, time: times[0], badge: "WIN", badgeClass: "feed-win" },
+    { icon: "💀", text: `<strong>${players[1]}</strong> lost a Gauntlet run at opponent 4`, time: times[1], badge: "LOSS", badgeClass: "feed-loss" },
+    { icon: "⚡", text: `<strong>${players[2]}</strong> hit a 5-win streak`, time: times[2], badge: "STREAK", badgeClass: "feed-streak" },
+    { icon: "📈", text: `<strong>${players[3]}</strong> climbed to rank #5 on the leaderboard`, time: times[3], badge: "RANK UP", badgeClass: "feed-rank" },
+    { icon: "🏆", text: `<strong>${players[4]}</strong> defeated ${opponents[1]} · scored 88`, time: times[4], badge: "WIN", badgeClass: "feed-win" },
+    { icon: "⚔️", text: `<strong>${players[5]}</strong> completed a full Gauntlet run`, time: times[2], badge: "GAUNTLET", badgeClass: "feed-streak" },
+    { icon: "💀", text: `<strong>${players[6]}</strong> lost to ${opponents[2]} on topic: "${topics[0]}"`, time: times[5], badge: "LOSS", badgeClass: "feed-loss" },
+    { icon: "🏆", text: `<strong>${players[7]}</strong> won against ${opponents[3]} · 96 pts`, time: times[3], badge: "WIN", badgeClass: "feed-win" },
+    { icon: "📈", text: `<strong>${players[8]}</strong> moved into the top 10`, time: times[6], badge: "RANK UP", badgeClass: "feed-rank" },
+    { icon: "⚡", text: `<strong>${players[9]}</strong> is on a 3-win streak`, time: times[7], badge: "STREAK", badgeClass: "feed-streak" },
+  ];
+  return pool.sort(() => Math.random() - 0.5).slice(0, 5);
+}
 
 function getScoreColor(s: number) {
   if (s >= 80) return "var(--green)";
@@ -706,7 +811,12 @@ export default function App() {
   const [tournamentMatchScores, setTournamentMatchScores] = useState<{ score: number; rank: string; won: boolean; botId: string; botName: string; botIcon: string; topic: string }[]>([]);
   const [gauntletNextSide, setGauntletNextSide] = useState<"for" | "against" | null>(null);
   const [tauntIndex, setTauntIndex] = useState(0);
+  const [tauntKey, setTauntKey] = useState(0);
   const [arenaDisplay, setArenaDisplay] = useState({ debates: 0, winRate: 0, topics: 0 });
+  const [featuredIdx, setFeaturedIdx] = useState(() => Math.floor(Math.random() * FEATURED_TOPICS.length));
+  const [featuredKey, setFeaturedKey] = useState(0);
+  const [feedItems, setFeedItems] = useState<FeedItem[]>(() => buildFeedItems());
+  const [feedKey, setFeedKey] = useState(0);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -716,7 +826,7 @@ export default function App() {
     const style = document.createElement("style");
     style.textContent = css;
     document.head.appendChild(style);
-    return () => document.head.removeChild(style);
+    return () => { document.head.removeChild(style); };
   }, []);
 
   useEffect(() => {
@@ -729,6 +839,7 @@ export default function App() {
       const t = setTimeout(() => inputRef.current?.focus(), 150);
       return () => clearTimeout(t);
     }
+    return undefined;
   }, [thinking, screen]);
 
   // Cycle thinking phase labels for tension
@@ -773,10 +884,33 @@ export default function App() {
     } catch {}
   }, []);
 
-  // Rotate AI taunts every 4s on home screen
+  // Rotate status taunts every 4s on home screen
   useEffect(() => {
     if (screen !== "home") return;
-    const iv = setInterval(() => setTauntIndex((i) => (i + 1) % TAUNTS.length), 4000);
+    const iv = setInterval(() => {
+      setTauntIndex((i) => (i + 1) % TAUNTS.length);
+      setTauntKey((k) => k + 1);
+    }, 4000);
+    return () => clearInterval(iv);
+  }, [screen]);
+
+  // Cycle featured topic every 9s on home screen
+  useEffect(() => {
+    if (screen !== "home") return;
+    const iv = setInterval(() => {
+      setFeaturedIdx((i) => (i + 1) % FEATURED_TOPICS.length);
+      setFeaturedKey((k) => k + 1);
+    }, 9000);
+    return () => clearInterval(iv);
+  }, [screen]);
+
+  // Refresh live feed every 14s on home screen
+  useEffect(() => {
+    if (screen !== "home") return;
+    const iv = setInterval(() => {
+      setFeedItems(buildFeedItems());
+      setFeedKey((k) => k + 1);
+    }, 14000);
     return () => clearInterval(iv);
   }, [screen]);
 
@@ -1201,11 +1335,13 @@ export default function App() {
               </div>
             </div>
           )}
+
+          {/* HERO */}
           <div className="home-hero">
             <h1 className="home-title">ARGUE.<span className="line2">WIN.</span></h1>
-            <p className="taunt-line">
+            <p key={tauntKey} className="taunt-line">
               <span className="taunt-who">{TAUNTS[tauntIndex].icon}</span>
-              "{TAUNTS[tauntIndex].text}"
+              {TAUNTS[tauntIndex].text}
             </p>
             <div className="home-cta">
               <button className="btn btn-primary" onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}>
@@ -1215,64 +1351,122 @@ export default function App() {
                 Leaderboard
               </button>
             </div>
-            <div style={{ marginTop: "14px", textAlign: "center" }}>
+            <div style={{ marginTop: "16px", textAlign: "center" }}>
               <button className="gauntlet-btn" onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}>
                 ⚔ Gauntlet Mode
               </button>
-              <p className="gauntlet-sub">Take on all 6 opponents in one run</p>
+              <p className="gauntlet-sub">6 Opponents. 1 Run. No Excuses.</p>
             </div>
           </div>
 
+          {/* TODAY'S CLASH — featured topic cycling card */}
+          <div>
+            <p className="section-label" style={{ marginBottom: "0" }}>Today's Clash</p>
+            <div
+              key={featuredKey}
+              className="featured-card"
+              onClick={() => {
+                const t = FEATURED_TOPICS[featuredIdx];
+                setSelectedTopic({ cat: t.cat, text: t.text });
+                setDisplayTopics(pickTopics());
+                setSetupStep(0);
+                setScreen("setup");
+              }}
+            >
+              <div className="featured-left">
+                <div className="featured-badge">
+                  🔥 Hot Topic
+                </div>
+                <div className="featured-topic-text">"{FEATURED_TOPICS[featuredIdx].text}"</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "7px" }}>
+                  <span className="featured-cat">{FEATURED_TOPICS[featuredIdx].cat}</span>
+                  <span className={`topic-rating rating-${FEATURED_TOPICS[featuredIdx].heat.toLowerCase()}`}>{FEATURED_TOPICS[featuredIdx].heat}</span>
+                </div>
+                <div className="featured-dots">
+                  {FEATURED_TOPICS.map((_, i) => (
+                    <div key={i} className={`featured-dot${i === featuredIdx ? " active" : ""}`} />
+                  ))}
+                </div>
+              </div>
+              <div className="featured-cta">Play This →</div>
+            </div>
+          </div>
+
+          {/* ARENA STATS STRIP */}
           <div className="arena-stats">
             <div className="arena-stat">
-              <span className="as-val">{arenaDisplay.debates.toLocaleString()}</span>
+              <span key={arenaDisplay.debates} className="as-val">{arenaDisplay.debates.toLocaleString()}</span>
               <span className="as-lbl">Debates fought</span>
             </div>
             <div className="arena-stat">
-              <span className="as-val">{arenaDisplay.winRate}%</span>
+              <span key={arenaDisplay.winRate} className="as-val">{arenaDisplay.winRate}%</span>
               <span className="as-lbl">Global win rate</span>
             </div>
             <div className="arena-stat">
-              <span className="as-val">{arenaDisplay.topics}</span>
+              <span key={arenaDisplay.topics} className="as-val">{arenaDisplay.topics}</span>
               <span className="as-lbl">Topics</span>
             </div>
           </div>
 
-          {stats.debates > 0 && (
-            <div style={{ marginTop: "28px" }}>
-              <p className="section-label">Your record</p>
-              <div className="stats-row">
-                <div className="stat-card">
-                  <span className="val red">{stats.debates}</span>
-                  <span className="lbl">Debates</span>
-                </div>
-                <div className="stat-card">
-                  <span className="val green">{stats.wins}</span>
-                  <span className="lbl">Wins</span>
-                </div>
-                <div className="stat-card">
-                  <span className="val gold">{stats.bestScore || "—"}</span>
-                  <span className="lbl">Best Score</span>
-                </div>
-                <div className="stat-card">
-                  <span className="val">{Math.round((stats.wins / stats.debates) * 100)}%</span>
-                  <span className="lbl">Win Rate</span>
-                </div>
+          {/* BOTTOM ROW — live feed + personal stats side by side on desktop */}
+          <div className="home-bottom-row">
+            {/* LIVE ACTIVITY FEED */}
+            <div className="live-feed-wrap">
+              <div className="live-feed-header">
+                <p className="section-label" style={{ marginBottom: 0 }}>
+                  <span className="live-dot" />
+                  Live Activity
+                </p>
               </div>
-              {nemesisBot && (
-                <div className="nemesis-card">
-                  <div className="nemesis-icon">{nemesisBot.icon}</div>
-                  <div>
-                    <div className="nemesis-name">{nemesisBot.name}</div>
-                    <div className="nemesis-sub">{nemesisBot.losses} loss{nemesisBot.losses !== 1 ? "es" : ""} · Unfinished business</div>
+              <div key={feedKey} className="live-feed">
+                {feedItems.map((item, i) => (
+                  <div key={i} className="feed-item" style={{ animationDelay: `${i * 60}ms` }}>
+                    <span className="feed-icon">{item.icon}</span>
+                    <span className="feed-text" dangerouslySetInnerHTML={{ __html: item.text }} />
+                    <span className={`feed-badge ${item.badgeClass}`}>{item.badge}</span>
+                    <span className="feed-time">{item.time}</span>
                   </div>
-                  <button className="nemesis-rematch" onClick={() => { setSelectedAI(nemesisBot.id); setSetupStep(1); setScreen("setup"); }}>
-                    Rematch →
-                  </button>
-                </div>
-              )}
+                ))}
+              </div>
             </div>
-          )}
+
+            {/* PERSONAL STATS */}
+            {stats.debates > 0 && (
+              <div style={{ marginTop: "24px" }}>
+                <p className="section-label">Your record</p>
+                <div className="stats-row">
+                  <div className="stat-card">
+                    <span className="val red">{stats.debates}</span>
+                    <span className="lbl">Debates</span>
+                  </div>
+                  <div className="stat-card">
+                    <span className="val green">{stats.wins}</span>
+                    <span className="lbl">Wins</span>
+                  </div>
+                  <div className="stat-card">
+                    <span className="val gold">{stats.bestScore || "—"}</span>
+                    <span className="lbl">Best Score</span>
+                  </div>
+                  <div className="stat-card">
+                    <span className="val">{Math.round((stats.wins / stats.debates) * 100)}%</span>
+                    <span className="lbl">Win Rate</span>
+                  </div>
+                </div>
+                {nemesisBot && (
+                  <div className="nemesis-card">
+                    <div className="nemesis-icon">{nemesisBot.icon}</div>
+                    <div>
+                      <div className="nemesis-name">{nemesisBot.name}</div>
+                      <div className="nemesis-sub">{nemesisBot.losses} loss{nemesisBot.losses !== 1 ? "es" : ""} · Unfinished business</div>
+                    </div>
+                    <button className="nemesis-rematch" onClick={() => { setSelectedAI(nemesisBot.id); setSetupStep(1); setScreen("setup"); }}>
+                      Rematch →
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
