@@ -453,36 +453,34 @@ export default function App() {
             </div>
           </div>
 
-          <div className="stats-row">
-            <div className="stat-card">
-              <span className="val red">{stats.debates}</span>
-              <span className="lbl">Debates</span>
-            </div>
-            <div className="stat-card">
-              <span className="val green">{stats.wins}</span>
-              <span className="lbl">Wins</span>
-            </div>
-            <div className="stat-card">
-              <span className="val gold">{stats.bestScore || "—"}</span>
-              <span className="lbl">Best Score</span>
-            </div>
-            <div className="stat-card">
-              <span className="val">{stats.debates > 0 ? Math.round((stats.wins / stats.debates) * 100) : 0}%</span>
-              <span className="lbl">Win Rate</span>
-            </div>
-          </div>
-
-          <p className="section-label">Choose your opponent</p>
-          <div className="ai-grid">
+          <div style={{ display: "flex", gap: "16px", justifyContent: "center", marginBottom: "40px", flexWrap: "wrap" }}>
             {AI_OPPONENTS.map((a) => (
-              <div key={a.id} className="ai-card" onClick={() => { setSelectedAI(a.id); setSetupStep(1); setScreen("setup"); }}>
-                <span className="ai-icon">{a.icon}</span>
-                <div className="ai-name">{a.name}</div>
-                <div className="ai-desc">{a.desc}</div>
-                <span className={`ai-diff diff-${a.diff}`}>{a.diffLabel}</span>
+              <div key={a.id} style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "28px" }} title={a.name}>
+                {a.icon}
               </div>
             ))}
           </div>
+
+          {stats.debates > 0 && (
+            <div className="stats-row">
+              <div className="stat-card">
+                <span className="val red">{stats.debates}</span>
+                <span className="lbl">Debates</span>
+              </div>
+              <div className="stat-card">
+                <span className="val green">{stats.wins}</span>
+                <span className="lbl">Wins</span>
+              </div>
+              <div className="stat-card">
+                <span className="val gold">{stats.bestScore || "—"}</span>
+                <span className="lbl">Best Score</span>
+              </div>
+              <div className="stat-card">
+                <span className="val">{Math.round((stats.wins / stats.debates) * 100)}%</span>
+                <span className="lbl">Win Rate</span>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

@@ -11,6 +11,27 @@ env = { "CI" = "true" }
 [workflows]
 runButton = "Project"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Clash Frontend"
+
+[[workflows.workflow]]
+name = "Clash Frontend"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=20285 BASE_PATH=/clash/ pnpm --filter @workspace/clash run dev"
+waitForPort = 20285
+
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true
