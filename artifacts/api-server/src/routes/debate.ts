@@ -125,29 +125,35 @@ router.post("/debate/round", async (req, res) => {
   const diff = str(difficulty) ?? "medium";
 
   try {
-    const scorePrompt = `You are a decisive, emotionally engaged debate judge — not a neutral academic. Your job is to pick a clear winner each round and score accordingly.
+    const scorePrompt = `You are a competitive debate referee. Score this argument fairly, decisively, and consistently using the rubric below.
 
 Topic: "${topic as string}"
 User is arguing: ${userSide as string}
 Round: ${round as number} of ${totalRounds as number}
 Opponent difficulty: ${diff}
 
-User's argument: "${userArgument as string}"
+User's argument:
+"${userArgument as string}"
 
-JUDGING PRINCIPLES — apply these strictly:
-- Prioritise overall convincingness and emotional impact, not just technical correctness.
-- Reward clarity: a clear, punchy argument beats a long rambling one every time.
-- Reward impact: did the argument actually land? Would it change a real person's mind?
-- Penalise hard: vagueness, filler phrases, repetition, and unsupported assertions get docked significantly.
-- Penalise hard: rambling or unfocused arguments that bury the main point score low on delivery.
-- Do NOT stay neutral. If the argument was weak, score it low (below 55). If it was strong, score it high (above 75). Avoid the 60-70 comfort zone unless it was genuinely mediocre.
-- For "hard" and "extreme" difficulty: be noticeably harsher. Vague claims get no credit.
+SCORING RUBRIC — use this to assign scores across all four dimensions (score, logic, persuasion, delivery):
 
-Respond ONLY with a JSON object, no markdown:
-{"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"strongest point in one sentence","weak":"weakest point in one sentence"}`;
+90-100 — Exceptional. Clear thesis, compelling evidence or examples, directly addresses the topic, highly persuasive. Structured and punchy. No wasted words.
+75-89  — Strong. Well-reasoned with a clear point. May lack one element (e.g. evidence or concision) but lands the argument convincingly.
+60-74  — Average. Makes a recognisable point but relies on assertion without support, or buries the argument in filler. Partially convincing.
+40-59  — Weak. Vague, repetitive, or off-topic. Fails to make a concrete case. Would not persuade a neutral observer.
+0-39   — Very poor. No coherent argument. Concession language, empty statements, or nonsensical content.
+
+ADDITIONAL RULES:
+- Score each dimension independently. Delivery measures clarity and concision; persuasion measures real-world impact; logic measures reasoning quality.
+- Spread scores meaningfully. Do not cluster every argument at 60-75. Use the full range.
+- For "hard" and "extreme" difficulty: apply the rubric one tier stricter — a score that would be 70 at easy becomes 55 at hard/extreme.
+- Be consistent. The same quality of argument should score similarly every time, regardless of the topic.
+
+Respond ONLY with a JSON object, no markdown, no explanation:
+{"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"the single strongest point in one sentence","weak":"the single weakest element in one sentence"}`;
 
     const scoreText = await claudeText(
-      "You are a strict debate judge. Always respond with only valid JSON.",
+      "You are a competitive debate referee. Score arguments using the provided rubric. Always respond with only valid JSON.",
       scorePrompt
     );
 
@@ -202,21 +208,27 @@ router.post("/debate/verdict", async (req, res) => {
     ? (userArguments as string[]).join(" / ")
     : "";
 
-  const prompt = `You are a decisive, emotionally engaged final debate judge. The debate on "${topic as string}" has ended.
+  const scoreLabel =
+    (avgScore as number) >= 85 ? "dominant" :
+    (avgScore as number) >= 70 ? "convincing" :
+    (avgScore as number) >= 55 ? "competitive but flawed" :
+    (avgScore as number) >= 40 ? "weak" : "very poor";
 
-User's average score: ${avgScore as number}/100.
+  const prompt = `You are a fair, decisive debate referee delivering the final verdict on the topic: "${topic as string}".
 
-JUDGING PRINCIPLES:
-- Be decisive. If they won convincingly (>=70), declare it clearly and with energy. If they lost badly (<50), be blunt about why.
-- Lean into a clear verdict — do not hedge or give wishy-washy "on one hand, on the other" verdicts.
-- Call out specifically what swung the debate in their favour or against them.
-- One sharp, memorable verdict. Make the user feel the outcome.
+Overall performance score: ${avgScore as number}/100 — classified as: ${scoreLabel}.
+Subcategory averages — Logic: ${avgLogic as number}, Persuasion: ${avgPersuasion as number}, Delivery: ${avgDelivery as number}.
 
-Write a 2-sentence verdict. Be specific to the topic and the score. No generic praise.
-Also write one concrete technique they should practice to debate better.
+VERDICT RULES:
+- Declare a clear outcome. Use the score classification above to determine the result — do not contradict it.
+- Base the verdict on argument quality: reasoning, evidence, clarity, and persuasive impact.
+- Be specific to the topic. Reference what kind of arguments won or lost the debate.
+- Never hedge. "Overall a decent attempt" is not acceptable. State who won and why.
+- Two sentences maximum. First sentence: the outcome and why. Second sentence: the decisive factor that swung it.
+- For the improvement tip: identify the single most impactful technique the debater should practice, tied directly to their performance.
 
-Respond ONLY with JSON:
-{"verdict":"2 sentence decisive verdict","improve":"One specific actionable technique"}`;
+Respond ONLY with valid JSON:
+{"verdict":"two-sentence verdict declaring a clear outcome","improve":"one specific, actionable improvement technique"}`;
 
   const summaryPrompt = userArgs
     ? `Summarise what this debater argued in 1-2 sentences. Do NOT evaluate, judge, or give any opinion. Only restate their position and the main points they raised. Be neutral and factual.
@@ -226,7 +238,7 @@ Their arguments: "${userArgs}"`
 
   try {
     const [vText, sText] = await Promise.all([
-      claudeText("You are a decisive debate judge. Respond only with valid JSON.", prompt),
+      claudeText("You are a fair, decisive debate referee. Respond only with valid JSON.", prompt),
       summaryPrompt
         ? claudeText("You summarise debate arguments neutrally. Respond with only the summary sentence(s), no labels or JSON.", summaryPrompt)
         : Promise.resolve(""),
