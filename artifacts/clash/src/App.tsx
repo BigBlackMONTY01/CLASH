@@ -221,6 +221,13 @@ margin-bottom:16px;white-space:pre-wrap;word-break:break-all;}
 .timer-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
 .timer-fill{height:100%;border-radius:2px;transition:width 1s linear,background 0.5s;}
 .timer-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+.rounds-pick{display:flex;gap:8px;margin-bottom:24px;}
+.rounds-btn{flex:1;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);
+padding:14px 8px;cursor:pointer;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:28px;
+color:var(--text-dim);transition:all 0.2s;}
+.rounds-btn:hover{border-color:var(--text-dim);color:var(--text);}
+.rounds-btn.selected{border-color:var(--red);color:var(--red);background:rgba(230,57,70,0.08);}
+.rounds-btn .rounds-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;display:block;margin-top:3px;color:var(--text-dim);}
 `;
 
 const AI_OPPONENTS = [
@@ -232,22 +239,118 @@ const AI_OPPONENTS = [
   { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Data obsessed. Demands evidence. Fact-checks everything.", diff: "extreme", diffLabel: "Extreme", timer: 60, personality: "You are a rigorous fact-checker and debunker. You demand sources, cite statistics, and dismantle arguments that lack evidence. You are skeptical of everything and can spot unsupported claims instantly. You are surgical and unforgiving." },
 ];
 
-const TOPICS = [
+const TOPIC_POOL = [
   { cat: "Hot Take", text: "Pineapple belongs on pizza" },
   { cat: "Hot Take", text: "Mornings are better than nights" },
+  { cat: "Hot Take", text: "Cats are better than dogs" },
+  { cat: "Hot Take", text: "The ocean is scarier than outer space" },
+  { cat: "Hot Take", text: "Winter is the best season" },
+  { cat: "Hot Take", text: "Coffee is overrated" },
+  { cat: "Hot Take", text: "Reading books is better than watching movies" },
+  { cat: "Hot Take", text: "Fast food is genuinely good food" },
+  { cat: "Hot Take", text: "Naps should be mandatory at work" },
+  { cat: "Hot Take", text: "Board games beat video games for fun" },
+  { cat: "Hot Take", text: "Leftovers taste better the next day" },
+  { cat: "Hot Take", text: "Sports are boring to watch" },
+  { cat: "Hot Take", text: "Everyone should learn to cook" },
+  { cat: "Hot Take", text: "Museums are overrated" },
+  { cat: "Hot Take", text: "Tattoos should be accepted in all workplaces" },
+  { cat: "Hot Take", text: "Online friendships are as real as offline ones" },
+  { cat: "Hot Take", text: "Celebrities should stay out of politics" },
+  { cat: "Hot Take", text: "Social media is not real life" },
+  { cat: "Hot Take", text: "Owning a car in a city is a waste of money" },
+  { cat: "Hot Take", text: "Breakfast is the most important meal of the day" },
   { cat: "Ethics", text: "Lying is sometimes morally justified" },
   { cat: "Ethics", text: "Social media does more harm than good" },
+  { cat: "Ethics", text: "The death penalty should be abolished worldwide" },
+  { cat: "Ethics", text: "Zoos are ethical" },
+  { cat: "Ethics", text: "It is ethical to eat meat" },
+  { cat: "Ethics", text: "Anonymous whistleblowing is always justified" },
+  { cat: "Ethics", text: "Billionaires should not exist" },
+  { cat: "Ethics", text: "Paparazzi culture violates basic human rights" },
+  { cat: "Ethics", text: "Medical experiments on animals are justified" },
+  { cat: "Ethics", text: "Prisoners should have the right to vote" },
+  { cat: "Ethics", text: "Everyone has a moral duty to vote" },
+  { cat: "Ethics", text: "Civil disobedience is sometimes necessary" },
+  { cat: "Ethics", text: "Designer babies are ethically acceptable" },
+  { cat: "Ethics", text: "Euthanasia should be legal everywhere" },
+  { cat: "Ethics", text: "Charity begins at home" },
   { cat: "Philosophy", text: "Free will is an illusion" },
   { cat: "Philosophy", text: "Money can buy happiness" },
+  { cat: "Philosophy", text: "Life has inherent meaning" },
+  { cat: "Philosophy", text: "Absolute truth does not exist" },
+  { cat: "Philosophy", text: "Humans are inherently selfish" },
+  { cat: "Philosophy", text: "Beauty is entirely subjective" },
+  { cat: "Philosophy", text: "Intelligence matters more than emotional intelligence" },
+  { cat: "Philosophy", text: "The ends justify the means" },
+  { cat: "Philosophy", text: "Luck matters more than talent" },
+  { cat: "Philosophy", text: "Failure is necessary for growth" },
+  { cat: "Philosophy", text: "Perfection is the enemy of good" },
+  { cat: "Philosophy", text: "Happiness is a choice" },
+  { cat: "Philosophy", text: "Morality is objective not subjective" },
+  { cat: "Philosophy", text: "Privacy is a human right not a privilege" },
+  { cat: "Philosophy", text: "Consciousness survives death" },
   { cat: "Pop Culture", text: "Streaming killed the music industry" },
   { cat: "Pop Culture", text: "Video games are a valid art form" },
+  { cat: "Pop Culture", text: "Marvel movies have ruined cinema" },
+  { cat: "Pop Culture", text: "Reality TV is harmful to society" },
+  { cat: "Pop Culture", text: "Social media influencers deserve their income" },
+  { cat: "Pop Culture", text: "Hollywood has run out of original ideas" },
+  { cat: "Pop Culture", text: "Sports stars are paid too much" },
+  { cat: "Pop Culture", text: "Award shows are irrelevant today" },
+  { cat: "Pop Culture", text: "Fan fiction is a legitimate art form" },
+  { cat: "Pop Culture", text: "Comedy has become too safe" },
+  { cat: "Pop Culture", text: "Nostalgia is killing creativity in entertainment" },
+  { cat: "Pop Culture", text: "Podcasts are the new radio" },
+  { cat: "Pop Culture", text: "Esports deserve Olympic recognition" },
+  { cat: "Pop Culture", text: "Books will always beat their movie adaptations" },
+  { cat: "Pop Culture", text: "Remakes are never as good as the originals" },
   { cat: "Society", text: "Remote work is better than office work" },
   { cat: "Society", text: "Cancel culture has gone too far" },
+  { cat: "Society", text: "Universal basic income would help society" },
+  { cat: "Society", text: "Mandatory voting should be law" },
+  { cat: "Society", text: "Graffiti is art not vandalism" },
+  { cat: "Society", text: "The four-day work week should be standard" },
+  { cat: "Society", text: "Marriage as an institution is outdated" },
+  { cat: "Society", text: "Homework does more harm than good" },
+  { cat: "Society", text: "Gap years should be encouraged for all students" },
+  { cat: "Society", text: "Cities should be designed for pedestrians not cars" },
+  { cat: "Society", text: "Term limits should apply to all elected officials" },
+  { cat: "Society", text: "Public transport should always be free" },
+  { cat: "Society", text: "Prisons should focus on rehabilitation not punishment" },
+  { cat: "Society", text: "Zoning laws harm cities more than they help" },
+  { cat: "Society", text: "Standardized testing is useless" },
   { cat: "Tech", text: "AI will do more good than harm to humanity" },
   { cat: "Tech", text: "Privacy is more important than convenience" },
+  { cat: "Tech", text: "Social media companies are too powerful" },
+  { cat: "Tech", text: "Smartphones have made humans less social" },
+  { cat: "Tech", text: "The metaverse will fail" },
+  { cat: "Tech", text: "Cryptocurrency is the future of money" },
+  { cat: "Tech", text: "Self-driving cars will save more lives than they risk" },
+  { cat: "Tech", text: "Tech companies should pay far more taxes" },
+  { cat: "Tech", text: "Screen time limits for children should be enforced by law" },
+  { cat: "Tech", text: "Open source software is the future" },
+  { cat: "Tech", text: "Algorithms are making us more polarized" },
+  { cat: "Tech", text: "Everyone should learn to code" },
+  { cat: "Tech", text: "Facial recognition in public spaces should be banned" },
+  { cat: "Tech", text: "Space exploration is worth the money" },
+  { cat: "Tech", text: "AI-generated art is not real art" },
+  { cat: "Tech", text: "Automation will create more jobs than it destroys" },
+  { cat: "Tech", text: "The internet has made the world more democratic" },
+  { cat: "Tech", text: "Big tech giants should be broken up by governments" },
+  { cat: "Tech", text: "Nuclear energy is safer than fossil fuels" },
+  { cat: "Tech", text: "Video game addiction is a real medical condition" },
 ];
 
-const MAX_ROUNDS = 3;
+function pickTopics() {
+  const pool = [...TOPIC_POOL];
+  const picked: typeof TOPIC_POOL = [];
+  while (picked.length < 5 && pool.length > 0) {
+    const idx = Math.floor(Math.random() * pool.length);
+    picked.push(pool.splice(idx, 1)[0]);
+  }
+  return picked;
+}
 
 const FAKE_LEADERBOARD = [
   { rank: 1, emoji: "🦁", name: "KINGDEBATE", wins: 47, score: 9840 },
@@ -294,6 +397,8 @@ export default function App() {
   const [error, setError] = useState("");
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [stats, setStats] = useState<Stats>({ wins: 0, debates: 0, bestScore: 0 });
+  const [selectedRounds, setSelectedRounds] = useState(3);
+  const [displayTopics, setDisplayTopics] = useState(() => pickTopics());
   const [lbTab, setLbTab] = useState("global");
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -313,7 +418,7 @@ export default function App() {
   const ai = AI_OPPONENTS.find((a) => a.id === selectedAI);
 
   // Derive current round from completed scores — always accurate, never stale
-  const currentRound = Math.min(roundScores.length + 1, MAX_ROUNDS);
+  const currentRound = Math.min(roundScores.length + 1, selectedRounds);
   const roundTimerDuration = ai?.timer ?? 60;
 
   const stopTimer = useCallback(() => {
@@ -326,7 +431,7 @@ export default function App() {
 
   // Start countdown whenever the input becomes available
   useEffect(() => {
-    const inputVisible = screen === "debate" && !thinking && roundScores.length < MAX_ROUNDS;
+    const inputVisible = screen === "debate" && !thinking && roundScores.length < selectedRounds;
     if (inputVisible) {
       stopTimer();
       setTimeLeft(roundTimerDuration);
@@ -364,7 +469,7 @@ export default function App() {
         topic: selectedTopic.text,
         userSide: sideLabel,
         oppSide,
-        totalRounds: MAX_ROUNDS,
+        totalRounds: selectedRounds,
         difficulty: ai.diff,
       });
       setMessages([{ role: "ai", text }]);
@@ -384,7 +489,7 @@ export default function App() {
 
     const completedRounds = roundScores.length;
     const roundNumber = completedRounds + 1;
-    const isLastRound = roundNumber >= MAX_ROUNDS;
+    const isLastRound = roundNumber >= selectedRounds;
 
     const newMessages: Message[] = [...messages, { role: "user", text: userMsg }];
     setMessages(newMessages);
@@ -405,7 +510,7 @@ export default function App() {
         messages: newMessages.slice(0, -1),
         userArgument: userMsg,
         round: roundNumber,
-        totalRounds: MAX_ROUNDS,
+        totalRounds: selectedRounds,
         difficulty: ai.diff,
         isLastRound,
       });
@@ -415,7 +520,7 @@ export default function App() {
       setMessages([...newMessages, { role: "ai", text: aiText }]);
 
       if (isLastRound) {
-        setTimeout(() => generateVerdict(newRoundScores, newMessages), 800);
+        setTimeout(() => generateVerdict(newRoundScores, newMessages), 4000);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
@@ -427,7 +532,7 @@ export default function App() {
 
   // Auto-submit when timer expires
   useEffect(() => {
-    if (timeLeft === 0 && screen === "debate" && !thinking && roundScores.length < MAX_ROUNDS) {
+    if (timeLeft === 0 && screen === "debate" && !thinking && roundScores.length < selectedRounds) {
       const fallback = inputText.trim() || "I concede this round.";
       submitArgument(fallback);
     }
@@ -477,6 +582,7 @@ export default function App() {
     setSelectedAI(null);
     setSelectedTopic(null);
     setSelectedSide(null);
+    setSelectedRounds(3);
     setMessages([]);
     setRoundScores([]);
     setVerdict(null);
@@ -500,7 +606,7 @@ export default function App() {
             <h1 className="home-title">ARGUE.<span className="line2">WIN.</span></h1>
             <p className="home-sub">Solo debate. AI opponent. Real judgment.</p>
             <div className="home-cta">
-              <button className="btn btn-primary" onClick={() => { setSetupStep(0); setScreen("setup"); }}>
+              <button className="btn btn-primary" onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}>
                 Start Debate
               </button>
               <button className="btn btn-secondary" onClick={() => setScreen("leaderboard")}>
@@ -566,7 +672,7 @@ export default function App() {
             <>
               <p className="section-label">Pick a topic</p>
               <div className="topic-grid">
-                {TOPICS.map((t, i) => (
+                {displayTopics.map((t, i) => (
                   <div key={i} className={`topic-card ${selectedTopic?.text === t.text ? "selected" : ""}`} onClick={() => setSelectedTopic(t)}>
                     <div className="t-cat">{t.cat}</div>
                     <div className="t-text">{t.text}</div>
@@ -613,6 +719,15 @@ export default function App() {
 
           {setupStep === 2 && (
             <>
+              <p className="section-label">How many rounds?</p>
+              <div className="rounds-pick">
+                {[1, 3, 5].map((r) => (
+                  <button key={r} className={`rounds-btn ${selectedRounds === r ? "selected" : ""}`} onClick={() => setSelectedRounds(r)}>
+                    {r}
+                    <span className="rounds-sub">{r === 1 ? "Quick" : r === 3 ? "Standard" : "Marathon"}</span>
+                  </button>
+                ))}
+              </div>
               <p className="section-label">Pick your side</p>
               <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "16px 20px", marginBottom: "24px" }}>
                 <div style={{ fontSize: "18px", fontWeight: 500 }}>{selectedTopic?.text}</div>
@@ -644,7 +759,7 @@ export default function App() {
       {screen === "debate" && (
         <div className="screen">
           <div className="arena-header">
-            <div className="round-badge">RD {currentRound}/{MAX_ROUNDS}</div>
+            <div className="round-badge">RD {currentRound}/{selectedRounds}</div>
             <div className="arena-topic">{selectedTopic?.text}</div>
             <div style={{ textAlign: "right" }}>
               <div style={{ fontSize: "20px" }}>{ai?.icon}</div>
@@ -690,7 +805,7 @@ export default function App() {
 
           {error && <div className="error-banner">{error}</div>}
 
-          {!thinking && roundScores.length < MAX_ROUNDS && (
+          {!thinking && roundScores.length < selectedRounds && (
             <div className="input-area">
               {timeLeft !== null && (() => {
                 const pct = (timeLeft / roundTimerDuration) * 100;
