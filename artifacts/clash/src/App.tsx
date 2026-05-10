@@ -352,10 +352,15 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   .debate-screen .debate-input{font-size:16px;padding:10px 12px;}
   .debate-screen .input-area{flex-shrink:0;}
 
-  .home-hero{padding:8px 0 28px;}
-  .home-title{font-size:clamp(44px,14vw,72px);}
-  .home-sub{font-size:15px;margin-bottom:24px;}
-  .home-cta{gap:8px;}
+  .home-screen{flex:1;display:flex;flex-direction:column;}
+  .home-hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:8px 0 16px;}
+  .home-title{font-size:clamp(52px,15vw,72px);margin-bottom:clamp(8px,1.5vh,14px);}
+  .home-cta{gap:10px;}
+  .home-cta .btn{flex:1;}
+  .gauntlet-btn{max-width:none;}
+  .taunt-line{font-size:12px;margin-top:3px;margin-bottom:clamp(14px,2.5vh,20px);}
+  .arena-stats{margin-top:0;}
+  .gauntlet-sub{margin-top:4px;font-size:9px;}
 
   .btn{font-size:13px;letter-spacing:2px;padding:12px 20px;}
 
@@ -1181,7 +1186,7 @@ export default function App() {
 
       {/* HOME */}
       {screen === "home" && (
-        <div className="screen">
+        <div className="screen home-screen">
           {sharedResult && (
             <div className="challenge-banner">
               <div className="challenge-header">⚡ Challenge Received</div>
