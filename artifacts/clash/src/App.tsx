@@ -894,39 +894,43 @@ function generateShareCard(params: {
   ctx.font = "bold 19px Arial, sans-serif";
   ctx.fillStyle = "#383838";
   ctx.textAlign = "center";
-  ctx.fillText("RANK", W / 2, 196);
+  ctx.fillText("RANK", W / 2, 190);
 
-  // Giant rank letter — no circle, just the letter itself
-  ctx.font = "bold 260px Impact, 'Arial Black', sans-serif";
+  // Rank letter — 180px so it doesn't bleed into the result text below
+  ctx.font = "bold 190px Impact, 'Arial Black', sans-serif";
   ctx.fillStyle = rankColor;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(params.rank, W / 2, 358);
+  ctx.fillText(params.rank, W / 2, 316);
   ctx.textBaseline = "alphabetic";
 
+  // Thin rank-colored divider between rank and result
+  ctx.fillStyle = rankColor + "44";
+  ctx.fillRect(W / 2 - 60, 420, 120, 2);
+
   // ── RESULT ──────────────────────────────────────────────────────────────
-  ctx.font = "bold 122px Impact, 'Arial Black', sans-serif";
+  ctx.font = "bold 118px Impact, 'Arial Black', sans-serif";
   ctx.fillStyle = resultColor;
   ctx.textAlign = "center";
-  ctx.fillText(params.won ? "VICTORY" : "DEFEATED", W / 2, 560);
+  ctx.fillText(params.won ? "VICTORY" : "DEFEATED", W / 2, 562);
 
   // Underline accent bar (matches width of text)
   const vTextW = ctx.measureText(params.won ? "VICTORY" : "DEFEATED").width;
   ctx.fillStyle = resultColor + "55";
-  ctx.fillRect((W - vTextW) / 2, 572, vTextW, 5);
+  ctx.fillRect((W - vTextW) / 2, 575, vTextW, 5);
 
   // ── VS + TOPIC ──────────────────────────────────────────────────────────
   ctx.font = "bold 34px Arial, sans-serif";
   ctx.fillStyle = "#888";
   ctx.textAlign = "center";
-  ctx.fillText(`vs  ${params.opponentIcon}  ${params.opponentName}`, W / 2, 638);
+  ctx.fillText(`vs  ${params.opponentIcon}  ${params.opponentName}`, W / 2, 640);
 
   // Topic — wrap if long
   const topicMaxW = W - PAD * 2.4;
   ctx.font = "italic 31px Georgia, 'Times New Roman', serif";
   ctx.fillStyle = "#505050";
   ctx.textAlign = "center";
-  wrapCanvasText(ctx, `"${params.topic}"`, W / 2, 692, topicMaxW, 42);
+  wrapCanvasText(ctx, `"${params.topic}"`, W / 2, 695, topicMaxW, 42);
 
   // ── SCORES ──────────────────────────────────────────────────────────────
   // Separator
