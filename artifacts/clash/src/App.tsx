@@ -815,6 +815,13 @@ function wrapCanvasText(
   if (line.trim()) ctx.fillText(line.trim(), x, curY);
 }
 
+function truncateAtWord(text: string, maxLen: number): string {
+  if (text.length <= maxLen) return text;
+  const cut = text.slice(0, maxLen);
+  const lastSpace = cut.lastIndexOf(" ");
+  return (lastSpace > maxLen * 0.6 ? cut.slice(0, lastSpace) : cut) + "…";
+}
+
 function generateShareCard(params: {
   won: boolean;
   rank: string;
@@ -827,37 +834,40 @@ function generateShareCard(params: {
   judgeText: string;
   playerName: string | null;
 }): string {
-  const W = 1080, H = 1080;
+  const W = 1080, H = 1350;
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext("2d")!;
-  const PAD = 72;
+  const PAD = 68;
   const rankColor = getRankColorHex(params.rank);
   const resultColor = params.won ? "#22c55e" : "#e63946";
   const glowRgb = params.won ? "34,197,94" : "230,57,70";
 
   ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "left";
 
   // — Background
   ctx.fillStyle = "#0a0a0a";
   ctx.fillRect(0, 0, W, H);
 
-  // — Atmospheric glow
-  const glow = ctx.createRadialGradient(W / 2, 380, 0, W / 2, 380, 560);
-  glow.addColorStop(0, `rgba(${glowRgb},0.16)`);
+  // — Top glow
+  const glow = ctx.createRadialGradient(W / 2, 360, 0, W / 2, 360, 640);
+  glow.addColorStop(0, `rgba(${glowRgb},0.22)`);
   glow.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, H);
 
-  // — Outer border
-  ctx.strokeStyle = "#1e1e1e";
-  ctx.lineWidth = 3;
-  ctx.strokeRect(2, 2, W - 4, H - 4);
+  // — Bottom glow
+  const glow2 = ctx.createRadialGradient(W / 2, H - 180, 0, W / 2, H - 180, 380);
+  glow2.addColorStop(0, `rgba(${glowRgb},0.07)`);
+  glow2.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = glow2;
+  ctx.fillRect(0, 0, W, H);
 
-  // — CLASH logo
-  ctx.font = "bold 58px Impact, 'Arial Black', sans-serif";
-  ctx.textAlign = "left";
+  // ── HEADER ──────────────────────────────────────────────────────────────
+  // CLASH logo
+  ctx.font = "bold 66px Impact, 'Arial Black', sans-serif";
   ctx.fillStyle = "#f0f0f0";
   const clW = ctx.measureText("CL").width;
   const aW  = ctx.measureText("A").width;
@@ -867,71 +877,62 @@ function generateShareCard(params: {
   ctx.fillStyle = "#f0f0f0";
   ctx.fillText("SH", PAD + clW + aW, 96);
 
-  // — "BETA" badge
-  const bx = PAD + clW + aW + ctx.measureText("SH").width + 14;
-  ctx.fillStyle = "#e63946";
-  ctx.beginPath();
-  ctx.roundRect(bx, 72, 68, 22, 4);
-  ctx.fill();
-  ctx.font = "bold 13px Arial, sans-serif";
-  ctx.fillStyle = "#fff";
-  ctx.textAlign = "center";
-  ctx.fillText("BETA", bx + 34, 88);
-
-  // — Player name (top right)
+  // Player name top-right
   if (params.playerName) {
-    ctx.font = "bold 22px Arial, sans-serif";
+    ctx.font = "bold 26px Arial, sans-serif";
     ctx.fillStyle = "#555";
     ctx.textAlign = "right";
     ctx.fillText(params.playerName.toUpperCase(), W - PAD, 96);
   }
 
-  // — Header separator
-  ctx.strokeStyle = "#1e1e1e";
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(PAD, 124); ctx.lineTo(W - PAD, 124); ctx.stroke();
+  // Colored accent line under header
+  ctx.fillStyle = resultColor;
+  ctx.fillRect(PAD, 118, W - PAD * 2, 4);
 
-  // — Rank badge (circle)
-  const cx = W / 2, cy = 282, radius = 92;
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.fillStyle = rankColor + "28";
-  ctx.fill();
-  ctx.strokeStyle = rankColor;
-  ctx.lineWidth = 5;
-  ctx.stroke();
-  ctx.font = "bold 120px Impact, 'Arial Black', sans-serif";
+  // ── RANK ────────────────────────────────────────────────────────────────
+  // "RANK" micro-label
+  ctx.font = "bold 19px Arial, sans-serif";
+  ctx.fillStyle = "#383838";
+  ctx.textAlign = "center";
+  ctx.fillText("RANK", W / 2, 196);
+
+  // Giant rank letter — no circle, just the letter itself
+  ctx.font = "bold 260px Impact, 'Arial Black', sans-serif";
   ctx.fillStyle = rankColor;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(params.rank, cx, cy + 4);
+  ctx.fillText(params.rank, W / 2, 358);
   ctx.textBaseline = "alphabetic";
 
-  // — WIN / DEFEATED
-  ctx.font = "bold 100px Impact, 'Arial Black', sans-serif";
+  // ── RESULT ──────────────────────────────────────────────────────────────
+  ctx.font = "bold 122px Impact, 'Arial Black', sans-serif";
   ctx.fillStyle = resultColor;
   ctx.textAlign = "center";
-  ctx.fillText(params.won ? "VICTORY" : "DEFEATED", W / 2, 462);
+  ctx.fillText(params.won ? "VICTORY" : "DEFEATED", W / 2, 560);
 
-  // — vs opponent
-  ctx.font = "bold 28px Arial, sans-serif";
-  ctx.fillStyle = "#777";
-  ctx.fillText(`vs ${params.opponentIcon}  ${params.opponentName}`, W / 2, 512);
+  // Underline accent bar (matches width of text)
+  const vTextW = ctx.measureText(params.won ? "VICTORY" : "DEFEATED").width;
+  ctx.fillStyle = resultColor + "55";
+  ctx.fillRect((W - vTextW) / 2, 572, vTextW, 5);
 
-  // — Topic
-  const topic = params.topic.length > 52
-    ? params.topic.slice(0, 52) + "…"
-    : params.topic;
-  ctx.font = "italic 26px Georgia, 'Times New Roman', serif";
-  ctx.fillStyle = "#555";
-  ctx.fillText(`"${topic}"`, W / 2, 558);
+  // ── VS + TOPIC ──────────────────────────────────────────────────────────
+  ctx.font = "bold 34px Arial, sans-serif";
+  ctx.fillStyle = "#888";
+  ctx.textAlign = "center";
+  ctx.fillText(`vs  ${params.opponentIcon}  ${params.opponentName}`, W / 2, 638);
 
-  // — Section separator
-  ctx.strokeStyle = "#1e1e1e";
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(PAD, 590); ctx.lineTo(W - PAD, 590); ctx.stroke();
+  // Topic — wrap if long
+  const topicMaxW = W - PAD * 2.4;
+  ctx.font = "italic 31px Georgia, 'Times New Roman', serif";
+  ctx.fillStyle = "#505050";
+  ctx.textAlign = "center";
+  wrapCanvasText(ctx, `"${params.topic}"`, W / 2, 692, topicMaxW, 42);
 
-  // — Three score columns
+  // ── SCORES ──────────────────────────────────────────────────────────────
+  // Separator
+  ctx.fillStyle = "#1c1c1c";
+  ctx.fillRect(PAD, 768, W - PAD * 2, 1);
+
   const cols = [
     { label: "OVERALL",    val: params.avgScore },
     { label: "LOGIC",      val: params.avgLogic },
@@ -941,39 +942,48 @@ function generateShareCard(params: {
   cols.forEach((col, i) => {
     const sx = PAD + colW * i + colW / 2;
     const sColor = col.val >= 80 ? "#22c55e" : col.val >= 60 ? "#f4c542" : "#e63946";
-    ctx.font = "bold 96px Impact, 'Arial Black', sans-serif";
+    ctx.font = "bold 112px Impact, 'Arial Black', sans-serif";
     ctx.fillStyle = sColor;
     ctx.textAlign = "center";
-    ctx.fillText(String(col.val), sx, 716);
-    ctx.font = "bold 16px Arial, sans-serif";
-    ctx.fillStyle = "#444";
-    ctx.fillText(col.label, sx, 748);
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(String(col.val), sx, 900);
+    ctx.font = "bold 20px Arial, sans-serif";
+    ctx.fillStyle = "#3a3a3a";
+    ctx.fillText(col.label, sx, 934);
   });
 
-  // — Section separator
-  ctx.strokeStyle = "#1e1e1e";
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(PAD, 776); ctx.lineTo(W - PAD, 776); ctx.stroke();
+  // ── JUDGE QUOTE ─────────────────────────────────────────────────────────
+  // Separator
+  ctx.fillStyle = "#1c1c1c";
+  ctx.fillRect(PAD, 964, W - PAD * 2, 1);
 
-  // — Judge quote
-  const quote = params.judgeText.length > 130
-    ? params.judgeText.slice(0, 127) + "…"
-    : params.judgeText;
-  ctx.font = "italic 25px Georgia, 'Times New Roman', serif";
-  ctx.fillStyle = "#666";
+  // "JUDGE'S VERDICT" label
+  ctx.font = "bold 17px Arial, sans-serif";
+  ctx.fillStyle = "#333";
   ctx.textAlign = "center";
-  wrapCanvasText(ctx, `"${quote}"`, W / 2, 826, W - PAD * 2.4, 38);
+  ctx.fillText("JUDGE'S VERDICT", W / 2, 1012);
 
-  // — Bottom separator
-  ctx.strokeStyle = "#1e1e1e";
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(PAD, 970); ctx.lineTo(W - PAD, 970); ctx.stroke();
+  // Decorative large opening quote mark
+  ctx.font = `bold 100px Georgia, serif`;
+  ctx.fillStyle = resultColor + "33";
+  ctx.textAlign = "left";
+  ctx.fillText("\u201C", PAD - 8, 1110);
 
-  // — URL watermark
-  ctx.font = "bold 20px Arial, sans-serif";
-  ctx.fillStyle = "#2a2a2a";
+  // Quote — full text, word-wrapped, up to ~220 chars
+  const judgeStr = truncateAtWord(params.judgeText, 220);
+  ctx.font = "italic 31px Georgia, 'Times New Roman', serif";
+  ctx.fillStyle = "#888";
   ctx.textAlign = "center";
-  ctx.fillText(window.location.hostname.replace(/^www\./, "").toUpperCase(), W / 2, 1010);
+  wrapCanvasText(ctx, `\u201C${judgeStr}\u201D`, W / 2, 1060, W - PAD * 2.2, 44);
+
+  // ── FOOTER ──────────────────────────────────────────────────────────────
+  ctx.fillStyle = "#1c1c1c";
+  ctx.fillRect(PAD, 1288, W - PAD * 2, 1);
+
+  ctx.font = "bold 23px Arial, sans-serif";
+  ctx.fillStyle = "#2c2c2c";
+  ctx.textAlign = "center";
+  ctx.fillText(window.location.hostname.replace(/^www\./, "").toUpperCase(), W / 2, 1326);
 
   return canvas.toDataURL("image/png");
 }
