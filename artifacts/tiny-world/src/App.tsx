@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Cinzel:wght@400;500;600&display=swap');`;
+const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');`;
 
 const css = `
 ${FONT_IMPORT}
@@ -8,619 +8,398 @@ ${FONT_IMPORT}
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --void: #070510;
-  --deep: #0e0b1a;
-  --card: rgba(255,255,255,0.035);
-  --ember: #e85c20;
-  --ember-dim: rgba(232,92,32,0.15);
-  --arcane: #9d4edd;
-  --arcane-dim: rgba(157,78,221,0.12);
-  --gold: #f5b942;
-  --gold-bright: #ffd27a;
-  --gold-dim: rgba(245,185,66,0.1);
-  --blood: #c0392b;
-  --ice: #a8edea;
-  --ink: #ddd0ff;
-  --ink-dim: #8b7faa;
+  --bg:        #080807;
+  --surface:   #101009;
+  --surface2:  #161512;
+  --rule:      rgba(255,255,255,0.07);
+  --rule-warm: rgba(200,180,140,0.12);
+  --text:      #cfc8b8;
+  --text-dim:  #6e6558;
+  --text-faint:#3a352c;
+  --rust:      #b5532a;
+  --rust-dim:  rgba(181,83,42,0.15);
+  --gold-mute: #987a3a;
+  --gold-dim:  rgba(152,122,58,0.15);
+  --blood:     #7a2e2e;
+  --blood-dim: rgba(122,46,46,0.15);
+  --teal:      #3a7a6e;
+  --teal-dim:  rgba(58,122,110,0.15);
 }
 
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--void);
-  color: var(--ink);
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Libre Baskerville', Georgia, serif;
   min-height: 100vh;
-  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
-
-/* ── PARTICLES ── */
-.particles {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  animation: floatUp linear infinite;
-  opacity: 0;
-}
-@keyframes floatUp {
-  0%   { opacity: 0; transform: translateY(0) scale(1); }
-  10%  { opacity: 1; }
-  90%  { opacity: 0.4; }
-  100% { opacity: 0; transform: translateY(-100vh) scale(0.5); }
-}
-
-/* ── ARCANE BG CIRCLE ── */
-.bg-sigil {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(90vw, 700px);
-  height: min(90vw, 700px);
-  pointer-events: none;
-  opacity: 0.04;
-  z-index: 0;
-  animation: rotateSigil 120s linear infinite;
-}
-@keyframes rotateSigil { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
 /* ── LAYOUT ── */
 .app {
-  position: relative;
-  z-index: 1;
-  max-width: 780px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 0 24px 100px;
+  padding: 0 28px 100px;
 }
 
 /* ── HEADER ── */
 .header {
-  text-align: center;
-  padding: 80px 0 56px;
-  position: relative;
+  padding: 72px 0 56px;
+  border-bottom: 1px solid var(--rule-warm);
+  margin-bottom: 52px;
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Cinzel', serif;
+.header-label {
+  font-family: 'Courier Prime', monospace;
   font-size: 10px;
-  letter-spacing: 0.35em;
-  color: var(--arcane);
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  background: rgba(157,78,221,0.1);
-  border: 1px solid rgba(157,78,221,0.25);
-  border-radius: 100px;
-  padding: 6px 16px;
-  margin-bottom: 36px;
-  backdrop-filter: blur(4px);
-}
-.badge-dot {
-  width: 5px; height: 5px;
-  background: var(--arcane);
-  border-radius: 50%;
-  box-shadow: 0 0 6px var(--arcane);
-  animation: pulse 2s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--arcane); }
-  50% { opacity: 0.4; box-shadow: 0 0 2px var(--arcane); }
+  color: var(--text-dim);
+  margin-bottom: 28px;
 }
 
 .title {
-  font-family: 'Cinzel Decorative', serif;
-  font-weight: 900;
-  font-size: clamp(2.6rem, 7vw, 5rem);
-  line-height: 0.95;
-  letter-spacing: -0.01em;
-  background: linear-gradient(135deg, #ff9e4a 0%, #f5b942 25%, #ffd27a 50%, #e06cff 75%, #9d4edd 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 40px rgba(157,78,221,0.4));
-  margin-bottom: 24px;
+  font-family: 'Bitter', serif;
+  font-weight: 700;
+  font-size: clamp(2.8rem, 7vw, 5.2rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 28px;
+}
+.title span {
+  display: block;
+  color: var(--rust);
 }
 
 .subtitle {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 300;
+  font-family: 'Libre Baskerville', serif;
   font-style: italic;
-  font-size: 1.25rem;
-  color: var(--ink-dim);
-  letter-spacing: 0.02em;
-  line-height: 1.6;
-  margin-bottom: 40px;
+  font-size: 1.05rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 380px;
 }
 
-.ornament {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin: 0 auto;
-  opacity: 0.35;
-}
-.ornament-line {
-  height: 1px;
-  width: 100px;
-  background: linear-gradient(to right, transparent, var(--arcane));
-}
-.ornament-line:last-child {
-  background: linear-gradient(to left, transparent, var(--arcane));
-}
-.ornament-diamond {
-  width: 7px; height: 7px;
-  background: var(--arcane);
-  transform: rotate(45deg);
-  box-shadow: 0 0 10px var(--arcane);
-}
-
-/* ── INPUT SECTION ── */
+/* ── INPUT ── */
 .input-section {
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
-.input-label {
-  font-family: 'Cinzel', serif;
+.field-label {
+  font-family: 'Courier Prime', monospace;
   font-size: 10px;
-  letter-spacing: 0.3em;
-  color: var(--arcane);
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 12px;
-  opacity: 0.8;
-}
-
-.input-outer {
-  position: relative;
-  margin-bottom: 16px;
-}
-.input-outer::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  background: linear-gradient(135deg, var(--ember), var(--arcane), var(--gold));
-  border-radius: 8px;
-  opacity: 0.4;
-  transition: opacity 0.3s;
-  z-index: 0;
-}
-.input-outer:focus-within::before { opacity: 0.9; }
-
-.input-field {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  background: #0e0b1a;
-  border: none;
-  border-radius: 7px;
-  padding: 20px 22px;
-  color: var(--ink);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.2rem;
-  font-weight: 400;
-  line-height: 1.6;
-  resize: none;
-  outline: none;
-  min-height: 96px;
-  transition: background 0.2s;
-}
-.input-field:focus { background: #13102b; }
-.input-field::placeholder { color: var(--ink-dim); opacity: 0.4; font-style: italic; }
-.input-field:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.btn-simulate {
-  width: 100%;
-  background: linear-gradient(135deg, #1a0e2e 0%, #2d1a4a 50%, #1a0e2e 100%);
-  border: 1px solid rgba(157,78,221,0.45);
-  color: var(--ink);
-  font-family: 'Cinzel', serif;
-  font-size: 0.82rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  padding: 18px 24px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.35s;
-  position: relative;
-  overflow: hidden;
+  color: var(--text-dim);
+  display: block;
+  margin-bottom: 10px;
 }
-.btn-simulate::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, rgba(157,78,221,0.2) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.btn-simulate:hover:not(:disabled)::after { opacity: 1; }
-.btn-simulate:hover:not(:disabled) {
-  border-color: rgba(157,78,221,0.8);
-  color: #fff;
-  box-shadow: 0 0 30px rgba(157,78,221,0.25), 0 0 60px rgba(157,78,221,0.1);
-}
-.btn-simulate:disabled { opacity: 0.3; cursor: not-allowed; }
 
-/* ── ERROR ── */
-.error-pill {
-  background: rgba(192,57,43,0.12);
-  border: 1px solid rgba(192,57,43,0.35);
-  color: #f88;
-  border-radius: 6px;
-  padding: 12px 18px;
-  font-size: 0.95rem;
-  margin-top: 14px;
-  line-height: 1.6;
+.input-field {
+  display: block;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--rule-warm);
+  border-radius: 0;
+  padding: 16px 18px;
+  color: var(--text);
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  resize: none;
+  outline: none;
+  min-height: 90px;
+  transition: border-color 0.2s;
+  margin-bottom: 12px;
+}
+.input-field:focus { border-color: rgba(200,180,140,0.3); }
+.input-field::placeholder { color: var(--text-faint); font-style: italic; }
+.input-field:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.btn-simulate {
+  display: block;
+  width: 100%;
+  background: var(--rust);
+  border: none;
+  color: #f0ebe0;
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 15px 24px;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  border-radius: 0;
+}
+.btn-simulate:hover:not(:disabled) { background: #c45e32; }
+.btn-simulate:disabled { opacity: 0.25; cursor: not-allowed; }
+
+.error-msg {
+  margin-top: 12px;
+  font-size: 0.88rem;
+  color: #a05050;
+  font-style: italic;
+  padding: 10px 14px;
+  border-left: 2px solid var(--blood);
+  background: var(--blood-dim);
 }
 
 /* ── LOADING ── */
 .loading {
-  text-align: center;
-  padding: 80px 0;
+  padding: 64px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
 }
-.orbit-container {
-  width: 80px; height: 80px;
-  position: relative;
-  margin: 0 auto 36px;
+.loading-bar-wrap {
+  width: 100%;
+  height: 2px;
+  background: var(--rule-warm);
+  margin-bottom: 28px;
+  overflow: hidden;
 }
-.orbit-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 1.5px solid transparent;
-  animation: spinRing 2s linear infinite;
+.loading-bar {
+  height: 100%;
+  background: var(--rust);
+  animation: loadSweep 1.8s ease-in-out infinite;
+  width: 35%;
 }
-.orbit-ring:nth-child(1) {
-  border-top-color: var(--arcane);
-  border-right-color: rgba(157,78,221,0.2);
-  animation-duration: 1.6s;
-}
-.orbit-ring:nth-child(2) {
-  inset: 10px;
-  border-top-color: var(--gold);
-  border-left-color: rgba(245,185,66,0.2);
-  animation-duration: 2.4s;
-  animation-direction: reverse;
-}
-.orbit-ring:nth-child(3) {
-  inset: 22px;
-  border-bottom-color: var(--ember);
-  border-right-color: rgba(232,92,32,0.2);
-  animation-duration: 1.9s;
-}
-.orbit-core {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 12px; height: 12px;
-  background: var(--arcane);
-  border-radius: 50%;
-  box-shadow: 0 0 20px var(--arcane), 0 0 40px rgba(157,78,221,0.5);
-  animation: coreBreath 2s ease-in-out infinite;
-}
-@keyframes spinRing { to { transform: rotate(360deg); } }
-@keyframes coreBreath {
-  0%, 100% { box-shadow: 0 0 20px var(--arcane), 0 0 40px rgba(157,78,221,0.5); }
-  50% { box-shadow: 0 0 8px var(--arcane), 0 0 16px rgba(157,78,221,0.3); }
+@keyframes loadSweep {
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(185%); }
+  100% { transform: translateX(400%); }
 }
 .loading-phrase {
-  font-family: 'Cinzel', serif;
-  font-size: 0.8rem;
-  letter-spacing: 0.15em;
-  color: var(--arcane);
-  margin-bottom: 12px;
-  animation: phraseFade 0.4s ease both;
-  min-height: 1.4em;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--rust);
+  text-transform: uppercase;
+  margin-bottom: 10px;
 }
-@keyframes phraseFade { from { opacity: 0; } to { opacity: 1; } }
 .loading-sub {
+  font-family: 'Libre Baskerville', serif;
   font-style: italic;
-  color: var(--ink-dim);
-  font-size: 1rem;
-  opacity: 0.6;
+  font-size: 0.95rem;
+  color: var(--text-dim);
 }
 
 /* ── SIMULATION ── */
 .simulation {
-  animation: fadeUp 0.7s ease both;
+  animation: fadeIn 0.4s ease both;
 }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* SIM HERO */
-.sim-hero {
-  text-align: center;
-  margin-bottom: 56px;
-  position: relative;
+/* SIM HEADER */
+.sim-header {
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--rule-warm);
+  margin-bottom: 48px;
 }
-.sim-hero-glow {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px; height: 200px;
-  background: radial-gradient(ellipse, rgba(157,78,221,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.sim-eyebrow {
-  font-family: 'Cinzel', serif;
+.sim-civ-label {
+  font-family: 'Courier Prime', monospace;
   font-size: 9px;
-  letter-spacing: 0.4em;
-  color: var(--arcane);
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  opacity: 0.7;
-  margin-bottom: 16px;
+  color: var(--rust);
+  margin-bottom: 14px;
+  opacity: 0.8;
 }
 .sim-name {
-  font-family: 'Cinzel Decorative', serif;
+  font-family: 'Bitter', serif;
   font-weight: 700;
-  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
-  background: linear-gradient(135deg, #ffd27a, #f5b942, #e06cff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.15;
-  margin-bottom: 16px;
-  filter: drop-shadow(0 0 24px rgba(245,185,66,0.3));
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  margin-bottom: 18px;
 }
 .sim-tagline {
+  font-family: 'Libre Baskerville', serif;
   font-style: italic;
-  font-weight: 300;
-  font-size: 1.2rem;
-  color: var(--ink-dim);
-  margin-bottom: 36px;
-  line-height: 1.6;
+  font-size: 1.05rem;
+  color: var(--text-dim);
+  line-height: 1.65;
+  margin-bottom: 32px;
 }
 
-/* STATS */
-.stats-row {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--rule-warm);
 }
-.stat-card {
-  background: var(--card);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 8px;
-  padding: 16px 20px;
-  min-width: 0;
-  flex: 1;
-  text-align: center;
-  backdrop-filter: blur(4px);
-  transition: border-color 0.25s, transform 0.25s;
+.stat-item {
+  padding: 16px 18px;
+  border-right: 1px solid var(--rule-warm);
 }
-.stat-card:hover {
-  border-color: rgba(157,78,221,0.3);
-  transform: translateY(-2px);
-}
-.stat-icon {
-  font-size: 1.4rem;
-  display: block;
-  margin-bottom: 8px;
-}
+.stat-item:last-child { border-right: none; }
 .stat-val {
   display: block;
-  font-family: 'Cinzel', serif;
-  font-size: 0.78rem;
-  color: var(--gold);
-  line-height: 1.4;
-  margin-bottom: 5px;
+  font-family: 'Bitter', serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.3;
 }
 .stat-key {
   display: block;
-  font-size: 0.68rem;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.62rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-dim);
-  opacity: 0.5;
-  font-family: 'Cinzel', serif;
+  color: var(--text-dim);
+  opacity: 0.6;
 }
 
 /* ── ERAS ── */
-.eras-heading {
-  font-family: 'Cinzel', serif;
-  font-size: 10px;
-  letter-spacing: 0.35em;
+.eras-label {
+  font-family: 'Courier Prime', monospace;
+  font-size: 9px;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--ink-dim);
+  color: var(--text-dim);
   opacity: 0.5;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
-.eras-heading::after {
+.eras-label::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, rgba(255,255,255,0.06), transparent);
+  background: var(--rule-warm);
 }
 
-.era-card {
-  background: var(--card);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-left: 3px solid var(--arcane);
-  border-radius: 0 8px 8px 0;
-  padding: 24px 26px;
-  margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.25s, border-color 0.25s;
-  animation: fadeUp 0.5s ease both;
-  backdrop-filter: blur(4px);
+.era {
+  display: grid;
+  grid-template-columns: 3px 1fr;
+  gap: 0 20px;
+  margin-bottom: 4px;
+  animation: fadeIn 0.4s ease both;
 }
-.era-card:hover { transform: translateX(4px); }
-.era-card.catastrophe { border-left-color: var(--ember); }
-.era-card.catastrophe::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, var(--ember-dim), transparent 60%);
-  pointer-events: none;
-}
-.era-card.golden { border-left-color: var(--gold); }
-.era-card.golden::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, var(--gold-dim), transparent 60%);
-  pointer-events: none;
-}
-.era-card.founding { border-left-color: var(--ice); }
-.era-card.discovery { border-left-color: #34d399; }
-.era-card.renaissance { border-left-color: #60a5fa; }
-.era-card.end { border-left-color: #6b7280; }
+.era:nth-child(1) { animation-delay: 0.04s; }
+.era:nth-child(2) { animation-delay: 0.08s; }
+.era:nth-child(3) { animation-delay: 0.12s; }
+.era:nth-child(4) { animation-delay: 0.16s; }
+.era:nth-child(5) { animation-delay: 0.20s; }
+.era:nth-child(6) { animation-delay: 0.24s; }
+.era:nth-child(7) { animation-delay: 0.28s; }
+.era:nth-child(8) { animation-delay: 0.32s; }
 
-.era-card:nth-child(1) { animation-delay: 0.05s; }
-.era-card:nth-child(2) { animation-delay: 0.1s; }
-.era-card:nth-child(3) { animation-delay: 0.15s; }
-.era-card:nth-child(4) { animation-delay: 0.2s; }
-.era-card:nth-child(5) { animation-delay: 0.25s; }
-.era-card:nth-child(6) { animation-delay: 0.3s; }
-.era-card:nth-child(7) { animation-delay: 0.35s; }
-.era-card:nth-child(8) { animation-delay: 0.4s; }
+.era-gutter {
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+.era.catastrophe .era-gutter { background: var(--blood); }
+.era.golden .era-gutter      { background: var(--gold-mute); }
+.era.founding .era-gutter    { background: var(--teal); }
+.era.discovery .era-gutter   { background: #4a7a5a; }
+.era.renaissance .era-gutter { background: #4a607a; }
 
-.era-type-badge {
-  position: relative;
-  z-index: 1;
-  display: inline-block;
-  font-family: 'Cinzel', serif;
+.era-body-wrap {
+  padding: 20px 0 20px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.era:last-child .era-body-wrap { border-bottom: none; }
+
+.era-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.era-type-tag {
+  font-family: 'Courier Prime', monospace;
   font-size: 0.6rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 100px;
-  margin-bottom: 10px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: var(--ink-dim);
+  padding: 2px 7px;
+  border: 1px solid var(--rule-warm);
+  color: var(--text-dim);
 }
-.era-card.catastrophe .era-type-badge { color: var(--ember); border-color: rgba(232,92,32,0.3); background: rgba(232,92,32,0.08); }
-.era-card.golden .era-type-badge { color: var(--gold); border-color: rgba(245,185,66,0.3); background: rgba(245,185,66,0.08); }
-.era-card.founding .era-type-badge { color: var(--ice); border-color: rgba(168,237,234,0.3); background: rgba(168,237,234,0.08); }
-.era-card.discovery .era-type-badge { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.08); }
-.era-card.renaissance .era-type-badge { color: #60a5fa; border-color: rgba(96,165,250,0.3); background: rgba(96,165,250,0.08); }
+.era.catastrophe .era-type-tag { border-color: rgba(122,46,46,0.4); color: #a06060; }
+.era.golden .era-type-tag      { border-color: rgba(152,122,58,0.4); color: #a0883a; }
+.era.founding .era-type-tag    { border-color: rgba(58,122,110,0.35); color: #4a9a8e; }
+.era.discovery .era-type-tag   { border-color: rgba(74,122,90,0.35); color: #4a9a6e; }
+.era.renaissance .era-type-tag { border-color: rgba(74,96,122,0.35); color: #607aaa; }
 
-.era-year {
-  font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--ink-dim);
-  opacity: 0.5;
-  position: absolute;
-  top: 24px; right: 24px;
+.era-year-txt {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  opacity: 0.45;
 }
 .era-title {
-  position: relative;
-  z-index: 1;
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 600;
-  font-size: 1.2rem;
-  color: var(--ink);
-  margin-bottom: 10px;
-  letter-spacing: 0.01em;
+  font-family: 'Bitter', serif;
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--text);
+  margin-bottom: 9px;
   line-height: 1.3;
 }
-.era-body {
-  position: relative;
-  z-index: 1;
-  font-weight: 300;
-  font-size: 1.08rem;
-  color: var(--ink-dim);
+.era-text {
+  font-size: 0.97rem;
+  color: var(--text-dim);
   line-height: 1.8;
 }
-.era-body em { color: var(--ink); font-style: italic; }
+.era-text em { color: var(--text); font-style: italic; }
 
 /* ── FATE ── */
-.fate-section {
-  margin: 48px 0 36px;
-  text-align: center;
-  position: relative;
-}
-.fate-backdrop {
-  position: absolute;
-  inset: -1px;
-  background: linear-gradient(135deg, rgba(232,92,32,0.05), rgba(157,78,221,0.05), rgba(245,185,66,0.05));
-  border-radius: 12px;
-  z-index: 0;
-}
-.fate-inner {
-  position: relative;
-  z-index: 1;
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 12px;
-  padding: 40px 32px;
-  backdrop-filter: blur(8px);
-}
-.fate-crown {
-  font-size: 2rem;
-  margin-bottom: 16px;
-  filter: drop-shadow(0 0 12px rgba(245,185,66,0.5));
+.fate-block {
+  margin: 52px 0 40px;
+  padding: 28px 0;
+  border-top: 1px solid var(--rule-warm);
+  border-bottom: 1px solid var(--rule-warm);
 }
 .fate-label {
-  font-family: 'Cinzel', serif;
+  font-family: 'Courier Prime', monospace;
   font-size: 9px;
-  letter-spacing: 0.4em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--gold);
-  opacity: 0.6;
-  margin-bottom: 18px;
+  color: var(--text-dim);
+  opacity: 0.5;
+  margin-bottom: 14px;
 }
 .fate-text {
-  font-size: 1.25rem;
+  font-family: 'Libre Baskerville', serif;
   font-style: italic;
-  font-weight: 300;
-  color: var(--ink-dim);
+  font-size: 1.1rem;
+  color: var(--text);
   line-height: 1.75;
-  max-width: 500px;
-  margin: 0 auto;
 }
 
 /* ── RESET ── */
 .btn-reset {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 0 auto;
   background: none;
-  border: 1px solid rgba(255,255,255,0.08);
-  color: var(--ink-dim);
-  font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
+  border: 1px solid var(--rule-warm);
+  color: var(--text-dim);
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.72rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  padding: 14px 32px;
+  padding: 12px 24px;
   cursor: pointer;
-  border-radius: 100px;
-  transition: all 0.3s;
+  transition: border-color 0.2s, color 0.2s;
+  border-radius: 0;
 }
 .btn-reset:hover {
-  border-color: rgba(157,78,221,0.5);
-  color: var(--arcane);
-  box-shadow: 0 0 20px rgba(157,78,221,0.1);
+  border-color: var(--rust);
+  color: var(--rust);
 }
 
 /* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(157,78,221,0.3); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--rule-warm); }
 `;
-
-const PARTICLES_CONFIG = Array.from({ length: 28 }, (_, i) => ({
-  left: `${Math.random() * 100}%`,
-  width: `${2 + Math.random() * 3}px`,
-  height: `${2 + Math.random() * 3}px`,
-  animationDuration: `${8 + Math.random() * 18}s`,
-  animationDelay: `${Math.random() * 12}s`,
-  background: i % 3 === 0 ? "rgba(157,78,221,0.6)" : i % 3 === 1 ? "rgba(245,185,66,0.4)" : "rgba(232,92,32,0.4)",
-}));
 
 const LOADING_PHRASES = [
   "Consulting the elder gods…",
@@ -628,66 +407,15 @@ const LOADING_PHRASES = [
   "Summoning empires from the void…",
   "Carving history into obsidian…",
   "The stars align above a new world…",
-  "Civilizations rise in the dark…",
   "Blood is spilled. Legends are born…",
 ];
 
-const ERA_ICONS: Record<string, string> = {
-  founding: "⚑",
-  golden: "✦",
-  conflict: "⚔",
-  discovery: "◎",
-  catastrophe: "☄",
-  renaissance: "❧",
-  decline: "☽",
-  end: "✦",
-};
-
-interface Era {
-  year: string;
-  type: string;
-  title: string;
-  body: string;
-}
-
+interface Era { year: string; type: string; title: string; body: string; }
 interface Simulation {
-  name: string;
-  tagline: string;
-  duration: string;
-  population_peak: string;
-  territory: string;
-  eras: Era[];
-  fate: string;
+  name: string; tagline: string; duration: string;
+  population_peak: string; territory: string;
+  eras: Era[]; fate: string;
 }
-
-const SIGIL_SVG = (
-  <svg
-    className="bg-sigil"
-    viewBox="0 0 500 500"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <circle cx="250" cy="250" r="240" stroke="white" strokeWidth="0.5" />
-    <circle cx="250" cy="250" r="180" stroke="white" strokeWidth="0.5" />
-    <circle cx="250" cy="250" r="120" stroke="white" strokeWidth="0.5" />
-    {Array.from({ length: 12 }, (_, i) => {
-      const angle = (i / 12) * Math.PI * 2;
-      const x1 = 250 + Math.cos(angle) * 120;
-      const y1 = 250 + Math.sin(angle) * 120;
-      const x2 = 250 + Math.cos(angle) * 240;
-      const y2 = 250 + Math.sin(angle) * 240;
-      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="white" strokeWidth="0.4" />;
-    })}
-    {Array.from({ length: 6 }, (_, i) => {
-      const angle = (i / 6) * Math.PI * 2;
-      const nx = 250 + Math.cos(angle) * 180;
-      const ny = 250 + Math.sin(angle) * 180;
-      const nx2 = 250 + Math.cos(angle + Math.PI * 2 / 3) * 180;
-      const ny2 = 250 + Math.sin(angle + Math.PI * 2 / 3) * 180;
-      return <line key={i} x1={nx} y1={ny} x2={nx2} y2={ny2} stroke="white" strokeWidth="0.4" />;
-    })}
-  </svg>
-);
 
 export default function App() {
   const [input, setInput] = useState("");
@@ -695,7 +423,6 @@ export default function App() {
   const [simulation, setSimulation] = useState<Simulation | null>(null);
   const [error, setError] = useState("");
   const [phraseIdx, setPhraseIdx] = useState(0);
-  const [phraseKey, setPhraseKey] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -711,8 +438,7 @@ export default function App() {
       intervalRef.current = setInterval(() => {
         i = (i + 1) % LOADING_PHRASES.length;
         setPhraseIdx(i);
-        setPhraseKey((k) => k + 1);
-      }, 2400);
+      }, 2200);
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
     }
@@ -721,9 +447,7 @@ export default function App() {
 
   const simulate = async () => {
     if (!input.trim()) return;
-    setStatus("loading");
-    setError("");
-    setSimulation(null);
+    setStatus("loading"); setError(""); setSimulation(null);
     try {
       const res = await fetch("/api/simulate", {
         method: "POST",
@@ -753,7 +477,7 @@ export default function App() {
 
   const eraClass = (type: string) =>
     ["catastrophe", "decline"].includes(type) ? "catastrophe"
-    : ["golden"].includes(type) ? "golden"
+    : type === "golden" ? "golden"
     : type === "founding" ? "founding"
     : type === "discovery" ? "discovery"
     : type === "renaissance" ? "renaissance"
@@ -761,124 +485,100 @@ export default function App() {
     : "";
 
   return (
-    <>
-      {SIGIL_SVG}
-      <div className="particles" aria-hidden>
-        {PARTICLES_CONFIG.map((p, i) => (
-          <span key={i} className="particle" style={p} />
-        ))}
-      </div>
+    <div className="app">
+      <header className="header">
+        <p className="header-label">The Oracle of Ages / World Simulator</p>
+        <h1 className="title">
+          Tiny<br />
+          <span>World</span>
+        </h1>
+        <p className="subtitle">Speak one sentence. Watch a thousand years unfold.</p>
+      </header>
 
-      <div className="app">
-        <header className="header">
-          <div className="badge">
-            <span className="badge-dot" />
-            The Oracle of Ages
-          </div>
-          <h1 className="title">Tiny World<br />Simulator</h1>
-          <p className="subtitle">Speak one sentence.<br />Watch a thousand years unfold.</p>
-          <div className="ornament">
-            <div className="ornament-line" />
-            <div className="ornament-diamond" />
-            <div className="ornament-line" />
-          </div>
-        </header>
+      {status !== "done" && (
+        <div className="input-section">
+          <label className="field-label" htmlFor="civ-input">Describe your civilization</label>
+          <textarea
+            id="civ-input"
+            className="input-field"
+            rows={3}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="e.g. A society of blind astronomers who navigate entirely by sound…"
+            disabled={status === "loading"}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); simulate(); } }}
+          />
+          <button
+            className="btn-simulate"
+            onClick={simulate}
+            disabled={status === "loading" || !input.trim()}
+          >
+            {status === "loading" ? "Consulting the Oracle…" : "Begin the simulation →"}
+          </button>
+          {status === "error" && <div className="error-msg">{error}</div>}
+        </div>
+      )}
 
-        {status !== "done" && (
-          <div className="input-section">
-            <label className="input-label" htmlFor="civ-input">Describe your civilization</label>
-            <div className="input-outer">
-              <textarea
-                id="civ-input"
-                className="input-field"
-                rows={3}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="e.g. A society of blind astronomers who navigate entirely by sound…"
-                disabled={status === "loading"}
-                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); simulate(); } }}
-              />
-            </div>
-            <button
-              className="btn-simulate"
-              onClick={simulate}
-              disabled={status === "loading" || !input.trim()}
-            >
-              {status === "loading" ? "Consulting the Oracle…" : "✦  Begin the Simulation  ✦"}
-            </button>
-            {status === "error" && <div className="error-pill">{error}</div>}
+      {status === "loading" && (
+        <div className="loading">
+          <div className="loading-bar-wrap">
+            <div className="loading-bar" />
           </div>
-        )}
+          <p className="loading-phrase">{LOADING_PHRASES[phraseIdx]}</p>
+          <p className="loading-sub">A thousand years takes but a moment…</p>
+        </div>
+      )}
 
-        {status === "loading" && (
-          <div className="loading">
-            <div className="orbit-container">
-              <div className="orbit-ring" />
-              <div className="orbit-ring" />
-              <div className="orbit-ring" />
-              <div className="orbit-core" />
-            </div>
-            <p className="loading-phrase" key={phraseKey}>{LOADING_PHRASES[phraseIdx]}</p>
-            <p className="loading-sub">A thousand years takes but a moment…</p>
-          </div>
-        )}
-
-        {status === "done" && simulation && (
-          <div className="simulation">
-            <div className="sim-hero">
-              <div className="sim-hero-glow" aria-hidden />
-              <p className="sim-eyebrow">✦ &nbsp; Chronicle of Ages &nbsp; ✦</p>
-              <h2 className="sim-name">{simulation.name}</h2>
-              <p className="sim-tagline">"{simulation.tagline}"</p>
-              <div className="stats-row">
-                <div className="stat-card">
-                  <span className="stat-icon">⏳</span>
-                  <span className="stat-val">{simulation.duration}</span>
-                  <span className="stat-key">Duration</span>
-                </div>
-                <div className="stat-card">
-                  <span className="stat-icon">👁</span>
-                  <span className="stat-val">{simulation.population_peak}</span>
-                  <span className="stat-key">Peak Population</span>
-                </div>
-                <div className="stat-card">
-                  <span className="stat-icon">🗺</span>
-                  <span className="stat-val">{simulation.territory}</span>
-                  <span className="stat-key">Territory</span>
-                </div>
+      {status === "done" && simulation && (
+        <div className="simulation">
+          <div className="sim-header">
+            <p className="sim-civ-label">Chronicle</p>
+            <h2 className="sim-name">{simulation.name}</h2>
+            <p className="sim-tagline">"{simulation.tagline}"</p>
+            <div className="stats">
+              <div className="stat-item">
+                <span className="stat-val">{simulation.duration}</span>
+                <span className="stat-key">Duration</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-val">{simulation.population_peak}</span>
+                <span className="stat-key">Peak pop.</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-val">{simulation.territory}</span>
+                <span className="stat-key">Territory</span>
               </div>
             </div>
+          </div>
 
-            <p className="eras-heading">The Chronicle</p>
+          <p className="eras-label">The Chronicle</p>
 
-            <div>
-              {(simulation.eras || []).map((era, i) => (
-                <div key={i} className={`era-card ${eraClass(era.type)}`}>
-                  <span className="era-type-badge">
-                    {ERA_ICONS[era.type] || "◈"} &nbsp; {era.type}
-                  </span>
-                  <p className="era-year">{era.year}</p>
+          <div>
+            {(simulation.eras || []).map((era, i) => (
+              <div key={i} className={`era ${eraClass(era.type)}`}>
+                <div className="era-gutter" />
+                <div className="era-body-wrap">
+                  <div className="era-meta">
+                    <span className="era-type-tag">{era.type}</span>
+                    <span className="era-year-txt">{era.year}</span>
+                  </div>
                   <h3 className="era-title">{era.title}</h3>
-                  <p className="era-body">{renderBody(era.body)}</p>
+                  <p className="era-text">{renderBody(era.body)}</p>
                 </div>
-              ))}
-            </div>
-
-            <div className="fate-section">
-              <div className="fate-backdrop" aria-hidden />
-              <div className="fate-inner">
-                <div className="fate-crown">☽</div>
-                <p className="fate-label">Final Reckoning</p>
-                <p className="fate-text">"{simulation.fate}"</p>
               </div>
-            </div>
-
-            <button className="btn-reset" onClick={reset}>
-              ↺ &nbsp; Summon Another World
-            </button>
+            ))}
           </div>
-        )}
-      </div>
-    </>
+
+          <div className="fate-block">
+            <p className="fate-label">Final Reckoning</p>
+            <p className="fate-text">"{simulation.fate}"</p>
+          </div>
+
+          <button className="btn-reset" onClick={reset}>
+            ← Summon another world
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
