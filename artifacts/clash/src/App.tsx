@@ -226,6 +226,30 @@ letter-spacing:1px;text-transform:uppercase;}
 .lb-wins{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;
 color:var(--text-dim);text-align:right;}
 
+.profile-pill{display:flex;align-items:center;gap:5px;cursor:pointer;padding:5px 12px;
+border:1px solid var(--border);border-radius:20px;font-family:'Barlow Condensed',sans-serif;
+font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);
+transition:all 0.2s;background:transparent;line-height:1;}
+.profile-pill:hover{border-color:var(--red);color:var(--text);}
+.profile-pill.named{color:var(--text);border-color:rgba(255,255,255,0.25);}
+.profile-pill .pill-icon{font-size:13px;}
+
+.username-modal{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.8);
+backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;}
+.username-dialog{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+padding:28px 24px;width:100%;max-width:380px;}
+.username-dialog h3{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;
+margin:0 0 6px;}
+.username-dialog .ud-sub{font-size:13px;color:var(--text-dim);margin:0 0 20px;line-height:1.5;}
+.username-field{width:100%;background:var(--surface);border:1.5px solid var(--border);
+border-radius:var(--radius);padding:12px 14px;font-family:'Barlow Condensed',sans-serif;
+font-size:17px;letter-spacing:3px;text-transform:uppercase;color:var(--text);outline:none;
+transition:border-color 0.2s;box-sizing:border-box;}
+.username-field:focus{border-color:var(--red);}
+.username-err{font-size:12px;color:var(--red);margin:6px 0 0;min-height:16px;}
+.username-hint{font-size:11px;color:var(--text-dim);margin:6px 0 18px;
+font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+
 .tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);
 border-radius:var(--radius);padding:4px;margin-bottom:24px;}
 .tab{flex:1;padding:10px;text-align:center;font-family:'Barlow Condensed',sans-serif;
@@ -705,15 +729,6 @@ function pickTopics() {
   return picked;
 }
 
-const FAKE_LEADERBOARD = [
-  { rank: 1, emoji: "🦁", name: "KINGDEBATE", wins: 47, score: 9840 },
-  { rank: 2, emoji: "🐺", name: "LOGICWOLF", wins: 41, score: 8720 },
-  { rank: 3, emoji: "🦊", name: "FOXFIRE99", wins: 38, score: 8100 },
-  { rank: 4, emoji: "🎯", name: "SHARPTAKE", wins: 33, score: 7450 },
-  { rank: 5, emoji: "⚡", name: "VOLTIX", wins: 29, score: 6800 },
-  { rank: 6, emoji: "🔥", name: "BLAZELOGIC", wins: 24, score: 5920 },
-  { rank: 7, emoji: "🧠", name: "BIGBRAIN47", wins: 21, score: 5100 },
-];
 
 const TAUNTS = [
   { icon: "⚖️", text: "The Prosecutor is waiting." },
@@ -778,6 +793,61 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return data as T;
 }
 
+async function apiGet<T>(path: string): Promise<T> {
+  const res = await fetch(`/api${path}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data as T;
+}
+
+async function apiPatch<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`/api${path}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data as T;
+}
+
+function getOrCreateDeviceId(): string {
+  let id = localStorage.getItem("clash-device-id");
+  if (!id) {
+    id = "d_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 9);
+    localStorage.setItem("clash-device-id", id);
+  }
+  return id;
+}
+
+interface PlayerProfile {
+  id: number;
+  deviceId: string;
+  username: string | null;
+  stats: { debates: number; wins: number; bestScore: number; avgScore: number; opponentHistory: Record<string, { wins: number; losses: number }> };
+}
+interface LbEntry { id: number; username: string | null; deviceId: string; wins: number; totalDebates: number; bestScore: number; score: number; }
+interface GlobalStats { totalDebates: number; globalWinRate: number; uniqueTopics: number; activePlayers: number; }
+interface RecentActivity { username: string | null; deviceId: string; opponentName: string; topic: string; avgScore: number; won: boolean; isGauntlet: boolean; rank: string; createdAt: string; }
+
+function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
+  if (activity.length === 0) return buildFeedItems();
+  return activity.slice(0, 8).map((a) => {
+    const name = a.username || ("GUEST#" + a.deviceId.slice(-4).toUpperCase());
+    const opp = a.opponentName.replace("The ", "");
+    const topic = a.topic.length > 30 ? a.topic.slice(0, 30) + "…" : a.topic;
+    const minsAgo = Math.max(1, Math.floor((Date.now() - new Date(a.createdAt).getTime()) / 60000));
+    const timeStr = minsAgo < 60 ? `${minsAgo}m ago` : `${Math.floor(minsAgo / 60)}h ago`;
+    if (a.isGauntlet) {
+      return { icon: "⚔", text: `<strong>${name}</strong> ran Gauntlet vs ${opp}`, badge: a.won ? "WON" : "LOST", badgeClass: a.won ? "win" : "loss", time: timeStr };
+    }
+    if (a.won) {
+      return { icon: "🏆", text: `<strong>${name}</strong> defeated ${opp} — "${topic}"`, badge: a.rank, badgeClass: "rank", time: timeStr };
+    }
+    return { icon: "💀", text: `<strong>${name}</strong> lost to ${opp} — "${topic}"`, badge: a.rank, badgeClass: "loss", time: timeStr };
+  });
+}
+
 interface Message { role: "user" | "ai"; text: string; }
 interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; }
 interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; }
@@ -827,6 +897,12 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const [feedItems, setFeedItems] = useState<FeedItem[]>(() => buildFeedItems());
   const [feedKey, setFeedKey] = useState(0);
+  const [player, setPlayer] = useState<PlayerProfile | null>(null);
+  const [showUsernameModal, setShowUsernameModal] = useState(false);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [lbData, setLbData] = useState<LbEntry[]>([]);
+  const [lbLoading, setLbLoading] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pendingVerdictRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -892,17 +968,39 @@ export default function App() {
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [screen]);
 
-  // Persist stats to localStorage
+  // Persist stats to localStorage (offline fallback)
   useEffect(() => {
     try { localStorage.setItem("clash-stats", JSON.stringify(stats)); } catch {}
   }, [stats]);
 
-  // Load stats from localStorage on mount
+  // Load player profile from DB on mount; fall back to localStorage
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("clash-stats");
-      if (saved) setStats((prev) => ({ ...prev, ...JSON.parse(saved) }));
-    } catch {}
+    const deviceId = getOrCreateDeviceId();
+    (async () => {
+      try {
+        await apiPost("/players/register", { deviceId });
+        const profile = await apiGet<PlayerProfile>(`/players/${deviceId}`);
+        setPlayer(profile);
+        if (profile.stats.debates > 0) {
+          setStats({
+            wins: profile.stats.wins,
+            debates: profile.stats.debates,
+            bestScore: profile.stats.bestScore,
+            opponentHistory: profile.stats.opponentHistory,
+          });
+        } else {
+          try {
+            const saved = localStorage.getItem("clash-stats");
+            if (saved) setStats((prev) => ({ ...prev, ...JSON.parse(saved) }));
+          } catch {}
+        }
+      } catch {
+        try {
+          const saved = localStorage.getItem("clash-stats");
+          if (saved) setStats((prev) => ({ ...prev, ...JSON.parse(saved) }));
+        } catch {}
+      }
+    })();
   }, []);
 
   // Rotate status taunts every 4s on home screen
@@ -938,23 +1036,58 @@ export default function App() {
     return () => clearInterval(iv);
   }, [screen]);
 
-  // Animate arena counters on home screen mount
+  // Load real global stats + real activity feed on home screen; animate counters
   useEffect(() => {
     if (screen !== "home") return;
-    const target = { debates: 12847, winRate: 58, topics: 48 };
-    const steps = 40;
-    let step = 0;
-    const iv = setInterval(() => {
-      step++;
-      const ease = 1 - Math.pow(1 - step / steps, 3);
-      setArenaDisplay({
-        debates: Math.round(target.debates * ease),
-        winRate: Math.round(target.winRate * ease),
-        topics: Math.round(target.topics * ease),
-      });
-      if (step >= steps) clearInterval(iv);
-    }, 20);
-    return () => clearInterval(iv);
+    let cancelled = false;
+
+    (async () => {
+      let target = { debates: 100, winRate: 0, topics: 10 };
+      try {
+        const gs = await apiGet<GlobalStats>("/stats/global");
+        if (!cancelled) {
+          target = {
+            debates: Math.max(gs.totalDebates, 1),
+            winRate: gs.globalWinRate || 0,
+            topics: Math.max(gs.uniqueTopics, 1),
+          };
+        }
+      } catch {}
+      if (cancelled) return;
+      const steps = 40;
+      let step = 0;
+      const iv = setInterval(() => {
+        step++;
+        const ease = 1 - Math.pow(1 - step / steps, 3);
+        setArenaDisplay({
+          debates: Math.round(target.debates * ease),
+          winRate: Math.round(target.winRate * ease),
+          topics: Math.round(target.topics * ease),
+        });
+        if (step >= steps) clearInterval(iv);
+      }, 20);
+    })();
+
+    (async () => {
+      try {
+        const activity = await apiGet<RecentActivity[]>("/activity/recent");
+        if (!cancelled && activity.length > 0) {
+          setFeedItems(buildRealFeedItems(activity));
+          setFeedKey((k) => k + 1);
+        }
+      } catch {}
+    })();
+
+    return () => { cancelled = true; };
+  }, [screen]);
+
+  // Load leaderboard when that screen opens
+  useEffect(() => {
+    if (screen !== "leaderboard") return;
+    setLbLoading(true);
+    apiGet<LbEntry[]>("/leaderboard")
+      .then((data) => { setLbData(data); setLbLoading(false); })
+      .catch(() => setLbLoading(false));
   }, [screen]);
 
   const ai = selectedAI === "custom"
@@ -1180,6 +1313,8 @@ export default function App() {
         outcome: judgeVerdict.outcome || (won ? "clear win" : "clear loss"),
       });
 
+      const finalRank = judgeVerdict.rank || (won ? "B" : "D");
+
       setStats((prev) => {
         const oppHistory = { ...(prev.opponentHistory || {}) };
         const oppId = selectedAI || "";
@@ -1196,6 +1331,28 @@ export default function App() {
           opponentHistory: oppHistory,
         };
       });
+
+      // Save debate to DB in background (non-blocking)
+      {
+        const deviceId = getOrCreateDeviceId();
+        apiPost("/debates/save", {
+          deviceId,
+          opponentId: selectedAI || "unknown",
+          opponentName: ai?.name || "AI",
+          topic: selectedTopic?.text || "",
+          topicCat: selectedTopic?.cat || "General",
+          side: selectedSide || "for",
+          rounds: scores.length,
+          avgScore, avgLogic, avgPersuasion, avgDelivery,
+          rank: finalRank,
+          won,
+          isGauntlet: tournamentMode,
+        }).then(() => {
+          apiGet<PlayerProfile>(`/players/${deviceId}`)
+            .then((p) => setPlayer(p))
+            .catch(() => {});
+        }).catch(() => {});
+      }
 
       if (tournamentMode) {
         const matchResult = {
@@ -1294,6 +1451,21 @@ export default function App() {
     setScreen("debate");
   };
 
+  const handleSetUsername = async () => {
+    const deviceId = getOrCreateDeviceId();
+    const trimmed = usernameInput.trim();
+    if (trimmed.length < 2) { setUsernameError("Must be at least 2 characters."); return; }
+    try {
+      const updated = await apiPatch<PlayerProfile>("/players/username", { deviceId, username: trimmed });
+      setPlayer(updated);
+      setShowUsernameModal(false);
+      setUsernameInput("");
+      setUsernameError("");
+    } catch (err: unknown) {
+      setUsernameError((err as Error).message || "That name is taken.");
+    }
+  };
+
   const shareResult = () => {
     if (!verdict || !selectedTopic || !ai) return;
     const data = {
@@ -1342,11 +1514,18 @@ export default function App() {
     <div className="app">
       <nav className="nav">
         <div className="logo">CL<span>A</span>SH</div>
-        {stats.debates > 0 && (
-          <div className="nav-rank">
-            Rank <span>#{Math.max(1, 8 - stats.wins)}</span> · {stats.wins}W {stats.debates - stats.wins}L
-          </div>
-        )}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {stats.debates > 0 && (
+            <div className="nav-rank">{stats.wins}W {stats.debates - stats.wins}L</div>
+          )}
+          <button
+            className={`profile-pill${player?.username ? " named" : ""}`}
+            onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setShowUsernameModal(true); }}
+          >
+            <span className="pill-icon">👤</span>
+            {player?.username || "Set Name"}
+          </button>
+        </div>
       </nav>
 
       {/* HOME */}
@@ -2258,39 +2437,69 @@ export default function App() {
             <button className={`tab ${lbTab === "weekly" ? "active" : ""}`} onClick={() => setLbTab("weekly")}>This Week</button>
           </div>
 
-          {FAKE_LEADERBOARD.map((p, i) => (
-            <div key={i} className="lb-row">
-              <div className={`lb-rank ${i < 3 ? "top" : ""}`}>{i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : p.rank}</div>
-              <div className="lb-avatar">{p.emoji}</div>
-              <div className="lb-info">
-                <div className="lb-name">{p.name}</div>
-                <div className="lb-meta">{p.wins} wins this season</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div className="lb-score">{p.score.toLocaleString()}</div>
-                <div className="lb-wins">pts</div>
-              </div>
-            </div>
-          ))}
-
-          {stats.debates > 0 && (
-            <div className="lb-row you" style={{ marginTop: "16px" }}>
-              <div className="lb-rank">YOU</div>
-              <div className="lb-avatar">⚡</div>
-              <div className="lb-info">
-                <div className="lb-name">YOU</div>
-                <div className="lb-meta">{stats.wins} wins · {stats.debates} debates</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div className="lb-score">{stats.wins * 200 + stats.bestScore * 10}</div>
-                <div className="lb-wins">pts</div>
-              </div>
+          {lbLoading && (
+            <div style={{ textAlign: "center", padding: "40px 0", color: "var(--text-dim)", fontFamily: "'Barlow Condensed',sans-serif", letterSpacing: "3px", fontSize: "13px" }}>
+              LOADING...
             </div>
           )}
+          {!lbLoading && lbData.length === 0 && (
+            <div style={{ textAlign: "center", padding: "40px 16px", color: "var(--text-dim)" }}>
+              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", letterSpacing: "2px", marginBottom: "8px" }}>NO PLAYERS YET</div>
+              <div style={{ fontSize: "13px" }}>Finish a debate to appear on the leaderboard.</div>
+            </div>
+          )}
+          {lbData.map((p, i) => {
+            const isMe = player?.deviceId === p.deviceId;
+            const AVATARS = ["🦁","🐺","🦊","🎯","⚡","🔥","🧠","🏆","👊","💎","🌊","🎭","🗡","🛡","🔬","⚖️","🐉","🦅","🎪","🌟"];
+            const emoji = AVATARS[p.id % AVATARS.length];
+            const displayName = p.username || ("GUEST#" + p.deviceId.slice(-4).toUpperCase());
+            return (
+              <div key={p.id} className={`lb-row${isMe ? " you" : ""}`}>
+                <div className={`lb-rank${i < 3 ? " top" : ""}`}>{i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1}</div>
+                <div className="lb-avatar">{emoji}</div>
+                <div className="lb-info">
+                  <div className="lb-name">{displayName}{isMe ? " ◀ YOU" : ""}</div>
+                  <div className="lb-meta">{p.wins} win{p.wins !== 1 ? "s" : ""} · {p.totalDebates} debate{p.totalDebates !== 1 ? "s" : ""}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div className="lb-score">{p.score.toLocaleString()}</div>
+                  <div className="lb-wins">pts</div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
     {shareToast && <div className="share-toast">{shareToast}</div>}
+
+    {showUsernameModal && (
+      <div className="username-modal" onClick={() => setShowUsernameModal(false)}>
+        <div className="username-dialog" onClick={(e) => e.stopPropagation()}>
+          <h3>SET YOUR NAME</h3>
+          <p className="ud-sub">Claim your identity on the leaderboard. Appears next to all your results.</p>
+          <input
+            className="username-field"
+            placeholder="YOURNAME"
+            maxLength={20}
+            value={usernameInput}
+            onChange={(e) => { setUsernameInput(e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, "")); setUsernameError(""); }}
+            onKeyDown={(e) => { if (e.key === "Enter") handleSetUsername(); }}
+            autoFocus
+          />
+          <div className="username-err">{usernameError}</div>
+          <div className="username-hint">2–20 CHARS · LETTERS, NUMBERS, UNDERSCORES</div>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button className="btn btn-primary" onClick={handleSetUsername}>
+              {player?.username ? "Update" : "Set Name"}
+            </button>
+            <button className="btn btn-ghost" onClick={() => { setShowUsernameModal(false); setUsernameError(""); }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </>
   );
 }
