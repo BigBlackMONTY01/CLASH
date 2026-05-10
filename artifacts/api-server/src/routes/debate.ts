@@ -154,40 +154,44 @@ router.post("/debate/round", async (req, res) => {
   const diff = str(difficulty) ?? "medium";
 
   try {
-    const scorePrompt = `You are a competitive debate referee. Score this argument fairly, decisively, and consistently.
+    const scorePrompt = `You are a ranked competitive debate judge. Score this argument with precision and distribute scores across the full range.
 
 Topic: "${topic as string}"
 User is arguing: ${userSide as string}
 Round: ${round as number} of ${totalRounds as number}
-Opponent difficulty: ${diff}
+Difficulty: ${diff}
 
 User's argument:
 "${userArgument as string}"
 
-SCORING RUBRIC:
-90-100 — Exceptional. Clear thesis, compelling evidence or examples, directly addresses the topic, highly persuasive.
-75-89  — Strong. Well-reasoned with a clear point. Lands the argument convincingly.
-60-74  — Average. Makes a recognisable point but relies on assertion without support.
-40-59  — Weak. Vague, repetitive, or off-topic. Fails to make a concrete case.
-0-39   — Very poor. No coherent argument. Concession language, empty statements.
+RANKED SCORING RUBRIC — use the full range, not just 60-75:
 
-RULES:
-- Score each dimension independently.
-- Spread scores meaningfully across the full range.
-- For "hard" and "extreme" difficulty: apply the rubric one tier stricter.
+85-100 — ELITE. Specific evidence or examples, direct rebuttal of opponent's points, clear thesis, highly persuasive. Reserve this for genuinely impressive arguments. Rare.
+70-84  — STRONG. Clear point, solid reasoning, lands the argument convincingly. Above average debater.
+50-69  — AVERAGE. Makes a recognisable point but relies on assertion without evidence. Middle of the pack.
+30-49  — WEAK. Vague, generic, or mostly assertion. Fails to actually make a case.
+0-29   — POOR. No coherent argument, off-topic, empty, or concedes the point entirely.
 
-Respond ONLY with a JSON object, no markdown:
-{"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"strongest point in one sentence","weak":"weakest element in one sentence"}`;
+MANDATORY DISTRIBUTION RULES:
+- A typical assertion-only argument (no evidence, no specifics) scores 45-60. Not 65-75.
+- Only cite 70+ for arguments that include a real example, a specific counter-point, or a clear logical chain.
+- Only cite 85+ for arguments that would genuinely impress in a real debate round. Rare.
+- For "hard" and "extreme" difficulty: shift your scoring one tier stricter (a 65 becomes a 50).
+- NEVER give the same score to consecutive rounds unless the argument quality is identical.
+- Spread scores. If round 1 was 58, round 2 should reflect whether the user improved or declined.
+
+Respond ONLY with valid JSON, no markdown:
+{"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"the single strongest moment in one sharp phrase","weak":"the single most exploitable weakness in one sharp phrase"}`;
 
     const scoreText = await claudeText(
-      "You are a competitive debate referee. Respond only with valid JSON.",
+      "You are a ranked competitive debate judge. Use the full scoring range. Respond only with valid JSON.",
       scorePrompt,
-      1000
+      800
     );
 
     const jMatch = scoreText.match(/\{[\s\S]*\}/);
     let roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string } = {
-      score: 70, logic: 70, persuasion: 70, delivery: 70, best: "", weak: "",
+      score: 55, logic: 55, persuasion: 55, delivery: 55, best: "", weak: "",
     };
     if (jMatch) {
       try { roundScore = JSON.parse(jMatch[0]); } catch { /* use default */ }
@@ -224,65 +228,73 @@ Counter the user's last argument directly and sharply. 2-3 sentences.${FORMATTIN
   }
 });
 
-// POST /api/debate/verdict — Generate final verdict
+// POST /api/debate/verdict — Generate final ranked verdict
 router.post("/debate/verdict", async (req, res) => {
-  const { topic, avgScore, avgLogic, avgPersuasion, avgDelivery, userArguments } = req.body as Record<string, unknown>;
+  const { topic, avgScore, avgLogic, avgPersuasion, avgDelivery, roundScores } = req.body as Record<string, unknown>;
   if (!str(topic) || !num(avgScore) || !num(avgLogic) || !num(avgPersuasion) || !num(avgDelivery)) {
     res.status(400).json({ error: "Invalid body" });
     return;
   }
 
-  const userArgs = Array.isArray(userArguments)
-    ? (userArguments as string[]).join(" / ")
-    : "";
+  const score = avgScore as number;
 
-  const scoreLabel =
-    (avgScore as number) >= 85 ? "dominant" :
-    (avgScore as number) >= 70 ? "convincing" :
-    (avgScore as number) >= 55 ? "competitive but flawed" :
-    (avgScore as number) >= 40 ? "weak" : "very poor";
+  const rank =
+    score >= 85 ? "S" :
+    score >= 75 ? "A" :
+    score >= 62 ? "B" :
+    score >= 48 ? "C" :
+    score >= 35 ? "D" : "F";
 
-  const prompt = `You are a fair, decisive debate referee. Topic: "${topic as string}".
+  const outcome =
+    score >= 80 ? "dominant win" :
+    score >= 65 ? "clear win" :
+    score >= 52 ? "narrow loss" :
+    score >= 38 ? "clear loss" : "crushing defeat";
 
-Overall score: ${avgScore as number}/100 — classified as: ${scoreLabel}.
-Logic: ${avgLogic as number}, Persuasion: ${avgPersuasion as number}, Delivery: ${avgDelivery as number}.
+  const prompt = `You are a competitive ranked debate judge delivering a match verdict. Be decisive, fast, and game-like — no hedging, no academic language.
 
-VERDICT RULES:
-- Declare a clear outcome. Use the score classification above. Never contradict it.
-- Be specific to the topic. Reference what kind of arguments won or lost.
-- Never hedge. State who won and why.
-- Two sentences max. Sentence one: outcome and why. Sentence two: the decisive factor.
-- Improvement tip: one specific, actionable technique tied directly to their performance.
+Topic: "${topic as string}"
+Overall score: ${score}/100
+Rank: ${rank} — ${outcome}
+Logic: ${avgLogic as number} | Persuasion: ${avgPersuasion as number} | Delivery: ${avgDelivery as number}
+
+VERDICT FORMAT RULES — follow exactly:
+- "verdict": Exactly 1-2 sentences. State the outcome bluntly. Name the decisive factor. Zero hedging.
+- "improve": Exactly 1 sentence. One specific, actionable technique. Start with a verb. No fluff.
+- Both fields must reference the topic specifically. Generic verdicts are rejected.
+- Write like a ranked game result screen, not a school essay. Fast. Sharp. Final.
+
+Examples of GOOD verdicts (match this energy):
+- "You dominated this debate with a clear command of the evidence. The opponent never recovered from your second-round counter."
+- "A sloppy performance — you argued with confidence but zero substance to back it up."
+
+Examples of BAD verdicts (avoid these):
+- "Overall, this was a decent attempt with some good moments..."
+- "While you made some valid points, there were areas for improvement..."
 
 Respond ONLY with valid JSON:
-{"verdict":"two-sentence verdict","improve":"one specific improvement technique"}`;
-
-  const summaryPrompt = userArgs
-    ? `Summarise what this debater argued in 1-2 sentences. No evaluation, no opinion. Only restate their position and main points. Be neutral and factual.
-
-Their arguments: "${userArgs}"`
-    : null;
+{"verdict":"1-2 sentence blunt verdict","improve":"1 sentence tip starting with a verb"}`;
 
   try {
-    const [vText, sText] = await Promise.all([
-      claudeText("You are a fair debate referee. Respond only with valid JSON.", prompt, 400),
-      summaryPrompt
-        ? claudeText("You summarise debate arguments neutrally. Respond with only the summary sentence(s), no labels or JSON.", summaryPrompt, 200)
-        : Promise.resolve(""),
-    ]);
+    const vText = await claudeText(
+      "You are a ranked competitive debate judge. Respond only with valid JSON. Be decisive and game-like.",
+      prompt,
+      300
+    );
 
     const jMatch = vText.match(/\{[\s\S]*\}/);
     let judgeVerdict = {
       verdict:
-        (avgScore as number) >= 65
-          ? "A convincing performance that controlled the debate from start to finish."
-          : "The arguments lacked the clarity and punch needed to take this debate.",
-      improve: "Practice backing claims with specific, concrete examples.",
+        score >= 65
+          ? "Clean win — you controlled the tempo and your opponent had no answer for your key points."
+          : "Too much assertion, not enough substance. You got outgunned on every exchange that mattered.",
+      improve: "Back every claim with a specific example or statistic before moving to the next point.",
     };
     if (jMatch) {
       try { judgeVerdict = JSON.parse(jMatch[0]); } catch { /* use default */ }
     }
-    res.json({ ...judgeVerdict, userSummary: sText.trim() });
+
+    res.json({ ...judgeVerdict, rank, outcome });
   } catch (err) {
     req.log.error({ err }, "debate/verdict failed");
     res.status(500).json({ error: "AI error" });

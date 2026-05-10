@@ -158,12 +158,21 @@ color:var(--text);resize:none;outline:none;transition:border-color 0.2s;line-hei
 .char-count{font-size:12px;color:var(--text-dim);}
 .submit-row{display:flex;gap:8px;}
 
-.thinking-row{display:flex;align-items:center;gap:8px;padding:12px 16px;color:var(--text-dim);
-font-style:italic;font-size:14px;}
+.thinking-row{display:flex;align-items:center;gap:10px;padding:12px 16px;color:var(--text-dim);font-size:14px;}
+.thinking-phase{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);animation:fadeIn 0.3s ease;}
 .dots span{display:inline-block;animation:dot 1.4s infinite;}
 .dots span:nth-child(2){animation-delay:0.2s;}
 .dots span:nth-child(3){animation-delay:0.4s;}
 @keyframes dot{0%,80%,100%{opacity:0;}40%{opacity:1;}}
+
+/* ===== RANK BADGES ===== */
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:6px;}
+.rank-S{background:rgba(168,85,247,0.15);border:2px solid #a855f7;color:#a855f7;}
+.rank-A{background:rgba(230,57,70,0.15);border:2px solid var(--red);color:var(--red);}
+.rank-B{background:rgba(34,197,94,0.12);border:2px solid var(--green);color:var(--green);}
+.rank-C{background:rgba(244,197,66,0.12);border:2px solid var(--gold);color:var(--gold);}
+.rank-D{background:rgba(153,153,153,0.1);border:2px solid var(--text-dim);color:var(--text-dim);}
+.rank-F{background:rgba(230,57,70,0.08);border:2px solid rgba(230,57,70,0.3);color:#ff4655;}
 
 .verdict-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
 padding:28px;margin-bottom:20px;}
@@ -418,7 +427,7 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
 
 interface Message { role: "user" | "ai"; text: string; }
 interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; }
-interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; userSummary: string; }
+interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; }
 interface Stats { wins: number; debates: number; bestScore: number; }
 
 type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard";
@@ -442,6 +451,7 @@ export default function App() {
   const [lbTab, setLbTab] = useState("global");
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [matchCountdown, setMatchCountdown] = useState(3);
+  const [thinkingPhase, setThinkingPhase] = useState(0);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -465,6 +475,13 @@ export default function App() {
       return () => clearTimeout(t);
     }
   }, [thinking, screen]);
+
+  // Cycle thinking phase labels for tension
+  useEffect(() => {
+    if (!thinking) { setThinkingPhase(0); return; }
+    const iv = setInterval(() => setThinkingPhase((p) => (p + 1) % 5), 1300);
+    return () => clearInterval(iv);
+  }, [thinking]);
 
   // Matchmaking countdown animation
   useEffect(() => {
@@ -577,6 +594,7 @@ export default function App() {
     const oppSide = selectedSide === "for" ? "AGAINST" : "FOR";
 
     try {
+      const thinkStart = Date.now();
       const { aiText, roundScore } = await apiPost<{
         aiText: string;
         roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string };
@@ -592,6 +610,13 @@ export default function App() {
         difficulty: ai.diff,
         isLastRound,
       });
+
+      // Enforce 4-6s minimum thinking time to build tension
+      const minThink = 4000 + Math.random() * 2000;
+      const elapsed = Date.now() - thinkStart;
+      if (elapsed < minThink) {
+        await new Promise<void>((r) => setTimeout(r, minThink - elapsed));
+      }
 
       const newRoundScores: RoundScore[] = [...roundScores, { round: roundNumber, ...roundScore }];
       setRoundScores(newRoundScores);
@@ -626,10 +651,10 @@ export default function App() {
 
     try {
       const userArguments = _msgs.filter((m) => m.role === "user").map((m) => m.text);
-      const judgeVerdict = await apiPost<{ verdict: string; improve: string; userSummary: string }>("/debate/verdict", {
+      const judgeVerdict = await apiPost<{ verdict: string; improve: string; rank: string; outcome: string }>("/debate/verdict", {
         topic: selectedTopic?.text ?? "",
         avgScore, avgLogic, avgPersuasion, avgDelivery,
-        userArguments,
+        roundScores: scores,
       });
 
       const allBest = scores.map((s) => s.best).filter(Boolean);
@@ -641,7 +666,8 @@ export default function App() {
         improve: judgeVerdict.improve,
         bestArg: allBest[allBest.length - 1] || "Strong rebuttal.",
         weakArg: allWeak[allWeak.length - 1] || "Opening argument needed more evidence.",
-        userSummary: judgeVerdict.userSummary || "",
+        rank: judgeVerdict.rank || (won ? "B" : "D"),
+        outcome: judgeVerdict.outcome || (won ? "clear win" : "clear loss"),
       });
 
       setStats((prev) => ({
@@ -933,6 +959,9 @@ export default function App() {
                   <div className="msg-name">{ai?.name}</div>
                   <div className="msg-text thinking-row">
                     <div className="dots"><span>●</span><span>●</span><span>●</span></div>
+                    <span key={thinkingPhase} className="thinking-phase">
+                      {["Reading your argument","Finding weaknesses","Calculating counter","Preparing response","Sharpening rebuttal"][thinkingPhase]}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1014,6 +1043,7 @@ export default function App() {
         <div className="screen">
           <div className="verdict-card">
             <div className="verdict-header">
+              <div className={`rank-badge rank-${verdict.rank}`}>{verdict.rank}</div>
               <div className={`verdict-title ${verdict.won ? "win" : "lose"}`}>
                 {verdict.won ? "VICTORY" : "DEFEATED"}
               </div>
@@ -1035,45 +1065,48 @@ export default function App() {
               </div>
             </div>
 
-            <div className="feedback-box">
-              <div className="fb-label">Judge's Verdict</div>
-              <p>{verdict.judgeText}</p>
-            </div>
-
-            {verdict.userSummary && (
-              <div className="feedback-box" style={{ borderColor: "var(--text-dim)", marginBottom: "16px" }}>
-                <div className="fb-label" style={{ color: "var(--text-mid)" }}>Your Argument</div>
-                <p>{verdict.userSummary}</p>
+            <div style={{
+              background: "var(--surface2)",
+              borderLeft: `3px solid ${verdict.won ? "var(--green)" : "var(--red)"}`,
+              borderRadius: "0 var(--radius) var(--radius) 0",
+              padding: "12px 16px",
+              marginBottom: "12px",
+            }}>
+              <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: verdict.won ? "var(--green)" : "var(--red)", marginBottom: "6px" }}>
+                Judge's Call
               </div>
-            )}
-
-            <div className="best-arg">
-              <div className="arg-label best">✓ Strongest Point</div>
-              <div style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.bestArg}</div>
-            </div>
-            <div className="worst-arg" style={{ marginTop: "8px" }}>
-              <div className="arg-label worst">✗ Weakest Point</div>
-              <div style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.weakArg}</div>
+              <p style={{ fontSize: "15px", lineHeight: 1.5, color: "var(--text-mid)", margin: 0 }}>{verdict.judgeText}</p>
             </div>
 
-            <div className="divider" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "12px" }}>
+              <div className="best-arg">
+                <div className="arg-label best">✓ Best Moment</div>
+                <div style={{ fontSize: "13px", color: "var(--text-mid)" }}>{verdict.bestArg}</div>
+              </div>
+              <div className="worst-arg">
+                <div className="arg-label worst">✗ Fatal Flaw</div>
+                <div style={{ fontSize: "13px", color: "var(--text-mid)" }}>{verdict.weakArg}</div>
+              </div>
+            </div>
 
-            <div className="feedback-box" style={{ borderColor: "var(--blue)" }}>
-              <div className="fb-label" style={{ color: "var(--blue)" }}>How to Improve</div>
-              <p>{verdict.improve}</p>
+            <div style={{
+              background: "rgba(0,119,255,0.07)",
+              border: "1px solid rgba(0,119,255,0.2)",
+              borderRadius: "var(--radius)",
+              padding: "10px 14px",
+              display: "flex",
+              gap: "10px",
+              alignItems: "baseline",
+            }}>
+              <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--blue)", whiteSpace: "nowrap" }}>IMPROVE</span>
+              <span style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.improve}</span>
             </div>
           </div>
 
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-            <button className="btn btn-primary" onClick={instantRematch}>
-              ⚡ Instant Rematch
-            </button>
-            <button className="btn btn-secondary" onClick={swapSidesRematch}>
-              ↕ Swap Sides
-            </button>
-            <button className="btn btn-secondary" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>
-              New Match
-            </button>
+            <button className="btn btn-primary" onClick={instantRematch}>⚡ Instant Rematch</button>
+            <button className="btn btn-secondary" onClick={swapSidesRematch}>↕ Swap Sides</button>
+            <button className="btn btn-secondary" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>New Match</button>
             <button className="btn btn-ghost" onClick={reset}>Home</button>
           </div>
         </div>
