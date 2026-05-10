@@ -8,3 +8,29 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface SimulateInput {
+  /** @minLength 1 */
+  description: string;
+}
+
+export interface SimulationEra {
+  year: string;
+  type: string;
+  title: string;
+  body: string;
+}
+
+export interface Simulation {
+  name: string;
+  tagline: string;
+  duration: string;
+  population_peak: string;
+  territory: string;
+  eras: SimulationEra[];
+  fate: string;
+}
+
+export interface ErrorResponse {
+  error: string;
+}

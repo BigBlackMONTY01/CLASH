@@ -5,18 +5,26 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { HealthStatus } from "./api.schemas";
+import type {
+  ErrorResponse,
+  HealthStatus,
+  SimulateInput,
+  Simulation,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
-import type { ErrorType } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -99,3 +107,90 @@ export function useHealthCheck<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * Takes a civilization description and generates 1000 years of dramatic history via AI
+ * @summary Simulate civilization history
+ */
+export const getSimulateUrl = () => {
+  return `/api/simulate`;
+};
+
+export const simulate = async (
+  simulateInput: SimulateInput,
+  options?: RequestInit,
+): Promise<Simulation> => {
+  return customFetch<Simulation>(getSimulateUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(simulateInput),
+  });
+};
+
+export const getSimulateMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof simulate>>,
+    TError,
+    { data: BodyType<SimulateInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof simulate>>,
+  TError,
+  { data: BodyType<SimulateInput> },
+  TContext
+> => {
+  const mutationKey = ["simulate"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof simulate>>,
+    { data: BodyType<SimulateInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return simulate(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SimulateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof simulate>>
+>;
+export type SimulateMutationBody = BodyType<SimulateInput>;
+export type SimulateMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Simulate civilization history
+ */
+export const useSimulate = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof simulate>>,
+    TError,
+    { data: BodyType<SimulateInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof simulate>>,
+  TError,
+  { data: BodyType<SimulateInput> },
+  TContext
+> => {
+  return useMutation(getSimulateMutationOptions(options));
+};

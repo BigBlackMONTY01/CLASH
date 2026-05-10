@@ -14,3 +14,29 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Takes a civilization description and generates 1000 years of dramatic history via AI
+ * @summary Simulate civilization history
+ */
+
+export const SimulateBody = zod.object({
+  description: zod.string().min(1),
+});
+
+export const SimulateResponse = zod.object({
+  name: zod.string(),
+  tagline: zod.string(),
+  duration: zod.string(),
+  population_peak: zod.string(),
+  territory: zod.string(),
+  eras: zod.array(
+    zod.object({
+      year: zod.string(),
+      type: zod.string(),
+      title: zod.string(),
+      body: zod.string(),
+    }),
+  ),
+  fate: zod.string(),
+});

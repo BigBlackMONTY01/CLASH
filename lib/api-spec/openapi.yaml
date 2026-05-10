@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: simulate
+    description: Civilization simulation
 paths:
   /healthz:
     get:
@@ -24,6 +26,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /simulate:
+    post:
+      operationId: simulate
+      tags: [simulate]
+      summary: Simulate civilization history
+      description: Takes a civilization description and generates 1000 years of dramatic history via AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SimulateInput"
+      responses:
+        "200":
+          description: Generated simulation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Simulation"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +66,48 @@ components:
           type: string
       required:
         - status
-
+    SimulateInput:
+      type: object
+      required: [description]
+      properties:
+        description:
+          type: string
+          minLength: 1
+    SimulationEra:
+      type: object
+      required: [year, type, title, body]
+      properties:
+        year:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+    Simulation:
+      type: object
+      required: [name, tagline, duration, population_peak, territory, eras, fate]
+      properties:
+        name:
+          type: string
+        tagline:
+          type: string
+        duration:
+          type: string
+        population_peak:
+          type: string
+        territory:
+          type: string
+        eras:
+          type: array
+          items:
+            $ref: "#/components/schemas/SimulationEra"
+        fate:
+          type: string
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
