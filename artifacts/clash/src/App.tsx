@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap');`;
 
@@ -461,6 +461,34 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .gf-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
 .gf-fill{height:100%;border-radius:2px;}
 .gf-score{font-family:'Bebas Neue',sans-serif;font-size:18px;}
+
+/* Glow behind WIN */
+.home-title .line2{position:relative;}
+.home-title .line2::before{content:'';position:absolute;inset:-30% -10%;background:radial-gradient(ellipse at center,rgba(230,57,70,0.2) 0%,transparent 60%);z-index:-1;pointer-events:none;}
+
+/* Taunt */
+.taunt-line{font-size:13px;color:var(--text-dim);opacity:0.45;font-style:italic;text-align:center;min-height:22px;margin-top:6px;margin-bottom:20px;}
+.taunt-who{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-right:5px;font-style:normal;opacity:0.8;}
+
+/* Gauntlet button */
+.gauntlet-btn{display:block;background:transparent;border:1px solid rgba(244,197,66,0.35);color:rgba(244,197,66,0.75);border-radius:var(--radius);padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;width:100%;max-width:340px;transition:all 0.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.gauntlet-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(244,197,66,0.04);}
+.gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.5;margin-top:5px;}
+
+/* Arena stats strip */
+.arena-stats{display:flex;justify-content:center;margin-top:28px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.arena-stat{flex:1;text-align:center;padding:11px 8px;}
+.arena-stat+.arena-stat{border-left:1px solid var(--border);}
+.arena-stat .as-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text-dim);display:block;}
+.arena-stat .as-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.5;}
+
+/* Personal record */
+.nemesis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-top:10px;}
+.nemesis-icon{font-size:26px;flex-shrink:0;}
+.nemesis-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.nemesis-sub{font-size:12px;color:var(--text-dim);}
+.nemesis-rematch{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--red);background:none;border:1px solid rgba(230,57,70,0.4);border-radius:var(--radius);padding:6px 12px;cursor:pointer;flex-shrink:0;touch-action:manipulation;}
+.nemesis-rematch:hover{border-color:var(--red);background:rgba(230,57,70,0.06);}
 `;
 
 function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
@@ -606,6 +634,15 @@ const FAKE_LEADERBOARD = [
   { rank: 7, emoji: "🧠", name: "BIGBRAIN47", wins: 21, score: 5100 },
 ];
 
+const TAUNTS = [
+  { icon: "🎓", text: "Most people can't argue their way out of a paper bag." },
+  { icon: "😈", text: "Every opinion you hold is probably wrong." },
+  { icon: "⚖️", text: "Your argument has at least three logical fallacies." },
+  { icon: "🔮", text: "But what does 'winning' even mean to you?" },
+  { icon: "🏛️", text: "I hear you. Let me reframe that completely." },
+  { icon: "🔬", text: "Interesting claim. Where are your sources?" },
+];
+
 function getScoreColor(s: number) {
   if (s >= 80) return "var(--green)";
   if (s >= 60) return "var(--gold)";
@@ -626,7 +663,7 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
 interface Message { role: "user" | "ai"; text: string; }
 interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; }
 interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; }
-interface Stats { wins: number; debates: number; bestScore: number; }
+interface Stats { wins: number; debates: number; bestScore: number; opponentHistory: Record<string, { wins: number; losses: number }>; }
 
 type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final";
 
@@ -642,7 +679,7 @@ export default function App() {
   const [thinking, setThinking] = useState(false);
   const [error, setError] = useState("");
   const [verdict, setVerdict] = useState<Verdict | null>(null);
-  const [stats, setStats] = useState<Stats>({ wins: 0, debates: 0, bestScore: 0 });
+  const [stats, setStats] = useState<Stats>({ wins: 0, debates: 0, bestScore: 0, opponentHistory: {} });
   const [selectedRounds, setSelectedRounds] = useState(3);
   const [displayTopics, setDisplayTopics] = useState(() => pickTopics());
   const [timerStarted, setTimerStarted] = useState(false);
@@ -663,6 +700,8 @@ export default function App() {
   const [tournamentTopics, setTournamentTopics] = useState<{ cat: string; text: string }[]>([]);
   const [tournamentMatchScores, setTournamentMatchScores] = useState<{ score: number; rank: string; won: boolean; botId: string; botName: string; botIcon: string; topic: string }[]>([]);
   const [gauntletNextSide, setGauntletNextSide] = useState<"for" | "against" | null>(null);
+  const [tauntIndex, setTauntIndex] = useState(0);
+  const [arenaDisplay, setArenaDisplay] = useState({ debates: 0, winRate: 0, topics: 0 });
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -714,6 +753,45 @@ export default function App() {
     const t2 = setTimeout(() => setMatchCountdown(1), 2000);
     const t3 = setTimeout(() => setMatchCountdown(0), 3000);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [screen]);
+
+  // Persist stats to localStorage
+  useEffect(() => {
+    try { localStorage.setItem("clash-stats", JSON.stringify(stats)); } catch {}
+  }, [stats]);
+
+  // Load stats from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("clash-stats");
+      if (saved) setStats((prev) => ({ ...prev, ...JSON.parse(saved) }));
+    } catch {}
+  }, []);
+
+  // Rotate AI taunts every 4s on home screen
+  useEffect(() => {
+    if (screen !== "home") return;
+    const iv = setInterval(() => setTauntIndex((i) => (i + 1) % TAUNTS.length), 4000);
+    return () => clearInterval(iv);
+  }, [screen]);
+
+  // Animate arena counters on home screen mount
+  useEffect(() => {
+    if (screen !== "home") return;
+    const target = { debates: 12847, winRate: 58, topics: 48 };
+    const steps = 40;
+    let step = 0;
+    const iv = setInterval(() => {
+      step++;
+      const ease = 1 - Math.pow(1 - step / steps, 3);
+      setArenaDisplay({
+        debates: Math.round(target.debates * ease),
+        winRate: Math.round(target.winRate * ease),
+        topics: Math.round(target.topics * ease),
+      });
+      if (step >= steps) clearInterval(iv);
+    }, 20);
+    return () => clearInterval(iv);
   }, [screen]);
 
   const ai = selectedAI === "custom"
@@ -933,11 +1011,22 @@ export default function App() {
         outcome: judgeVerdict.outcome || (won ? "clear win" : "clear loss"),
       });
 
-      setStats((prev) => ({
-        wins: prev.wins + (won ? 1 : 0),
-        debates: prev.debates + 1,
-        bestScore: Math.max(prev.bestScore, avgScore),
-      }));
+      setStats((prev) => {
+        const oppHistory = { ...(prev.opponentHistory || {}) };
+        const oppId = selectedAI || "";
+        if (oppId) {
+          oppHistory[oppId] = {
+            wins: (oppHistory[oppId]?.wins || 0) + (won ? 1 : 0),
+            losses: (oppHistory[oppId]?.losses || 0) + (won ? 0 : 1),
+          };
+        }
+        return {
+          wins: prev.wins + (won ? 1 : 0),
+          debates: prev.debates + 1,
+          bestScore: Math.max(prev.bestScore, avgScore),
+          opponentHistory: oppHistory,
+        };
+      });
 
       if (tournamentMode) {
         const matchResult = {
@@ -1065,14 +1154,29 @@ export default function App() {
     setScreen("setup");
   };
 
+  const nemesisBot = useMemo(() => {
+    const hist = stats.opponentHistory;
+    if (!hist || Object.keys(hist).length === 0) return null;
+    let maxLosses = 0;
+    let nemesisId: string | null = null;
+    for (const [id, rec] of Object.entries(hist)) {
+      if (rec.losses > maxLosses) { maxLosses = rec.losses; nemesisId = id; }
+    }
+    if (!nemesisId || maxLosses === 0) return null;
+    const bot = AI_OPPONENTS.find((a) => a.id === nemesisId);
+    return bot ? { ...bot, losses: maxLosses } : null;
+  }, [stats.opponentHistory]);
+
   return (
     <>
     <div className="app">
       <nav className="nav">
         <div className="logo">CL<span>A</span>SH</div>
-        <div className="nav-rank">
-          Rank <span>#{Math.max(1, 8 - stats.wins)}</span> · {stats.wins}W {stats.debates - stats.wins}L
-        </div>
+        {stats.debates > 0 && (
+          <div className="nav-rank">
+            Rank <span>#{Math.max(1, 8 - stats.wins)}</span> · {stats.wins}W {stats.debates - stats.wins}L
+          </div>
+        )}
       </nav>
 
       {/* HOME */}
@@ -1094,7 +1198,10 @@ export default function App() {
           )}
           <div className="home-hero">
             <h1 className="home-title">ARGUE.<span className="line2">WIN.</span></h1>
-            <p className="home-sub">Solo debate. AI opponent. Real judgment.</p>
+            <p className="taunt-line">
+              <span className="taunt-who">{TAUNTS[tauntIndex].icon}</span>
+              "{TAUNTS[tauntIndex].text}"
+            </p>
             <div className="home-cta">
               <button className="btn btn-primary" onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}>
                 Start Debate
@@ -1103,42 +1210,62 @@ export default function App() {
                 Leaderboard
               </button>
             </div>
-            <div style={{ marginTop: "14px" }}>
-              <button
-                style={{ background: "transparent", border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "var(--radius)", padding: "10px 24px", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "14px", letterSpacing: "3px", textTransform: "uppercase", cursor: "pointer", width: "100%", maxWidth: "340px" }}
-                onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}
-              >
-                ⚔ Gauntlet Mode — All 6 Bots
+            <div style={{ marginTop: "14px", textAlign: "center" }}>
+              <button className="gauntlet-btn" onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}>
+                ⚔ Gauntlet Mode
               </button>
+              <p className="gauntlet-sub">Take on all 6 opponents in one run</p>
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "16px", justifyContent: "center", marginBottom: "40px", flexWrap: "wrap" }}>
-            {AI_OPPONENTS.map((a) => (
-              <div key={a.id} style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "28px" }} title={a.name}>
-                {a.icon}
-              </div>
-            ))}
+          <div className="arena-stats">
+            <div className="arena-stat">
+              <span className="as-val">{arenaDisplay.debates.toLocaleString()}</span>
+              <span className="as-lbl">Debates fought</span>
+            </div>
+            <div className="arena-stat">
+              <span className="as-val">{arenaDisplay.winRate}%</span>
+              <span className="as-lbl">Global win rate</span>
+            </div>
+            <div className="arena-stat">
+              <span className="as-val">{arenaDisplay.topics}</span>
+              <span className="as-lbl">Topics</span>
+            </div>
           </div>
 
           {stats.debates > 0 && (
-            <div className="stats-row">
-              <div className="stat-card">
-                <span className="val red">{stats.debates}</span>
-                <span className="lbl">Debates</span>
+            <div style={{ marginTop: "28px" }}>
+              <p className="section-label">Your record</p>
+              <div className="stats-row">
+                <div className="stat-card">
+                  <span className="val red">{stats.debates}</span>
+                  <span className="lbl">Debates</span>
+                </div>
+                <div className="stat-card">
+                  <span className="val green">{stats.wins}</span>
+                  <span className="lbl">Wins</span>
+                </div>
+                <div className="stat-card">
+                  <span className="val gold">{stats.bestScore || "—"}</span>
+                  <span className="lbl">Best Score</span>
+                </div>
+                <div className="stat-card">
+                  <span className="val">{Math.round((stats.wins / stats.debates) * 100)}%</span>
+                  <span className="lbl">Win Rate</span>
+                </div>
               </div>
-              <div className="stat-card">
-                <span className="val green">{stats.wins}</span>
-                <span className="lbl">Wins</span>
-              </div>
-              <div className="stat-card">
-                <span className="val gold">{stats.bestScore || "—"}</span>
-                <span className="lbl">Best Score</span>
-              </div>
-              <div className="stat-card">
-                <span className="val">{Math.round((stats.wins / stats.debates) * 100)}%</span>
-                <span className="lbl">Win Rate</span>
-              </div>
+              {nemesisBot && (
+                <div className="nemesis-card">
+                  <div className="nemesis-icon">{nemesisBot.icon}</div>
+                  <div>
+                    <div className="nemesis-name">{nemesisBot.name}</div>
+                    <div className="nemesis-sub">{nemesisBot.losses} loss{nemesisBot.losses !== 1 ? "es" : ""} · Unfinished business</div>
+                  </div>
+                  <button className="nemesis-rematch" onClick={() => { setSelectedAI(nemesisBot.id); setSetupStep(1); setScreen("setup"); }}>
+                    Rematch →
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
