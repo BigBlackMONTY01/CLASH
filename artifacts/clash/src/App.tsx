@@ -259,10 +259,8 @@ function getScoreColor(s: number) {
   return "var(--red)";
 }
 
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${BASE}/api${path}`, {
+  const res = await fetch(`/api${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
