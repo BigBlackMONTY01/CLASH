@@ -338,6 +338,93 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .replay-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);}
 .replay-sub span{color:var(--text);}
 
+/* === MOBILE === */
+@media (max-width:520px){
+  .app{padding:12px 14px 60px;}
+  .nav{margin-bottom:24px;}
+  .logo{font-size:28px;letter-spacing:3px;}
+  .logo::after{font-size:8px;right:-42px;}
+  .nav-rank{font-size:11px;}
+
+  .home-hero{padding:8px 0 28px;}
+  .home-title{font-size:clamp(44px,14vw,72px);}
+  .home-sub{font-size:15px;margin-bottom:24px;}
+  .home-cta{gap:8px;}
+
+  .btn{font-size:13px;letter-spacing:2px;padding:12px 20px;}
+
+  .section-label{font-size:10px;letter-spacing:3px;margin-bottom:12px;}
+
+  .ai-grid{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:24px;}
+  .ai-card{padding:14px 10px;}
+  .ai-card .ai-icon{font-size:26px;margin-bottom:6px;}
+  .ai-card .ai-name{font-size:13px;}
+  .ai-card .ai-desc{font-size:11px;}
+
+  .topic-grid{grid-template-columns:1fr;gap:8px;margin-bottom:16px;}
+  .topic-card{padding:12px 14px;}
+  .topic-card .t-text{font-size:14px;}
+
+  .rounds-pick{gap:6px;}
+  .rounds-btn{padding:10px 4px;font-size:22px;}
+
+  .side-pick{gap:8px;margin-bottom:20px;}
+  .side-btn{padding:16px 10px;}
+  .side-btn .side-icon{font-size:22px;margin-bottom:6px;}
+  .side-btn .side-label{font-size:17px;}
+
+  .arena-header{padding:10px 12px;margin-bottom:14px;}
+  .arena-topic{font-size:13px;margin:0 8px;}
+  .round-badge{font-size:18px;}
+
+  .messages{min-height:200px;max-height:280px;gap:10px;margin-bottom:12px;}
+  .msg-bubble{max-width:85%;}
+  .msg-text{font-size:14px;padding:10px 12px;}
+  .msg-avatar{width:30px;height:30px;font-size:14px;}
+
+  .debate-input{font-size:14px;padding:12px;}
+  .timer-countdown{font-size:24px;min-width:36px;}
+
+  .verdict-card{padding:18px 16px;margin-bottom:14px;}
+  .verdict-title{font-size:36px;}
+  .verdict-header{margin-bottom:18px;}
+  .score-breakdown{gap:8px;margin-bottom:16px;}
+  .score-pill{padding:10px 8px;}
+  .score-pill .sp-val{font-size:28px;}
+
+  .matchmaking{min-height:50vh;}
+  .mf-vs-card{padding:14px 16px;gap:10px;}
+  .mf-icon{font-size:28px;}
+  .mf-countdown{font-size:72px;}
+
+  .gauntlet-bots{grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:20px;}
+  .gauntlet-bot-card{padding:10px 6px;}
+  .gauntlet-bot-card .gb-icon{font-size:22px;margin-bottom:4px;}
+  .gauntlet-bot-card .gb-name{font-size:11px;}
+
+  .gauntlet-progress{gap:4px;margin-bottom:20px;}
+  .gp-bot{padding:8px 4px;}
+  .gp-bot .gp-icon{font-size:16px;}
+  .gp-bot .gp-score{font-size:13px;}
+
+  .gauntlet-final-grid{grid-template-columns:1fr;gap:8px;}
+
+  .stats-row{gap:8px;margin-bottom:28px;}
+  .stat-card{padding:12px 14px;}
+  .stat-card .val{font-size:26px;}
+
+  .lb-row{gap:10px;padding:12px;}
+  .lb-score{font-size:20px;}
+
+  .share-toast{font-size:11px;padding:8px 16px;bottom:16px;}
+}
+@media (max-width:360px){
+  .ai-grid{grid-template-columns:1fr 1fr;}
+  .gauntlet-bots{grid-template-columns:repeat(2,1fr);}
+  .mf-vs-card{padding:10px 12px;}
+  .messages{max-height:240px;}
+}
+
 /* === GAUNTLET === */
 .gauntlet-bots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px;}
 .gauntlet-bot-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 12px;text-align:center;}

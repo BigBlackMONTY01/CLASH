@@ -64,7 +64,14 @@ export default defineConfig({
     host: "0.0.0.0",
     allowedHosts: true,
     watch: {
-      ignored: ["**/api-server/dist/**", "**/api-server/node_modules/**"],
+      usePolling: false,
+      ignored: [
+        "**/api-server/**",
+        "**/lecture-flow/**",
+        "**/mockup-sandbox/**",
+        "**/attached_assets/**",
+        "**/.git/**",
+      ],
     },
     fs: {
       strict: true,
