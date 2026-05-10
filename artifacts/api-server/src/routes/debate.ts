@@ -41,19 +41,7 @@ function bool(v: unknown): boolean | null {
   return typeof v === "boolean" ? v : null;
 }
 
-// POST /api/debate/start — AI opens the debate
-router.post("/debate/start", async (req, res) => {
-  const { personality, topic, userSide, oppSide, totalRounds } = req.body as Record<string, unknown>;
-  if (!str(personality) || !str(topic) || !str(userSide) || !str(oppSide) || !num(totalRounds)) {
-    res.status(400).json({ error: "Invalid body" });
-    return;
-  }
-
-  const system = `${personality as string}
-
-You are debating the topic: "${topic as string}"
-You are arguing ${oppSide as string} this statement. The user is arguing ${userSide as string}.
-This is round 1 of ${totalRounds as number}. Open the debate with your opening argument. Be sharp, confident, and start the clash immediately. Keep it to 3-4 sentences. Do NOT say "Round 1" or any meta commentary. Just argue.
+const FORMATTING = `
 
 CRITICAL FORMATTING RULES — violating these will invalidate your response:
 - Write in plain conversational prose only. No markdown of any kind.
@@ -61,6 +49,42 @@ CRITICAL FORMATTING RULES — violating these will invalidate your response:
 - Never use em-dashes (—) or en-dashes (–). Use commas or periods instead.
 - Never use bullet points, numbered lists, or headers.
 - Sound like a real person speaking, not a formatted document.`;
+
+function difficultyInstructions(diff: string): string {
+  switch (diff) {
+    case "easy":
+      return `
+DIFFICULTY — EASY: You argue with passion but loosely. Occasionally overstate your case or go off on a colorful tangent. You can be countered with a clear, direct rebuttal. You sometimes half-concede a point before doubling down. Keep it entertaining and human-feeling.`;
+    case "medium":
+      return `
+DIFFICULTY — MEDIUM: You argue with structure and confidence. You use rhetorical techniques, reframe the user's points subtly, and appeal to common-sense. You do not give ground easily, but you are beatable with a well-reasoned argument.`;
+    case "hard":
+      return `
+DIFFICULTY — HARD: You are relentless and precise. You identify the exact weakest link in the user's argument and attack it directly. You ask sharp rhetorical questions that force the user to defend their assumptions. You never give an inch and your logic is airtight. The user must work hard to land a point.`;
+    case "extreme":
+      return `
+DIFFICULTY — EXTREME: You are surgical and merciless. You name specific logical fallacies the user commits. You demand concrete evidence for every claim. You treat vague assertions as automatic losses. Your responses are calm, cold, and devastating. Only an exceptionally well-argued, evidence-based case can score against you.`;
+    default:
+      return "";
+  }
+}
+
+// POST /api/debate/start — AI opens the debate
+router.post("/debate/start", async (req, res) => {
+  const { personality, topic, userSide, oppSide, totalRounds, difficulty } = req.body as Record<string, unknown>;
+  if (!str(personality) || !str(topic) || !str(userSide) || !str(oppSide) || !num(totalRounds)) {
+    res.status(400).json({ error: "Invalid body" });
+    return;
+  }
+
+  const diff = str(difficulty) ?? "medium";
+
+  const system = `${personality as string}
+${difficultyInstructions(diff)}
+
+You are debating the topic: "${topic as string}"
+You are arguing ${oppSide as string} this statement. The user is arguing ${userSide as string}.
+This is round 1 of ${totalRounds as number}. Open the debate with your opening argument. Be sharp, confident, and start the clash immediately. Keep it to 3-4 sentences. Do NOT say "Round 1" or any meta commentary. Just argue.${FORMATTING}`;
 
   try {
     const text = await claudeText(system, "Begin the debate with your opening argument.");
@@ -73,7 +97,7 @@ CRITICAL FORMATTING RULES — violating these will invalidate your response:
 
 // POST /api/debate/round — Score user arg + get AI response
 router.post("/debate/round", async (req, res) => {
-  const { personality, topic, userSide, oppSide, messages, userArgument, round, totalRounds, isLastRound } =
+  const { personality, topic, userSide, oppSide, messages, userArgument, round, totalRounds, isLastRound, difficulty } =
     req.body as Record<string, unknown>;
 
   if (
@@ -85,14 +109,19 @@ router.post("/debate/round", async (req, res) => {
     return;
   }
 
+  const diff = str(difficulty) ?? "medium";
+
   try {
     const scorePrompt = `You are an impartial debate judge. Score the user's argument on a scale of 0-100.
 
 Topic: "${topic as string}"
 User is arguing: ${userSide as string}
 Round: ${round as number} of ${totalRounds as number}
+Opponent difficulty: ${diff}
 
 User's argument: "${userArgument as string}"
+
+Scoring note: for "hard" and "extreme" difficulty opponents, be a stricter judge — weak, vague, or unsupported arguments should score lower than they would against easier opponents. Strong, evidence-backed, logically sound arguments should still score well.
 
 Respond ONLY with a JSON object, no markdown:
 {"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"strongest point in one sentence","weak":"weakest point in one sentence"}`;
@@ -115,17 +144,19 @@ Respond ONLY with a JSON object, no markdown:
       content: m.text,
     }));
 
-    const formatting = `\n\nCRITICAL FORMATTING RULES — violating these will invalidate your response:\n- Write in plain conversational prose only. No markdown of any kind.\n- Never use asterisks (*word* or **word**) for emphasis.\n- Never use em-dashes (—) or en-dashes (–). Use commas or periods instead.\n- Never use bullet points, numbered lists, or headers.\n- Sound like a real person speaking, not a formatted document.`;
+    const diffInstr = difficultyInstructions(diff);
 
     const systemResp = (isLastRound as boolean)
       ? `${personality as string}
+${diffInstr}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-This is the FINAL ROUND. Give a powerful closing argument that wraps up your position. 3-4 sentences maximum. Be decisive.${formatting}`
+This is the FINAL ROUND. Give a powerful closing argument that wraps up your position. 3-4 sentences maximum. Be decisive and land your strongest point.${FORMATTING}`
       : `${personality as string}
+${diffInstr}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-Round ${(round as number) + 1} of ${totalRounds as number}. Respond directly to the user's last argument. Counter it sharply. 3-4 sentences.${formatting}`;
+Round ${(round as number) + 1} of ${totalRounds as number}. Respond directly to the user's last argument. Counter it sharply according to your difficulty level. 3-4 sentences.${FORMATTING}`;
 
     const aiText = await claudeConversation(systemResp, [
       ...history,
