@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap');`;
 
@@ -215,15 +215,21 @@ border-radius:var(--radius);padding:12px 16px;color:#ff6b6b;font-size:14px;
 margin-bottom:16px;white-space:pre-wrap;word-break:break-all;}
 
 .divider{height:1px;background:var(--border);margin:32px 0;}
+
+.timer-bar{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.timer-countdown{font-family:'Bebas Neue',sans-serif;font-size:30px;min-width:44px;text-align:center;transition:color 0.3s;line-height:1;}
+.timer-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.timer-fill{height:100%;border-radius:2px;transition:width 1s linear,background 0.5s;}
+.timer-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
 `;
 
 const AI_OPPONENTS = [
-  { id: "professor", icon: "🎓", name: "The Professor", desc: "Calm, methodical. Dismantles logic with academic precision.", diff: "medium", diffLabel: "Medium", personality: "You are a calm, highly intelligent academic debater. You cite logic and reasoning, speak in measured tones, and systematically dismantle weak arguments. You never get emotional. You are polite but devastating." },
-  { id: "politician", icon: "🏛️", name: "The Politician", desc: "Dodges, pivots, and spins. Never directly admits fault.", diff: "medium", diffLabel: "Medium", personality: "You are a slippery politician-style debater. You deflect, reframe questions, use emotional rhetoric, appeal to broad audiences, and never directly admit you're wrong. You pivot masterfully." },
-  { id: "prosecutor", icon: "⚖️", name: "The Prosecutor", desc: "Aggressive cross-examiner. Destroys weak logic ruthlessly.", diff: "hard", diffLabel: "Hard", personality: "You are an aggressive, relentless prosecutor. You find the weakest point in every argument and hammer it. You ask piercing rhetorical questions and never let weak logic slide. You are intense and relentless." },
-  { id: "philosopher", icon: "🔮", name: "The Philosopher", desc: "Questions your assumptions. Makes you doubt everything.", diff: "hard", diffLabel: "Hard", personality: "You are a Socratic philosopher debater. You question the user's fundamental assumptions, expose logical fallacies, and make them doubt their own premises. You answer questions with questions. You are unsettling and deep." },
-  { id: "troll", icon: "😈", name: "The Devil", desc: "Chaotic. Takes the most extreme opposing position always.", diff: "easy", diffLabel: "Easy", personality: "You are a chaotic devil's advocate who takes the most extreme, provocative opposing position possible. You are intentionally over-the-top but make surprisingly sharp points. You are fun but hard to pin down." },
-  { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Data obsessed. Demands evidence. Fact-checks everything.", diff: "extreme", diffLabel: "Extreme", personality: "You are a rigorous fact-checker and debunker. You demand sources, cite statistics, and dismantle arguments that lack evidence. You are skeptical of everything and can spot unsupported claims instantly. You are surgical and unforgiving." },
+  { id: "professor", icon: "🎓", name: "The Professor", desc: "Calm, methodical. Dismantles logic with academic precision.", diff: "medium", diffLabel: "Medium", timer: 60, personality: "You are a calm, highly intelligent academic debater. You cite logic and reasoning, speak in measured tones, and systematically dismantle weak arguments. You never get emotional. You are polite but devastating." },
+  { id: "politician", icon: "🏛️", name: "The Politician", desc: "Dodges, pivots, and spins. Never directly admits fault.", diff: "medium", diffLabel: "Medium", timer: 60, personality: "You are a slippery politician-style debater. You deflect, reframe questions, use emotional rhetoric, appeal to broad audiences, and never directly admit you're wrong. You pivot masterfully." },
+  { id: "prosecutor", icon: "⚖️", name: "The Prosecutor", desc: "Aggressive cross-examiner. Destroys weak logic ruthlessly.", diff: "hard", diffLabel: "Hard", timer: 45, personality: "You are an aggressive, relentless prosecutor. You find the weakest point in every argument and hammer it. You ask piercing rhetorical questions and never let weak logic slide. You are intense and relentless." },
+  { id: "philosopher", icon: "🔮", name: "The Philosopher", desc: "Questions your assumptions. Makes you doubt everything.", diff: "hard", diffLabel: "Hard", timer: 45, personality: "You are a Socratic philosopher debater. You question the user's fundamental assumptions, expose logical fallacies, and make them doubt their own premises. You answer questions with questions. You are unsettling and deep." },
+  { id: "troll", icon: "😈", name: "The Devil", desc: "Chaotic. Takes the most extreme opposing position always.", diff: "easy", diffLabel: "Easy", timer: 90, personality: "You are a chaotic devil's advocate who takes the most extreme, provocative opposing position possible. You are intentionally over-the-top but make surprisingly sharp points. You are fun but hard to pin down." },
+  { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Data obsessed. Demands evidence. Fact-checks everything.", diff: "extreme", diffLabel: "Extreme", timer: 30, personality: "You are a rigorous fact-checker and debunker. You demand sources, cite statistics, and dismantle arguments that lack evidence. You are skeptical of everything and can spot unsupported claims instantly. You are surgical and unforgiving." },
 ];
 
 const TOPICS = [
@@ -283,13 +289,14 @@ export default function App() {
   const [selectedSide, setSelectedSide] = useState<"for" | "against" | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [roundScores, setRoundScores] = useState<RoundScore[]>([]);
-  const [currentRound, setCurrentRound] = useState(1);
   const [inputText, setInputText] = useState("");
   const [thinking, setThinking] = useState(false);
   const [error, setError] = useState("");
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [stats, setStats] = useState<Stats>({ wins: 0, debates: 0, bestScore: 0 });
   const [lbTab, setLbTab] = useState("global");
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -305,12 +312,46 @@ export default function App() {
 
   const ai = AI_OPPONENTS.find((a) => a.id === selectedAI);
 
+  // Derive current round from completed scores — always accurate, never stale
+  const currentRound = Math.min(roundScores.length + 1, MAX_ROUNDS);
+  const roundTimerDuration = ai?.timer ?? 60;
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setTimeLeft(null);
+  }, []);
+
+  // Start countdown whenever the input becomes available
+  useEffect(() => {
+    const inputVisible = screen === "debate" && !thinking && roundScores.length < MAX_ROUNDS;
+    if (inputVisible) {
+      stopTimer();
+      setTimeLeft(roundTimerDuration);
+      timerRef.current = setInterval(() => {
+        setTimeLeft((t) => {
+          if (t === null || t <= 1) {
+            clearInterval(timerRef.current!);
+            timerRef.current = null;
+            return 0;
+          }
+          return t - 1;
+        });
+      }, 1000);
+    } else {
+      stopTimer();
+    }
+    return () => stopTimer();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [thinking, screen, roundScores.length]);
+
   const startDebate = async () => {
     if (!ai || !selectedTopic || !selectedSide) return;
     setScreen("debate");
     setMessages([]);
     setRoundScores([]);
-    setCurrentRound(1);
     setError("");
     setThinking(true);
 
@@ -333,11 +374,16 @@ export default function App() {
     }
   };
 
-  const submitArgument = async () => {
-    if (!inputText.trim() || thinking || !ai || !selectedTopic || !selectedSide) return;
-    const userMsg = inputText.trim();
+  const submitArgument = useCallback(async (forcedText?: string) => {
+    const userMsg = (forcedText ?? inputText).trim();
+    if (!userMsg || thinking || !ai || !selectedTopic || !selectedSide) return;
+    stopTimer();
     setInputText("");
     setError("");
+
+    const completedRounds = roundScores.length;
+    const roundNumber = completedRounds + 1;
+    const isLastRound = roundNumber >= MAX_ROUNDS;
 
     const newMessages: Message[] = [...messages, { role: "user", text: userMsg }];
     setMessages(newMessages);
@@ -345,7 +391,6 @@ export default function App() {
 
     const sideLabel = selectedSide === "for" ? "FOR" : "AGAINST";
     const oppSide = selectedSide === "for" ? "AGAINST" : "FOR";
-    const isLastRound = currentRound >= MAX_ROUNDS;
 
     try {
       const { aiText, roundScore } = await apiPost<{
@@ -358,26 +403,34 @@ export default function App() {
         oppSide,
         messages: newMessages.slice(0, -1),
         userArgument: userMsg,
-        round: currentRound,
+        round: roundNumber,
         totalRounds: MAX_ROUNDS,
         isLastRound,
       });
 
-      const newRoundScores: RoundScore[] = [...roundScores, { round: currentRound, ...roundScore }];
+      const newRoundScores: RoundScore[] = [...roundScores, { round: roundNumber, ...roundScore }];
       setRoundScores(newRoundScores);
       setMessages([...newMessages, { role: "ai", text: aiText }]);
 
       if (isLastRound) {
         setTimeout(() => generateVerdict(newRoundScores, newMessages), 800);
-      } else {
-        setCurrentRound((r) => r + 1);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
       setThinking(false);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputText, thinking, ai, selectedTopic, selectedSide, roundScores, messages, stopTimer]);
+
+  // Auto-submit when timer expires
+  useEffect(() => {
+    if (timeLeft === 0 && screen === "debate" && !thinking && roundScores.length < MAX_ROUNDS) {
+      const fallback = inputText.trim() || "I concede this round.";
+      submitArgument(fallback);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft]);
 
   const generateVerdict = async (scores: RoundScore[], _msgs: Message[]) => {
     const avgScore = Math.round(scores.reduce((s, r) => s + r.score, 0) / scores.length);
@@ -416,6 +469,7 @@ export default function App() {
   };
 
   const reset = () => {
+    stopTimer();
     setScreen("home");
     setSetupStep(0);
     setSelectedAI(null);
@@ -634,8 +688,25 @@ export default function App() {
 
           {error && <div className="error-banner">{error}</div>}
 
-          {!thinking && currentRound <= MAX_ROUNDS && roundScores.length < currentRound && (
+          {!thinking && roundScores.length < MAX_ROUNDS && (
             <div className="input-area">
+              {timeLeft !== null && (() => {
+                const pct = (timeLeft / roundTimerDuration) * 100;
+                const color = timeLeft > roundTimerDuration * 0.5
+                  ? "var(--green)"
+                  : timeLeft > roundTimerDuration * 0.25
+                  ? "var(--gold)"
+                  : "var(--red)";
+                return (
+                  <div className="timer-bar">
+                    <span className="timer-countdown" style={{ color }}>{timeLeft}</span>
+                    <div className="timer-track">
+                      <div className="timer-fill" style={{ width: `${pct}%`, background: color }} />
+                    </div>
+                    <span className="timer-label">{ai?.diffLabel}</span>
+                  </div>
+                );
+              })()}
               <textarea
                 className="debate-input"
                 rows={4}
@@ -649,7 +720,7 @@ export default function App() {
                 <span className="char-count">{inputText.length}/500 · Ctrl+Enter to submit</span>
                 <div className="submit-row">
                   <button className="btn btn-ghost" onClick={reset}>Forfeit</button>
-                  <button className="btn btn-primary" disabled={!inputText.trim()} onClick={submitArgument}>
+                  <button className="btn btn-primary" disabled={!inputText.trim()} onClick={() => submitArgument()}>
                     Submit Argument →
                   </button>
                 </div>
