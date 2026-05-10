@@ -32,6 +32,16 @@ async function claudeConversation(
   return block.text;
 }
 
+function responseTokens(diff: string): number {
+  switch (diff) {
+    case "easy":    return 750;
+    case "medium":  return 420;
+    case "hard":    return 520;
+    case "extreme": return 260;
+    default:        return 500;
+  }
+}
+
 function str(v: unknown): string | null {
   return typeof v === "string" && v.trim().length > 0 ? v : null;
 }
@@ -73,43 +83,43 @@ function difficultyInstructions(diff: string): string {
   switch (diff) {
     case "easy":
       return `
-DIFFICULTY — EASY (argument quality + response style — follow precisely):
-RESPONSE STYLE: Write 3-5 sentences. Be conversational and a little rambling — think loud bar argument, not a debate club. Use relatable examples and let your personality come through before landing your point.
-- Make surface-level arguments that sound confident but lack depth or evidence.
-- Rely on vibes, anecdotes, and weak generalizations. Avoid citing facts or building tight logic.
-- Occasionally miss obvious logical holes in the user's argument — let some bad points slide unchallenged.
-- Sometimes overclaim, then walk it back slightly before doubling down in a different direction.
-- Your arguments are genuinely beatable with a clear, direct rebuttal. A competent debater will land points.
-- Stumble occasionally. Be colorful. Prioritize entertainment over airtight reasoning.`;
+DIFFICULTY — EASY:
+HARD RESPONSE LIMIT: 3 to 5 sentences. Count them. Stop at 5. Not 6, not 7. Exactly 3–5.
+Style: Conversational, a little rambling — loud bar argument energy, not debate club. Let personality bleed through before landing the point.
+- Make surface-level, confident-sounding arguments with no real depth or evidence behind them.
+- Rely on vibes, anecdotes, weak generalizations. Avoid tight logic or real facts.
+- Miss some obvious holes in the user's argument — let a few bad points slide unchallenged.
+- Occasionally overclaim, walk it back, then double down in a different direction.
+- Be entertaining and colorful. A competent debater can beat you with one clear rebuttal.`;
     case "medium":
       return `
-DIFFICULTY — MEDIUM (argument quality + response style — follow precisely):
-RESPONSE STYLE: Write 2-3 sentences. Structured and clear — one thesis, one supporting point, one closing shot. No rambling.
+DIFFICULTY — MEDIUM:
+HARD RESPONSE LIMIT: 2 to 3 sentences. Count them. Stop at 3. One thesis, one supporting point, one closing shot.
+Style: Structured and clear. No rambling. Every sentence earns its place.
 - Make solid, competent arguments with clear structure and coherent reasoning.
 - Notice obvious weaknesses in the user's argument but miss subtle logical gaps.
-- Use rhetorical techniques, reframe the user's points subtly, and appeal to common sense.
-- Do not give ground easily, but a strong well-reasoned counter will make you implicitly acknowledge it.
-- You are beatable with a well-structured, evidence-backed argument. Bad arguments from the user should lose.`;
+- Use rhetorical techniques, reframe the user's points subtly, appeal to common sense.
+- Do not give ground easily, but a strong well-reasoned counter will make you implicitly acknowledge it.`;
     case "hard":
       return `
-DIFFICULTY — HARD (argument quality + response style — follow precisely):
-RESPONSE STYLE: Write 3-5 sentences. Sharp and dense — each sentence attacks a different angle of the user's argument. Build a tight multi-layered counter. No filler, no padding.
-- Make sharp, targeted arguments that attack the single weakest link in what the user just said.
-- Actively track the full conversation. If the user contradicts an earlier point, call it out directly by name.
-- Ask one sharp rhetorical question per response that forces the user to defend an assumption they haven't addressed.
-- Never concede anything without immediately pivoting to a stronger position.
-- Your logic is tight and builds across rounds. Vague or unsupported arguments from the user should lose clearly.
-- Require genuine effort to beat. Be relentless and precise.`;
+DIFFICULTY — HARD:
+HARD RESPONSE LIMIT: 3 to 5 sentences. Count them. Stop at 5. Each sentence must attack a different angle. No filler, no padding, no warmup.
+Style: Sharp and dense. Multi-layered. Every word lands a point.
+- Attack the single weakest link in what the user just said — not the whole argument, the weakest link.
+- Track the full conversation. If the user contradicts an earlier point, call it out by name.
+- Ask exactly one sharp rhetorical question that forces the user to defend an assumption they skipped.
+- Never concede without immediately pivoting to a stronger position.
+- Require genuine effort to beat. Vague or unsupported arguments from the user should lose clearly.`;
     case "extreme":
       return `
-DIFFICULTY — EXTREME (argument quality + response style — follow precisely):
-RESPONSE STYLE: Write 2-4 sentences. Maximum aggression, minimum words. Name the flaw, destroy it, move on. Every extra word is weakness.
-- Be surgical and devastating. Identify the exact logical fallacy the user just committed and name it explicitly.
-- Demand specific evidence for every claim the user makes. Treat assertions without data as automatic losses.
-- Track the full conversation relentlessly. Expose every contradiction, shifted goalpost, and unanswered question.
-- Never give ground. Your logic is airtight and your memory is perfect.
-- The user must bring exceptional reasoning, concrete data, and flawless structure to score a single point.
-- Be cold, precise, and utterly unfazed. You have seen every argument before and found it wanting.`;
+DIFFICULTY — EXTREME:
+HARD RESPONSE LIMIT: 2 to 4 sentences. MAXIMUM. Count them. If you write 5 you have already failed. Cut to the bone.
+Style: Cold, surgical, annihilating. Name the flaw. Destroy it. Move on. Every extra word is weakness.
+- Identify the exact logical fallacy the user just committed and name it explicitly (ad hominem, straw man, etc.).
+- Demand specific evidence for every claim. Assertions without data are automatic concessions.
+- Track every contradiction, shifted goalpost, and unanswered question across all rounds. Expose them by name.
+- Never give ground. Your logic is airtight. Your memory is perfect. You are utterly unfazed.
+- The user must bring exceptional reasoning AND concrete data to score a single point. Anything less fails.`;
     default:
       return "";
   }
@@ -125,15 +135,17 @@ router.post("/debate/start", async (req, res) => {
 
   const diff = str(difficulty) ?? "medium";
 
+  const tokens = responseTokens(diff);
+
   const system = `${personality as string}
 ${difficultyInstructions(diff)}
 
 You are debating the topic: "${topic as string}"
 You are arguing ${oppSide as string} this statement. The user is arguing ${userSide as string}.
-This is a ${totalRounds as number}-round debate. Open with a brief in-character intro taunt or provocation (one sharp sentence), then immediately launch into your opening argument. Follow your difficulty's RESPONSE STYLE sentence count. Do NOT say "Round 1" or any meta-commentary. Just start.${FORMATTING}`;
+This is a ${totalRounds as number}-round debate. Open with a brief in-character intro taunt or provocation (one sharp sentence), then immediately launch into your opening argument. Obey your HARD RESPONSE LIMIT above. Do NOT say "Round 1" or any meta-commentary. Just start.${FORMATTING}`;
 
   try {
-    const text = await claudeText(system, "Open the debate.", 700);
+    const text = await claudeText(system, "Open the debate.", tokens);
     res.json({ text });
   } catch (err) {
     req.log.error({ err }, "debate/start failed");
@@ -207,23 +219,24 @@ Respond ONLY with valid JSON, no markdown:
     }));
 
     const diffInstr = difficultyInstructions(diff);
+    const tokens = responseTokens(diff);
 
     const systemResp = (isLastRound as boolean)
       ? `${personality as string}
 ${diffInstr}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-This is your FINAL closing argument. Make it decisive and land your strongest point. Follow your difficulty's RESPONSE STYLE sentence count.${FORMATTING}`
+This is your FINAL closing argument. Make it decisive and land your strongest point. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`
       : `${personality as string}
 ${diffInstr}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-Counter the user's last argument directly and sharply. Follow your difficulty's RESPONSE STYLE sentence count.${FORMATTING}`;
+Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`;
 
     const aiText = await claudeConversation(systemResp, [
       ...history,
       { role: "user", content: userArgument as string },
-    ], 700);
+    ], tokens);
 
     res.json({ aiText, roundScore });
   } catch (err) {

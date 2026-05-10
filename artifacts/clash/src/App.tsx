@@ -146,18 +146,24 @@ text-transform:uppercase;color:var(--text-dim);white-space:nowrap;}
 .input-area{position:relative;}
 .timer-bar{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
 .timer-countdown{font-family:'Bebas Neue',sans-serif;font-size:30px;min-width:44px;text-align:center;transition:color 0.3s;line-height:1;}
+.timer-countdown.pulse{animation:timerPulse 0.5s ease infinite alternate;}
+@keyframes timerPulse{from{opacity:1;transform:scale(1);}to{opacity:0.6;transform:scale(1.08);}}
 .timer-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
 .timer-fill{height:100%;border-radius:2px;transition:width 1s linear,background 0.5s;}
 .timer-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+.timer-extreme-badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#a855f7;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.3);border-radius:3px;padding:2px 7px;white-space:nowrap;}
 .debate-input{width:100%;background:var(--surface);border:2px solid var(--border);
 border-radius:var(--radius);padding:16px;font-family:'Barlow',sans-serif;font-size:15px;
 color:var(--text);resize:none;outline:none;transition:border-color 0.2s;line-height:1.5;}
 .debate-input:focus{border-color:var(--blue);}
+.debate-input.extreme-urgent{border-color:var(--red) !important;animation:urgentBorder 0.6s ease infinite alternate;}
+@keyframes urgentBorder{from{box-shadow:0 0 0 0 rgba(230,57,70,0);}to{box-shadow:0 0 12px 2px rgba(230,57,70,0.35);}}
 .debate-input::placeholder{color:var(--text-dim);}
 .input-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
 .char-count{font-size:12px;color:var(--text-dim);transition:color 0.2s;}
 .char-count.warn{color:var(--gold);}
 .char-count.danger{color:var(--red);}
+.char-over{font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;color:var(--red);margin-left:4px;}
 .submit-row{display:flex;gap:8px;}
 
 .thinking-row{display:flex;align-items:center;gap:10px;padding:12px 16px;color:var(--text-dim);font-size:14px;}
@@ -497,8 +503,9 @@ export default function App() {
 
   const ai = AI_OPPONENTS.find((a) => a.id === selectedAI);
   const currentRound = Math.min(roundScores.length + 1, selectedRounds);
-  const roundTimerDuration = ai?.timer ?? 60;
-  const charLimit = ai?.diff === "easy" ? 1000 : ai?.diff === "extreme" ? 600 : ai?.diff === "hard" ? 700 : 800;
+  const roundTimerDuration = ai?.diff === "extreme" ? 45 : ai?.timer ?? 60;
+  const charLimit = ai?.diff === "easy" ? 1000 : ai?.diff === "extreme" ? 600 : ai?.diff === "hard" ? 750 : 850;
+  const isExtreme = ai?.diff === "extreme";
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -978,44 +985,62 @@ export default function App() {
             <div className="input-area">
               {timerStarted && timeLeft !== null && (() => {
                 const pct = (timeLeft / roundTimerDuration) * 100;
-                const color = timeLeft > roundTimerDuration * 0.5
-                  ? "var(--green)"
-                  : timeLeft > roundTimerDuration * 0.25
+                const isUrgent = timeLeft <= 15;
+                const isCritical = timeLeft <= 7;
+                const color = isCritical
+                  ? "var(--red)"
+                  : isUrgent
                   ? "var(--gold)"
-                  : "var(--red)";
+                  : "var(--green)";
                 return (
                   <div className="timer-bar">
-                    <span className="timer-countdown" style={{ color }}>{timeLeft}</span>
+                    <span className={`timer-countdown${isCritical ? " pulse" : ""}`} style={{ color }}>{timeLeft}</span>
                     <div className="timer-track">
                       <div className="timer-fill" style={{ width: `${pct}%`, background: color }} />
                     </div>
-                    <span className="timer-label">{ai?.diffLabel}</span>
+                    {isExtreme
+                      ? <span className="timer-extreme-badge">{isCritical ? "⚠ SUBMIT NOW" : isUrgent ? "EXTREME" : "EXTREME"}</span>
+                      : <span className="timer-label">{ai?.diffLabel}</span>
+                    }
                   </div>
                 );
               })()}
               <textarea
                 ref={inputRef}
-                className="debate-input"
+                className={`debate-input${isExtreme && timerStarted && timeLeft !== null && timeLeft <= 10 ? " extreme-urgent" : ""}`}
                 rows={4}
                 value={inputText}
                 onChange={(e) => {
                   const val = e.target.value;
-                  if (val.length <= charLimit) setInputText(val);
+                  setInputText(val);
                   if (!timerStarted && val.length > 0) startResponseTimer();
                 }}
-                placeholder={`Round ${currentRound}: Make your argument… (timer starts when you type)`}
+                placeholder={
+                  isExtreme
+                    ? `Round ${currentRound}: Argue — 45 seconds after you start typing`
+                    : `Round ${currentRound}: Make your argument… (timer starts when you type)`
+                }
                 onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitArgument(); }}
               />
               <div className="input-footer">
                 <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                  <span className={`char-count${inputText.length >= charLimit * 0.95 ? " danger" : inputText.length >= charLimit * 0.8 ? " warn" : ""}`}>
-                    {inputText.length}/{charLimit}
-                    {inputText.length >= Math.floor(charLimit * 0.9) && (
-                      <span style={{ marginLeft: "4px", fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px" }}>
-                        {inputText.length >= charLimit ? "· at limit" : "· near limit"}
+                  {(() => {
+                    const overLimit = inputText.length > charLimit;
+                    const nearLimit = inputText.length >= Math.floor(charLimit * 0.85);
+                    return (
+                      <span className={`char-count${overLimit ? " danger" : nearLimit ? " warn" : ""}`}>
+                        {inputText.length}/{charLimit}
+                        {overLimit && (
+                          <span className="char-over">· {inputText.length - charLimit} over</span>
+                        )}
+                        {!overLimit && nearLimit && (
+                          <span style={{ marginLeft: "4px", fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px" }}>
+                            · near limit
+                          </span>
+                        )}
                       </span>
-                    )}
-                  </span>
+                    );
+                  })()}
                   {!timerStarted && (
                     <button
                       style={{
@@ -1038,7 +1063,11 @@ export default function App() {
                 </div>
                 <div className="submit-row">
                   <button className="btn btn-ghost" onClick={reset}>Forfeit</button>
-                  <button className="btn btn-primary" disabled={!inputText.trim()} onClick={() => submitArgument()}>
+                  <button
+                    className="btn btn-primary"
+                    disabled={!inputText.trim() || inputText.length > charLimit}
+                    onClick={() => submitArgument()}
+                  >
                     Submit →
                   </button>
                 </div>
