@@ -21,12 +21,13 @@ ${FONTS}
   --green:#22c55e;
   --radius:8px;
 }
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;}
 
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
 background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);}
 
-.app{max-width:780px;margin:0 auto;padding:40px 20px 80px;}
+.app{max-width:780px;margin:0 auto;padding:40px 20px 32px;flex:1;width:100%;}
 
 .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:4px;color:var(--text);position:relative;}
@@ -340,7 +341,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 
 /* === MOBILE === */
 @media (max-width:520px){
-  .app{padding:12px 14px 60px;}
+  .app{padding:12px 14px 20px;}
   .nav{margin-bottom:24px;}
   .logo{font-size:28px;letter-spacing:3px;}
   .logo::after{font-size:8px;right:-42px;}
