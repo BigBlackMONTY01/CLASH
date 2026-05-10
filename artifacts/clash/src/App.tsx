@@ -808,9 +808,12 @@ export default function App() {
       setMessages([{ role: "ai", text: result.text }]);
       setScreen("debate");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
-      setScreen("setup");
-      setSetupStep(2);
+      const raw = e instanceof Error ? e.message : "Something went wrong";
+      const isRate = raw.includes("429") || raw.toLowerCase().includes("quota") || raw.toLowerCase().includes("rate");
+      setError(isRate
+        ? "The AI is rate-limited right now. Wait a moment, then tap Retry."
+        : "Couldn't reach the AI. Check your connection and tap Retry.");
+      // Stay on matchmaking screen so the user can retry without losing their setup
     }
   }, [selectedAI, selectedTopic, selectedSide, selectedRounds]);
 
@@ -1327,7 +1330,15 @@ export default function App() {
             </div>
           </div>
 
-          {matchCountdown > 0 ? (
+          {error ? (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "14px", marginTop: "8px", width: "100%", maxWidth: "400px" }}>
+              <div className="error-banner" style={{ width: "100%", textAlign: "center" }}>{error}</div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button className="btn btn-primary" onClick={() => { setError(""); launchMatchmaking(); }}>⟳ Retry</button>
+                <button className="btn btn-ghost" onClick={() => { setError(""); setScreen("setup"); setSetupStep(2); }}>← Back</button>
+              </div>
+            </div>
+          ) : matchCountdown > 0 ? (
             <div key={matchCountdown} className="mf-countdown">{matchCountdown}</div>
           ) : (
             <div className="mf-waiting">

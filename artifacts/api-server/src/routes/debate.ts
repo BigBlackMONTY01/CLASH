@@ -4,13 +4,34 @@ import { anthropic } from "@workspace/integrations-anthropic-ai";
 const router = Router();
 const MODEL = "claude-sonnet-4-6";
 
+async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 4): Promise<T> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (e: any) {
+      lastErr = e;
+      const is429 = e?.status === 429 || String(e?.message ?? "").includes("429");
+      if (is429 && attempt < maxAttempts - 1) {
+        const delay = (attempt + 1) * 4000;
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw lastErr;
+}
+
 async function claudeText(system: string, userMsg: string, maxTokens = 600): Promise<string> {
-  const msg = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: maxTokens,
-    system,
-    messages: [{ role: "user", content: userMsg }],
-  });
+  const msg = await withRetry(() =>
+    anthropic.messages.create({
+      model: MODEL,
+      max_tokens: maxTokens,
+      system,
+      messages: [{ role: "user", content: userMsg }],
+    })
+  );
   const block = msg.content.find((b) => b.type === "text");
   if (!block || block.type !== "text") throw new Error("No text in response");
   return block.text;
@@ -21,12 +42,14 @@ async function claudeConversation(
   messages: { role: "user" | "assistant"; content: string }[],
   maxTokens = 600
 ): Promise<string> {
-  const msg = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: maxTokens,
-    system,
-    messages,
-  });
+  const msg = await withRetry(() =>
+    anthropic.messages.create({
+      model: MODEL,
+      max_tokens: maxTokens,
+      system,
+      messages,
+    })
+  );
   const block = msg.content.find((b) => b.type === "text");
   if (!block || block.type !== "text") throw new Error("No text in response");
   return block.text;
