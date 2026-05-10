@@ -780,6 +780,204 @@ function getScoreColor(s: number) {
   return "var(--red)";
 }
 
+function getRankColorHex(rank: string): string {
+  switch (rank) {
+    case "S": return "#a855f7";
+    case "A": return "#e63946";
+    case "B": return "#22c55e";
+    case "C": return "#f4c542";
+    case "F": return "#ff4655";
+    default:  return "#666666";
+  }
+}
+
+function wrapCanvasText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  lineHeight: number,
+): void {
+  const words = text.split(" ");
+  let line = "";
+  let curY = y;
+  for (const word of words) {
+    const test = line + word + " ";
+    if (ctx.measureText(test).width > maxWidth && line !== "") {
+      ctx.fillText(line.trim(), x, curY);
+      line = word + " ";
+      curY += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  if (line.trim()) ctx.fillText(line.trim(), x, curY);
+}
+
+function generateShareCard(params: {
+  won: boolean;
+  rank: string;
+  avgScore: number;
+  avgLogic: number;
+  avgPersuasion: number;
+  topic: string;
+  opponentName: string;
+  opponentIcon: string;
+  judgeText: string;
+  playerName: string | null;
+}): string {
+  const W = 1080, H = 1080;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d")!;
+  const PAD = 72;
+  const rankColor = getRankColorHex(params.rank);
+  const resultColor = params.won ? "#22c55e" : "#e63946";
+  const glowRgb = params.won ? "34,197,94" : "230,57,70";
+
+  ctx.textBaseline = "alphabetic";
+
+  // — Background
+  ctx.fillStyle = "#0a0a0a";
+  ctx.fillRect(0, 0, W, H);
+
+  // — Atmospheric glow
+  const glow = ctx.createRadialGradient(W / 2, 380, 0, W / 2, 380, 560);
+  glow.addColorStop(0, `rgba(${glowRgb},0.16)`);
+  glow.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  // — Outer border
+  ctx.strokeStyle = "#1e1e1e";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(2, 2, W - 4, H - 4);
+
+  // — CLASH logo
+  ctx.font = "bold 58px Impact, 'Arial Black', sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#f0f0f0";
+  const clW = ctx.measureText("CL").width;
+  const aW  = ctx.measureText("A").width;
+  ctx.fillText("CL", PAD, 96);
+  ctx.fillStyle = "#e63946";
+  ctx.fillText("A", PAD + clW, 96);
+  ctx.fillStyle = "#f0f0f0";
+  ctx.fillText("SH", PAD + clW + aW, 96);
+
+  // — "BETA" badge
+  const bx = PAD + clW + aW + ctx.measureText("SH").width + 14;
+  ctx.fillStyle = "#e63946";
+  ctx.beginPath();
+  ctx.roundRect(bx, 72, 68, 22, 4);
+  ctx.fill();
+  ctx.font = "bold 13px Arial, sans-serif";
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "center";
+  ctx.fillText("BETA", bx + 34, 88);
+
+  // — Player name (top right)
+  if (params.playerName) {
+    ctx.font = "bold 22px Arial, sans-serif";
+    ctx.fillStyle = "#555";
+    ctx.textAlign = "right";
+    ctx.fillText(params.playerName.toUpperCase(), W - PAD, 96);
+  }
+
+  // — Header separator
+  ctx.strokeStyle = "#1e1e1e";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD, 124); ctx.lineTo(W - PAD, 124); ctx.stroke();
+
+  // — Rank badge (circle)
+  const cx = W / 2, cy = 282, radius = 92;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = rankColor + "28";
+  ctx.fill();
+  ctx.strokeStyle = rankColor;
+  ctx.lineWidth = 5;
+  ctx.stroke();
+  ctx.font = "bold 120px Impact, 'Arial Black', sans-serif";
+  ctx.fillStyle = rankColor;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(params.rank, cx, cy + 4);
+  ctx.textBaseline = "alphabetic";
+
+  // — WIN / DEFEATED
+  ctx.font = "bold 100px Impact, 'Arial Black', sans-serif";
+  ctx.fillStyle = resultColor;
+  ctx.textAlign = "center";
+  ctx.fillText(params.won ? "VICTORY" : "DEFEATED", W / 2, 462);
+
+  // — vs opponent
+  ctx.font = "bold 28px Arial, sans-serif";
+  ctx.fillStyle = "#777";
+  ctx.fillText(`vs ${params.opponentIcon}  ${params.opponentName}`, W / 2, 512);
+
+  // — Topic
+  const topic = params.topic.length > 52
+    ? params.topic.slice(0, 52) + "…"
+    : params.topic;
+  ctx.font = "italic 26px Georgia, 'Times New Roman', serif";
+  ctx.fillStyle = "#555";
+  ctx.fillText(`"${topic}"`, W / 2, 558);
+
+  // — Section separator
+  ctx.strokeStyle = "#1e1e1e";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD, 590); ctx.lineTo(W - PAD, 590); ctx.stroke();
+
+  // — Three score columns
+  const cols = [
+    { label: "OVERALL",    val: params.avgScore },
+    { label: "LOGIC",      val: params.avgLogic },
+    { label: "PERSUASION", val: params.avgPersuasion },
+  ];
+  const colW = (W - PAD * 2) / 3;
+  cols.forEach((col, i) => {
+    const sx = PAD + colW * i + colW / 2;
+    const sColor = col.val >= 80 ? "#22c55e" : col.val >= 60 ? "#f4c542" : "#e63946";
+    ctx.font = "bold 96px Impact, 'Arial Black', sans-serif";
+    ctx.fillStyle = sColor;
+    ctx.textAlign = "center";
+    ctx.fillText(String(col.val), sx, 716);
+    ctx.font = "bold 16px Arial, sans-serif";
+    ctx.fillStyle = "#444";
+    ctx.fillText(col.label, sx, 748);
+  });
+
+  // — Section separator
+  ctx.strokeStyle = "#1e1e1e";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD, 776); ctx.lineTo(W - PAD, 776); ctx.stroke();
+
+  // — Judge quote
+  const quote = params.judgeText.length > 130
+    ? params.judgeText.slice(0, 127) + "…"
+    : params.judgeText;
+  ctx.font = "italic 25px Georgia, 'Times New Roman', serif";
+  ctx.fillStyle = "#666";
+  ctx.textAlign = "center";
+  wrapCanvasText(ctx, `"${quote}"`, W / 2, 826, W - PAD * 2.4, 38);
+
+  // — Bottom separator
+  ctx.strokeStyle = "#1e1e1e";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD, 970); ctx.lineTo(W - PAD, 970); ctx.stroke();
+
+  // — URL watermark
+  ctx.font = "bold 20px Arial, sans-serif";
+  ctx.fillStyle = "#2a2a2a";
+  ctx.textAlign = "center";
+  ctx.fillText(window.location.hostname.replace(/^www\./, "").toUpperCase(), W / 2, 1010);
+
+  return canvas.toDataURL("image/png");
+}
+
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, {
     method: "POST",
@@ -1494,6 +1692,44 @@ export default function App() {
     setTimeout(() => setShareToast(""), 3000);
   };
 
+  const shareImage = useCallback(async () => {
+    if (!verdict || !ai || !selectedTopic) return;
+    const dataUrl = generateShareCard({
+      won: verdict.won,
+      rank: verdict.rank,
+      avgScore: verdict.avgScore,
+      avgLogic: verdict.avgLogic,
+      avgPersuasion: verdict.avgPersuasion,
+      topic: selectedTopic.text,
+      opponentName: ai.name,
+      opponentIcon: ai.icon,
+      judgeText: verdict.judgeText,
+      playerName: player?.username ?? null,
+    });
+
+    if (typeof navigator.canShare === "function") {
+      try {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], "clash-result.png", { type: "image/png" });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: `CLASH — Rank ${verdict.rank} ${verdict.won ? "Victory" : "Defeat"}`,
+            text: `I scored ${verdict.avgScore}/100 (Rank ${verdict.rank}) vs ${ai.name} on CLASH`,
+          });
+          return;
+        }
+      } catch { /* user cancelled or unsupported — fall through to download */ }
+    }
+
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = `clash-${verdict.rank}-${verdict.avgScore}.png`;
+    link.click();
+    setShareToast("Image saved!");
+    setTimeout(() => setShareToast(""), 3000);
+  }, [verdict, ai, selectedTopic, player]);
+
   const acceptChallenge = () => {
     if (!sharedResult) return;
     setSelectedAI(sharedResult.opponentId);
@@ -2153,6 +2389,7 @@ export default function App() {
             <button className="btn btn-secondary" onClick={swapSidesRematch}>↕ Swap Sides</button>
             <button className="btn btn-secondary" onClick={() => setScreen("replay")}>📋 Replay</button>
             <button className="btn btn-secondary" onClick={shareResult}>🔗 Share</button>
+            <button className="btn btn-secondary" onClick={shareImage}>📸 Share Card</button>
             <button className="btn btn-ghost" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>New Match</button>
             <button className="btn btn-ghost" onClick={reset}>Home</button>
           </div>
