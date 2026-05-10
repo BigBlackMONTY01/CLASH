@@ -517,6 +517,35 @@ export default function App() {
                   </div>
                 ))}
               </div>
+              <div style={{ marginBottom: "24px" }}>
+                <p className="section-label" style={{ marginBottom: "10px" }}>Or write your own</p>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <input
+                    type="text"
+                    placeholder="e.g. Cats are better than dogs"
+                    maxLength={120}
+                    style={{
+                      flex: 1,
+                      background: "var(--surface)",
+                      border: `2px solid ${selectedTopic?.cat === "Custom" ? "var(--red)" : "var(--border)"}`,
+                      borderRadius: "var(--radius)",
+                      padding: "12px 16px",
+                      fontFamily: "'Barlow', sans-serif",
+                      fontSize: "15px",
+                      color: "var(--text)",
+                      outline: "none",
+                    }}
+                    value={selectedTopic?.cat === "Custom" ? selectedTopic.text : ""}
+                    onChange={(e) => {
+                      if (e.target.value.trim()) {
+                        setSelectedTopic({ cat: "Custom", text: e.target.value });
+                      } else {
+                        setSelectedTopic(null);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <button className="btn btn-ghost" onClick={() => setSetupStep(0)}>← Back</button>
                 <button className="btn btn-primary" disabled={!selectedTopic} onClick={() => setSetupStep(2)}>

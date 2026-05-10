@@ -53,7 +53,14 @@ router.post("/debate/start", async (req, res) => {
 
 You are debating the topic: "${topic as string}"
 You are arguing ${oppSide as string} this statement. The user is arguing ${userSide as string}.
-This is round 1 of ${totalRounds as number}. Open the debate with your opening argument. Be sharp, confident, and start the clash immediately. Keep it to 3-4 sentences. Do NOT say "Round 1" or any meta commentary. Just argue.`;
+This is round 1 of ${totalRounds as number}. Open the debate with your opening argument. Be sharp, confident, and start the clash immediately. Keep it to 3-4 sentences. Do NOT say "Round 1" or any meta commentary. Just argue.
+
+CRITICAL FORMATTING RULES — violating these will invalidate your response:
+- Write in plain conversational prose only. No markdown of any kind.
+- Never use asterisks (*word* or **word**) for emphasis.
+- Never use em-dashes (—) or en-dashes (–). Use commas or periods instead.
+- Never use bullet points, numbered lists, or headers.
+- Sound like a real person speaking, not a formatted document.`;
 
   try {
     const text = await claudeText(system, "Begin the debate with your opening argument.");
@@ -108,15 +115,17 @@ Respond ONLY with a JSON object, no markdown:
       content: m.text,
     }));
 
+    const formatting = `\n\nCRITICAL FORMATTING RULES — violating these will invalidate your response:\n- Write in plain conversational prose only. No markdown of any kind.\n- Never use asterisks (*word* or **word**) for emphasis.\n- Never use em-dashes (—) or en-dashes (–). Use commas or periods instead.\n- Never use bullet points, numbered lists, or headers.\n- Sound like a real person speaking, not a formatted document.`;
+
     const systemResp = (isLastRound as boolean)
       ? `${personality as string}
 
-Topic: "${topic as string}" — You argue ${oppSide as string}, user argues ${userSide as string}.
-This is the FINAL ROUND. Give a powerful closing argument that wraps up your position. 3-4 sentences maximum. Be decisive.`
+Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
+This is the FINAL ROUND. Give a powerful closing argument that wraps up your position. 3-4 sentences maximum. Be decisive.${formatting}`
       : `${personality as string}
 
-Topic: "${topic as string}" — You argue ${oppSide as string}, user argues ${userSide as string}.
-Round ${(round as number) + 1} of ${totalRounds as number}. Respond directly to the user's last argument. Counter it sharply. 3-4 sentences.`;
+Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
+Round ${(round as number) + 1} of ${totalRounds as number}. Respond directly to the user's last argument. Counter it sharply. 3-4 sentences.${formatting}`;
 
     const aiText = await claudeConversation(systemResp, [
       ...history,
