@@ -155,7 +155,9 @@ color:var(--text);resize:none;outline:none;transition:border-color 0.2s;line-hei
 .debate-input:focus{border-color:var(--blue);}
 .debate-input::placeholder{color:var(--text-dim);}
 .input-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
-.char-count{font-size:12px;color:var(--text-dim);}
+.char-count{font-size:12px;color:var(--text-dim);transition:color 0.2s;}
+.char-count.warn{color:var(--gold);}
+.char-count.danger{color:var(--red);}
 .submit-row{display:flex;gap:8px;}
 
 .thinking-row{display:flex;align-items:center;gap:10px;padding:12px 16px;color:var(--text-dim);font-size:14px;}
@@ -282,7 +284,7 @@ const AI_OPPONENTS = [
   { id: "prosecutor", icon: "⚖️", name: "The Prosecutor", desc: "Aggressive cross-examiner. Destroys weak logic ruthlessly.", diff: "hard", diffLabel: "Hard", timer: 135, personality: "You are an aggressive, relentless prosecutor. You find the weakest point in every argument and hammer it. You ask piercing rhetorical questions and never let weak logic slide. You are intense and relentless." },
   { id: "philosopher", icon: "🔮", name: "The Philosopher", desc: "Questions your assumptions. Makes you doubt everything.", diff: "hard", diffLabel: "Hard", timer: 135, personality: "You are a Socratic philosopher debater. You question the user's fundamental assumptions, expose logical fallacies, and make them doubt their own premises. You answer questions with questions. You are unsettling and deep." },
   { id: "troll", icon: "😈", name: "The Devil", desc: "Chaotic. Takes the most extreme opposing position always.", diff: "easy", diffLabel: "Easy", timer: 270, personality: "You are a chaotic devil's advocate who takes the most extreme, provocative opposing position possible. You are intentionally over-the-top but make surprisingly sharp points. You are fun but hard to pin down." },
-  { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Data obsessed. Demands evidence. Fact-checks everything.", diff: "extreme", diffLabel: "Extreme", timer: 60, personality: "You are a rigorous fact-checker and debunker. You demand sources, cite statistics, and dismantle arguments that lack evidence. You are skeptical of everything and can spot unsupported claims instantly. You are surgical and unforgiving." },
+  { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Data obsessed. Demands evidence. Fact-checks everything.", diff: "extreme", diffLabel: "Extreme", timer: 45, personality: "You are a rigorous fact-checker and debunker. You demand sources, cite statistics, and dismantle arguments that lack evidence. You are skeptical of everything and can spot unsupported claims instantly. You are surgical and unforgiving." },
 ];
 
 const TOPIC_POOL = [
@@ -496,6 +498,7 @@ export default function App() {
   const ai = AI_OPPONENTS.find((a) => a.id === selectedAI);
   const currentRound = Math.min(roundScores.length + 1, selectedRounds);
   const roundTimerDuration = ai?.timer ?? 60;
+  const charLimit = ai?.diff === "easy" ? 1000 : ai?.diff === "extreme" ? 600 : ai?.diff === "hard" ? 700 : 800;
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -840,10 +843,10 @@ export default function App() {
             <>
               <p className="section-label">How many rounds?</p>
               <div className="rounds-pick">
-                {[1, 3, 5].map((r) => (
+                {[1, 3, 5, 10].map((r) => (
                   <button key={r} className={`rounds-btn ${selectedRounds === r ? "selected" : ""}`} onClick={() => setSelectedRounds(r)}>
                     {r}
-                    <span className="rounds-sub">{r === 1 ? "Quick" : r === 3 ? "Standard" : "Marathon"}</span>
+                    <span className="rounds-sub">{r === 1 ? "Quick" : r === 3 ? "Standard" : r === 5 ? "Marathon" : "Endurance"}</span>
                   </button>
                 ))}
               </div>
@@ -996,16 +999,23 @@ export default function App() {
                 rows={4}
                 value={inputText}
                 onChange={(e) => {
-                  setInputText(e.target.value);
-                  if (!timerStarted && e.target.value.length > 0) startResponseTimer();
+                  const val = e.target.value;
+                  if (val.length <= charLimit) setInputText(val);
+                  if (!timerStarted && val.length > 0) startResponseTimer();
                 }}
                 placeholder={`Round ${currentRound}: Make your argument… (timer starts when you type)`}
-                maxLength={500}
                 onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitArgument(); }}
               />
               <div className="input-footer">
                 <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                  <span className="char-count">{inputText.length}/500</span>
+                  <span className={`char-count${inputText.length >= charLimit * 0.95 ? " danger" : inputText.length >= charLimit * 0.8 ? " warn" : ""}`}>
+                    {inputText.length}/{charLimit}
+                    {inputText.length >= Math.floor(charLimit * 0.9) && (
+                      <span style={{ marginLeft: "4px", fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px" }}>
+                        {inputText.length >= charLimit ? "· at limit" : "· near limit"}
+                      </span>
+                    )}
+                  </span>
                   {!timerStarted && (
                     <button
                       style={{

@@ -44,8 +44,8 @@ function bool(v: unknown): boolean | null {
 
 const FORMATTING = `
 
-BREVITY RULE — absolute hard limit:
-- Your entire response must be 2-3 sentences. No more. Cut ruthlessly.
+LENGTH RULE — per difficulty (enforced — see your difficulty block):
+- Follow your difficulty block's sentence count exactly. Cut anything beyond it.
 - Every sentence must land a direct point. Zero filler, zero throat-clearing.
 - Do NOT start with "I" or restate what the user said.
 
@@ -73,7 +73,8 @@ function difficultyInstructions(diff: string): string {
   switch (diff) {
     case "easy":
       return `
-DIFFICULTY — EASY (argument quality — follow precisely):
+DIFFICULTY — EASY (argument quality + response style — follow precisely):
+RESPONSE STYLE: Write 3-5 sentences. Be conversational and a little rambling — think loud bar argument, not a debate club. Use relatable examples and let your personality come through before landing your point.
 - Make surface-level arguments that sound confident but lack depth or evidence.
 - Rely on vibes, anecdotes, and weak generalizations. Avoid citing facts or building tight logic.
 - Occasionally miss obvious logical holes in the user's argument — let some bad points slide unchallenged.
@@ -82,7 +83,8 @@ DIFFICULTY — EASY (argument quality — follow precisely):
 - Stumble occasionally. Be colorful. Prioritize entertainment over airtight reasoning.`;
     case "medium":
       return `
-DIFFICULTY — MEDIUM (argument quality — follow precisely):
+DIFFICULTY — MEDIUM (argument quality + response style — follow precisely):
+RESPONSE STYLE: Write 2-3 sentences. Structured and clear — one thesis, one supporting point, one closing shot. No rambling.
 - Make solid, competent arguments with clear structure and coherent reasoning.
 - Notice obvious weaknesses in the user's argument but miss subtle logical gaps.
 - Use rhetorical techniques, reframe the user's points subtly, and appeal to common sense.
@@ -90,7 +92,8 @@ DIFFICULTY — MEDIUM (argument quality — follow precisely):
 - You are beatable with a well-structured, evidence-backed argument. Bad arguments from the user should lose.`;
     case "hard":
       return `
-DIFFICULTY — HARD (argument quality — follow precisely):
+DIFFICULTY — HARD (argument quality + response style — follow precisely):
+RESPONSE STYLE: Write 3-5 sentences. Sharp and dense — each sentence attacks a different angle of the user's argument. Build a tight multi-layered counter. No filler, no padding.
 - Make sharp, targeted arguments that attack the single weakest link in what the user just said.
 - Actively track the full conversation. If the user contradicts an earlier point, call it out directly by name.
 - Ask one sharp rhetorical question per response that forces the user to defend an assumption they haven't addressed.
@@ -99,7 +102,8 @@ DIFFICULTY — HARD (argument quality — follow precisely):
 - Require genuine effort to beat. Be relentless and precise.`;
     case "extreme":
       return `
-DIFFICULTY — EXTREME (argument quality — follow precisely):
+DIFFICULTY — EXTREME (argument quality + response style — follow precisely):
+RESPONSE STYLE: Write 2-4 sentences. Maximum aggression, minimum words. Name the flaw, destroy it, move on. Every extra word is weakness.
 - Be surgical and devastating. Identify the exact logical fallacy the user just committed and name it explicitly.
 - Demand specific evidence for every claim the user makes. Treat assertions without data as automatic losses.
 - Track the full conversation relentlessly. Expose every contradiction, shifted goalpost, and unanswered question.
@@ -126,7 +130,7 @@ ${difficultyInstructions(diff)}
 
 You are debating the topic: "${topic as string}"
 You are arguing ${oppSide as string} this statement. The user is arguing ${userSide as string}.
-This is a ${totalRounds as number}-round debate. Open with a brief in-character intro taunt or provocation (one sharp sentence), then immediately launch into your opening argument. 2-3 sentences total. Do NOT say "Round 1" or any meta-commentary. Just start.${FORMATTING}`;
+This is a ${totalRounds as number}-round debate. Open with a brief in-character intro taunt or provocation (one sharp sentence), then immediately launch into your opening argument. Follow your difficulty's RESPONSE STYLE sentence count. Do NOT say "Round 1" or any meta-commentary. Just start.${FORMATTING}`;
 
   try {
     const text = await claudeText(system, "Open the debate.", 700);
@@ -209,12 +213,12 @@ Respond ONLY with valid JSON, no markdown:
 ${diffInstr}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-This is your FINAL closing argument. Make it decisive and land your strongest point. 2-3 sentences.${FORMATTING}`
+This is your FINAL closing argument. Make it decisive and land your strongest point. Follow your difficulty's RESPONSE STYLE sentence count.${FORMATTING}`
       : `${personality as string}
 ${diffInstr}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-Counter the user's last argument directly and sharply. 2-3 sentences.${FORMATTING}`;
+Counter the user's last argument directly and sharply. Follow your difficulty's RESPONSE STYLE sentence count.${FORMATTING}`;
 
     const aiText = await claudeConversation(systemResp, [
       ...history,
