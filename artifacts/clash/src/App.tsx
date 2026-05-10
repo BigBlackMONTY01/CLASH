@@ -381,7 +381,7 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
 
 interface Message { role: "user" | "ai"; text: string; }
 interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; }
-interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; }
+interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; userSummary: string; }
 interface Stats { wins: number; debates: number; bestScore: number; }
 
 export default function App() {
@@ -399,6 +399,7 @@ export default function App() {
   const [stats, setStats] = useState<Stats>({ wins: 0, debates: 0, bestScore: 0 });
   const [selectedRounds, setSelectedRounds] = useState(3);
   const [displayTopics, setDisplayTopics] = useState(() => pickTopics());
+  const [timerStarted, setTimerStarted] = useState(false);
   const [lbTab, setLbTab] = useState("global");
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -429,10 +430,15 @@ export default function App() {
     setTimeLeft(null);
   }, []);
 
-  // Start countdown whenever the input becomes available
+  // Reset timerStarted whenever AI finishes responding (new round begins)
   useEffect(() => {
-    const inputVisible = screen === "debate" && !thinking && roundScores.length < selectedRounds;
-    if (inputVisible) {
+    if (!thinking) setTimerStarted(false);
+  }, [thinking, roundScores.length]);
+
+  // Start countdown only after user explicitly kicks off their response
+  useEffect(() => {
+    const shouldRun = screen === "debate" && !thinking && roundScores.length < selectedRounds && timerStarted;
+    if (shouldRun) {
       stopTimer();
       setTimeLeft(roundTimerDuration);
       timerRef.current = setInterval(() => {
@@ -445,12 +451,16 @@ export default function App() {
           return t - 1;
         });
       }, 1000);
-    } else {
+    } else if (!timerStarted) {
       stopTimer();
     }
     return () => stopTimer();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [thinking, screen, roundScores.length]);
+  }, [timerStarted, thinking, screen, roundScores.length]);
+
+  const startResponseTimer = useCallback(() => {
+    if (!timerStarted) setTimerStarted(true);
+  }, [timerStarted]);
 
   const startDebate = async () => {
     if (!ai || !selectedTopic || !selectedSide) return;
@@ -547,9 +557,11 @@ export default function App() {
     const won = avgScore >= 65;
 
     try {
-      const judgeVerdict = await apiPost<{ verdict: string; improve: string }>("/debate/verdict", {
+      const userArguments = _msgs.filter((m) => m.role === "user").map((m) => m.text);
+      const judgeVerdict = await apiPost<{ verdict: string; improve: string; userSummary: string }>("/debate/verdict", {
         topic: selectedTopic?.text ?? "",
         avgScore, avgLogic, avgPersuasion, avgDelivery,
+        userArguments,
       });
 
       const allBest = scores.map((s) => s.best).filter(Boolean);
@@ -559,8 +571,9 @@ export default function App() {
         won, avgScore, avgLogic, avgPersuasion, avgDelivery,
         judgeText: judgeVerdict.verdict,
         improve: judgeVerdict.improve,
-        bestArg: allBest[allBest.length - 1] || "Strong rebuttal in round 2.",
+        bestArg: allBest[allBest.length - 1] || "Strong rebuttal.",
         weakArg: allWeak[allWeak.length - 1] || "Opening argument needed more evidence.",
+        userSummary: judgeVerdict.userSummary || "",
       });
 
       setStats((prev) => ({
@@ -807,41 +820,57 @@ export default function App() {
 
           {!thinking && roundScores.length < selectedRounds && (
             <div className="input-area">
-              {timeLeft !== null && (() => {
-                const pct = (timeLeft / roundTimerDuration) * 100;
-                const color = timeLeft > roundTimerDuration * 0.5
-                  ? "var(--green)"
-                  : timeLeft > roundTimerDuration * 0.25
-                  ? "var(--gold)"
-                  : "var(--red)";
-                return (
-                  <div className="timer-bar">
-                    <span className="timer-countdown" style={{ color }}>{timeLeft}</span>
-                    <div className="timer-track">
-                      <div className="timer-fill" style={{ width: `${pct}%`, background: color }} />
-                    </div>
-                    <span className="timer-label">{ai?.diffLabel}</span>
-                  </div>
-                );
-              })()}
-              <textarea
-                className="debate-input"
-                rows={4}
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                placeholder={`Round ${currentRound}: Make your argument…`}
-                maxLength={500}
-                onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitArgument(); }}
-              />
-              <div className="input-footer">
-                <span className="char-count">{inputText.length}/500 · Ctrl+Enter to submit</span>
-                <div className="submit-row">
-                  <button className="btn btn-ghost" onClick={reset}>Forfeit</button>
-                  <button className="btn btn-primary" disabled={!inputText.trim()} onClick={() => submitArgument()}>
-                    Submit Argument →
+              {!timerStarted ? (
+                <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "8px" }}>
+                  <button
+                    className="btn btn-primary"
+                    style={{ flex: 1 }}
+                    onClick={startResponseTimer}
+                  >
+                    ▶ Start Response
                   </button>
+                  <button className="btn btn-ghost" onClick={reset}>Forfeit</button>
                 </div>
-              </div>
+              ) : (
+                <>
+                  {timeLeft !== null && (() => {
+                    const pct = (timeLeft / roundTimerDuration) * 100;
+                    const color = timeLeft > roundTimerDuration * 0.5
+                      ? "var(--green)"
+                      : timeLeft > roundTimerDuration * 0.25
+                      ? "var(--gold)"
+                      : "var(--red)";
+                    return (
+                      <div className="timer-bar">
+                        <span className="timer-countdown" style={{ color }}>{timeLeft}</span>
+                        <div className="timer-track">
+                          <div className="timer-fill" style={{ width: `${pct}%`, background: color }} />
+                        </div>
+                        <span className="timer-label">{ai?.diffLabel}</span>
+                      </div>
+                    );
+                  })()}
+                  <textarea
+                    className="debate-input"
+                    rows={4}
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    placeholder={`Round ${currentRound}: Make your argument…`}
+                    maxLength={500}
+                    autoFocus
+                    onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitArgument(); }}
+                  />
+                  <div className="input-footer">
+                    <span className="char-count">{inputText.length}/500 · Ctrl+Enter to submit</span>
+                    <div className="submit-row">
+                      <button className="btn btn-ghost" onClick={reset}>Forfeit</button>
+                      <button className="btn btn-primary" disabled={!inputText.trim()} onClick={() => submitArgument()}>
+                        Submit Argument →
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -878,8 +907,15 @@ export default function App() {
               <p>{verdict.judgeText}</p>
             </div>
 
+            {verdict.userSummary && (
+              <div className="feedback-box" style={{ borderColor: "var(--text-dim)", marginBottom: "16px" }}>
+                <div className="fb-label" style={{ color: "var(--text-mid)" }}>Your Argument</div>
+                <p>{verdict.userSummary}</p>
+              </div>
+            )}
+
             <div className="best-arg">
-              <div className="arg-label best">✓ Strongest Argument</div>
+              <div className="arg-label best">✓ Strongest Point</div>
               <div style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.bestArg}</div>
             </div>
             <div className="worst-arg" style={{ marginTop: "8px" }}>

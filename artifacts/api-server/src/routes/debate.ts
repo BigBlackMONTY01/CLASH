@@ -125,7 +125,7 @@ router.post("/debate/round", async (req, res) => {
   const diff = str(difficulty) ?? "medium";
 
   try {
-    const scorePrompt = `You are an impartial debate judge. Score the user's argument on a scale of 0-100.
+    const scorePrompt = `You are a decisive, emotionally engaged debate judge — not a neutral academic. Your job is to pick a clear winner each round and score accordingly.
 
 Topic: "${topic as string}"
 User is arguing: ${userSide as string}
@@ -134,7 +134,14 @@ Opponent difficulty: ${diff}
 
 User's argument: "${userArgument as string}"
 
-Scoring note: for "hard" and "extreme" difficulty opponents, be a stricter judge — weak, vague, or unsupported arguments should score lower than they would against easier opponents. Strong, evidence-backed, logically sound arguments should still score well.
+JUDGING PRINCIPLES — apply these strictly:
+- Prioritise overall convincingness and emotional impact, not just technical correctness.
+- Reward clarity: a clear, punchy argument beats a long rambling one every time.
+- Reward impact: did the argument actually land? Would it change a real person's mind?
+- Penalise hard: vagueness, filler phrases, repetition, and unsupported assertions get docked significantly.
+- Penalise hard: rambling or unfocused arguments that bury the main point score low on delivery.
+- Do NOT stay neutral. If the argument was weak, score it low (below 55). If it was strong, score it high (above 75). Avoid the 60-70 comfort zone unless it was genuinely mediocre.
+- For "hard" and "extreme" difficulty: be noticeably harsher. Vague claims get no credit.
 
 Respond ONLY with a JSON object, no markdown:
 {"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"strongest point in one sentence","weak":"weakest point in one sentence"}`;
@@ -185,32 +192,58 @@ Round ${(round as number) + 1} of ${totalRounds as number}. Respond directly to 
 
 // POST /api/debate/verdict — Generate final verdict
 router.post("/debate/verdict", async (req, res) => {
-  const { topic, avgScore, avgLogic, avgPersuasion, avgDelivery } = req.body as Record<string, unknown>;
+  const { topic, avgScore, avgLogic, avgPersuasion, avgDelivery, userArguments } = req.body as Record<string, unknown>;
   if (!str(topic) || !num(avgScore) || !num(avgLogic) || !num(avgPersuasion) || !num(avgDelivery)) {
     res.status(400).json({ error: "Invalid body" });
     return;
   }
 
-  const prompt = `You are a final debate judge. The debate on "${topic as string}" has ended.
+  const userArgs = Array.isArray(userArguments)
+    ? (userArguments as string[]).join(" / ")
+    : "";
+
+  const prompt = `You are a decisive, emotionally engaged final debate judge. The debate on "${topic as string}" has ended.
 
 User's average score: ${avgScore as number}/100.
-Write a 2-sentence judge's verdict. Be honest but constructive. If score >= 65, acknowledge their win but note weaknesses. If score < 65, acknowledge effort but explain why they lost. Be specific to the topic.
-Respond ONLY with JSON: {"verdict":"2 sentence verdict","improve":"One specific technique they should practice"}`;
+
+JUDGING PRINCIPLES:
+- Be decisive. If they won convincingly (>=70), declare it clearly and with energy. If they lost badly (<50), be blunt about why.
+- Lean into a clear verdict — do not hedge or give wishy-washy "on one hand, on the other" verdicts.
+- Call out specifically what swung the debate in their favour or against them.
+- One sharp, memorable verdict. Make the user feel the outcome.
+
+Write a 2-sentence verdict. Be specific to the topic and the score. No generic praise.
+Also write one concrete technique they should practice to debate better.
+
+Respond ONLY with JSON:
+{"verdict":"2 sentence decisive verdict","improve":"One specific actionable technique"}`;
+
+  const summaryPrompt = userArgs
+    ? `Summarise what this debater argued in 1-2 sentences. Do NOT evaluate, judge, or give any opinion. Only restate their position and the main points they raised. Be neutral and factual.
+
+Their arguments: "${userArgs}"`
+    : null;
 
   try {
-    const vText = await claudeText("You are a strict debate judge. Respond only with JSON.", prompt);
+    const [vText, sText] = await Promise.all([
+      claudeText("You are a decisive debate judge. Respond only with valid JSON.", prompt),
+      summaryPrompt
+        ? claudeText("You summarise debate arguments neutrally. Respond with only the summary sentence(s), no labels or JSON.", summaryPrompt)
+        : Promise.resolve(""),
+    ]);
+
     const jMatch = vText.match(/\{[\s\S]*\}/);
     let judgeVerdict = {
       verdict:
         (avgScore as number) >= 65
-          ? "A solid performance with well-structured arguments."
-          : "A valiant effort, but key arguments needed stronger evidence.",
-      improve: "Practice backing claims with specific examples.",
+          ? "A convincing performance that controlled the debate from start to finish."
+          : "The arguments lacked the clarity and punch needed to take this debate.",
+      improve: "Practice backing claims with specific, concrete examples.",
     };
     if (jMatch) {
       try { judgeVerdict = JSON.parse(jMatch[0]); } catch { /* use default */ }
     }
-    res.json(judgeVerdict);
+    res.json({ ...judgeVerdict, userSummary: sText.trim() });
   } catch (err) {
     req.log.error({ err }, "debate/verdict failed");
     res.status(500).json({ error: "AI error" });
