@@ -819,6 +819,7 @@ export default function App() {
   const [feedKey, setFeedKey] = useState(0);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pendingVerdictRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -829,6 +830,14 @@ export default function App() {
     return () => {
       if (style.parentNode) style.parentNode.removeChild(style);
     };
+  }, []);
+
+  // Swallow unhandled promise rejections so the Replit runtime-error overlay
+  // never triggers a page reload from async errors we already handle in-app.
+  useEffect(() => {
+    const handler = (e: PromiseRejectionEvent) => { e.preventDefault(); };
+    window.addEventListener("unhandledrejection", handler);
+    return () => window.removeEventListener("unhandledrejection", handler);
   }, []);
 
   useEffect(() => {
@@ -986,6 +995,8 @@ export default function App() {
   // Launch matchmaking + fetch AI opening in parallel with 3.5s min display
   // Accepts overrides so tournament mode can pass explicit values without waiting for state to settle
   const launchMatchmaking = useCallback(async (sideOverride?: "for" | "against", aiIdOverride?: string, topicOverride?: { cat: string; text: string }, roundsOverride?: number) => {
+    if (pendingVerdictRef.current) { clearTimeout(pendingVerdictRef.current); pendingVerdictRef.current = null; }
+
     const side = sideOverride ?? selectedSide;
     const aiId = aiIdOverride ?? selectedAI ?? "";
     const topic = topicOverride ?? selectedTopic;
@@ -1103,7 +1114,11 @@ export default function App() {
       setMessages([...newMessages, { role: "ai", text: aiText }]);
 
       if (isLastRound) {
-        setTimeout(() => generateVerdict(newRoundScores, newMessages), 4000);
+        if (pendingVerdictRef.current) clearTimeout(pendingVerdictRef.current);
+        pendingVerdictRef.current = setTimeout(async () => {
+          pendingVerdictRef.current = null;
+          try { await generateVerdict(newRoundScores, newMessages); } catch { /* handled inside generateVerdict */ }
+        }, 4000);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
@@ -1195,6 +1210,7 @@ export default function App() {
 
   const reset = () => {
     stopTimer();
+    if (pendingVerdictRef.current) { clearTimeout(pendingVerdictRef.current); pendingVerdictRef.current = null; }
     setScreen("home");
     setSetupStep(0);
     setSelectedAI(null);
