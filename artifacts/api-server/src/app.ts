@@ -3,6 +3,7 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { startCleanupJob } from "./lib/cleanup";
 
 const app: Express = express();
 
@@ -30,5 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+
+startCleanupJob();
 
 export default app;

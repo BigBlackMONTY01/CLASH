@@ -757,23 +757,21 @@ const FEATURED_TOPICS = [
 interface FeedItem { icon: string; text: string; time: string; badge: string; badgeClass: string; }
 
 function buildFeedItems(): FeedItem[] {
-  const players = ["LOGICWOLF", "FOXFIRE99", "SHARPTAKE", "VOLTIX", "BLAZELOGIC", "BIGBRAIN47", "GHOSTLOGIC", "IRONMIND", "SHADOWTAKE", "REDCLASH"];
+  const ghostPlayers = ["LOGICWOLF", "FOXFIRE99", "SHARPTAKE", "VOLTIX", "BLAZELOGIC", "BIGBRAIN47", "GHOSTLOGIC", "IRONMIND", "SHADOWTAKE", "REDCLASH"];
   const opponents = ["The Prosecutor", "The Professor", "The Philosopher", "The Debunker", "The Politician", "The Devil"];
   const topics = ["Free will is an illusion", "AI will do more good than harm", "Cancel culture has gone too far", "Billionaires should not exist", "The death penalty should be abolished"];
-  const times = ["just now", "1m ago", "2m ago", "3m ago", "5m ago", "7m ago", "9m ago", "11m ago"];
+  const sparseTimeLabels = ["34m ago", "47m ago", "1h ago", "1h 12m ago", "1h 28m ago", "1h 45m ago", "2h ago", "2h 20m ago"];
   const pool: FeedItem[] = [
-    { icon: "🏆", text: `<strong>${players[0]}</strong> won against ${opponents[0]} · 91 pts`, time: times[0], badge: "WIN", badgeClass: "feed-win" },
-    { icon: "💀", text: `<strong>${players[1]}</strong> lost a Gauntlet run at opponent 4`, time: times[1], badge: "LOSS", badgeClass: "feed-loss" },
-    { icon: "⚡", text: `<strong>${players[2]}</strong> hit a 5-win streak`, time: times[2], badge: "STREAK", badgeClass: "feed-streak" },
-    { icon: "📈", text: `<strong>${players[3]}</strong> climbed to rank #5 on the leaderboard`, time: times[3], badge: "RANK UP", badgeClass: "feed-rank" },
-    { icon: "🏆", text: `<strong>${players[4]}</strong> defeated ${opponents[1]} · scored 88`, time: times[4], badge: "WIN", badgeClass: "feed-win" },
-    { icon: "⚔️", text: `<strong>${players[5]}</strong> completed a full Gauntlet run`, time: times[2], badge: "GAUNTLET", badgeClass: "feed-streak" },
-    { icon: "💀", text: `<strong>${players[6]}</strong> lost to ${opponents[2]} on topic: "${topics[0]}"`, time: times[5], badge: "LOSS", badgeClass: "feed-loss" },
-    { icon: "🏆", text: `<strong>${players[7]}</strong> won against ${opponents[3]} · 96 pts`, time: times[3], badge: "WIN", badgeClass: "feed-win" },
-    { icon: "📈", text: `<strong>${players[8]}</strong> moved into the top 10`, time: times[6], badge: "RANK UP", badgeClass: "feed-rank" },
-    { icon: "⚡", text: `<strong>${players[9]}</strong> is on a 3-win streak`, time: times[7], badge: "STREAK", badgeClass: "feed-streak" },
+    { icon: "🏆", text: `<strong>${ghostPlayers[0]}</strong> won against ${opponents[0]} · 91 pts`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "WIN", badgeClass: "feed-win" },
+    { icon: "💀", text: `<strong>${ghostPlayers[1]}</strong> lost a Gauntlet run at opponent 4`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "LOSS", badgeClass: "feed-loss" },
+    { icon: "⚡", text: `<strong>${ghostPlayers[2]}</strong> hit a 5-win streak`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "STREAK", badgeClass: "feed-streak" },
+    { icon: "🏆", text: `<strong>${ghostPlayers[4]}</strong> defeated ${opponents[1]} · scored 88`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "WIN", badgeClass: "feed-win" },
+    { icon: "⚔️", text: `<strong>${ghostPlayers[5]}</strong> completed a full Gauntlet run`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "GAUNTLET", badgeClass: "feed-streak" },
+    { icon: "💀", text: `<strong>${ghostPlayers[6]}</strong> lost to ${opponents[2]} · "${topics[0]}"`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "LOSS", badgeClass: "feed-loss" },
+    { icon: "🏆", text: `<strong>${ghostPlayers[7]}</strong> won against ${opponents[3]} · 96 pts`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "WIN", badgeClass: "feed-win" },
+    { icon: "⚡", text: `<strong>${ghostPlayers[9]}</strong> is on a 3-win streak`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "STREAK", badgeClass: "feed-streak" },
   ];
-  return pool.sort(() => Math.random() - 0.5).slice(0, 5);
+  return pool.sort(() => Math.random() - 0.5).slice(0, 2);
 }
 
 function getScoreColor(s: number) {
@@ -832,20 +830,25 @@ interface RecentActivity { username: string | null; deviceId: string; opponentNa
 
 function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
   if (activity.length === 0) return buildFeedItems();
-  return activity.slice(0, 8).map((a) => {
+  const realItems = activity.slice(0, 8).map((a) => {
     const name = a.username || ("GUEST#" + a.deviceId.slice(-4).toUpperCase());
     const opp = a.opponentName.replace("The ", "");
     const topic = a.topic.length > 30 ? a.topic.slice(0, 30) + "…" : a.topic;
     const minsAgo = Math.max(1, Math.floor((Date.now() - new Date(a.createdAt).getTime()) / 60000));
-    const timeStr = minsAgo < 60 ? `${minsAgo}m ago` : `${Math.floor(minsAgo / 60)}h ago`;
+    const timeStr = minsAgo < 60 ? `${minsAgo}m ago` : minsAgo < 1440 ? `${Math.floor(minsAgo / 60)}h ago` : `${Math.floor(minsAgo / 1440)}d ago`;
     if (a.isGauntlet) {
-      return { icon: "⚔", text: `<strong>${name}</strong> ran Gauntlet vs ${opp}`, badge: a.won ? "WON" : "LOST", badgeClass: a.won ? "win" : "loss", time: timeStr };
+      return { icon: "⚔️", text: `<strong>${name}</strong> ran Gauntlet vs ${opp}`, badge: a.won ? "WON" : "LOST", badgeClass: a.won ? "feed-win" : "feed-loss", time: timeStr };
     }
     if (a.won) {
-      return { icon: "🏆", text: `<strong>${name}</strong> defeated ${opp} — "${topic}"`, badge: a.rank, badgeClass: "rank", time: timeStr };
+      return { icon: "🏆", text: `<strong>${name}</strong> defeated ${opp} — "${topic}"`, badge: a.rank, badgeClass: "feed-rank", time: timeStr };
     }
-    return { icon: "💀", text: `<strong>${name}</strong> lost to ${opp} — "${topic}"`, badge: a.rank, badgeClass: "loss", time: timeStr };
+    return { icon: "💀", text: `<strong>${name}</strong> lost to ${opp} — "${topic}"`, badge: a.rank, badgeClass: "feed-loss", time: timeStr };
   });
+  if (realItems.length < 3) {
+    const fakeBackfill = buildFeedItems().slice(0, 2 - realItems.length);
+    return [...realItems, ...fakeBackfill];
+  }
+  return realItems;
 }
 
 interface Message { role: "user" | "ai"; text: string; }
@@ -1026,13 +1029,18 @@ export default function App() {
     return () => clearInterval(iv);
   }, [screen, navigateFeatured]);
 
-  // Refresh live feed every 14s on home screen
+  // Refresh live feed with real data every 5 minutes on home screen
   useEffect(() => {
     if (screen !== "home") return;
-    const iv = setInterval(() => {
-      setFeedItems(buildFeedItems());
+    const iv = setInterval(async () => {
+      try {
+        const activity = await apiGet<RecentActivity[]>("/activity/recent");
+        setFeedItems(buildRealFeedItems(activity));
+      } catch {
+        // keep existing feed items on error
+      }
       setFeedKey((k) => k + 1);
-    }, 14000);
+    }, 5 * 60 * 1000);
     return () => clearInterval(iv);
   }, [screen]);
 
