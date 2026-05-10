@@ -826,7 +826,9 @@ export default function App() {
     const style = document.createElement("style");
     style.textContent = css;
     document.head.appendChild(style);
-    return () => { document.head.removeChild(style); };
+    return () => {
+      if (style.parentNode) style.parentNode.removeChild(style);
+    };
   }, []);
 
   useEffect(() => {
@@ -1531,9 +1533,9 @@ export default function App() {
               <button
                 className="btn btn-primary"
                 disabled={!selectedAI || (selectedAI === "custom" && (!customOpponent.name.trim() || !customOpponent.personality.trim()))}
-                onClick={() => setSetupStep(1)}
+                onClick={() => setSetupStep(selectedTopic ? 2 : 1)}
               >
-                Next: Pick Topic →
+                {selectedTopic ? "Next: Pick Side →" : "Next: Pick Topic →"}
               </button>
             </>
           )}
