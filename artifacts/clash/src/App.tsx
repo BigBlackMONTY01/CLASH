@@ -517,17 +517,25 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;margin-top:6px;}
 
 /* Featured topic card */
-@keyframes featuredSlide{from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:translateX(0);}}
-.featured-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-top:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;animation:featuredSlide 0.4s ease;}
-.featured-card:hover{border-color:rgba(230,57,70,0.5);background:rgba(230,57,70,0.04);transform:translateY(-1px);}
+@keyframes featuredSlideLeft{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
+@keyframes featuredSlideRight{from{opacity:0;transform:translateX(-40px);}to{opacity:1;transform:translateX(0);}}
+.featured-wrap{position:relative;margin-top:20px;overflow:hidden;border-radius:var(--radius);}
+.featured-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;cursor:pointer;transition:border-color 0.2s,background 0.2s;display:flex;align-items:center;gap:16px;touch-action:pan-y;user-select:none;}
+.featured-card:hover{border-color:rgba(230,57,70,0.5);background:rgba(230,57,70,0.04);}
+.featured-card.anim-left{animation:featuredSlideLeft 0.38s cubic-bezier(0.25,0.46,0.45,0.94);}
+.featured-card.anim-right{animation:featuredSlideRight 0.38s cubic-bezier(0.25,0.46,0.45,0.94);}
 .featured-left{flex:1;min-width:0;}
 .featured-badge{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--red);background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);border-radius:3px;padding:2px 8px;margin-bottom:8px;}
 .featured-topic-text{font-size:15px;font-weight:500;line-height:1.4;color:var(--text);}
 .featured-cat{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:6px;}
 .featured-cta{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--red);white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:4px;}
-.featured-dots{display:flex;gap:4px;margin-top:14px;}
-.featured-dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:background 0.3s;}
-.featured-dot.active{background:var(--red);}
+.featured-nav{display:flex;align-items:center;justify-content:space-between;padding:10px 4px 0;}
+.featured-dots{display:flex;gap:5px;align-items:center;}
+.featured-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all 0.25s;cursor:pointer;border:none;padding:0;}
+.featured-dot.active{background:var(--red);width:16px;border-radius:3px;}
+.featured-arrows{display:flex;gap:6px;}
+.featured-arrow{background:none;border:1px solid var(--border);color:var(--text-dim);width:26px;height:26px;border-radius:50%;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;}
+.featured-arrow:hover{border-color:var(--red);color:var(--red);}
 
 /* Live activity feed */
 .live-feed-wrap{margin-top:24px;}
@@ -815,6 +823,8 @@ export default function App() {
   const [arenaDisplay, setArenaDisplay] = useState({ debates: 0, winRate: 0, topics: 0 });
   const [featuredIdx, setFeaturedIdx] = useState(() => Math.floor(Math.random() * FEATURED_TOPICS.length));
   const [featuredKey, setFeaturedKey] = useState(0);
+  const [featuredDir, setFeaturedDir] = useState<1 | -1>(1);
+  const touchStartX = useRef<number | null>(null);
   const [feedItems, setFeedItems] = useState<FeedItem[]>(() => buildFeedItems());
   const [feedKey, setFeedKey] = useState(0);
 
@@ -905,15 +915,18 @@ export default function App() {
     return () => clearInterval(iv);
   }, [screen]);
 
+  const navigateFeatured = useCallback((dir: 1 | -1) => {
+    setFeaturedDir(dir);
+    setFeaturedIdx((i) => (i + dir + FEATURED_TOPICS.length) % FEATURED_TOPICS.length);
+    setFeaturedKey((k) => k + 1);
+  }, []);
+
   // Cycle featured topic every 9s on home screen
   useEffect(() => {
     if (screen !== "home") return;
-    const iv = setInterval(() => {
-      setFeaturedIdx((i) => (i + 1) % FEATURED_TOPICS.length);
-      setFeaturedKey((k) => k + 1);
-    }, 9000);
+    const iv = setInterval(() => navigateFeatured(1), 9000);
     return () => clearInterval(iv);
-  }, [screen]);
+  }, [screen, navigateFeatured]);
 
   // Refresh live feed every 14s on home screen
   useEffect(() => {
@@ -1377,36 +1390,54 @@ export default function App() {
             </div>
           </div>
 
-          {/* TODAY'S CLASH — featured topic cycling card */}
+          {/* TODAY'S CLASH — swipeable featured topic card */}
           <div>
             <p className="section-label" style={{ marginBottom: "0" }}>Today's Clash</p>
-            <div
-              key={featuredKey}
-              className="featured-card"
-              onClick={() => {
-                const t = FEATURED_TOPICS[featuredIdx];
-                setSelectedTopic({ cat: t.cat, text: t.text });
-                setDisplayTopics(pickTopics());
-                setSetupStep(0);
-                setScreen("setup");
-              }}
-            >
-              <div className="featured-left">
-                <div className="featured-badge">
-                  🔥 Hot Topic
+            <div className="featured-wrap">
+              <div
+                key={featuredKey}
+                className={`featured-card${featuredDir === 1 ? " anim-left" : " anim-right"}`}
+                onClick={() => {
+                  const t = FEATURED_TOPICS[featuredIdx];
+                  setSelectedTopic({ cat: t.cat, text: t.text });
+                  setDisplayTopics(pickTopics());
+                  setSetupStep(0);
+                  setScreen("setup");
+                }}
+                onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+                onTouchEnd={(e) => {
+                  if (touchStartX.current === null) return;
+                  const dx = e.changedTouches[0].clientX - touchStartX.current;
+                  touchStartX.current = null;
+                  if (Math.abs(dx) < 30) return;
+                  navigateFeatured(dx < 0 ? 1 : -1);
+                }}
+              >
+                <div className="featured-left">
+                  <div className="featured-badge">🔥 Hot Topic</div>
+                  <div className="featured-topic-text">"{FEATURED_TOPICS[featuredIdx].text}"</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "7px" }}>
+                    <span className="featured-cat">{FEATURED_TOPICS[featuredIdx].cat}</span>
+                    <span className={`topic-rating rating-${FEATURED_TOPICS[featuredIdx].heat.toLowerCase()}`}>{FEATURED_TOPICS[featuredIdx].heat}</span>
+                  </div>
                 </div>
-                <div className="featured-topic-text">"{FEATURED_TOPICS[featuredIdx].text}"</div>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "7px" }}>
-                  <span className="featured-cat">{FEATURED_TOPICS[featuredIdx].cat}</span>
-                  <span className={`topic-rating rating-${FEATURED_TOPICS[featuredIdx].heat.toLowerCase()}`}>{FEATURED_TOPICS[featuredIdx].heat}</span>
-                </div>
+                <div className="featured-cta">Play This →</div>
+              </div>
+              <div className="featured-nav">
                 <div className="featured-dots">
                   {FEATURED_TOPICS.map((_, i) => (
-                    <div key={i} className={`featured-dot${i === featuredIdx ? " active" : ""}`} />
+                    <button
+                      key={i}
+                      className={`featured-dot${i === featuredIdx ? " active" : ""}`}
+                      onClick={(e) => { e.stopPropagation(); if (i === featuredIdx) return; setFeaturedDir(i > featuredIdx ? 1 : -1); setFeaturedIdx(i); setFeaturedKey((k) => k + 1); }}
+                    />
                   ))}
                 </div>
+                <div className="featured-arrows">
+                  <button className="featured-arrow" onClick={() => navigateFeatured(-1)}>‹</button>
+                  <button className="featured-arrow" onClick={() => navigateFeatured(1)}>›</button>
+                </div>
               </div>
-              <div className="featured-cta">Play This →</div>
             </div>
           </div>
 
