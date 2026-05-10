@@ -4,10 +4,10 @@ import { anthropic } from "@workspace/integrations-anthropic-ai";
 const router = Router();
 const MODEL = "claude-sonnet-4-6";
 
-async function claudeText(system: string, userMsg: string): Promise<string> {
+async function claudeText(system: string, userMsg: string, maxTokens = 600): Promise<string> {
   const msg = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 2000,
+    max_tokens: maxTokens,
     system,
     messages: [{ role: "user", content: userMsg }],
   });
@@ -18,11 +18,12 @@ async function claudeText(system: string, userMsg: string): Promise<string> {
 
 async function claudeConversation(
   system: string,
-  messages: { role: "user" | "assistant"; content: string }[]
+  messages: { role: "user" | "assistant"; content: string }[],
+  maxTokens = 600
 ): Promise<string> {
   const msg = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 2000,
+    max_tokens: maxTokens,
     system,
     messages,
   });
@@ -43,20 +44,25 @@ function bool(v: unknown): boolean | null {
 
 const FORMATTING = `
 
-CRITICAL FORMATTING RULES — violating these will invalidate your response:
+BREVITY RULE — absolute hard limit:
+- Your entire response must be 2-3 sentences. No more. Cut ruthlessly.
+- Every sentence must land a direct point. Zero filler, zero throat-clearing.
+- Do NOT start with "I" or restate what the user said.
+
+CRITICAL FORMATTING RULES:
 - Write in plain conversational prose only. No markdown of any kind.
 - Never use asterisks (*word* or **word**) for emphasis.
 - Never use em-dashes (—) or en-dashes (–). Use commas or periods instead.
 - Never use bullet points, numbered lists, or headers.
 - Sound like a real person speaking, not a formatted document.
 
-ANTI-REPETITION RULE — this is mandatory:
-- Review every single argument and point you have already made in this conversation.
+ANTI-REPETITION RULE:
+- Review every argument you have already made in this conversation.
 - Do NOT reuse the same argument, example, analogy, or phrasing from any previous response.
-- Every response must introduce a completely fresh angle, new evidence, or an unexplored dimension of the topic.
+- Every response must introduce a completely fresh angle, new evidence, or an unexplored dimension.
 - Repeating yourself is automatic disqualification.
 
-RAGEBAITABLE RULE — lean into this hard:
+RAGEBAITABLE RULE — lean into this hard regardless of difficulty:
 - Be condescending and dismissive of weak or vague arguments.
 - Mock hesitation, contradictions, or obvious points with dry sarcasm.
 - Act visibly delighted when the user stumbles.
@@ -67,16 +73,39 @@ function difficultyInstructions(diff: string): string {
   switch (diff) {
     case "easy":
       return `
-DIFFICULTY — EASY: You argue with passion but loosely. Occasionally overstate your case or go off on a colorful tangent. You can be countered with a clear, direct rebuttal. You sometimes half-concede a point before doubling down. Keep it entertaining and human-feeling.`;
+DIFFICULTY — EASY (argument quality — follow precisely):
+- Make surface-level arguments that sound confident but lack depth or evidence.
+- Rely on vibes, anecdotes, and weak generalizations. Avoid citing facts or building tight logic.
+- Occasionally miss obvious logical holes in the user's argument — let some bad points slide unchallenged.
+- Sometimes overclaim, then walk it back slightly before doubling down in a different direction.
+- Your arguments are genuinely beatable with a clear, direct rebuttal. A competent debater will land points.
+- Stumble occasionally. Be colorful. Prioritize entertainment over airtight reasoning.`;
     case "medium":
       return `
-DIFFICULTY — MEDIUM: You argue with structure and confidence. You use rhetorical techniques, reframe the user's points subtly, and appeal to common-sense. You do not give ground easily, but you are beatable with a well-reasoned argument.`;
+DIFFICULTY — MEDIUM (argument quality — follow precisely):
+- Make solid, competent arguments with clear structure and coherent reasoning.
+- Notice obvious weaknesses in the user's argument but miss subtle logical gaps.
+- Use rhetorical techniques, reframe the user's points subtly, and appeal to common sense.
+- Do not give ground easily, but a strong well-reasoned counter will make you implicitly acknowledge it.
+- You are beatable with a well-structured, evidence-backed argument. Bad arguments from the user should lose.`;
     case "hard":
       return `
-DIFFICULTY — HARD: You are relentless and precise. You identify the exact weakest link in the user's argument and attack it directly. You ask sharp rhetorical questions that force the user to defend their assumptions. You never give an inch and your logic is airtight. The user must work hard to land a point.`;
+DIFFICULTY — HARD (argument quality — follow precisely):
+- Make sharp, targeted arguments that attack the single weakest link in what the user just said.
+- Actively track the full conversation. If the user contradicts an earlier point, call it out directly by name.
+- Ask one sharp rhetorical question per response that forces the user to defend an assumption they haven't addressed.
+- Never concede anything without immediately pivoting to a stronger position.
+- Your logic is tight and builds across rounds. Vague or unsupported arguments from the user should lose clearly.
+- Require genuine effort to beat. Be relentless and precise.`;
     case "extreme":
       return `
-DIFFICULTY — EXTREME: You are surgical and merciless. You name specific logical fallacies the user commits. You demand concrete evidence for every claim. You treat vague assertions as automatic losses. Your responses are calm, cold, and devastating. Only an exceptionally well-argued, evidence-based case can score against you.`;
+DIFFICULTY — EXTREME (argument quality — follow precisely):
+- Be surgical and devastating. Identify the exact logical fallacy the user just committed and name it explicitly.
+- Demand specific evidence for every claim the user makes. Treat assertions without data as automatic losses.
+- Track the full conversation relentlessly. Expose every contradiction, shifted goalpost, and unanswered question.
+- Never give ground. Your logic is airtight and your memory is perfect.
+- The user must bring exceptional reasoning, concrete data, and flawless structure to score a single point.
+- Be cold, precise, and utterly unfazed. You have seen every argument before and found it wanting.`;
     default:
       return "";
   }
@@ -97,10 +126,10 @@ ${difficultyInstructions(diff)}
 
 You are debating the topic: "${topic as string}"
 You are arguing ${oppSide as string} this statement. The user is arguing ${userSide as string}.
-This is round 1 of ${totalRounds as number}. Open the debate with your opening argument. Be sharp, confident, and start the clash immediately. Keep it to 3-4 sentences. Do NOT say "Round 1" or any meta commentary. Just argue.${FORMATTING}`;
+This is a ${totalRounds as number}-round debate. Open with a brief in-character intro taunt or provocation (one sharp sentence), then immediately launch into your opening argument. 2-3 sentences total. Do NOT say "Round 1" or any meta-commentary. Just start.${FORMATTING}`;
 
   try {
-    const text = await claudeText(system, "Begin the debate with your opening argument.");
+    const text = await claudeText(system, "Open the debate.", 700);
     res.json({ text });
   } catch (err) {
     req.log.error({ err }, "debate/start failed");
@@ -125,7 +154,7 @@ router.post("/debate/round", async (req, res) => {
   const diff = str(difficulty) ?? "medium";
 
   try {
-    const scorePrompt = `You are a competitive debate referee. Score this argument fairly, decisively, and consistently using the rubric below.
+    const scorePrompt = `You are a competitive debate referee. Score this argument fairly, decisively, and consistently.
 
 Topic: "${topic as string}"
 User is arguing: ${userSide as string}
@@ -135,26 +164,25 @@ Opponent difficulty: ${diff}
 User's argument:
 "${userArgument as string}"
 
-SCORING RUBRIC — use this to assign scores across all four dimensions (score, logic, persuasion, delivery):
+SCORING RUBRIC:
+90-100 — Exceptional. Clear thesis, compelling evidence or examples, directly addresses the topic, highly persuasive.
+75-89  — Strong. Well-reasoned with a clear point. Lands the argument convincingly.
+60-74  — Average. Makes a recognisable point but relies on assertion without support.
+40-59  — Weak. Vague, repetitive, or off-topic. Fails to make a concrete case.
+0-39   — Very poor. No coherent argument. Concession language, empty statements.
 
-90-100 — Exceptional. Clear thesis, compelling evidence or examples, directly addresses the topic, highly persuasive. Structured and punchy. No wasted words.
-75-89  — Strong. Well-reasoned with a clear point. May lack one element (e.g. evidence or concision) but lands the argument convincingly.
-60-74  — Average. Makes a recognisable point but relies on assertion without support, or buries the argument in filler. Partially convincing.
-40-59  — Weak. Vague, repetitive, or off-topic. Fails to make a concrete case. Would not persuade a neutral observer.
-0-39   — Very poor. No coherent argument. Concession language, empty statements, or nonsensical content.
+RULES:
+- Score each dimension independently.
+- Spread scores meaningfully across the full range.
+- For "hard" and "extreme" difficulty: apply the rubric one tier stricter.
 
-ADDITIONAL RULES:
-- Score each dimension independently. Delivery measures clarity and concision; persuasion measures real-world impact; logic measures reasoning quality.
-- Spread scores meaningfully. Do not cluster every argument at 60-75. Use the full range.
-- For "hard" and "extreme" difficulty: apply the rubric one tier stricter — a score that would be 70 at easy becomes 55 at hard/extreme.
-- Be consistent. The same quality of argument should score similarly every time, regardless of the topic.
-
-Respond ONLY with a JSON object, no markdown, no explanation:
-{"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"the single strongest point in one sentence","weak":"the single weakest element in one sentence"}`;
+Respond ONLY with a JSON object, no markdown:
+{"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"strongest point in one sentence","weak":"weakest element in one sentence"}`;
 
     const scoreText = await claudeText(
-      "You are a competitive debate referee. Score arguments using the provided rubric. Always respond with only valid JSON.",
-      scorePrompt
+      "You are a competitive debate referee. Respond only with valid JSON.",
+      scorePrompt,
+      1000
     );
 
     const jMatch = scoreText.match(/\{[\s\S]*\}/);
@@ -177,17 +205,17 @@ Respond ONLY with a JSON object, no markdown, no explanation:
 ${diffInstr}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-This is the FINAL ROUND. Give a powerful closing argument that wraps up your position. 3-4 sentences maximum. Be decisive and land your strongest point.${FORMATTING}`
+This is your FINAL closing argument. Make it decisive and land your strongest point. 2-3 sentences.${FORMATTING}`
       : `${personality as string}
 ${diffInstr}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-Round ${(round as number) + 1} of ${totalRounds as number}. Respond directly to the user's last argument. Counter it sharply according to your difficulty level. 3-4 sentences.${FORMATTING}`;
+Counter the user's last argument directly and sharply. 2-3 sentences.${FORMATTING}`;
 
     const aiText = await claudeConversation(systemResp, [
       ...history,
       { role: "user", content: userArgument as string },
-    ]);
+    ], 700);
 
     res.json({ aiText, roundScore });
   } catch (err) {
@@ -214,33 +242,32 @@ router.post("/debate/verdict", async (req, res) => {
     (avgScore as number) >= 55 ? "competitive but flawed" :
     (avgScore as number) >= 40 ? "weak" : "very poor";
 
-  const prompt = `You are a fair, decisive debate referee delivering the final verdict on the topic: "${topic as string}".
+  const prompt = `You are a fair, decisive debate referee. Topic: "${topic as string}".
 
-Overall performance score: ${avgScore as number}/100 — classified as: ${scoreLabel}.
-Subcategory averages — Logic: ${avgLogic as number}, Persuasion: ${avgPersuasion as number}, Delivery: ${avgDelivery as number}.
+Overall score: ${avgScore as number}/100 — classified as: ${scoreLabel}.
+Logic: ${avgLogic as number}, Persuasion: ${avgPersuasion as number}, Delivery: ${avgDelivery as number}.
 
 VERDICT RULES:
-- Declare a clear outcome. Use the score classification above to determine the result — do not contradict it.
-- Base the verdict on argument quality: reasoning, evidence, clarity, and persuasive impact.
-- Be specific to the topic. Reference what kind of arguments won or lost the debate.
-- Never hedge. "Overall a decent attempt" is not acceptable. State who won and why.
-- Two sentences maximum. First sentence: the outcome and why. Second sentence: the decisive factor that swung it.
-- For the improvement tip: identify the single most impactful technique the debater should practice, tied directly to their performance.
+- Declare a clear outcome. Use the score classification above. Never contradict it.
+- Be specific to the topic. Reference what kind of arguments won or lost.
+- Never hedge. State who won and why.
+- Two sentences max. Sentence one: outcome and why. Sentence two: the decisive factor.
+- Improvement tip: one specific, actionable technique tied directly to their performance.
 
 Respond ONLY with valid JSON:
-{"verdict":"two-sentence verdict declaring a clear outcome","improve":"one specific, actionable improvement technique"}`;
+{"verdict":"two-sentence verdict","improve":"one specific improvement technique"}`;
 
   const summaryPrompt = userArgs
-    ? `Summarise what this debater argued in 1-2 sentences. Do NOT evaluate, judge, or give any opinion. Only restate their position and the main points they raised. Be neutral and factual.
+    ? `Summarise what this debater argued in 1-2 sentences. No evaluation, no opinion. Only restate their position and main points. Be neutral and factual.
 
 Their arguments: "${userArgs}"`
     : null;
 
   try {
     const [vText, sText] = await Promise.all([
-      claudeText("You are a fair, decisive debate referee. Respond only with valid JSON.", prompt),
+      claudeText("You are a fair debate referee. Respond only with valid JSON.", prompt, 400),
       summaryPrompt
-        ? claudeText("You summarise debate arguments neutrally. Respond with only the summary sentence(s), no labels or JSON.", summaryPrompt)
+        ? claudeText("You summarise debate arguments neutrally. Respond with only the summary sentence(s), no labels or JSON.", summaryPrompt, 200)
         : Promise.resolve(""),
     ]);
 

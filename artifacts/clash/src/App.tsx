@@ -144,6 +144,11 @@ text-transform:uppercase;color:var(--text-dim);white-space:nowrap;}
 .rs-score{font-family:'Bebas Neue',sans-serif;font-size:20px;white-space:nowrap;}
 
 .input-area{position:relative;}
+.timer-bar{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.timer-countdown{font-family:'Bebas Neue',sans-serif;font-size:30px;min-width:44px;text-align:center;transition:color 0.3s;line-height:1;}
+.timer-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.timer-fill{height:100%;border-radius:2px;transition:width 1s linear,background 0.5s;}
+.timer-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
 .debate-input{width:100%;background:var(--surface);border:2px solid var(--border);
 border-radius:var(--radius);padding:16px;font-family:'Barlow',sans-serif;font-size:15px;
 color:var(--text);resize:none;outline:none;transition:border-color 0.2s;line-height:1.5;}
@@ -216,11 +221,6 @@ margin-bottom:16px;white-space:pre-wrap;word-break:break-all;}
 
 .divider{height:1px;background:var(--border);margin:32px 0;}
 
-.timer-bar{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
-.timer-countdown{font-family:'Bebas Neue',sans-serif;font-size:30px;min-width:44px;text-align:center;transition:color 0.3s;line-height:1;}
-.timer-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
-.timer-fill{height:100%;border-radius:2px;transition:width 1s linear,background 0.5s;}
-.timer-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
 .rounds-pick{display:flex;gap:8px;margin-bottom:24px;}
 .rounds-btn{flex:1;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);
 padding:14px 8px;cursor:pointer;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:28px;
@@ -228,6 +228,43 @@ color:var(--text-dim);transition:all 0.2s;}
 .rounds-btn:hover{border-color:var(--text-dim);color:var(--text);}
 .rounds-btn.selected{border-color:var(--red);color:var(--red);background:rgba(230,57,70,0.08);}
 .rounds-btn .rounds-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;display:block;margin-top:3px;color:var(--text-dim);}
+
+/* ===== MATCHMAKING SCREEN ===== */
+.matchmaking{display:flex;flex-direction:column;align-items:center;justify-content:center;
+min-height:60vh;text-align:center;animation:fadeIn 0.4s ease;}
+.mf-found{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,9vw,64px);letter-spacing:6px;
+color:var(--text);animation:mfPulse 0.9s ease infinite alternate;margin-bottom:4px;}
+@keyframes mfPulse{from{opacity:0.55;text-shadow:0 0 20px rgba(230,57,70,0.2);}
+to{opacity:1;text-shadow:0 0 60px rgba(230,57,70,0.85);}}
+.mf-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:5px;
+text-transform:uppercase;color:var(--red);margin-bottom:36px;}
+.mf-vs-card{display:flex;align-items:center;gap:20px;background:var(--surface);
+border:1px solid var(--border);border-radius:var(--radius);padding:20px 28px;
+margin-bottom:20px;width:100%;}
+.mf-player{flex:1;text-align:center;}
+.mf-icon{font-size:38px;display:block;margin-bottom:6px;}
+.mf-plbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;
+text-transform:uppercase;color:var(--text-dim);margin-bottom:3px;}
+.mf-pname{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;}
+.mf-sep{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--red);flex-shrink:0;}
+.mf-topic{font-size:14px;color:var(--text-mid);font-style:italic;margin-bottom:18px;
+max-width:400px;line-height:1.5;}
+.mf-stances{display:flex;gap:10px;width:100%;margin-bottom:32px;}
+.mf-stance{flex:1;border-radius:var(--radius);padding:11px 14px;text-align:center;}
+.mf-stance.for{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.35);}
+.mf-stance.against{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.35);}
+.mf-swho{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;
+text-transform:uppercase;margin-bottom:3px;}
+.mf-stance.for .mf-swho{color:var(--green);}
+.mf-stance.against .mf-swho{color:var(--red);}
+.mf-sside{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:2px;}
+.mf-stance.for .mf-sside{color:var(--green);}
+.mf-stance.against .mf-sside{color:var(--red);}
+.mf-countdown{font-family:'Bebas Neue',sans-serif;font-size:96px;line-height:1;color:var(--red);
+animation:cdTick 0.45s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes cdTick{from{transform:scale(1.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+.mf-waiting{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;
+font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);}
 `;
 
 const AI_OPPONENTS = [
@@ -384,8 +421,10 @@ interface RoundScore { round: number; score: number; logic: number; persuasion: 
 interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; userSummary: string; }
 interface Stats { wins: number; debates: number; bestScore: number; }
 
+type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard";
+
 export default function App() {
-  const [screen, setScreen] = useState<"home" | "setup" | "debate" | "verdict" | "leaderboard">("home");
+  const [screen, setScreen] = useState<Screen>("home");
   const [setupStep, setSetupStep] = useState(0);
   const [selectedAI, setSelectedAI] = useState<string | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<{ cat: string; text: string } | null>(null);
@@ -402,8 +441,11 @@ export default function App() {
   const [timerStarted, setTimerStarted] = useState(false);
   const [lbTab, setLbTab] = useState("global");
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [matchCountdown, setMatchCountdown] = useState(3);
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -416,9 +458,25 @@ export default function App() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, thinking]);
 
-  const ai = AI_OPPONENTS.find((a) => a.id === selectedAI);
+  // Auto-focus input after AI finishes replying
+  useEffect(() => {
+    if (!thinking && screen === "debate") {
+      const t = setTimeout(() => inputRef.current?.focus(), 150);
+      return () => clearTimeout(t);
+    }
+  }, [thinking, screen]);
 
-  // Derive current round from completed scores — always accurate, never stale
+  // Matchmaking countdown animation
+  useEffect(() => {
+    if (screen !== "matchmaking") return;
+    setMatchCountdown(3);
+    const t1 = setTimeout(() => setMatchCountdown(2), 1000);
+    const t2 = setTimeout(() => setMatchCountdown(1), 2000);
+    const t3 = setTimeout(() => setMatchCountdown(0), 3000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [screen]);
+
+  const ai = AI_OPPONENTS.find((a) => a.id === selectedAI);
   const currentRound = Math.min(roundScores.length + 1, selectedRounds);
   const roundTimerDuration = ai?.timer ?? 60;
 
@@ -430,12 +488,12 @@ export default function App() {
     setTimeLeft(null);
   }, []);
 
-  // Reset timerStarted whenever AI finishes responding (new round begins)
+  // Reset timerStarted on new round
   useEffect(() => {
     if (!thinking) setTimerStarted(false);
   }, [thinking, roundScores.length]);
 
-  // Start countdown only after user explicitly kicks off their response
+  // Run timer when started
   useEffect(() => {
     const shouldRun = screen === "debate" && !thinking && roundScores.length < selectedRounds && timerStarted;
     if (shouldRun) {
@@ -462,33 +520,43 @@ export default function App() {
     if (!timerStarted) setTimerStarted(true);
   }, [timerStarted]);
 
-  const startDebate = async () => {
-    if (!ai || !selectedTopic || !selectedSide) return;
-    setScreen("debate");
+  // Launch matchmaking + fetch AI opening in parallel with 3.5s min display
+  const launchMatchmaking = useCallback(async (sideOverride?: "for" | "against") => {
+    const side = sideOverride ?? selectedSide;
+    const currentAI = AI_OPPONENTS.find((a) => a.id === selectedAI);
+    if (!currentAI || !selectedTopic || !side) return;
+
     setMessages([]);
     setRoundScores([]);
     setError("");
-    setThinking(true);
+    setInputText("");
+    setVerdict(null);
+    setScreen("matchmaking");
 
-    const sideLabel = selectedSide === "for" ? "FOR" : "AGAINST";
-    const oppSide = selectedSide === "for" ? "AGAINST" : "FOR";
+    const sideLabel = side === "for" ? "FOR" : "AGAINST";
+    const oppSide = side === "for" ? "AGAINST" : "FOR";
 
     try {
-      const { text } = await apiPost<{ text: string }>("/debate/start", {
-        personality: ai.personality,
-        topic: selectedTopic.text,
-        userSide: sideLabel,
-        oppSide,
-        totalRounds: selectedRounds,
-        difficulty: ai.diff,
-      });
-      setMessages([{ role: "ai", text }]);
+      const [result] = await Promise.all([
+        apiPost<{ text: string }>("/debate/start", {
+          personality: currentAI.personality,
+          topic: selectedTopic.text,
+          userSide: sideLabel,
+          oppSide,
+          totalRounds: selectedRounds,
+          difficulty: currentAI.diff,
+        }),
+        new Promise<void>((resolve) => setTimeout(resolve, 3500)),
+      ] as [Promise<{ text: string }>, Promise<void>]);
+
+      setMessages([{ role: "ai", text: result.text }]);
+      setScreen("debate");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
-    } finally {
-      setThinking(false);
+      setScreen("setup");
+      setSetupStep(2);
     }
-  };
+  }, [selectedAI, selectedTopic, selectedSide, selectedRounds]);
 
   const submitArgument = useCallback(async (forcedText?: string) => {
     const userMsg = (forcedText ?? inputText).trim();
@@ -601,6 +669,18 @@ export default function App() {
     setVerdict(null);
     setError("");
     setInputText("");
+  };
+
+  const instantRematch = () => {
+    stopTimer();
+    launchMatchmaking();
+  };
+
+  const swapSidesRematch = () => {
+    stopTimer();
+    const newSide: "for" | "against" = selectedSide === "for" ? "against" : "for";
+    setSelectedSide(newSide);
+    launchMatchmaking(newSide);
   };
 
   return (
@@ -759,11 +839,55 @@ export default function App() {
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <button className="btn btn-ghost" onClick={() => setSetupStep(1)}>← Back</button>
-                <button className="btn btn-primary" disabled={!selectedSide} onClick={startDebate}>
+                <button className="btn btn-primary" disabled={!selectedSide} onClick={() => launchMatchmaking()}>
                   ⚡ Start Clash
                 </button>
               </div>
             </>
+          )}
+        </div>
+      )}
+
+      {/* MATCHMAKING */}
+      {screen === "matchmaking" && ai && selectedTopic && selectedSide && (
+        <div className="matchmaking">
+          <div className="mf-found">MATCH FOUND</div>
+          <div className="mf-sub">Entering the arena</div>
+
+          <div className="mf-vs-card">
+            <div className="mf-player">
+              <span className="mf-icon">👤</span>
+              <div className="mf-plbl">You</div>
+              <div className="mf-pname">CHALLENGER</div>
+            </div>
+            <div className="mf-sep">VS</div>
+            <div className="mf-player">
+              <span className="mf-icon">{ai.icon}</span>
+              <div className="mf-plbl">Opponent</div>
+              <div className="mf-pname">{ai.name.replace("The ", "").toUpperCase()}</div>
+            </div>
+          </div>
+
+          <div className="mf-topic">"{selectedTopic.text}"</div>
+
+          <div className="mf-stances">
+            <div className={`mf-stance ${selectedSide === "for" ? "for" : "against"}`}>
+              <div className="mf-swho">Your Side</div>
+              <div className="mf-sside">{selectedSide === "for" ? "FOR" : "AGAINST"}</div>
+            </div>
+            <div className={`mf-stance ${selectedSide === "for" ? "against" : "for"}`}>
+              <div className="mf-swho">{ai.name}</div>
+              <div className="mf-sside">{selectedSide === "for" ? "AGAINST" : "FOR"}</div>
+            </div>
+          </div>
+
+          {matchCountdown > 0 ? (
+            <div key={matchCountdown} className="mf-countdown">{matchCountdown}</div>
+          ) : (
+            <div className="mf-waiting">
+              <div className="dots"><span>●</span><span>●</span><span>●</span></div>
+              Preparing opponent
+            </div>
           )}
         </div>
       )}
@@ -820,57 +944,66 @@ export default function App() {
 
           {!thinking && roundScores.length < selectedRounds && (
             <div className="input-area">
-              {!timerStarted ? (
-                <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "8px" }}>
-                  <button
-                    className="btn btn-primary"
-                    style={{ flex: 1 }}
-                    onClick={startResponseTimer}
-                  >
-                    ▶ Start Response
-                  </button>
-                  <button className="btn btn-ghost" onClick={reset}>Forfeit</button>
-                </div>
-              ) : (
-                <>
-                  {timeLeft !== null && (() => {
-                    const pct = (timeLeft / roundTimerDuration) * 100;
-                    const color = timeLeft > roundTimerDuration * 0.5
-                      ? "var(--green)"
-                      : timeLeft > roundTimerDuration * 0.25
-                      ? "var(--gold)"
-                      : "var(--red)";
-                    return (
-                      <div className="timer-bar">
-                        <span className="timer-countdown" style={{ color }}>{timeLeft}</span>
-                        <div className="timer-track">
-                          <div className="timer-fill" style={{ width: `${pct}%`, background: color }} />
-                        </div>
-                        <span className="timer-label">{ai?.diffLabel}</span>
-                      </div>
-                    );
-                  })()}
-                  <textarea
-                    className="debate-input"
-                    rows={4}
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    placeholder={`Round ${currentRound}: Make your argument…`}
-                    maxLength={500}
-                    autoFocus
-                    onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitArgument(); }}
-                  />
-                  <div className="input-footer">
-                    <span className="char-count">{inputText.length}/500 · Ctrl+Enter to submit</span>
-                    <div className="submit-row">
-                      <button className="btn btn-ghost" onClick={reset}>Forfeit</button>
-                      <button className="btn btn-primary" disabled={!inputText.trim()} onClick={() => submitArgument()}>
-                        Submit Argument →
-                      </button>
+              {timerStarted && timeLeft !== null && (() => {
+                const pct = (timeLeft / roundTimerDuration) * 100;
+                const color = timeLeft > roundTimerDuration * 0.5
+                  ? "var(--green)"
+                  : timeLeft > roundTimerDuration * 0.25
+                  ? "var(--gold)"
+                  : "var(--red)";
+                return (
+                  <div className="timer-bar">
+                    <span className="timer-countdown" style={{ color }}>{timeLeft}</span>
+                    <div className="timer-track">
+                      <div className="timer-fill" style={{ width: `${pct}%`, background: color }} />
                     </div>
+                    <span className="timer-label">{ai?.diffLabel}</span>
                   </div>
-                </>
-              )}
+                );
+              })()}
+              <textarea
+                ref={inputRef}
+                className="debate-input"
+                rows={4}
+                value={inputText}
+                onChange={(e) => {
+                  setInputText(e.target.value);
+                  if (!timerStarted && e.target.value.length > 0) startResponseTimer();
+                }}
+                placeholder={`Round ${currentRound}: Make your argument… (timer starts when you type)`}
+                maxLength={500}
+                onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitArgument(); }}
+              />
+              <div className="input-footer">
+                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                  <span className="char-count">{inputText.length}/500</span>
+                  {!timerStarted && (
+                    <button
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "var(--text-dim)",
+                        font: "inherit",
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        fontSize: "11px",
+                        letterSpacing: "2px",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        padding: 0,
+                      }}
+                      onClick={startResponseTimer}
+                    >
+                      ▶ Start Clock
+                    </button>
+                  )}
+                </div>
+                <div className="submit-row">
+                  <button className="btn btn-ghost" onClick={reset}>Forfeit</button>
+                  <button className="btn btn-primary" disabled={!inputText.trim()} onClick={() => submitArgument()}>
+                    Submit →
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -932,10 +1065,15 @@ export default function App() {
           </div>
 
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-            <button className="btn btn-primary" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>
-              Rematch →
+            <button className="btn btn-primary" onClick={instantRematch}>
+              ⚡ Instant Rematch
             </button>
-            <button className="btn btn-secondary" onClick={() => setScreen("leaderboard")}>Leaderboard</button>
+            <button className="btn btn-secondary" onClick={swapSidesRematch}>
+              ↕ Swap Sides
+            </button>
+            <button className="btn btn-secondary" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>
+              New Match
+            </button>
             <button className="btn btn-ghost" onClick={reset}>Home</button>
           </div>
         </div>
