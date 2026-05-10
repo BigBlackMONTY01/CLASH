@@ -337,6 +337,37 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .replay-subs{display:flex;gap:12px;padding:4px 16px 12px;flex-wrap:wrap;}
 .replay-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);}
 .replay-sub span{color:var(--text);}
+
+/* === GAUNTLET === */
+.gauntlet-bots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px;}
+.gauntlet-bot-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 12px;text-align:center;}
+.gauntlet-bot-card .gb-num{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+.gauntlet-bot-card .gb-icon{font-size:28px;display:block;margin-bottom:6px;}
+.gauntlet-bot-card .gb-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.gauntlet-progress{display:flex;gap:6px;margin-bottom:28px;}
+.gp-bot{flex:1;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:10px 6px;text-align:center;transition:all 0.3s;}
+.gp-bot.done{border-color:var(--green);background:rgba(34,197,94,0.07);}
+.gp-bot.current-done{border-color:var(--gold);background:rgba(244,197,66,0.07);}
+.gp-bot .gp-icon{font-size:20px;display:block;margin-bottom:4px;}
+.gp-bot .gp-score{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text-dim);}
+.gp-bot .gp-rank{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;color:var(--text-dim);}
+.gp-bot.done .gp-score{color:var(--green);}
+.gp-bot.current-done .gp-score{color:var(--gold);}
+.gauntlet-final-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px;}
+.gf-match{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.gf-match.won{border-color:rgba(34,197,94,0.4);}
+.gf-match.lost{border-color:rgba(230,57,70,0.25);}
+.gf-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.gf-icon{font-size:22px;}
+.gf-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.gf-topic{font-size:11px;color:var(--text-dim);margin-bottom:8px;line-height:1.3;}
+.gf-score-row{display:flex;align-items:center;gap:8px;}
+.gf-rank{font-family:'Bebas Neue',sans-serif;font-size:22px;}
+.gf-match.won .gf-rank{color:var(--green);}
+.gf-match.lost .gf-rank{color:var(--red);}
+.gf-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.gf-fill{height:100%;border-radius:2px;}
+.gf-score{font-family:'Bebas Neue',sans-serif;font-size:18px;}
 `;
 
 function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
@@ -347,6 +378,8 @@ function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
   if (casuals.some((c) => t.includes(c))) return "Casual";
   return "Contested";
 }
+
+const TOURNAMENT_BOT_ORDER = ["troll", "professor", "politician", "prosecutor", "philosopher", "debunker"];
 
 const AI_OPPONENTS = [
   { id: "professor", icon: "🎓", name: "The Professor", desc: "Calm, methodical. Dismantles logic with academic precision.", diff: "medium", diffLabel: "Medium", timer: 180, personality: "You are a calm, highly intelligent academic debater. You cite logic and reasoning, speak in measured tones, and systematically dismantle weak arguments. You never get emotional. You are polite but devastating." },
@@ -502,7 +535,7 @@ interface RoundScore { round: number; score: number; logic: number; persuasion: 
 interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; }
 interface Stats { wins: number; debates: number; bestScore: number; }
 
-type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay";
+type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
@@ -532,6 +565,11 @@ export default function App() {
   const [isOvertime, setIsOvertime] = useState(false);
   const [shareToast, setShareToast] = useState("");
   const [sharedResult, setSharedResult] = useState<{ topic: string; opponentId: string; opponent: string; side: string; score: number; rank: string; outcome: string; judge: string; rounds: number; } | null>(null);
+  const [tournamentMode, setTournamentMode] = useState(false);
+  const [tournamentBotIndex, setTournamentBotIndex] = useState(0);
+  const [tournamentTopics, setTournamentTopics] = useState<{ cat: string; text: string }[]>([]);
+  const [tournamentMatchScores, setTournamentMatchScores] = useState<{ score: number; rank: string; won: boolean; botId: string; botName: string; botIcon: string; topic: string }[]>([]);
+  const [gauntletNextSide, setGauntletNextSide] = useState<"for" | "against" | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -634,12 +672,23 @@ export default function App() {
   }, [timerStarted]);
 
   // Launch matchmaking + fetch AI opening in parallel with 3.5s min display
-  const launchMatchmaking = useCallback(async (sideOverride?: "for" | "against") => {
+  // Accepts overrides so tournament mode can pass explicit values without waiting for state to settle
+  const launchMatchmaking = useCallback(async (sideOverride?: "for" | "against", aiIdOverride?: string, topicOverride?: { cat: string; text: string }, roundsOverride?: number) => {
     const side = sideOverride ?? selectedSide;
-    const currentAI = selectedAI === "custom"
+    const aiId = aiIdOverride ?? selectedAI ?? "";
+    const topic = topicOverride ?? selectedTopic;
+    const rounds = roundsOverride ?? selectedRounds;
+
+    // Apply any overrides to state so debate screen renders correctly
+    if (sideOverride !== undefined) setSelectedSide(sideOverride);
+    if (aiIdOverride !== undefined) setSelectedAI(aiIdOverride);
+    if (topicOverride !== undefined) setSelectedTopic(topicOverride);
+    if (roundsOverride !== undefined) setSelectedRounds(roundsOverride);
+
+    const currentAI = aiId === "custom"
       ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
-      : AI_OPPONENTS.find((a) => a.id === selectedAI);
-    if (!currentAI || !currentAI.personality || !selectedTopic || !side) return;
+      : AI_OPPONENTS.find((a) => a.id === aiId);
+    if (!currentAI || !currentAI.personality || !topic || !side) return;
 
     setMessages([]);
     setRoundScores([]);
@@ -660,10 +709,10 @@ export default function App() {
       const [result] = await Promise.all([
         apiPost<{ text: string }>("/debate/start", {
           personality: currentAI.personality,
-          topic: selectedTopic.text,
+          topic: topic.text,
           userSide: sideLabel,
           oppSide,
-          totalRounds: selectedRounds,
+          totalRounds: rounds,
           difficulty: currentAI.diff,
         }),
         new Promise<void>((resolve) => setTimeout(resolve, 3500)),
@@ -794,7 +843,25 @@ export default function App() {
         bestScore: Math.max(prev.bestScore, avgScore),
       }));
 
-      setScreen("verdict");
+      if (tournamentMode) {
+        const matchResult = {
+          score: avgScore,
+          rank: judgeVerdict.rank || (won ? "B" : "D"),
+          won,
+          botId: selectedAI || "",
+          botName: ai?.name || "",
+          botIcon: ai?.icon || "",
+          topic: selectedTopic?.text || "",
+        };
+        setTournamentMatchScores((prev) => [...prev, matchResult]);
+        if (tournamentBotIndex >= 5) {
+          setScreen("gauntlet-final");
+        } else {
+          setScreen("gauntlet-between");
+        }
+      } else {
+        setScreen("verdict");
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     }
@@ -819,6 +886,36 @@ export default function App() {
     setSuddenDeathAvailable(false);
     setIsOvertime(false);
     setCustomOpponent({ name: "", personality: "", diff: "medium", icon: "🎭" });
+    setTournamentMode(false);
+    setTournamentBotIndex(0);
+    setTournamentTopics([]);
+    setTournamentMatchScores([]);
+    setGauntletNextSide(null);
+  };
+
+  const beginGauntlet = (side: "for" | "against") => {
+    const topics: { cat: string; text: string }[] = [];
+    const pool = [...TOPIC_POOL];
+    for (let i = 0; i < 6; i++) {
+      const idx = Math.floor(Math.random() * pool.length);
+      topics.push(pool.splice(idx, 1)[0]);
+    }
+    setTournamentMode(true);
+    setTournamentBotIndex(0);
+    setTournamentTopics(topics);
+    setTournamentMatchScores([]);
+    setGauntletNextSide(null);
+    launchMatchmaking(side, TOURNAMENT_BOT_ORDER[0], topics[0], 3);
+  };
+
+  const continueGauntlet = (side: "for" | "against") => {
+    const nextIndex = tournamentBotIndex + 1;
+    const nextBotId = TOURNAMENT_BOT_ORDER[nextIndex];
+    const nextTopic = tournamentTopics[nextIndex];
+    setTournamentBotIndex(nextIndex);
+    setGauntletNextSide(null);
+    setVerdict(null);
+    launchMatchmaking(side, nextBotId, nextTopic, 3);
   };
 
   const instantRematch = () => {
@@ -908,6 +1005,14 @@ export default function App() {
               </button>
               <button className="btn btn-secondary" onClick={() => setScreen("leaderboard")}>
                 Leaderboard
+              </button>
+            </div>
+            <div style={{ marginTop: "14px" }}>
+              <button
+                style={{ background: "transparent", border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "var(--radius)", padding: "10px 24px", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "14px", letterSpacing: "3px", textTransform: "uppercase", cursor: "pointer", width: "100%", maxWidth: "340px" }}
+                onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}
+              >
+                ⚔ Gauntlet Mode — All 6 Bots
               </button>
             </div>
           </div>
@@ -1464,6 +1569,196 @@ export default function App() {
           })}
         </div>
       )}
+
+      {/* GAUNTLET INTRO */}
+      {screen === "gauntlet-intro" && (
+        <div className="screen">
+          <div style={{ textAlign: "center", marginBottom: "28px" }}>
+            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "5px", textTransform: "uppercase", color: "var(--gold)", marginBottom: "8px" }}>Challenge Mode</div>
+            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "clamp(48px,12vw,72px)", letterSpacing: "4px", lineHeight: 1, margin: 0 }}>⚔ THE GAUNTLET</h2>
+            <p style={{ color: "var(--text-dim)", marginTop: "10px", fontSize: "15px" }}>
+              Face all 6 opponents back-to-back. 3 rounds each. No respawn.
+            </p>
+          </div>
+
+          <p className="section-label">Your opponents — in order</p>
+          <div className="gauntlet-bots">
+            {TOURNAMENT_BOT_ORDER.map((id, i) => {
+              const bot = AI_OPPONENTS.find((a) => a.id === id)!;
+              return (
+                <div className="gauntlet-bot-card" key={id}>
+                  <div className="gb-num">#{i + 1}</div>
+                  <span className="gb-icon">{bot.icon}</span>
+                  <div className="gb-name">{bot.name}</div>
+                  <span className={`ai-diff diff-${bot.diff}`}>{bot.diffLabel}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="section-label">Pick your side for the first match</p>
+          <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "12px 16px", marginBottom: "16px", fontSize: "13px", color: "var(--text-dim)" }}>
+            Topic 1: <span style={{ color: "var(--text)", fontStyle: "italic" }}>"{tournamentTopics[0]?.text || "Topics are picked when you begin"}"</span>
+          </div>
+          <div className="side-pick" style={{ marginBottom: "24px" }}>
+            <button className={`side-btn for ${gauntletNextSide === "for" ? "selected" : ""}`} onClick={() => setGauntletNextSide("for")}>
+              <span className="side-icon">✅</span>
+              <div className="side-label">For</div>
+              <div className="side-sub">I agree with this</div>
+            </button>
+            <button className={`side-btn against ${gauntletNextSide === "against" ? "selected" : ""}`} onClick={() => setGauntletNextSide("against")}>
+              <span className="side-icon">❌</span>
+              <div className="side-label">Against</div>
+              <div className="side-sub">I disagree with this</div>
+            </button>
+          </div>
+
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button className="btn btn-ghost" onClick={reset}>← Back</button>
+            <button
+              className="btn btn-primary"
+              disabled={!gauntletNextSide}
+              onClick={() => gauntletNextSide && beginGauntlet(gauntletNextSide)}
+            >
+              ⚔ Begin Gauntlet
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* GAUNTLET BETWEEN */}
+      {screen === "gauntlet-between" && verdict && (
+        <div className="screen">
+          <div style={{ textAlign: "center", marginBottom: "24px" }}>
+            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "4px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "6px" }}>
+              Match {tournamentBotIndex + 1} of 6 Complete
+            </div>
+            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "clamp(40px,10vw,60px)", color: verdict.won ? "var(--green)" : "var(--red)", letterSpacing: "3px", lineHeight: 1 }}>
+              {verdict.won ? "VICTORY" : "DEFEATED"}
+            </div>
+            <div style={{ fontSize: "14px", color: "var(--text-dim)", marginTop: "6px" }}>
+              {tournamentMatchScores[tournamentMatchScores.length - 1]?.botIcon}{" "}
+              {tournamentMatchScores[tournamentMatchScores.length - 1]?.botName} · Score: <span style={{ color: "var(--text)" }}>{verdict.avgScore}</span> · Rank <span className={`rank-badge rank-${verdict.rank}`} style={{ display: "inline-block", fontSize: "13px", padding: "1px 6px" }}>{verdict.rank}</span>
+            </div>
+            <div style={{ fontSize: "13px", color: "var(--text-dim)", marginTop: "4px", fontStyle: "italic" }}>
+              "{verdict.judgeText.slice(0, 100)}{verdict.judgeText.length > 100 ? "…" : ""}"
+            </div>
+          </div>
+
+          <p className="section-label">Gauntlet Progress</p>
+          <div className="gauntlet-progress">
+            {TOURNAMENT_BOT_ORDER.map((id, i) => {
+              const bot = AI_OPPONENTS.find((a) => a.id === id)!;
+              const matchScore = tournamentMatchScores[i];
+              const isDone = i < tournamentBotIndex;
+              const isCurrentDone = i === tournamentBotIndex;
+              return (
+                <div key={id} className={`gp-bot ${isDone ? "done" : ""} ${isCurrentDone ? "current-done" : ""}`}>
+                  <span className="gp-icon">{bot.icon}</span>
+                  {(isDone || isCurrentDone) && matchScore ? (
+                    <>
+                      <div className="gp-score" style={{ color: matchScore.won ? (isDone ? "var(--green)" : "var(--gold)") : "var(--red)" }}>{matchScore.score}</div>
+                      <div className="gp-rank">{matchScore.rank}</div>
+                    </>
+                  ) : (
+                    <div className="gp-score">—</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "16px 20px", marginBottom: "20px" }}>
+            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "10px" }}>
+              Next — Opponent {tournamentBotIndex + 2} of 6
+            </div>
+            {(() => {
+              const nextBot = AI_OPPONENTS.find((a) => a.id === TOURNAMENT_BOT_ORDER[tournamentBotIndex + 1])!;
+              return (
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span style={{ fontSize: "36px" }}>{nextBot.icon}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "17px", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase" }}>{nextBot.name}</div>
+                    <div style={{ fontSize: "13px", color: "var(--text-dim)", marginBottom: "4px" }}>{nextBot.desc}</div>
+                    <div style={{ fontSize: "12px", color: "var(--text-dim)", fontStyle: "italic" }}>
+                      Topic: "{tournamentTopics[tournamentBotIndex + 1]?.text}"
+                    </div>
+                  </div>
+                  <span className={`ai-diff diff-${nextBot.diff}`}>{nextBot.diffLabel}</span>
+                </div>
+              );
+            })()}
+          </div>
+
+          <p className="section-label">Pick your side for the next match</p>
+          <div className="side-pick" style={{ marginBottom: "20px" }}>
+            <button className={`side-btn for ${gauntletNextSide === "for" ? "selected" : ""}`} onClick={() => setGauntletNextSide("for")}>
+              <span className="side-icon">✅</span>
+              <div className="side-label">For</div>
+            </button>
+            <button className={`side-btn against ${gauntletNextSide === "against" ? "selected" : ""}`} onClick={() => setGauntletNextSide("against")}>
+              <span className="side-icon">❌</span>
+              <div className="side-label">Against</div>
+            </button>
+          </div>
+
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button className="btn btn-ghost" onClick={reset}>Abandon Gauntlet</button>
+            <button
+              className="btn btn-primary"
+              disabled={!gauntletNextSide}
+              onClick={() => gauntletNextSide && continueGauntlet(gauntletNextSide)}
+            >
+              Continue → Match {tournamentBotIndex + 2}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* GAUNTLET FINAL */}
+      {screen === "gauntlet-final" && (() => {
+        const totalAvg = tournamentMatchScores.length > 0 ? Math.round(tournamentMatchScores.reduce((s, m) => s + m.score, 0) / tournamentMatchScores.length) : 0;
+        const wins = tournamentMatchScores.filter((m) => m.won).length;
+        const overallRank = totalAvg >= 85 ? "S" : totalAvg >= 75 ? "A" : totalAvg >= 62 ? "B" : totalAvg >= 48 ? "C" : totalAvg >= 35 ? "D" : "F";
+        return (
+          <div className="screen">
+            <div style={{ textAlign: "center", marginBottom: "32px" }}>
+              <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "5px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "8px" }}>Gauntlet Complete</div>
+              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "clamp(48px,12vw,80px)", letterSpacing: "4px", lineHeight: 1 }}>⚔ GAUNTLET</div>
+              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "clamp(48px,12vw,80px)", color: "var(--gold)", letterSpacing: "4px", lineHeight: 1, marginBottom: "16px" }}>COMPLETE</div>
+              <div className={`rank-badge rank-${overallRank}`} style={{ margin: "0 auto 12px", fontSize: "28px", width: "64px", height: "64px", lineHeight: "64px" }}>{overallRank}</div>
+              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", letterSpacing: "2px", color: "var(--text-mid)" }}>
+                {wins}/6 Wins · Avg Score {totalAvg}
+              </div>
+            </div>
+
+            <p className="section-label">All Match Results</p>
+            <div className="gauntlet-final-grid">
+              {tournamentMatchScores.map((m, i) => (
+                <div key={i} className={`gf-match ${m.won ? "won" : "lost"}`}>
+                  <div className="gf-header">
+                    <span className="gf-icon">{m.botIcon}</span>
+                    <span className="gf-name">{m.botName.replace("The ", "")}</span>
+                  </div>
+                  <div className="gf-topic">"{m.topic}"</div>
+                  <div className="gf-score-row">
+                    <span className="gf-rank">{m.rank}</span>
+                    <div className="gf-bar">
+                      <div className="gf-fill" style={{ width: `${m.score}%`, background: getScoreColor(m.score) }} />
+                    </div>
+                    <span className="gf-score" style={{ color: getScoreColor(m.score) }}>{m.score}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <button className="btn btn-primary" onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}>⚔ Run Again</button>
+              <button className="btn btn-ghost" onClick={reset}>Home</button>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* LEADERBOARD */}
       {screen === "leaderboard" && (
