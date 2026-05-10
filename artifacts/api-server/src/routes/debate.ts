@@ -155,7 +155,7 @@ This is a ${totalRounds as number}-round debate. Open with a brief in-character 
 
 // POST /api/debate/round — Score user arg + get AI response
 router.post("/debate/round", async (req, res) => {
-  const { personality, topic, userSide, oppSide, messages, userArgument, round, totalRounds, isLastRound, difficulty } =
+  const { personality, topic, userSide, oppSide, messages, userArgument, round, totalRounds, isLastRound, difficulty, adaptiveLevel, isOvertime } =
     req.body as Record<string, unknown>;
 
   if (
@@ -168,6 +168,18 @@ router.post("/debate/round", async (req, res) => {
   }
 
   const diff = str(difficulty) ?? "medium";
+  const adapt = typeof adaptiveLevel === "number" ? Math.max(-1, Math.min(2, adaptiveLevel)) : 0;
+  const overtimeMode = isOvertime === true;
+
+  const adaptiveNote =
+    adapt > 0
+      ? `\n\nADAPTATION ALERT: The user has dominated the last two rounds. Escalate hard — sharper logic, faster rebuttals, zero mercy. Raise your game visibly beyond your normal level.`
+      : adapt < 0
+      ? `\n\nADAPTATION ALERT: The user is struggling badly. Open a few more exploitable angles. Don't shut the debate down completely — maintain character but leave some room.`
+      : "";
+  const overtimeNote = overtimeMode
+    ? `\n\nSUDDEN DEATH OVERTIME: This is the tiebreaker round. Everything is on the line. Make this your most decisive, unforgettable argument.`
+    : "";
 
   try {
     const scorePrompt = `You are a ranked competitive debate judge. Score this argument with precision and distribute scores across the full range.
@@ -223,12 +235,12 @@ Respond ONLY with valid JSON, no markdown:
 
     const systemResp = (isLastRound as boolean)
       ? `${personality as string}
-${diffInstr}
+${diffInstr}${adaptiveNote}${overtimeNote}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
 This is your FINAL closing argument. Make it decisive and land your strongest point. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`
       : `${personality as string}
-${diffInstr}
+${diffInstr}${adaptiveNote}${overtimeNote}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
 Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`;

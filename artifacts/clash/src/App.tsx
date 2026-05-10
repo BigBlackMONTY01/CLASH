@@ -282,7 +282,71 @@ animation:cdTick 0.45s cubic-bezier(0.34,1.56,0.64,1);}
 @keyframes cdTick{from{transform:scale(1.6);opacity:0;}to{transform:scale(1);opacity:1;}}
 .mf-waiting{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;
 font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);}
+
+/* === TOPIC RATINGS === */
+.topic-rating{display:inline-flex;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-top:6px;}
+.rating-casual{background:rgba(34,197,94,0.1);color:var(--green);}
+.rating-contested{background:rgba(244,197,66,0.12);color:var(--gold);}
+.rating-minefield{background:rgba(230,57,70,0.12);color:var(--red);}
+
+/* === CUSTOM OPPONENT === */
+.custom-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-top:-12px;margin-bottom:24px;animation:fadeIn 0.3s ease;}
+.custom-form-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px;display:block;}
+.custom-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.custom-input:focus{border-color:var(--blue);}
+.custom-diff-row{display:flex;gap:6px;}
+.custom-diff-opt{flex:1;padding:8px 4px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface2);cursor:pointer;transition:all 0.2s;color:var(--text-dim);text-align:center;}
+.custom-diff-opt.sel-easy{border-color:var(--green);color:var(--green);}
+.custom-diff-opt.sel-medium{border-color:var(--gold);color:var(--gold);}
+.custom-diff-opt.sel-hard{border-color:var(--red);color:var(--red);}
+.custom-diff-opt.sel-extreme{border-color:#a855f7;color:#a855f7;}
+
+/* === ADAPTIVE BADGE === */
+.adaptive-badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:3px;}
+.adaptive-up{background:rgba(230,57,70,0.15);color:var(--red);border:1px solid rgba(230,57,70,0.3);animation:fadeIn 0.4s ease;}
+.adaptive-dn{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.25);animation:fadeIn 0.4s ease;}
+
+/* === SUDDEN DEATH === */
+.sudden-btn{width:100%;background:rgba(230,57,70,0.08);border:2px solid var(--red);border-radius:var(--radius);padding:18px 24px;cursor:pointer;text-align:center;transition:all 0.2s;margin-bottom:12px;animation:suddenGlow 1.8s ease infinite;}
+@keyframes suddenGlow{0%,100%{box-shadow:0 0 0 0 rgba(230,57,70,0);}50%{box-shadow:0 0 22px 4px rgba(230,57,70,0.35);}}
+.sudden-btn:hover{background:rgba(230,57,70,0.15);}
+.sudden-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:var(--red);display:block;}
+.sudden-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);display:block;margin-top:3px;}
+
+/* === SHARE TOAST === */
+.share-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--green);border-radius:var(--radius);padding:10px 22px;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--green);z-index:9999;animation:fadeIn 0.3s ease;}
+
+/* === CHALLENGE BANNER === */
+.challenge-banner{background:var(--surface);border:1px solid rgba(168,85,247,0.4);border-radius:var(--radius);padding:18px 20px;margin-bottom:28px;animation:fadeIn 0.4s ease;}
+.challenge-header{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#a855f7;margin-bottom:10px;}
+
+/* === REPLAY SCREEN === */
+.replay-intro{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.replay-verdict-badge{font-family:'Bebas Neue',sans-serif;font-size:28px;}
+.replay-round{margin-bottom:16px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.replay-round-hdr{background:var(--surface);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+.replay-round-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);}
+.replay-round-score{font-family:'Bebas Neue',sans-serif;font-size:22px;}
+.replay-msgs{padding:12px 16px;display:flex;flex-direction:column;gap:10px;}
+.replay-msg{padding:10px 14px;border-radius:var(--radius);font-size:14px;line-height:1.55;background:var(--surface2);}
+.replay-msg.rmuser{border-left:3px solid var(--blue);}
+.replay-msg.rmai{border-left:3px solid var(--red);}
+.replay-who{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.replay-msg.rmuser .replay-who{color:var(--blue);}
+.replay-msg.rmai .replay-who{color:var(--red);}
+.replay-subs{display:flex;gap:12px;padding:4px 16px 12px;flex-wrap:wrap;}
+.replay-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);}
+.replay-sub span{color:var(--text);}
 `;
+
+function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
+  const t = text.toLowerCase();
+  const minefields = ["death penalty", "billionaires", "euthanasia", "designer babies", "facial recognition", "cancel culture", "animal experiments", "ends justify", "prisoners", "capital punishment", "assisted dying", "consciousness survives"];
+  const casuals = ["pineapple", "mornings vs", "cats ", " cats", "cats vs", "winter", "coffee", "board games", "leftovers", "museums", "breakfast", "metaverse", "nostalgia", "remakes", "marvel", "award show", "fan fiction", "gap year", "podcasts", "fast food", "naps", "money can buy", "luck vs", "failure is", "perfection", "beauty is", "intelligence matters", "reading", "sports boring", "cooking"];
+  if (minefields.some((m) => t.includes(m))) return "Minefield";
+  if (casuals.some((c) => t.includes(c))) return "Casual";
+  return "Contested";
+}
 
 const AI_OPPONENTS = [
   { id: "professor", icon: "🎓", name: "The Professor", desc: "Calm, methodical. Dismantles logic with academic precision.", diff: "medium", diffLabel: "Medium", timer: 180, personality: "You are a calm, highly intelligent academic debater. You cite logic and reasoning, speak in measured tones, and systematically dismantle weak arguments. You never get emotional. You are polite but devastating." },
@@ -438,7 +502,7 @@ interface RoundScore { round: number; score: number; logic: number; persuasion: 
 interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; }
 interface Stats { wins: number; debates: number; bestScore: number; }
 
-type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard";
+type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
@@ -460,6 +524,14 @@ export default function App() {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [matchCountdown, setMatchCountdown] = useState(3);
   const [thinkingPhase, setThinkingPhase] = useState(0);
+  const [customOpponent, setCustomOpponent] = useState({ name: "", personality: "", diff: "medium" as "easy" | "medium" | "hard" | "extreme", icon: "🎭" });
+  const [adaptiveLevel, setAdaptiveLevel] = useState(0);
+  const [consecutiveHigh, setConsecutiveHigh] = useState(0);
+  const [consecutiveLow, setConsecutiveLow] = useState(0);
+  const [suddenDeathAvailable, setSuddenDeathAvailable] = useState(false);
+  const [isOvertime, setIsOvertime] = useState(false);
+  const [shareToast, setShareToast] = useState("");
+  const [sharedResult, setSharedResult] = useState<{ topic: string; opponentId: string; opponent: string; side: string; score: number; rank: string; outcome: string; judge: string; rounds: number; } | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -491,6 +563,18 @@ export default function App() {
     return () => clearInterval(iv);
   }, [thinking]);
 
+  // Load shared result from URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const share = params.get("share");
+    if (share) {
+      try {
+        const d = JSON.parse(atob(share));
+        setSharedResult({ topic: d.t, opponentId: d.oid, opponent: d.o, side: d.s, score: d.sc, rank: d.r, outcome: d.out, judge: d.j, rounds: d.rounds });
+      } catch { /* ignore malformed share params */ }
+    }
+  }, []);
+
   // Matchmaking countdown animation
   useEffect(() => {
     if (screen !== "matchmaking") return;
@@ -501,7 +585,9 @@ export default function App() {
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [screen]);
 
-  const ai = AI_OPPONENTS.find((a) => a.id === selectedAI);
+  const ai = selectedAI === "custom"
+    ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
+    : AI_OPPONENTS.find((a) => a.id === selectedAI);
   const currentRound = Math.min(roundScores.length + 1, selectedRounds);
   const roundTimerDuration = ai?.diff === "extreme" ? 45 : ai?.timer ?? 60;
   const charLimit = ai?.diff === "easy" ? 1000 : ai?.diff === "extreme" ? 600 : ai?.diff === "hard" ? 750 : 850;
@@ -550,11 +636,18 @@ export default function App() {
   // Launch matchmaking + fetch AI opening in parallel with 3.5s min display
   const launchMatchmaking = useCallback(async (sideOverride?: "for" | "against") => {
     const side = sideOverride ?? selectedSide;
-    const currentAI = AI_OPPONENTS.find((a) => a.id === selectedAI);
-    if (!currentAI || !selectedTopic || !side) return;
+    const currentAI = selectedAI === "custom"
+      ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
+      : AI_OPPONENTS.find((a) => a.id === selectedAI);
+    if (!currentAI || !currentAI.personality || !selectedTopic || !side) return;
 
     setMessages([]);
     setRoundScores([]);
+    setAdaptiveLevel(0);
+    setConsecutiveHigh(0);
+    setConsecutiveLow(0);
+    setSuddenDeathAvailable(false);
+    setIsOvertime(false);
     setError("");
     setInputText("");
     setVerdict(null);
@@ -619,6 +712,8 @@ export default function App() {
         totalRounds: selectedRounds,
         difficulty: ai.diff,
         isLastRound,
+        adaptiveLevel,
+        isOvertime,
       });
 
       // Enforce 4-6s minimum thinking time to build tension
@@ -627,6 +722,17 @@ export default function App() {
       if (elapsed < minThink) {
         await new Promise<void>((r) => setTimeout(r, minThink - elapsed));
       }
+
+      // Adaptive difficulty tracking
+      const sc = roundScore.score;
+      const newConsecHigh = sc > 78 ? consecutiveHigh + 1 : 0;
+      const newConsecLow = sc < 42 ? consecutiveLow + 1 : 0;
+      let newAdaptLevel = adaptiveLevel;
+      if (newConsecHigh >= 2) newAdaptLevel = Math.min(2, adaptiveLevel + 1);
+      else if (newConsecLow >= 2) newAdaptLevel = Math.max(-1, adaptiveLevel - 1);
+      setConsecutiveHigh(newConsecHigh);
+      setConsecutiveLow(newConsecLow);
+      setAdaptiveLevel(newAdaptLevel);
 
       const newRoundScores: RoundScore[] = [...roundScores, { round: roundNumber, ...roundScore }];
       setRoundScores(newRoundScores);
@@ -641,7 +747,7 @@ export default function App() {
       setThinking(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputText, thinking, ai, selectedTopic, selectedSide, roundScores, messages, stopTimer]);
+  }, [inputText, thinking, ai, selectedTopic, selectedSide, roundScores, messages, stopTimer, adaptiveLevel, consecutiveHigh, consecutiveLow, isOvertime]);
 
   // Auto-submit when timer expires
   useEffect(() => {
@@ -669,6 +775,8 @@ export default function App() {
 
       const allBest = scores.map((s) => s.best).filter(Boolean);
       const allWeak = scores.map((s) => s.weak).filter(Boolean);
+
+      setSuddenDeathAvailable(!isOvertime && avgScore >= 58 && avgScore <= 72);
 
       setVerdict({
         won, avgScore, avgLogic, avgPersuasion, avgDelivery,
@@ -705,6 +813,12 @@ export default function App() {
     setVerdict(null);
     setError("");
     setInputText("");
+    setAdaptiveLevel(0);
+    setConsecutiveHigh(0);
+    setConsecutiveLow(0);
+    setSuddenDeathAvailable(false);
+    setIsOvertime(false);
+    setCustomOpponent({ name: "", personality: "", diff: "medium", icon: "🎭" });
   };
 
   const instantRematch = () => {
@@ -719,7 +833,47 @@ export default function App() {
     launchMatchmaking(newSide);
   };
 
+  const launchSuddenDeath = () => {
+    stopTimer();
+    setSuddenDeathAvailable(false);
+    setIsOvertime(true);
+    setSelectedRounds((prev) => prev + 1);
+    setVerdict(null);
+    setScreen("debate");
+  };
+
+  const shareResult = () => {
+    if (!verdict || !selectedTopic || !ai) return;
+    const data = {
+      t: selectedTopic.text,
+      o: ai.name,
+      oid: selectedAI ?? "",
+      s: selectedSide ?? "",
+      sc: verdict.avgScore,
+      r: verdict.rank,
+      out: verdict.outcome,
+      j: verdict.judgeText.slice(0, 120),
+      rounds: selectedRounds,
+    };
+    const encoded = btoa(JSON.stringify(data));
+    const url = `${window.location.origin}${window.location.pathname}?share=${encoded}`;
+    navigator.clipboard.writeText(url).catch(() => {});
+    setShareToast("Link copied!");
+    setTimeout(() => setShareToast(""), 3000);
+  };
+
+  const acceptChallenge = () => {
+    if (!sharedResult) return;
+    setSelectedAI(sharedResult.opponentId);
+    setSelectedTopic({ cat: "Challenge", text: sharedResult.topic });
+    setSelectedRounds(sharedResult.rounds || 3);
+    setSharedResult(null);
+    setSetupStep(2);
+    setScreen("setup");
+  };
+
   return (
+    <>
     <div className="app">
       <nav className="nav">
         <div className="logo">CL<span>A</span>SH</div>
@@ -731,6 +885,20 @@ export default function App() {
       {/* HOME */}
       {screen === "home" && (
         <div className="screen">
+          {sharedResult && (
+            <div className="challenge-banner">
+              <div className="challenge-header">⚡ Challenge Received</div>
+              <div style={{ fontSize: "16px", fontWeight: 500, marginBottom: "8px" }}>"{sharedResult.topic}"</div>
+              <div style={{ fontSize: "13px", color: "var(--text-dim)", marginBottom: "14px" }}>
+                vs {sharedResult.opponent} · {sharedResult.rounds} rounds · Rank {sharedResult.rank} · {sharedResult.score}/100
+                <br />Judge: "{sharedResult.judge}"
+              </div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button className="btn btn-primary" onClick={acceptChallenge}>⚡ Accept Challenge</button>
+                <button className="btn btn-ghost" onClick={() => setSharedResult(null)}>Dismiss</button>
+              </div>
+            </div>
+          )}
           <div className="home-hero">
             <h1 className="home-title">ARGUE.<span className="line2">WIN.</span></h1>
             <p className="home-sub">Solo debate. AI opponent. Real judgment.</p>
@@ -790,8 +958,54 @@ export default function App() {
                     <span className={`ai-diff diff-${a.diff}`}>{a.diffLabel}</span>
                   </div>
                 ))}
+                <div className={`ai-card ${selectedAI === "custom" ? "selected" : ""}`} onClick={() => setSelectedAI("custom")}>
+                  <span className="ai-icon">🎭</span>
+                  <div className="ai-name">Build Your Own</div>
+                  <div className="ai-desc">Design a custom AI opponent with any personality and style.</div>
+                  <span className="ai-diff" style={{ background: "rgba(168,85,247,0.15)", color: "#a855f7" }}>Custom</span>
+                </div>
               </div>
-              <button className="btn btn-primary" disabled={!selectedAI} onClick={() => setSetupStep(1)}>
+              {selectedAI === "custom" && (
+                <div className="custom-form">
+                  <label className="custom-form-lbl">Opponent name</label>
+                  <input
+                    className="custom-input"
+                    type="text"
+                    placeholder='e.g. "The Cynic" or "The Optimist"'
+                    maxLength={30}
+                    value={customOpponent.name}
+                    onChange={(e) => setCustomOpponent((p) => ({ ...p, name: e.target.value }))}
+                    style={{ marginBottom: "14px" }}
+                  />
+                  <label className="custom-form-lbl">Personality & debate style</label>
+                  <textarea
+                    className="custom-input"
+                    rows={3}
+                    placeholder="e.g. You are a cold, data-driven scientist who dismisses anything anecdotal and demands peer-reviewed evidence for every claim..."
+                    maxLength={400}
+                    value={customOpponent.personality}
+                    onChange={(e) => setCustomOpponent((p) => ({ ...p, personality: e.target.value }))}
+                    style={{ resize: "none", marginBottom: "14px" }}
+                  />
+                  <label className="custom-form-lbl">Difficulty</label>
+                  <div className="custom-diff-row">
+                    {(["easy", "medium", "hard", "extreme"] as const).map((d) => (
+                      <button
+                        key={d}
+                        className={`custom-diff-opt${customOpponent.diff === d ? ` sel-${d}` : ""}`}
+                        onClick={() => setCustomOpponent((p) => ({ ...p, diff: d }))}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <button
+                className="btn btn-primary"
+                disabled={!selectedAI || (selectedAI === "custom" && (!customOpponent.name.trim() || !customOpponent.personality.trim()))}
+                onClick={() => setSetupStep(1)}
+              >
                 Next: Pick Topic →
               </button>
             </>
@@ -801,12 +1015,16 @@ export default function App() {
             <>
               <p className="section-label">Pick a topic</p>
               <div className="topic-grid">
-                {displayTopics.map((t, i) => (
-                  <div key={i} className={`topic-card ${selectedTopic?.text === t.text ? "selected" : ""}`} onClick={() => setSelectedTopic(t)}>
-                    <div className="t-cat">{t.cat}</div>
-                    <div className="t-text">{t.text}</div>
-                  </div>
-                ))}
+                {displayTopics.map((t, i) => {
+                  const rating = getTopicRating(t.text);
+                  return (
+                    <div key={i} className={`topic-card ${selectedTopic?.text === t.text ? "selected" : ""}`} onClick={() => setSelectedTopic(t)}>
+                      <div className="t-cat">{t.cat}</div>
+                      <div className="t-text">{t.text}</div>
+                      <div className={`topic-rating rating-${rating.toLowerCase()}`}>{rating}</div>
+                    </div>
+                  );
+                })}
               </div>
               <div style={{ marginBottom: "24px" }}>
                 <p className="section-label" style={{ marginBottom: "10px" }}>Or write your own</p>
@@ -932,8 +1150,18 @@ export default function App() {
       {screen === "debate" && (
         <div className="screen">
           <div className="arena-header">
-            <div className="round-badge">RD {currentRound}/{selectedRounds}</div>
-            <div className="arena-topic">{selectedTopic?.text}</div>
+            <div className="round-badge">
+              RD {currentRound}/{selectedRounds}
+              {isOvertime && <span style={{ display: "block", fontFamily: "'Barlow Condensed'", fontSize: "9px", letterSpacing: "2px", color: "var(--red)", textTransform: "uppercase", marginTop: "2px" }}>OVERTIME</span>}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+              <div className="arena-topic">{selectedTopic?.text}</div>
+              {adaptiveLevel !== 0 && (
+                <div className={`adaptive-badge ${adaptiveLevel > 0 ? "adaptive-up" : "adaptive-dn"}`}>
+                  {adaptiveLevel > 0 ? "⬆ AI Escalating" : "⬇ AI Easing"}
+                </div>
+              )}
+            </div>
             <div style={{ textAlign: "right" }}>
               <div style={{ fontSize: "20px" }}>{ai?.icon}</div>
               <div className="vs-badge">{ai?.name}</div>
@@ -1142,12 +1370,98 @@ export default function App() {
             </div>
           </div>
 
+          {suddenDeathAvailable && (
+            <button className="sudden-btn" onClick={launchSuddenDeath}>
+              <span className="sudden-title">⚡ SUDDEN DEATH</span>
+              <span className="sudden-sub">Score is close — one overtime round decides everything</span>
+            </button>
+          )}
+
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
             <button className="btn btn-primary" onClick={instantRematch}>⚡ Instant Rematch</button>
             <button className="btn btn-secondary" onClick={swapSidesRematch}>↕ Swap Sides</button>
-            <button className="btn btn-secondary" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>New Match</button>
+            <button className="btn btn-secondary" onClick={() => setScreen("replay")}>📋 Replay</button>
+            <button className="btn btn-secondary" onClick={shareResult}>🔗 Share</button>
+            <button className="btn btn-ghost" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>New Match</button>
             <button className="btn btn-ghost" onClick={reset}>Home</button>
           </div>
+        </div>
+      )}
+
+      {/* REPLAY */}
+      {screen === "replay" && verdict && (
+        <div className="screen">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "36px", letterSpacing: "3px" }}>REPLAY</h2>
+            <button className="btn btn-ghost" onClick={() => setScreen("verdict")}>← Back</button>
+          </div>
+
+          <div className="replay-intro">
+            <div>
+              <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "11px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "6px" }}>
+                {ai?.name} · {selectedRounds} Round{selectedRounds !== 1 ? "s" : ""} · {selectedTopic?.text}
+              </div>
+              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+                {[["Logic", verdict.avgLogic], ["Persuasion", verdict.avgPersuasion], ["Delivery", verdict.avgDelivery]].map(([lbl, val]) => (
+                  <span key={lbl as string} className="replay-sub">{lbl} <span>{val}</span></span>
+                ))}
+              </div>
+            </div>
+            <div className="replay-verdict-badge" style={{ color: verdict.won ? "var(--green)" : "var(--red)" }}>
+              {verdict.won ? "WIN" : "LOSS"} · {verdict.rank}
+            </div>
+          </div>
+
+          {messages[0] && (
+            <div className="replay-round">
+              <div className="replay-round-hdr">
+                <span className="replay-round-lbl">Opening Statement</span>
+                <span style={{ fontSize: "18px" }}>{ai?.icon}</span>
+              </div>
+              <div className="replay-msgs">
+                <div className="replay-msg rmai">
+                  <div className="replay-who">{ai?.name}</div>
+                  {messages[0].text}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {roundScores.map((rs, i) => {
+            const userMsg = messages[1 + i * 2];
+            const aiMsg = messages[2 + i * 2];
+            return (
+              <div key={i} className="replay-round">
+                <div className="replay-round-hdr">
+                  <span className="replay-round-lbl">Round {rs.round}{rs.round > (selectedRounds - (isOvertime ? 1 : 0)) ? " · OVERTIME" : ""}</span>
+                  <span className="replay-round-score" style={{ color: getScoreColor(rs.score) }}>{rs.score}</span>
+                </div>
+                {userMsg && (
+                  <div className="replay-msgs">
+                    <div className="replay-msg rmuser">
+                      <div className="replay-who">You</div>
+                      {userMsg.text}
+                    </div>
+                  </div>
+                )}
+                <div className="replay-subs">
+                  <span className="replay-sub">Logic <span>{rs.logic}</span></span>
+                  <span className="replay-sub">Persuasion <span>{rs.persuasion}</span></span>
+                  <span className="replay-sub">Delivery <span>{rs.delivery}</span></span>
+                  {rs.best && <span className="replay-sub">✓ Best: <span>"{rs.best}"</span></span>}
+                  {rs.weak && <span className="replay-sub">✗ Weak: <span>"{rs.weak}"</span></span>}
+                </div>
+                {aiMsg && (
+                  <div className="replay-msgs" style={{ paddingTop: 0 }}>
+                    <div className="replay-msg rmai">
+                      <div className="replay-who">{ai?.name}</div>
+                      {aiMsg.text}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -1202,5 +1516,7 @@ export default function App() {
         </div>
       )}
     </div>
+    {shareToast && <div className="share-toast">{shareToast}</div>}
+    </>
   );
 }
