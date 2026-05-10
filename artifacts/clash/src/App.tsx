@@ -21,8 +21,8 @@ ${FONTS}
   --green:#22c55e;
   --radius:8px;
 }
-html,body{height:100%;}
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;}
+html,body{height:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100dvh;overflow-x:hidden;display:flex;flex-direction:column;}
 
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
 background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);}
@@ -50,7 +50,7 @@ color:var(--text-dim);text-transform:uppercase;}
 
 .btn{font-family:'Barlow Condensed',sans-serif;font-size:15px;letter-spacing:3px;
 text-transform:uppercase;padding:14px 32px;border-radius:var(--radius);
-border:none;cursor:pointer;transition:all 0.2s;font-weight:600;}
+border:none;cursor:pointer;transition:all 0.2s;font-weight:600;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .btn-primary{background:var(--red);color:#fff;}
 .btn-primary:hover{background:#ff4655;transform:translateY(-1px);box-shadow:0 8px 24px rgba(230,57,70,0.4);}
 .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
@@ -341,11 +341,16 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 
 /* === MOBILE === */
 @media (max-width:520px){
-  .app{padding:12px 14px 20px;}
-  .nav{margin-bottom:24px;}
+  .app{padding:max(12px,env(safe-area-inset-top,12px)) 14px max(16px,env(safe-area-inset-bottom,16px));display:flex;flex-direction:column;}
+  .nav{margin-bottom:16px;}
   .logo{font-size:28px;letter-spacing:3px;}
   .logo::after{font-size:8px;right:-42px;}
   .nav-rank{font-size:11px;}
+  .debate-screen{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .debate-screen .arena-header{padding:8px 10px;margin-bottom:10px;}
+  .debate-screen .messages{flex:1;max-height:none !important;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;margin-bottom:10px;}
+  .debate-screen .debate-input{font-size:16px;padding:10px 12px;}
+  .debate-screen .input-area{flex-shrink:0;}
 
   .home-hero{padding:8px 0 28px;}
   .home-title{font-size:clamp(44px,14vw,72px);}
@@ -378,12 +383,12 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   .arena-topic{font-size:13px;margin:0 8px;}
   .round-badge{font-size:18px;}
 
-  .messages{min-height:200px;max-height:280px;gap:10px;margin-bottom:12px;}
+  .messages{min-height:100px;max-height:280px;gap:10px;margin-bottom:12px;}
   .msg-bubble{max-width:85%;}
   .msg-text{font-size:14px;padding:10px 12px;}
   .msg-avatar{width:30px;height:30px;font-size:14px;}
 
-  .debate-input{font-size:14px;padding:12px;}
+  .debate-input{font-size:16px;padding:10px 12px;}
   .timer-countdown{font-size:24px;min-width:36px;}
 
   .verdict-card{padding:18px 16px;margin-bottom:14px;}
@@ -1352,7 +1357,7 @@ export default function App() {
 
       {/* DEBATE */}
       {screen === "debate" && (
-        <div className="screen">
+        <div className="screen debate-screen">
           <div className="arena-header">
             <div className="round-badge">
               RD {currentRound}/{selectedRounds}
