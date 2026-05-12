@@ -570,11 +570,98 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .gauntlet-btn:hover{background:rgba(244,197,66,0.07);color:var(--gold);transform:translateY(-1px);}
 .gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;margin-top:6px;}
 
-/* 1V1 home button — same style as gauntlet but red, no glow */
-@keyframes redPulse{0%,100%{border-color:rgba(230,57,70,0.38);color:rgba(230,57,70,0.72);}50%{border-color:rgba(230,57,70,0.72);color:var(--red);}}
-.v1-home-btn{display:block;background:rgba(230,57,70,0.03);border:1.5px solid rgba(230,57,70,0.45);color:rgba(230,57,70,0.8);border-radius:var(--radius);padding:14px 24px;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;width:100%;max-width:400px;text-align:center;transition:all 0.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;animation:redPulse 2.4s ease-in-out infinite;}
-.v1-home-btn:hover{background:rgba(230,57,70,0.07);color:var(--red);transform:translateY(-1px);}
-[data-theme="light"] .v1-home-btn{border-color:rgba(192,57,43,0.42);color:rgba(192,57,43,0.82);}
+/* 1V1 BATTLE BUTTON */
+@keyframes v1BtnGlow{
+  0%,34%,56%,100%{box-shadow:0 0 8px rgba(230,57,70,0.12);border-color:rgba(230,57,70,0.4);}
+  42%{box-shadow:0 0 32px rgba(230,57,70,0.7),0 0 70px rgba(230,57,70,0.28);border-color:rgba(230,57,70,1);}
+  50%{box-shadow:0 0 8px rgba(230,57,70,0.18);border-color:rgba(230,57,70,0.45);}
+  63%{box-shadow:0 0 24px rgba(230,57,70,0.55),0 0 50px rgba(230,57,70,0.22);border-color:rgba(230,57,70,0.9);}
+  70%{box-shadow:0 0 8px rgba(230,57,70,0.12);border-color:rgba(230,57,70,0.4);}
+}
+.v1-home-btn{display:block;background:rgba(230,57,70,0.03);border:1.5px solid rgba(230,57,70,0.4);border-radius:var(--radius);padding:10px 24px 14px;font-family:'Barlow Condensed',sans-serif;cursor:pointer;width:100%;max-width:400px;text-align:center;transition:background 0.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;animation:v1BtnGlow 3s ease-in-out infinite;position:relative;overflow:visible;}
+.v1-home-btn:hover{background:rgba(230,57,70,0.08);}
+[data-theme="light"] .v1-home-btn{border-color:rgba(192,57,43,0.42);}
+
+/* battle arena inside the button */
+.v1-arena{position:relative;width:100%;height:48px;display:flex;align-items:center;justify-content:center;}
+.v1-sol-l{position:absolute;font-size:28px;line-height:1;z-index:2;
+  animation:v1SolL 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 5px rgba(230,57,70,0.5));}
+.v1-sol-r{position:absolute;font-size:28px;line-height:1;z-index:2;
+  animation:v1SolR 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 5px rgba(230,57,70,0.5));}
+.v1-clash-fx{position:absolute;font-size:26px;line-height:1;z-index:5;pointer-events:none;animation:v1ClashFx 3s ease-in-out infinite;}
+.v1-sp{position:absolute;width:5px;height:5px;border-radius:50%;pointer-events:none;z-index:6;}
+.v1-sp1{background:#ff4655;animation:v1Sp1 3s ease-in-out infinite;}
+.v1-sp2{background:#f4c542;animation:v1Sp2 3s ease-in-out infinite;}
+.v1-sp3{background:#ff4655;animation:v1Sp3 3s ease-in-out infinite;}
+.v1-sp4{background:#f4c542;animation:v1Sp4 3s ease-in-out infinite;}
+.v1-sp5{background:#ff4655;animation:v1Sp5 3s ease-in-out infinite;}
+.v1-sp6{background:#fff;animation:v1Sp6 3s ease-in-out infinite;}
+.v1-battle-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:5px;text-transform:uppercase;color:rgba(230,57,70,0.7);display:block;margin-top:2px;animation:v1BtnGlow 3s ease-in-out infinite;}
+
+/* soldier march left */
+@keyframes v1SolL{
+  0%   {transform:translateX(-64px) translateY(0);}
+  7%   {transform:translateX(-56px) translateY(-4px);}
+  14%  {transform:translateX(-46px) translateY(0);}
+  21%  {transform:translateX(-34px) translateY(-4px);}
+  28%  {transform:translateX(-22px) translateY(0);}
+  35%  {transform:translateX(-10px) translateY(-3px);}
+  /* CLASH 1 */
+  40%  {transform:translateX(0px) translateY(0);}
+  43%  {transform:translateX(10px) rotate(12deg) translateY(-2px);}
+  48%  {transform:translateX(-18px) rotate(-5deg);}
+  /* re-engage */
+  53%  {transform:translateX(-12px) translateY(-3px);}
+  58%  {transform:translateX(-2px) translateY(0);}
+  /* CLASH 2 */
+  62%  {transform:translateX(8px) rotate(10deg);}
+  67%  {transform:translateX(-20px) rotate(-4deg);}
+  /* retreat */
+  74%  {transform:translateX(-36px) translateY(-3px);}
+  82%  {transform:translateX(-52px) translateY(0);}
+  91%  {transform:translateX(-62px) translateY(-2px);}
+  100% {transform:translateX(-64px) translateY(0);}
+}
+/* soldier march right — mirrors left using scaleX(-1) */
+@keyframes v1SolR{
+  0%   {transform:scaleX(-1) translateX(-64px) translateY(0);}
+  7%   {transform:scaleX(-1) translateX(-56px) translateY(-4px);}
+  14%  {transform:scaleX(-1) translateX(-46px) translateY(0);}
+  21%  {transform:scaleX(-1) translateX(-34px) translateY(-4px);}
+  28%  {transform:scaleX(-1) translateX(-22px) translateY(0);}
+  35%  {transform:scaleX(-1) translateX(-10px) translateY(-3px);}
+  40%  {transform:scaleX(-1) translateX(0px) translateY(0);}
+  43%  {transform:scaleX(-1) translateX(10px) rotate(-12deg) translateY(-2px);}
+  48%  {transform:scaleX(-1) translateX(-18px) rotate(5deg);}
+  53%  {transform:scaleX(-1) translateX(-12px) translateY(-3px);}
+  58%  {transform:scaleX(-1) translateX(-2px) translateY(0);}
+  62%  {transform:scaleX(-1) translateX(8px) rotate(-10deg);}
+  67%  {transform:scaleX(-1) translateX(-20px) rotate(4deg);}
+  74%  {transform:scaleX(-1) translateX(-36px) translateY(-3px);}
+  82%  {transform:scaleX(-1) translateX(-52px) translateY(0);}
+  91%  {transform:scaleX(-1) translateX(-62px) translateY(-2px);}
+  100% {transform:scaleX(-1) translateX(-64px) translateY(0);}
+}
+/* clash star */
+@keyframes v1ClashFx{
+  0%,38%{transform:scale(0) rotate(0deg);opacity:0;}
+  42%{transform:scale(1.5) rotate(25deg);opacity:1;}
+  46%{transform:scale(0.7) rotate(-10deg);opacity:0.8;}
+  50%{transform:scale(0) rotate(0deg);opacity:0;}
+  59%,100%{opacity:0;transform:scale(0);}
+  62%{transform:scale(1.2) rotate(-20deg);opacity:1;}
+  66%{transform:scale(0.5) rotate(15deg);opacity:0.6;}
+  69%{transform:scale(0) rotate(0deg);opacity:0;}
+}
+/* sparks */
+@keyframes v1Sp1{0%,39%{transform:translate(0,0);opacity:0;}42%{transform:translate(0,0);opacity:1;}50%{transform:translate(18px,-14px);opacity:0;}100%{opacity:0;}}
+@keyframes v1Sp2{0%,39%{transform:translate(0,0);opacity:0;}42%{transform:translate(0,0);opacity:1;}50%{transform:translate(-16px,-18px);opacity:0;}100%{opacity:0;}}
+@keyframes v1Sp3{0%,39%{transform:translate(0,0);opacity:0;}42%{transform:translate(0,0);opacity:1;}50%{transform:translate(14px,16px);opacity:0;}100%{opacity:0;}}
+@keyframes v1Sp4{0%,39%{transform:translate(0,0);opacity:0;}42%{transform:translate(0,0);opacity:1;}50%{transform:translate(-18px,12px);opacity:0;}100%{opacity:0;}}
+@keyframes v1Sp5{0%,60%{transform:translate(0,0);opacity:0;}63%{transform:translate(0,0);opacity:1;}70%{transform:translate(20px,-10px);opacity:0;}100%{opacity:0;}}
+@keyframes v1Sp6{0%,60%{transform:translate(0,0);opacity:0;}63%{transform:translate(0,0);opacity:1;}70%{transform:translate(-14px,-16px);opacity:0;}100%{opacity:0;}}
 
 /* Featured topic card */
 @keyframes featuredSlideLeft{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
@@ -2606,11 +2693,18 @@ export default function App() {
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
               <button className="v1-home-btn" onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}>
-                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-                  <span style={{ fontSize: "15px" }}>🤺</span>
-                  <span>1V1</span>
-                  <span style={{ fontSize: "15px", display: "inline-block", transform: "scaleX(-1)" }}>🤺</span>
-                </span>
+                <div className="v1-arena">
+                  <span className="v1-sol-l">🤺</span>
+                  <span className="v1-clash-fx">⚡</span>
+                  <span className="v1-sp v1-sp1" />
+                  <span className="v1-sp v1-sp2" />
+                  <span className="v1-sp v1-sp3" />
+                  <span className="v1-sp v1-sp4" />
+                  <span className="v1-sp v1-sp5" />
+                  <span className="v1-sp v1-sp6" />
+                  <span className="v1-sol-r">🤺</span>
+                </div>
+                <span className="v1-battle-label">1V1 Challenge</span>
               </button>
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
