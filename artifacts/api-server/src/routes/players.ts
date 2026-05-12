@@ -171,8 +171,16 @@ router.get("/stats/global", async (_req, res) => {
 });
 
 // GET /api/leaderboard — top players ranked by score (wins * 200 + bestScore * 10)
-router.get("/leaderboard", async (_req, res) => {
+// Query param: ?period=weekly  →  only debates from the last 7 days
+router.get("/leaderboard", async (req, res) => {
   try {
+    const weekly = req.query.period === "weekly";
+    const since = weekly ? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) : null;
+
+    const joinCondition = since
+      ? and(eq(debates.playerId, players.id), gte(debates.createdAt, since))
+      : eq(debates.playerId, players.id);
+
     const rows = await db
       .select({
         id: players.id,
@@ -184,7 +192,7 @@ router.get("/leaderboard", async (_req, res) => {
         score: sql<number>`(sum(case when ${debates.won} then 1 else 0 end) * 200 + coalesce(max(${debates.avgScore}), 0) * 10)::int`,
       })
       .from(players)
-      .leftJoin(debates, eq(debates.playerId, players.id))
+      .leftJoin(debates, joinCondition)
       .groupBy(players.id)
       .having(sql`count(${debates.id}) > 0`)
       .orderBy(desc(sql`(sum(case when ${debates.won} then 1 else 0 end) * 200 + coalesce(max(${debates.avgScore}), 0) * 10)`))

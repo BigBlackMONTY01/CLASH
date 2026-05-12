@@ -1307,14 +1307,15 @@ export default function App() {
     return () => { cancelled = true; };
   }, [screen]);
 
-  // Load leaderboard when that screen opens
+  // Load leaderboard when that screen opens or when tab switches
   useEffect(() => {
     if (screen !== "leaderboard") return;
     setLbLoading(true);
-    apiGet<LbEntry[]>("/leaderboard")
+    const qs = lbTab === "weekly" ? "?period=weekly" : "";
+    apiGet<LbEntry[]>(`/leaderboard${qs}`)
       .then((data) => { setLbData(data); setLbLoading(false); })
       .catch(() => setLbLoading(false));
-  }, [screen]);
+  }, [screen, lbTab]);
 
   const ai = selectedAI === "custom"
     ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
@@ -2723,8 +2724,12 @@ export default function App() {
           )}
           {!lbLoading && lbData.length === 0 && (
             <div style={{ textAlign: "center", padding: "40px 16px", color: "var(--text-dim)" }}>
-              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", letterSpacing: "2px", marginBottom: "8px" }}>NO PLAYERS YET</div>
-              <div style={{ fontSize: "13px" }}>Finish a debate to appear on the leaderboard.</div>
+              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", letterSpacing: "2px", marginBottom: "8px" }}>
+                {lbTab === "weekly" ? "NO DEBATES THIS WEEK" : "NO PLAYERS YET"}
+              </div>
+              <div style={{ fontSize: "13px" }}>
+                {lbTab === "weekly" ? "Be the first to debate this week and claim #1." : "Finish a debate to appear on the leaderboard."}
+              </div>
             </div>
           )}
           {lbData.map((p, i) => {
