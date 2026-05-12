@@ -1,23 +1,11 @@
-# ─────────────────────────────────────────────────────────────────────
-#  Netlify config for Clash frontend
-#
-#  The frontend calls /api/* endpoints. In production on Netlify,
-#  those calls need to be proxied to your deployed API server.
-#
-#  HOW TO USE:
-#  1. Deploy the API server (e.g. publish it on Replit)
-#  2. Replace https://YOUR-API-SERVER.replit.app below with the real URL
-#  3. Push this file — Netlify will proxy all /api/* requests automatically
-# ─────────────────────────────────────────────────────────────────────
+# Netlify proxies /api/* → Replit API server
+# The SPA fallback must come last.
 
 [[redirects]]
   from   = "/api/*"
-  to     = "https://YOUR-API-SERVER.replit.app/api/:splat"
+  to     = "https://clash--ladytrissh.replit.app/api/:splat"
   status = 200
   force  = true
-
-  [redirects.headers]
-    X-From = "netlify-proxy"
 
 # SPA fallback — must come last
 [[redirects]]
