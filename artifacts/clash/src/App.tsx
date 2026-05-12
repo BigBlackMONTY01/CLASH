@@ -1887,22 +1887,30 @@ export default function App() {
   const handleSetUsername = async () => {
   const deviceId = getOrCreateDeviceId();
   const trimmed = usernameInput.trim();
-  if (trimmed.length < 2) { setUsernameError("Must be at least 2 characters."); return; }
+  if (trimmed.length < 2) { 
+    setUsernameError("Must be at least 2 characters."); 
+    return; 
+  }
+  
+  setUsernameError("");
+  
   try {
-    // Remove .catch(() => {}) - let it throw naturally
     await apiPost("/players/register", { deviceId });
     await apiPatch("/players/username", { deviceId, username: trimmed });
+    
     setPlayer((prev) => prev ? { ...prev, username: trimmed } : prev);
     setShowUsernameModal(false);
     setUsernameInput("");
     setUsernameError("");
   } catch (err: unknown) {
-    console.error("[CLASH] username save failed:", err);
+    console.error("Username error:", err);
     const msg = (err as Error).message || "";
-    if (msg.includes("taken") || msg.includes("23505")) {
+    
+    if (msg.includes("taken") || 
+        msg.includes("23505") || 
+        msg.includes("duplicate") ||
+        msg.includes("already exists")) {
       setUsernameError("That username is already taken — try another.");
-    } else if (msg.includes("network") || msg.includes("fetch") || msg.includes("Failed to fetch")) {
-      setUsernameError(`No server connection: ${msg}`);
     } else {
       setUsernameError(`Save failed: ${msg}`);
     }
