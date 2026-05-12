@@ -2186,7 +2186,7 @@ export default function App() {
                   </div>
                   <div className="stat-card">
                     <span className="val gold">{stats.bestScore || "—"}</span>
-                    <span className="lbl">Best Score</span>
+                    <span className="lbl">MASTEDEBATOR!</span>
                   </div>
                   <div className="stat-card">
                     <span className="val">{Math.round((stats.wins / stats.debates) * 100)}%</span>
@@ -3019,7 +3019,7 @@ export default function App() {
           <div className="stats-row">
             <div className="stat-card"><span className="val red">{stats.debates}</span><span className="lbl">Your Debates</span></div>
             <div className="stat-card"><span className="val green">{stats.wins}</span><span className="lbl">Your Wins</span></div>
-            <div className="stat-card"><span className="val gold">{stats.bestScore || "—"}</span><span className="lbl">Best Score</span></div>
+            <div className="stat-card"><span className="val gold">{stats.bestScore || "—"}</span><span className="lbl">MASTEDEBATOR!</span></div>
           </div>
 
           <div className="tabs">
