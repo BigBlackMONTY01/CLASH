@@ -614,6 +614,26 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .arena-stat .as-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);display:block;animation:statCount 0.6s ease;}
 .arena-stat .as-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;}
 
+/* LIVE SCOREBOARD */
+.live-scoreboard{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;margin-bottom:12px;flex-wrap:wrap;}
+.ls-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;}
+.ls-you{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--green);line-height:1;}.ls-ai{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--red);line-height:1;}
+.ls-sep{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text-dim);margin:0 4px;}.ls-avg{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-mid);margin-left:auto;}
+.ls-dots{display:flex;gap:4px;align-items:center;}.ls-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+/* TOPIC VOTES */
+.topic-vote-btn{background:none;border:1px solid var(--border);border-radius:100px;padding:2px 10px 2px 6px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:var(--text-dim);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:4px;touch-action:manipulation;margin-top:8px;}
+.topic-vote-btn:hover,.topic-vote-btn.voted{border-color:var(--red);color:var(--red);}
+.trending-section{margin-bottom:20px;}.trending-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;cursor:pointer;transition:border-color 0.2s;}
+.trending-item:hover{border-color:var(--text-dim);}.trending-rank{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text-dim);width:20px;flex-shrink:0;text-align:center;}
+.trending-text{flex:1;font-size:13px;font-weight:500;min-width:0;}.trending-votes{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--red);flex-shrink:0;}
+/* ACHIEVEMENTS */
+.achievement-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#111;border:1px solid var(--gold);border-radius:var(--radius);padding:12px 20px;display:flex;align-items:center;gap:12px;z-index:10000;box-shadow:0 8px 32px rgba(0,0,0,0.8);animation:toastIn 0.4s ease;max-width:360px;width:calc(100% - 32px);}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,20px);}to{opacity:1;transform:translate(-50%,0);}}
+.achievement-toast-icon{font-size:28px;flex-shrink:0;}.achievement-toast-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.achievement-toast-name{font-size:15px;font-weight:600;}.achievement-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.ach-badge{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:4px 12px 4px 8px;display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;}.ach-badge.gold-ach{border-color:var(--gold);background:rgba(244,197,66,0.08);}
+/* SOUND TOGGLE */
+.sound-btn{background:none;border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-size:15px;cursor:pointer;transition:border-color 0.2s;color:var(--text-dim);line-height:1;-webkit-tap-highlight-color:transparent;}.sound-btn:hover{border-color:var(--text-dim);color:var(--text);}
 /* Personal record */
 .nemesis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-top:10px;}
 .nemesis-icon{font-size:26px;flex-shrink:0;}
@@ -744,6 +764,19 @@ const TOPIC_POOL = [
   { cat: "Tech", text: "Big tech giants should be broken up by governments" },
   { cat: "Tech", text: "Nuclear energy is safer than fossil fuels" },
   { cat: "Tech", text: "Video game addiction is a real medical condition" },
+];
+
+const ACHIEVEMENTS = [
+  { id: "first-win",          icon: "🏆", name: "First Blood",          desc: "Win your first debate" },
+  { id: "debunker-slayer",    icon: "🔬", name: "Fact Checked",          desc: "Beat The Debunker" },
+  { id: "streak-3",           icon: "🔥", name: "On Fire",               desc: "Win 3 in a row" },
+  { id: "gauntlet-complete",  icon: "⚔️", name: "Gauntlet Champion",     desc: "Complete all 6 opponents" },
+  { id: "score-90",           icon: "💎", name: "Diamond Tongue",         desc: "Score 90+ in a debate" },
+  { id: "philosopher-slayer", icon: "🔮", name: "Deep Thinker",           desc: "Beat The Philosopher" },
+  { id: "share-it",           icon: "🔗", name: "Challenger",             desc: "Share a result" },
+  { id: "veteran",            icon: "📊", name: "Veteran",                desc: "Complete 10 debates" },
+  { id: "prosecutor-slayer",  icon: "⚖️", name: "Cross Examined",         desc: "Beat The Prosecutor" },
+  { id: "perfect-round",      icon: "⭐", name: "Flawless",               desc: "Score 95+ in a round" },
 ];
 
 function pickTopics() {
@@ -1148,6 +1181,11 @@ export default function App() {
   const [usernameError, setUsernameError] = useState("");
   const [lbData, setLbData] = useState<LbEntry[]>([]);
   const [lbLoading, setLbLoading] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => { try { return localStorage.getItem("clash-sound") !== "off"; } catch { return true; } });
+  const [topicVotes, setTopicVotes] = useState<Record<string,number>>(() => { try { return JSON.parse(localStorage.getItem("clash-votes")||"{}"); } catch { return {}; } });
+  const [votedTopics, setVotedTopics] = useState<Set<string>>(() => { try { return new Set<string>(JSON.parse(localStorage.getItem("clash-voted")||"[]")); } catch { return new Set<string>(); } });
+  const [unlockedAchs, setUnlockedAchs] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem("clash-achievements")||"[]"); } catch { return []; } });
+  const [achToast, setAchToast] = useState<{id:string;name:string;icon:string}|null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pendingVerdictRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1343,6 +1381,65 @@ export default function App() {
       .catch(() => setLbLoading(false));
   }, [screen, lbTab]);
 
+  const playSound = useCallback((type: "round-win"|"round-loss"|"victory"|"defeat"|"tick"|"submit") => {
+    if (!soundEnabled) return;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext) as typeof AudioContext;
+      const ctx = new AudioCtx();
+      const play = (freq: number, dur: number, delay = 0, waveType: OscillatorType = "sine", vol = 0.25) => {
+        const osc = ctx.createOscillator(); const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = waveType; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+        gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + delay + 0.01);
+        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + delay + dur);
+        osc.start(ctx.currentTime + delay);
+        osc.stop(ctx.currentTime + delay + dur + 0.05);
+      };
+      if (type === "round-win")  { play(523,0.12); play(659,0.12,0.13); play(784,0.2,0.26); }
+      else if (type === "round-loss") { play(240,0.18,0,"triangle",0.2); play(190,0.25,0.2,"triangle",0.15); }
+      else if (type === "victory") { play(523,0.1); play(659,0.1,0.1); play(784,0.1,0.2); play(1047,0.35,0.32,"sine",0.22); }
+      else if (type === "defeat") { play(380,0.15); play(290,0.18,0.16); play(200,0.3,0.35,"triangle",0.2); }
+      else if (type === "tick")   { play(1400,0.04,0,"square",0.06); }
+      else if (type === "submit") { play(440,0.08,0,"sine",0.12); }
+      setTimeout(() => { try { ctx.close(); } catch {} }, 2000);
+    } catch {}
+  }, [soundEnabled]);
+
+  const unlockAch = useCallback((id: string) => {
+    const def = ACHIEVEMENTS.find(a => a.id === id);
+    if (!def) return;
+    setUnlockedAchs(prev => {
+      if (prev.includes(id)) return prev;
+      const next = [...prev, id];
+      try { localStorage.setItem("clash-achievements", JSON.stringify(next)); } catch {}
+      setAchToast({ id: def.id, name: def.name, icon: def.icon });
+      setTimeout(() => setAchToast(null), 4000);
+      return next;
+    });
+  }, []);
+
+  const voteForTopic = useCallback((text: string) => {
+    if (votedTopics.has(text)) return;
+    const newVotes: Record<string,number> = { ...topicVotes, [text]: (topicVotes[text] || 0) + 1 };
+    const newVoted = new Set<string>([...votedTopics, text]);
+    setTopicVotes(newVotes);
+    setVotedTopics(newVoted);
+    try {
+      localStorage.setItem("clash-votes", JSON.stringify(newVotes));
+      localStorage.setItem("clash-voted", JSON.stringify([...newVoted]));
+    } catch {}
+  }, [votedTopics, topicVotes]);
+
+  const toggleSound = useCallback(() => {
+    setSoundEnabled(prev => {
+      const next = !prev;
+      try { localStorage.setItem("clash-sound", next ? "on" : "off"); } catch {}
+      return next;
+    });
+  }, []);
+
   const ai = selectedAI === "custom"
     ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
     : AI_OPPONENTS.find((a) => a.id === selectedAI);
@@ -1510,6 +1607,8 @@ export default function App() {
 
       const newRoundScores: RoundScore[] = [...roundScores, { round: roundNumber, ...roundScore }];
       setRoundScores(newRoundScores);
+      playSound(roundScore.score >= 60 ? "round-win" : "round-loss");
+      if (roundScore.score >= 95) unlockAch("perfect-round");
       setMessages([...newMessages, { role: "ai", text: aiText }]);
 
       if (isLastRound) {
@@ -1568,6 +1667,8 @@ export default function App() {
 
       const finalRank = judgeVerdict.rank || (won ? "B" : "D");
 
+      const nextStreak = won ? (stats.currentStreak ?? 0) + 1 : 0;
+      const nextDebates = stats.debates + 1;
       setStats((prev) => {
         const oppHistory = { ...(prev.opponentHistory || {}) };
         const oppId = selectedAI || "";
@@ -1577,15 +1678,27 @@ export default function App() {
             losses: (oppHistory[oppId]?.losses || 0) + (won ? 0 : 1),
           };
         }
+        const newStreak = won ? (prev.currentStreak ?? 0) + 1 : 0;
         return {
           wins: prev.wins + (won ? 1 : 0),
           debates: prev.debates + 1,
           bestScore: Math.max(prev.bestScore, avgScore),
-          currentStreak: prev.currentStreak,
-          bestStreak: prev.bestStreak,
+          currentStreak: newStreak,
+          bestStreak: Math.max(prev.bestStreak ?? 0, newStreak),
           opponentHistory: oppHistory,
         };
       });
+      playSound(won ? "victory" : "defeat");
+      if (won) {
+        unlockAch("first-win");
+        if (nextStreak >= 3) unlockAch("streak-3");
+        if (selectedAI === "debunker")    unlockAch("debunker-slayer");
+        if (selectedAI === "philosopher") unlockAch("philosopher-slayer");
+        if (selectedAI === "prosecutor")  unlockAch("prosecutor-slayer");
+      }
+      if (avgScore >= 90) unlockAch("score-90");
+      if (nextDebates >= 10) unlockAch("veteran");
+      if (tournamentMode && tournamentBotIndex >= 5 && won) unlockAch("gauntlet-complete");
 
       // Save debate to DB in background (non-blocking)
       {
@@ -1738,6 +1851,7 @@ export default function App() {
     const url = `${window.location.origin}${window.location.pathname}?share=${encoded}`;
     navigator.clipboard.writeText(url).catch(() => {});
     setShareToast("Link copied!");
+    unlockAch("share-it");
     setTimeout(() => setShareToast(""), 3000);
   };
 
@@ -1818,10 +1932,13 @@ export default function App() {
     <div className="app">
       <nav className="nav">
         <div className="logo">CL<span>A</span>SH</div>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {stats.debates > 0 && (
             <div className="nav-rank">{stats.wins}W {stats.debates - stats.wins}L</div>
           )}
+          <button className="sound-btn" onClick={toggleSound} title={soundEnabled ? "Mute sounds" : "Enable sounds"}>
+            {soundEnabled ? "🔊" : "🔇"}
+          </button>
           <button
             className={`profile-pill${player?.username ? " named" : ""}`}
             onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setShowUsernameModal(true); }}
@@ -2006,6 +2123,23 @@ export default function App() {
                 )}
               </div>
             )}
+            {unlockedAchs.length > 0 && (
+              <div style={{ marginTop: "24px" }}>
+                <p className="section-label">Achievements</p>
+                <div className="achievement-strip">
+                  {unlockedAchs.map(id => {
+                    const def = ACHIEVEMENTS.find(a => a.id === id);
+                    if (!def) return null;
+                    return (
+                      <div key={id} className="ach-badge gold-ach" title={def.desc}>
+                        <span>{def.icon}</span>
+                        <span>{def.name}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -2081,6 +2215,20 @@ export default function App() {
           {setupStep === 1 && (
             <>
               <p className="section-label">Pick a topic</p>
+              {Object.keys(topicVotes).length > 0 && (() => {
+                const sorted = Object.entries(topicVotes).sort((a, b) => b[1] - a[1]).slice(0, 3);
+                return (
+                  <div className="trending-section">
+                    <p className="section-label" style={{ marginBottom: "8px" }}>🔥 Trending</p>
+                    {sorted.map(([text, votes]) => (
+                      <div key={text} className="trending-item" onClick={() => setSelectedTopic({ cat: "Hot Take", text })}>
+                        <span className="trending-text">{text}</span>
+                        <span className="trending-votes">{votes} vote{votes !== 1 ? "s" : ""}</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
               <div className="topic-grid">
                 {displayTopics.map((t, i) => {
                   const rating = getTopicRating(t.text);
@@ -2089,6 +2237,12 @@ export default function App() {
                       <div className="t-cat">{t.cat}</div>
                       <div className="t-text">{t.text}</div>
                       <div className={`topic-rating rating-${rating.toLowerCase()}`}>{rating}</div>
+                      <button
+                        className={`topic-vote-btn${votedTopics.has(t.text) ? " voted" : ""}`}
+                        onClick={(e) => { e.stopPropagation(); voteForTopic(t.text); }}
+                      >
+                        🔥 {topicVotes[t.text] ? `${topicVotes[t.text]} vote${topicVotes[t.text] !== 1 ? "s" : ""}` : "Vote"}
+                      </button>
                     </div>
                   );
                 })}
@@ -2243,6 +2397,28 @@ export default function App() {
             </div>
           </div>
 
+          {roundScores.length > 0 && (() => {
+            const roundsWon = roundScores.filter(r => r.score >= 60).length;
+            const roundsLost = roundScores.length - roundsWon;
+            const avg = Math.round(roundScores.reduce((s, r) => s + r.score, 0) / roundScores.length);
+            return (
+              <div className="live-scoreboard">
+                <span className="ls-label">Live</span>
+                <div className="ls-dots">
+                  {roundScores.map((r, i) => (
+                    <div key={i} className="ls-dot" style={{ background: r.score >= 60 ? "var(--green)" : "var(--red)" }} />
+                  ))}
+                  {Array.from({ length: Math.max(0, selectedRounds - roundScores.length) }).map((_, i) => (
+                    <div key={`e${i}`} className="ls-dot" style={{ background: "var(--border)" }} />
+                  ))}
+                </div>
+                <span className="ls-you">{roundsWon}W</span>
+                <span className="ls-sep">:</span>
+                <span className="ls-ai">{roundsLost}L</span>
+                <span className="ls-avg">Avg {avg}</span>
+              </div>
+            );
+          })()}
           {roundScores.map((rs, i) => (
             <div key={i} className="round-score">
               <span className="rs-round">Rd {rs.round}</span>
@@ -2799,6 +2975,15 @@ export default function App() {
       )}
     </div>
     {shareToast && <div className="share-toast">{shareToast}</div>}
+    {achToast && (
+      <div className="achievement-toast">
+        <span className="achievement-toast-icon">{achToast.icon}</span>
+        <div>
+          <div className="achievement-toast-label">Achievement Unlocked</div>
+          <div className="achievement-toast-name">{achToast.name}</div>
+        </div>
+      </div>
+    )}
 
     {showUsernameModal && (
       <div className="username-modal" onClick={() => setShowUsernameModal(false)}>

@@ -78,6 +78,26 @@ const LP_CSS = `
 .lp-cursor.lp-cursor-big { width:18px; height:18px; background:var(--lp-red2); }
 .lp-cursor-ring.lp-ring-big { width:48px; height:48px; }
 
+/* LASER */
+.lp-laser {
+  position:fixed; width:14px; height:14px; border-radius:50%;
+  background:var(--lp-red); pointer-events:none; z-index:9997;
+  box-shadow:0 0 8px 4px rgba(230,57,70,0.9),0 0 24px 8px rgba(230,57,70,0.5),0 0 60px 20px rgba(230,57,70,0.2);
+  animation:lp-laser-pulse 0.6s ease-in-out infinite;
+}
+@keyframes lp-laser-pulse {
+  0%,100%{box-shadow:0 0 8px 4px rgba(230,57,70,0.9),0 0 24px 8px rgba(230,57,70,0.5),0 0 60px 20px rgba(230,57,70,0.2);}
+  50%{box-shadow:0 0 14px 7px rgba(255,70,85,1),0 0 40px 14px rgba(230,57,70,0.7),0 0 80px 30px rgba(230,57,70,0.3);}
+}
+
+/* FEATURE GRID */
+.lp-feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:32px;}
+.lp-feat-card{background:var(--lp-surface);border:1px solid var(--lp-border);border-radius:12px;padding:24px;transition:border-color 0.3s;}
+.lp-feat-card:hover{border-color:#333;}
+.lp-feat-icon{font-size:28px;margin-bottom:12px;}
+.lp-feat-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:6px;}
+.lp-feat-desc{font-size:14px;color:var(--lp-mid);line-height:1.6;}
+
 .lp-grain {
   position:fixed; inset:0; pointer-events:none; z-index:9998;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
@@ -482,11 +502,14 @@ html { scroll-behavior:smooth; }
 export function Landing() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const ringRef   = useRef<HTMLDivElement>(null);
+  const laserRef  = useRef<HTMLDivElement>(null);
   const mouseX = useRef(0);
   const mouseY = useRef(0);
   const ringX  = useRef(0);
   const ringY  = useRef(0);
   const rafRef = useRef<number>(0);
+  const laserPos = useRef({ x: 200, y: 300, vx: 3.2, vy: 2.4 });
+  const laserRaf = useRef<number>(0);
 
   const [stats, setStats] = useState<GlobalStats>({
     totalDebates: 0,
@@ -509,6 +532,34 @@ export function Landing() {
   useEffect(() => {
     document.body.style.cursor = "none";
     return () => { document.body.style.cursor = ""; };
+  }, []);
+
+  useEffect(() => {
+    const el = laserRef.current;
+    if (!el) return;
+    const size = 14;
+    laserPos.current = {
+      x: Math.random() * (window.innerWidth - size),
+      y: Math.random() * (window.innerHeight - size),
+      vx: (Math.random() > 0.5 ? 1 : -1) * (2.5 + Math.random() * 2),
+      vy: (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2),
+    };
+    const animate = () => {
+      const p = laserPos.current;
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x <= 0)        { p.x = 0;      p.vx =  Math.abs(p.vx); }
+      if (p.x >= W - size) { p.x = W-size; p.vx = -Math.abs(p.vx); }
+      if (p.y <= 0)        { p.y = 0;      p.vy =  Math.abs(p.vy); }
+      if (p.y >= H - size) { p.y = H-size; p.vy = -Math.abs(p.vy); }
+      el.style.left = p.x + "px";
+      el.style.top  = p.y + "px";
+      laserRaf.current = requestAnimationFrame(animate);
+    };
+    laserRaf.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(laserRaf.current);
   }, []);
 
   useEffect(() => {
@@ -569,6 +620,7 @@ export function Landing() {
     <>
       <style>{LP_CSS}</style>
       <div className="lp-grain" />
+      <div ref={laserRef}  className="lp-laser" />
       <div ref={cursorRef} className="lp-cursor" />
       <div ref={ringRef}   className="lp-cursor-ring" />
 
@@ -743,6 +795,28 @@ export function Landing() {
               ))}
             </div>
             <a href={APP_URL} className="lp-btn-gold">Enter the Gauntlet</a>
+          </div>
+        </section>
+
+        {/* PLATFORM FEATURES */}
+        <section className="lp-section">
+          <div className="lp-reveal"><div className="lp-section-label">Platform Features</div></div>
+          <div className="lp-reveal lp-rd-1"><h2 className="lp-section-title">BUILT FOR<br />SERIOUS DEBATERS.</h2></div>
+          <div className="lp-reveal lp-rd-2"><p className="lp-section-sub">Everything you need to track, improve, and dominate every debate.</p></div>
+          <div className="lp-feat-grid lp-reveal lp-rd-3">
+            {[
+              { icon: "📊", name: "Live Round Scoreboard", desc: "Track your W:L record round by round as the debate unfolds. See your running average and exactly where you stand before the final verdict." },
+              { icon: "🔥", name: "Topic Voting", desc: "Vote on debate topics to make them trend. The community surfaces the most divisive topics — so every match is fresh and contested." },
+              { icon: "🏆", name: "Achievements & Badges", desc: "Unlock badges for wins, streaks, and conquering tough opponents. From First Blood to Gauntlet Champion — every milestone is tracked." },
+              { icon: "🔗", name: "Challenge Friends", desc: "Share your verdict as a link. Anyone who opens it sees your result and can accept the same debate — directly challenging your record." },
+              { icon: "🔊", name: "Sound Feedback", desc: "Immersive audio on every round win, loss, and final verdict. Toggle on or off from the nav. Feels better to win with sound." },
+            ].map((f) => (
+              <div key={f.name} className="lp-feat-card lp-reveal">
+                <div className="lp-feat-icon">{f.icon}</div>
+                <div className="lp-feat-name">{f.name}</div>
+                <div className="lp-feat-desc">{f.desc}</div>
+              </div>
+            ))}
           </div>
         </section>
 
