@@ -1,4 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+interface GlobalStats {
+  totalDebates: number;
+  globalWinRate: number;
+  activePlayers: number;
+}
 
 const APP_URL = "/play";
 
@@ -384,6 +390,19 @@ export function Landing() {
   const ringY  = useRef(0);
   const rafRef = useRef<number>(0);
 
+  const [stats, setStats] = useState<GlobalStats>({
+    totalDebates: 2847,
+    globalWinRate: 61,
+    activePlayers: 0,
+  });
+
+  useEffect(() => {
+    fetch("/api/stats/global")
+      .then(r => r.ok ? r.json() : null)
+      .then((data: GlobalStats | null) => { if (data) setStats(data); })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     document.body.style.cursor = "none";
     return () => { document.body.style.cursor = ""; };
@@ -483,7 +502,15 @@ export function Landing() {
           <div className="lp-ticker">
             <div className="lp-ticker-inner">
               <span className="lp-live-dot" />
-              <strong>2,847</strong>&nbsp;debates fought · <strong>61%</strong>&nbsp;global win rate
+              <strong>{stats.totalDebates.toLocaleString()}</strong>&nbsp;debates
+              <span style={{ color: "var(--lp-border)", margin: "0 6px" }}>·</span>
+              <strong>{stats.globalWinRate}%</strong>&nbsp;win rate
+              {stats.activePlayers > 0 && (
+                <>
+                  <span style={{ color: "var(--lp-border)", margin: "0 6px" }}>·</span>
+                  <strong>{stats.activePlayers.toLocaleString()}</strong>&nbsp;players
+                </>
+              )}
             </div>
           </div>
         </div>
