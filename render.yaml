@@ -1,24 +1,20 @@
 services:
   - type: web
-    name: clash
-    env: node
-    plan: free
-    buildCommand: >
-      pnpm install --frozen-lockfile &&
-      PORT=10000 pnpm --filter @workspace/clash run build &&
-      pnpm --filter @workspace/api-server run build
-    startCommand: node artifacts/api-server/dist/index.mjs
-    healthCheckPath: /api/health
+    name: clash-api
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
-      - key: NEON_DATABASE_URL
+      - key: DATABASE_URL
+        sync: false
+      - key: ANTHROPIC_API_KEY
         sync: false
       - key: JWT_SECRET
         generateValue: true
-      - key: ANTHROPIC_API_KEY
-        sync: false
       - key: FRONTEND_DIST
         value: artifacts/clash/dist/public
