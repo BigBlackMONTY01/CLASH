@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { API } from "./lib/api";
+import { V1BattleButton } from "./V1BattleButton";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap');`;
 
@@ -2692,20 +2693,7 @@ export default function App() {
               </button>
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
-              <button className="v1-home-btn" onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}>
-                <div className="v1-arena">
-                  <span className="v1-sol-l">🤺</span>
-                  <span className="v1-clash-fx">⚡</span>
-                  <span className="v1-sp v1-sp1" />
-                  <span className="v1-sp v1-sp2" />
-                  <span className="v1-sp v1-sp3" />
-                  <span className="v1-sp v1-sp4" />
-                  <span className="v1-sp v1-sp5" />
-                  <span className="v1-sp v1-sp6" />
-                  <span className="v1-sol-r">🤺</span>
-                </div>
-                <span className="v1-battle-label">1V1 Challenge</span>
-              </button>
+              <V1BattleButton onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }} />
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
               <button className="gauntlet-btn" onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}>
