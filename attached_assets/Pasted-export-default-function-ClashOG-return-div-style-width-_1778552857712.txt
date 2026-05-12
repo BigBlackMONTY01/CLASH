@@ -1,0 +1,188 @@
+export default function ClashOG() {
+  return (
+    <div style={{
+      width: '100%',
+      background: '#080808',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '16px',
+      minHeight: '100vh',
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@600;700&display=swap');
+      `}</style>
+
+      <div style={{
+        width: '100%',
+        maxWidth: '1200px',
+        aspectRatio: '1200/630',
+        position: 'relative',
+        overflow: 'hidden',
+        borderRadius: '8px',
+        boxShadow: '0 0 0 1px #222, 0 40px 80px rgba(0,0,0,0.8)',
+      }}>
+        <svg
+          viewBox="0 0 1200 630"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ width: '100%', height: '100%', display: 'block' }}
+        >
+          <defs>
+            <radialGradient id="redGlow2" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stopColor="#e63946" stopOpacity="0.22"/>
+              <stop offset="70%" stopColor="#e63946" stopOpacity="0.05"/>
+              <stop offset="100%" stopColor="#080808" stopOpacity="0"/>
+            </radialGradient>
+            <linearGradient id="topBar2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#e63946"/>
+              <stop offset="50%" stopColor="#f4c542"/>
+              <stop offset="100%" stopColor="#22c55e"/>
+            </linearGradient>
+            <linearGradient id="streakL2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#e63946" stopOpacity="0.5"/>
+              <stop offset="100%" stopColor="#e63946" stopOpacity="0"/>
+            </linearGradient>
+            <linearGradient id="streakR2" x1="100%" y1="0%" x2="0%" y2="0%">
+              <stop offset="0%" stopColor="#e63946" stopOpacity="0.5"/>
+              <stop offset="100%" stopColor="#e63946" stopOpacity="0"/>
+            </linearGradient>
+            <radialGradient id="vignette2" cx="50%" cy="50%" r="70%">
+              <stop offset="0%" stopColor="transparent"/>
+              <stop offset="100%" stopColor="#000000" stopOpacity="0.65"/>
+            </radialGradient>
+          </defs>
+
+          {/* Base */}
+          <rect width="1200" height="630" fill="#080808"/>
+
+          {/* Grid */}
+          <g opacity="0.03" stroke="#ffffff" strokeWidth="1">
+            {[105,210,315,420,525].map(y => <line key={y} x1="0" y1={y} x2="1200" y2={y}/>)}
+            {[150,300,450,600,750,900,1050].map(x => <line key={x} x1={x} y1="0" x2={x} y2="630"/>)}
+          </g>
+
+          {/* Red glow */}
+          <rect width="1200" height="630" fill="url(#redGlow2)"/>
+
+          {/* Diagonal slashes */}
+          <polygon points="0,0 220,0 120,630 0,630" fill="#e63946" opacity="0.04"/>
+          <polygon points="1200,0 980,0 1080,630 1200,630" fill="#e63946" opacity="0.04"/>
+
+          {/* Horizontal streaks */}
+          <rect x="0" y="314" width="260" height="1.5" fill="url(#streakL2)"/>
+          <rect x="940" y="314" width="260" height="1.5" fill="url(#streakR2)"/>
+
+          {/* CLASH — giant, centered, vertically centered */}
+          <text
+            x="600" y="370"
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize="340"
+            fill="#f0f0f0"
+            textAnchor="middle"
+            letterSpacing="4"
+          >CL</text>
+          <text
+            x="600" y="370"
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize="340"
+            fill="#f0f0f0"
+            textAnchor="middle"
+            letterSpacing="4"
+            opacity="0"
+          >CLASH</text>
+
+          {/* Full CLASH white */}
+          <text
+            x="600" y="380"
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize="320"
+            fill="#efefef"
+            textAnchor="middle"
+            letterSpacing="6"
+          >CLASH</text>
+
+          {/* Red A overlay — position carefully over the A in CLASH */}
+          {/* C=1 L=2 A=3 S=4 H=5 — A is roughly at x=560 */}
+          <text
+            x="600" y="380"
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize="320"
+            fill="none"
+            textAnchor="middle"
+            letterSpacing="6"
+          >
+          </text>
+
+          {/* Clip the A red — use a rect mask over just the A position */}
+          <clipPath id="aClip">
+            <rect x="468" y="60" width="138" height="340"/>
+          </clipPath>
+          <text
+            x="600" y="380"
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize="320"
+            fill="#e63946"
+            textAnchor="middle"
+            letterSpacing="6"
+            clipPath="url(#aClip)"
+          >CLASH</text>
+
+          {/* ARGUE. WIN. */}
+          <text
+            x="600" y="456"
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize="64"
+            fill="#e63946"
+            textAnchor="middle"
+            letterSpacing="16"
+          >ARGUE. WIN.</text>
+
+          {/* Tagline */}
+          <text
+            x="600" y="508"
+            fontFamily="'Barlow Condensed', sans-serif"
+            fontSize="19"
+            fill="#505050"
+            textAnchor="middle"
+            letterSpacing="5"
+            fontWeight="600"
+          >YOU VS AI · GET SCORED · CLIMB THE RANKS</text>
+
+          {/* Top rainbow bar */}
+          <rect x="0" y="0" width="1200" height="5" fill="url(#topBar2)"/>
+
+          {/* Bottom bar */}
+          <rect x="0" y="625" width="1200" height="5" fill="#161616"/>
+
+          {/* Logo top left */}
+          <text x="48" y="70" fontFamily="'Bebas Neue', sans-serif" fontSize="36" fill="#f0f0f0" letterSpacing="1">CL</text>
+          <text x="96" y="70" fontFamily="'Bebas Neue', sans-serif" fontSize="36" fill="#e63946" letterSpacing="1">A</text>
+          <text x="118" y="70" fontFamily="'Bebas Neue', sans-serif" fontSize="36" fill="#f0f0f0" letterSpacing="1">SH</text>
+
+          {/* BETA badge */}
+          <rect x="170" y="48" width="50" height="22" rx="3" fill="#e63946"/>
+          <text x="195" y="63" fontFamily="'Barlow Condensed', sans-serif" fontSize="12" fill="#fff" textAnchor="middle" letterSpacing="2" fontWeight="700">BETA</text>
+
+          {/* Live dot + stat top right */}
+          <circle cx="894" cy="57" r="6" fill="#22c55e"/>
+          <text x="910" y="63" fontFamily="'Barlow Condensed', sans-serif" fontSize="15" fill="#444" letterSpacing="2" fontWeight="600">LIVE · 2,847 DEBATES FOUGHT</text>
+
+          {/* Bottom left — opponents */}
+          <text x="48" y="592" fontFamily="'Barlow Condensed', sans-serif" fontSize="13" fill="#303030" letterSpacing="3" fontWeight="700">6 AI OPPONENTS</text>
+          <text x="210" y="594" fontSize="19">🎓</text>
+          <text x="240" y="594" fontSize="19">🏛️</text>
+          <text x="270" y="594" fontSize="19">⚖️</text>
+          <text x="300" y="594" fontSize="19">🔮</text>
+          <text x="330" y="594" fontSize="19">😈</text>
+          <text x="360" y="594" fontSize="19">🔬</text>
+
+          {/* Bottom right URL */}
+          <text x="1152" y="592" fontFamily="'Barlow Condensed', sans-serif" fontSize="15" fill="#303030" textAnchor="end" letterSpacing="2">clashbant.netlify.app</text>
+
+          {/* Vignette */}
+          <rect width="1200" height="630" fill="url(#vignette2)"/>
+        </svg>
+      </div>
+    </div>
+  );
+}
