@@ -1609,7 +1609,7 @@ export default function App() {
     if (!multiScreens.includes(screen) || !currentRoom?.code) return;
     const poll = async () => {
       try {
-        const room = await apiAuthGet<RoomState>(`/rooms/${currentRoom.code}`);
+        const room = await apiAuthGet<RoomState>(`/1v1/room/${currentRoom.code}`);
         setCurrentRoom(room);
         if (room.status === "debating" && screen === "multiplayer-waiting") setScreen("multiplayer-debate");
         if (room.status === "complete" && screen !== "multiplayer-results") setScreen("multiplayer-results");
@@ -2236,8 +2236,8 @@ export default function App() {
   const createRoom = async () => {
     setRoomLoading(true); setRoomError("");
     try {
-      const data = await apiAuthPost<{code: string}>("/rooms/create", { totalRounds: 3 });
-      const room = await apiAuthGet<RoomState>(`/rooms/${data.code}`);
+      const data = await apiAuthPost<{code: string}>("/1v1/create", { totalRounds: 3 });
+      const room = await apiAuthGet<RoomState>(`/1v1/room/${data.code}`);
       setCurrentRoom(room);
       setRoomPlayerNum(1);
       setScreen("multiplayer-waiting");
@@ -2249,8 +2249,8 @@ export default function App() {
     if (!roomJoinCode || roomJoinCode.length !== 6) return;
     setRoomLoading(true); setRoomError("");
     try {
-      const data = await apiAuthPost<{code: string; playerNum: number}>("/rooms/join", { code: roomJoinCode });
-      const room = await apiAuthGet<RoomState>(`/rooms/${data.code}`);
+      const data = await apiAuthPost<{code: string; playerNum: number}>("/1v1/join", { code: roomJoinCode });
+      const room = await apiAuthGet<RoomState>(`/1v1/room/${data.code}`);
       setCurrentRoom(room);
       setRoomPlayerNum(data.playerNum as 1 | 2);
       setScreen(room.status === "debating" ? "multiplayer-debate" : "multiplayer-waiting");
@@ -2261,7 +2261,7 @@ export default function App() {
   const setRoomSide = async (side: "for" | "against") => {
     if (!currentRoom) return;
     try {
-      await apiAuthPost(`/rooms/${currentRoom.code}/sides`, { side });
+      await apiAuthPost(`/1v1/${currentRoom.code}/sides`, { side });
       const opp: "for" | "against" = side === "for" ? "against" : "for";
       setCurrentRoom(prev => prev ? { ...prev, player1Side: side, player2Side: opp } : prev);
     } catch (e) { setRoomError((e as Error).message); }
@@ -2269,7 +2269,7 @@ export default function App() {
 
   const markReady = async () => {
     if (!currentRoom) return;
-    try { await apiAuthPost(`/rooms/${currentRoom.code}/ready`, {}); }
+    try { await apiAuthPost(`/1v1/${currentRoom.code}/ready`, {}); }
     catch (e) { setRoomError((e as Error).message); }
   };
 
@@ -2277,7 +2277,7 @@ export default function App() {
     if (!currentRoom || !roomArgInput.trim() || roomSubmitting) return;
     setRoomSubmitting(true);
     try {
-      await apiAuthPost(`/rooms/${currentRoom.code}/argue`, { argumentText: roomArgInput.trim() });
+      await apiAuthPost(`/1v1/${currentRoom.code}/argue`, { argumentText: roomArgInput.trim() });
       setRoomArgInput("");
     } catch (e) { setRoomError((e as Error).message); }
     finally { setRoomSubmitting(false); }
@@ -2286,8 +2286,8 @@ export default function App() {
   const forfeitRoom = async () => {
     if (!currentRoom) return;
     try {
-      await apiAuthPost(`/rooms/${currentRoom.code}/forfeit`, {});
-      const room = await apiAuthGet<RoomState>(`/rooms/${currentRoom.code}`);
+      await apiAuthPost(`/1v1/${currentRoom.code}/forfeit`, {});
+      const room = await apiAuthGet<RoomState>(`/1v1/room/${currentRoom.code}`);
       setCurrentRoom(room);
       setScreen("multiplayer-results");
     } catch (e) { setRoomError((e as Error).message); }

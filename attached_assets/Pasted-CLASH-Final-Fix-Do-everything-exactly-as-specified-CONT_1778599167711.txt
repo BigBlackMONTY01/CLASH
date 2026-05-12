@@ -1,0 +1,16 @@
+CLASH — Final Fix. Do everything exactly as specified.
+CONTEXT:
+	•	Monorepo. Frontend: artifacts/clash/src/. Backend: artifacts/api-server/src/. DB package: @workspace/db at lib/db/src/
+	•	Backend runs on Render at clash-1xpu.onrender.com. Frontend on Vercel at clashbant.vercel.app
+	•	Auth routes are in artifacts/api-server/src/routes/auth.ts — the code is correct but something is preventing it from working
+	•	Main Express app is artifacts/api-server/src/app.ts — it imports router from ./routes
+	•	CSS theme is in artifacts/clash/src/index.css — all CSS variables are set to red as placeholders and need to be properly set
+
+FIX 1 — AUTH IS BROKEN
+The auth routes exist and look correct. The problem is likely one of these — check and fix ALL of them:
+	1.	Open artifacts/api-server/src/routes/index.ts (the main router file). Make sure authRouter is imported from ./auth and mounted with router.use(authRouter) or equivalent. If it’s missing, add it.
+	2.	Check lib/db/src/ for the database schema. Make sure a users table exists with columns: id, email, passwordHash, playerId, createdAt. If it doesn’t exist, create it in the schema file and run pnpm drizzle-kit push to apply it to Neon.
+	3.	Make sure bcryptjs and jsonwebtoken are in the dependencies of artifacts/api-server/package.json. If missing, add them and run pnpm install.
+	4.	Make sure JWT_SECRET is read from process.env.JWT_SECRET — it already is in the code, so just confirm the env var is set on Render. Add to Render environment: JWT_SECRET = any random 32-character string.
+	5.	On the frontend, find the Sign In modal/form component. Make sure it’s calling POST /api/auth/register and POST /api/auth/login with Content-Type: application/json and a JSON body { email, password }. Make sure it’s using the Vercel proxy (just /api/... not the full Render URL). On success, save the returned token to localStorage as clash_token and save email, userId, playerId to localStorage as clash_user.
+	6.	After successful login/register: hide the Sign In button completely. Show only the profile button with the username/email.

@@ -1,0 +1,279 @@
+Perfect. Now I have everything I need. Here’s your guaranteed prompt:
+
+CLASH — Final Fix. Do everything exactly as specified.
+CONTEXT:
+	•	Monorepo. Frontend: artifacts/clash/src/. Backend: artifacts/api-server/src/. DB package: @workspace/db at lib/db/src/
+	•	Backend runs on Render at clash-1xpu.onrender.com. Frontend on Vercel at clashbant.vercel.app
+	•	Auth routes are in artifacts/api-server/src/routes/auth.ts — the code is correct but something is preventing it from working
+	•	Main Express app is artifacts/api-server/src/app.ts — it imports router from ./routes
+	•	CSS theme is in artifacts/clash/src/index.css — all CSS variables are set to red as placeholders and need to be properly set
+
+FIX 1 — AUTH IS BROKEN
+The auth routes exist and look correct. The problem is likely one of these — check and fix ALL of them:
+	1.	Open artifacts/api-server/src/routes/index.ts (the main router file). Make sure authRouter is imported from ./auth and mounted with router.use(authRouter) or equivalent. If it’s missing, add it.
+	2.	Check lib/db/src/ for the database schema. Make sure a users table exists with columns: id, email, passwordHash, playerId, createdAt. If it doesn’t exist, create it in the schema file and run pnpm drizzle-kit push to apply it to Neon.
+	3.	Make sure bcryptjs and jsonwebtoken are in the dependencies of artifacts/api-server/package.json. If missing, add them and run pnpm install.
+	4.	Make sure JWT_SECRET is read from process.env.JWT_SECRET — it already is in the code, so just confirm the env var is set on Render. Add to Render environment: JWT_SECRET = any random 32-character string.
+	5.	On the frontend, find the Sign In modal/form component. Make sure it’s calling POST /api/auth/register and POST /api/auth/login with Content-Type: application/json and a JSON body { email, password }. Make sure it’s using the Vercel proxy (just /api/... not the full Render URL). On success, save the returned token to localStorage as clash_token and save email, userId, playerId to localStorage as clash_user.
+	6.	After successful login/register: hide the Sign In button completely. Show only the profile button with the username/email.
+
+FIX 2 — BUILD THE 1V1 BACKEND (it doesn’t exist)
+There is no 1v1 route file. Build it from scratch.
+Create artifacts/api-server/src/routes/1v1.ts:
+
+import { Router } from "express";
+import { db } from "@workspace/db";
+import { nanoid } from "nanoid";
+
+const router = Router();
+
+// In-memory room store (good enough for now)
+const rooms: Record<string, {
+  code: string;
+  topic: string;
+  creatorId: string;
+  joinerId?: string;
+  status: "waiting" | "active" | "done";
+  createdAt: number;
+}> = {};
+
+// POST /api/1v1/create
+router.post("/1v1/create", (req, res) => {
+  try {
+    const { topic, playerId } = req.body;
+    if (!topic || !playerId) {
+      res.status(400).json({ error: "topic and playerId required" });
+      return;
+    }
+    const code = nanoid(6).toUpperCase();
+    rooms[code] = { code, topic, creatorId: String(playerId), status: "waiting", createdAt: Date.now() };
+    res.json({ code, topic, status: "waiting" });
+  } catch (err) {
+    console.error("1v1/create error:", err);
+    res.status(500).json({ error: "Failed to create room" });
+  }
+});
+
+// POST /api/1v1/join
+router.post("/1v1/join", (req, res) => {
+  try {
+    const { code, playerId } = req.body;
+    if (!code || !playerId) {
+      res.status(400).json({ error: "code and playerId required" });
+      return;
+    }
+    const room = rooms[code.toUpperCase()];
+    if (!room) {
+      res.status(404).json({ error: "Room not found. Check the code and try again." });
+      return;
+    }
+    if (room.status !== "waiting") {
+      res.status(409).json({ error: "This room is already in progress." });
+      return;
+    }
+    if (room.creatorId === String(playerId)) {
+      res.status(409).json({ error: "You can't join your own room." });
+      return;
+    }
+    room.joinerId = String(playerId);
+    room.status = "active";
+    res.json({ code: room.code, topic: room.topic, status: room.status });
+  } catch (err) {
+    console.error("1v1/join error:", err);
+    res.status(500).json({ error: "Failed to join room" });
+  }
+});
+
+// GET /api/1v1/room/:code
+router.get("/1v1/room/:code", (req, res) => {
+  try {
+    const room = rooms[req.params.code.toUpperCase()];
+    if (!room) {
+      res.status(404).json({ error: "Room not found" });
+      return;
+    }
+    res.json(room);
+  } catch (err) {
+    console.error("1v1/room error:", err);
+    res.status(500).json({ error: "Failed to get room" });
+  }
+});
+
+export default router;
+
+
+Then open artifacts/api-server/src/routes/index.ts and add:
+
+import oneVOneRouter from "./1v1";
+router.use(oneVOneRouter);
+
+
+Install nanoid if not present: pnpm add nanoid in artifacts/api-server/.
+On the frontend, make sure CREATE ROOM calls POST /api/1v1/create with { topic, playerId } and JOIN ROOM calls POST /api/1v1/join with { code, playerId }.
+
+FIX 3 — CSS THEME (all variables are set to red — fix them)
+Open artifacts/clash/src/index.css. Every CSS variable says red as a placeholder. Replace ALL of them with real values.
+Dark mode (.dark) — CLASH’s existing dark aesthetic:
+
+--background: 0 0% 5%;
+--foreground: 0 0% 95%;
+--border: 0 0% 15%;
+--card: 0 0% 8%;
+--card-foreground: 0 0% 95%;
+--card-border: 0 0% 15%;
+--popover: 0 0% 8%;
+--popover-foreground: 0 0% 95%;
+--popover-border: 0 0% 15%;
+--primary: 0 65% 47%;
+--primary-foreground: 0 0% 100%;
+--secondary: 0 0% 12%;
+--secondary-foreground: 0 0% 85%;
+--muted: 0 0% 12%;
+--muted-foreground: 0 0% 55%;
+--accent: 0 0% 15%;
+--accent-foreground: 0 0% 95%;
+--destructive: 0 65% 47%;
+--destructive-foreground: 0 0% 100%;
+--input: 0 0% 20%;
+--ring: 0 65% 47%;
+--sidebar: 0 0% 6%;
+--sidebar-foreground: 0 0% 90%;
+--sidebar-border: 0 0% 15%;
+--sidebar-primary: 0 65% 47%;
+--sidebar-primary-foreground: 0 0% 100%;
+--sidebar-accent: 0 0% 12%;
+--sidebar-accent-foreground: 0 0% 90%;
+--sidebar-ring: 0 65% 47%;
+--chart-1: 0 65% 47%;
+--chart-2: 210 65% 55%;
+--chart-3: 142 55% 45%;
+--chart-4: 45 90% 55%;
+--chart-5: 280 55% 55%;
+
+
+Light mode (:root) — iOS 26 liquid glass base:
+
+--background: 0 0% 96%;
+--foreground: 0 0% 8%;
+--border: 0 0% 82%;
+--card: 0 0% 100%;
+--card-foreground: 0 0% 8%;
+--card-border: 0 0% 85%;
+--popover: 0 0% 100%;
+--popover-foreground: 0 0% 8%;
+--popover-border: 0 0% 85%;
+--primary: 0 65% 40%;
+--primary-foreground: 0 0% 100%;
+--secondary: 0 0% 92%;
+--secondary-foreground: 0 0% 20%;
+--muted: 0 0% 92%;
+--muted-foreground: 0 0% 45%;
+--accent: 0 0% 90%;
+--accent-foreground: 0 0% 10%;
+--destructive: 0 65% 40%;
+--destructive-foreground: 0 0% 100%;
+--input: 0 0% 80%;
+--ring: 0 65% 40%;
+--sidebar: 0 0% 95%;
+--sidebar-foreground: 0 0% 10%;
+--sidebar-border: 0 0% 85%;
+--sidebar-primary: 0 65% 40%;
+--sidebar-primary-foreground: 0 0% 100%;
+--sidebar-accent: 0 0% 90%;
+--sidebar-accent-foreground: 0 0% 10%;
+--sidebar-ring: 0 65% 40%;
+--chart-1: 0 65% 40%;
+--chart-2: 210 65% 50%;
+--chart-3: 142 55% 40%;
+--chart-4: 45 90% 50%;
+--chart-5: 280 55% 50%;
+
+
+FIX 4 — iOS 26 LIQUID GLASS LIGHT MODE
+In artifacts/clash/src/index.css, add this at the bottom — it only activates when NOT in .dark mode:
+
+/* iOS 26 Liquid Glass - Light Mode Only */
+:root:not(.dark) body {
+  background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 40%, #f0f0f5 100%);
+  min-height: 100vh;
+}
+
+:root:not(.dark) .glass {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 8px 32px rgba(0,0,0,0.08) !important;
+  transition: background 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+/* Apply glass to nav, cards, buttons, modals automatically in light mode */
+:root:not(.dark) nav,
+:root:not(.dark) header {
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.9), 0 4px 24px rgba(0,0,0,0.06) !important;
+}
+
+:root:not(.dark) [class*="card"],
+:root:not(.dark) [class*="Card"] {
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 4px 16px rgba(0,0,0,0.06) !important;
+}
+
+:root:not(.dark) [class*="modal"],
+:root:not(.dark) [class*="Modal"],
+:root:not(.dark) [class*="dialog"],
+:root:not(.dark) [class*="Dialog"],
+:root:not(.dark) [role="dialog"] {
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(40px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 24px 64px rgba(0,0,0,0.12) !important;
+}
+
+:root:not(.dark) button:not([class*="primary"]):not([class*="destructive"]) {
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  transition: background 0.2s ease;
+}
+
+:root:not(.dark) button:not([class*="primary"]):not([class*="destructive"]):hover {
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+
+Then find every component that renders a card, modal, or panel and add the glass className to it in addition to its existing classes.
+
+FIX 5 — NAV CLEANUP
+Find the component that renders the top navigation bar (search for Sign In in the codebase to find it).
+	•	When logged OUT: show Sign In button, mute icon button, light/dark toggle button. No profile button.
+	•	When logged IN (token exists in localStorage as clash_token): hide Sign In button. Show mute icon, light/dark toggle, and a compact profile pill (avatar icon + username or email prefix).
+	•	Tapping profile pill opens a floating panel with backdrop-filter: blur(40px), background: rgba(0,0,0,0.6) in dark mode / rgba(255,255,255,0.6) in light mode, rounded corners, showing: username/email, and a Logout button at the bottom. Logout clears clash_token and clash_user from localStorage and resets state.
+	•	Mute and light/dark buttons: remove border boxes, icon only, 36x36px tap target, subtle opacity on hover.
+
+FIX 6 — 1V1 BUTTON ON HOME SCREEN
+Find the 1V1 button on the main play/home screen. It currently has a blue tint and left-aligned text with a chevron. Fix it:
+	•	Remove blue background, use same dark background as other buttons (background: rgba(255,255,255,0.05) dark / glass in light)
+	•	Center the text
+	•	Remove the chevron ›
+	•	Make it ⚔️ 1V1 VS HUMAN in bold caps, same style as GAUNTLET MODE button
+
+FIX 7 — START CLASH BUTTON
+On the match setup screen, START CLASH button must be:
+	•	Full width
+	•	Centered below the FOR / AGAINST cards
+	•	Red background (#C0392B), white bold text, large, dominant
+	•	BACK button smaller, secondary style, left aligned or below
+
+DO NOT break: VS AI debate flow, scoring, AI judge, leaderboard, activity feed, gauntlet mode, share card, replay system. Test that the app still builds after all changes with pnpm build.
+
+That’s the full prompt. Every file path is real, every fix is specific. Send it.​​​​​​​​​​​​​​​​
