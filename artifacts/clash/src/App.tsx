@@ -731,50 +731,53 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 
 /* LIGHT MODE — iOS 26 Liquid Glass */
 [data-theme="light"]{
-  --bg:#f0f2f7;
-  --surface:rgba(255,255,255,0.75);
-  --surface2:rgba(255,255,255,0.55);
-  --border:rgba(0,0,0,0.09);
-  --red:#ff3b30;
-  --red-dim:rgba(255,59,48,0.14);
-  --blue:#007aff;
-  --blue-dim:rgba(0,122,255,0.14);
-  --gold:#ff9500;
+  --bg:transparent;
+  --surface:rgba(255,255,255,0.52);
+  --surface2:rgba(255,255,255,0.38);
+  --border:rgba(255,255,255,0.58);
+  --red:#e0302a;
+  --red-dim:rgba(224,48,42,0.14);
+  --blue:#0071e3;
+  --blue-dim:rgba(0,113,227,0.14);
+  --gold:#c77b00;
   --text:#1c1c1e;
-  --text-dim:#8e8e93;
-  --text-mid:#48484a;
-  --green:#30d158;
+  --text-dim:#636366;
+  --text-mid:#3a3a3c;
+  --green:#1a8c40;
 }
-[data-theme="light"] body{background:linear-gradient(155deg,#dde5f5 0%,#ede8f8 40%,#d8e9f5 100%);background-attachment:fixed;}
+[data-theme="light"] body{background:linear-gradient(145deg,#95b8f5 0%,#c2a8f2 28%,#80c8f5 58%,#7de0b8 100%);min-height:100dvh;}
 [data-theme="light"] body::after{background:none;}
-[data-theme="light"] .nav{background:rgba(255,255,255,0.72);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.65);box-shadow:0 1px 0 rgba(0,0,0,0.06),0 4px 20px rgba(0,0,0,0.04);}
-[data-theme="light"] .featured-card,[data-theme="light"] .stat-card,[data-theme="light"] .ai-card,[data-theme="light"] .topic-card,[data-theme="light"] .lb-row,[data-theme="light"] .round-score,[data-theme="light"] .live-scoreboard,[data-theme="light"] .arena-header,[data-theme="light"] .feed-item,[data-theme="light"] .lobby-card,[data-theme="light"] .v1-result-card,[data-theme="light"] .v1-arg-entry,[data-theme="light"] .v1-arena-header,[data-theme="light"] .nemesis-card,[data-theme="light"] .challenge-banner,[data-theme="light"] .verdict-card,[data-theme="light"] .replay-intro,[data-theme="light"] .replay-round,[data-theme="light"] .trending-item,[data-theme="light"] .v1-history-entry,[data-theme="light"] .gauntlet-bot-card,[data-theme="light"] .gp-bot,[data-theme="light"] .gf-match,[data-theme="light"] .ach-badge{background:rgba(255,255,255,0.72);backdrop-filter:blur(22px) saturate(170%);-webkit-backdrop-filter:blur(22px) saturate(170%);border-color:rgba(255,255,255,0.7);box-shadow:0 2px 14px rgba(0,0,0,0.07),inset 0 1px 0 rgba(255,255,255,0.9);}
-[data-theme="light"] .msg-text,[data-theme="light"] .score-pill,[data-theme="light"] .custom-form,[data-theme="light"] .auth-box,[data-theme="light"] .username-dialog,[data-theme="light"] .v1-iq-card,[data-theme="light"] .v1-score-bar,[data-theme="light"] .share-link-box,[data-theme="light"] .waiting-room{background:rgba(255,255,255,0.72);backdrop-filter:blur(22px) saturate(170%);-webkit-backdrop-filter:blur(22px) saturate(170%);border-color:rgba(255,255,255,0.7);box-shadow:0 2px 14px rgba(0,0,0,0.07);}
-[data-theme="light"] .v1-mode-card{background:linear-gradient(135deg,rgba(0,122,255,0.11),rgba(0,70,180,0.05));border-color:rgba(0,122,255,0.22);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);}
-[data-theme="light"] .btn-primary{background:var(--red);box-shadow:0 4px 16px rgba(255,59,48,0.35);}
-[data-theme="light"] .btn-secondary{background:rgba(255,255,255,0.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:rgba(0,0,0,0.1);color:var(--text);}
-[data-theme="light"] .btn-ghost{background:rgba(255,255,255,0.55);border-color:rgba(0,0,0,0.1);color:var(--text-dim);}
-[data-theme="light"] .btn-ghost:hover{background:rgba(255,255,255,0.88);color:var(--text);}
-[data-theme="light"] .debate-input,[data-theme="light"] .join-code-input,[data-theme="light"] .auth-field,[data-theme="light"] .username-field,[data-theme="light"] .custom-input{background:rgba(255,255,255,0.88);border-color:rgba(0,0,0,0.12);color:var(--text);}
-[data-theme="light"] .tabs,[data-theme="light"] .v1-tab-row{background:rgba(255,255,255,0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:rgba(0,0,0,0.08);}
-[data-theme="light"] .sound-btn,[data-theme="light"] .theme-btn{background:rgba(255,255,255,0.65);border-color:rgba(0,0,0,0.1);}
-[data-theme="light"] .sound-btn:hover,[data-theme="light"] .theme-btn:hover{background:rgba(255,255,255,0.92);border-color:rgba(0,0,0,0.18);}
-[data-theme="light"] .auth-pill{background:rgba(255,59,48,0.09);border-color:rgba(255,59,48,0.25);}
-[data-theme="light"] .profile-pill{background:rgba(255,255,255,0.65);border-color:rgba(0,0,0,0.1);}
-[data-theme="light"] .share-toast{background:rgba(255,255,255,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:var(--green);}
-[data-theme="light"] .achievement-toast{background:rgba(255,255,255,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
-[data-theme="light"] .mf-vs-card{background:rgba(255,255,255,0.72);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-color:rgba(255,255,255,0.7);}
-[data-theme="light"] .mf-stance.for{background:rgba(48,209,88,0.1);}
-[data-theme="light"] .mf-stance.against{background:rgba(255,59,48,0.1);}
-[data-theme="light"] .error-banner{background:rgba(255,59,48,0.07);}
-[data-theme="light"] .v1-player-chip.me{background:rgba(255,59,48,0.1);border-color:rgba(255,59,48,0.3);}
-[data-theme="light"] .v1-player-chip.opp{background:rgba(0,122,255,0.1);border-color:rgba(0,122,255,0.25);}
-[data-theme="light"] .arena-stats{border-color:rgba(0,0,0,0.08);}
-[data-theme="light"] .arena-stat+.arena-stat{border-color:rgba(0,0,0,0.08);}
+[data-theme="light"] .nav{position:relative;overflow:hidden;background:rgba(255,255,255,0.58);backdrop-filter:blur(28px) saturate(200%);-webkit-backdrop-filter:blur(28px) saturate(200%);border-bottom:1px solid rgba(255,255,255,0.72);box-shadow:0 1px 0 rgba(0,0,0,0.04),0 4px 24px rgba(0,0,0,0.06);}
+[data-theme="light"] .nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.95),transparent);pointer-events:none;}
+[data-theme="light"] .featured-card,[data-theme="light"] .stat-card,[data-theme="light"] .ai-card,[data-theme="light"] .topic-card,[data-theme="light"] .lb-row,[data-theme="light"] .round-score,[data-theme="light"] .live-scoreboard,[data-theme="light"] .arena-header,[data-theme="light"] .feed-item,[data-theme="light"] .lobby-card,[data-theme="light"] .v1-result-card,[data-theme="light"] .v1-arg-entry,[data-theme="light"] .v1-arena-header,[data-theme="light"] .nemesis-card,[data-theme="light"] .challenge-banner,[data-theme="light"] .verdict-card,[data-theme="light"] .replay-intro,[data-theme="light"] .replay-round,[data-theme="light"] .trending-item,[data-theme="light"] .v1-history-entry,[data-theme="light"] .gauntlet-bot-card,[data-theme="light"] .gp-bot,[data-theme="light"] .gf-match,[data-theme="light"] .ach-badge,[data-theme="light"] .msg-text,[data-theme="light"] .score-pill,[data-theme="light"] .custom-form,[data-theme="light"] .auth-box,[data-theme="light"] .username-dialog,[data-theme="light"] .v1-iq-card,[data-theme="light"] .v1-score-bar,[data-theme="light"] .share-link-box,[data-theme="light"] .waiting-room,[data-theme="light"] .mf-vs-card{position:relative;overflow:hidden;background:rgba(255,255,255,0.52)!important;backdrop-filter:blur(22px) saturate(200%)!important;-webkit-backdrop-filter:blur(22px) saturate(200%)!important;border:1px solid rgba(255,255,255,0.65)!important;box-shadow:0 8px 32px rgba(0,0,0,0.06)!important;}
+[data-theme="light"] .featured-card::before,[data-theme="light"] .stat-card::before,[data-theme="light"] .ai-card::before,[data-theme="light"] .topic-card::before,[data-theme="light"] .lb-row::before,[data-theme="light"] .arena-header::before,[data-theme="light"] .lobby-card::before,[data-theme="light"] .v1-result-card::before,[data-theme="light"] .verdict-card::before,[data-theme="light"] .v1-history-entry::before,[data-theme="light"] .gf-match::before,[data-theme="light"] .auth-box::before,[data-theme="light"] .v1-iq-card::before,[data-theme="light"] .mf-vs-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.9),transparent);pointer-events:none;z-index:1;}
+[data-theme="light"] .v1-mode-card{position:relative;overflow:hidden;background:rgba(170,200,255,0.45)!important;backdrop-filter:blur(22px) saturate(200%)!important;-webkit-backdrop-filter:blur(22px) saturate(200%)!important;border:1px solid rgba(255,255,255,0.68)!important;box-shadow:0 8px 32px rgba(0,0,0,0.06)!important;}
+[data-theme="light"] .btn-primary{background:var(--red);box-shadow:0 4px 16px rgba(224,48,42,0.3);}
+[data-theme="light"] .btn-secondary{position:relative;overflow:hidden;background:rgba(255,255,255,0.52);backdrop-filter:blur(14px) saturate(180%);-webkit-backdrop-filter:blur(14px) saturate(180%);border:1px solid rgba(255,255,255,0.65);color:var(--text);}
+[data-theme="light"] .btn-ghost{background:rgba(255,255,255,0.42);border-color:rgba(255,255,255,0.6);color:var(--text-dim);}
+[data-theme="light"] .btn-ghost:hover{background:rgba(255,255,255,0.78);color:var(--text);}
+[data-theme="light"] .debate-input,[data-theme="light"] .join-code-input,[data-theme="light"] .auth-field,[data-theme="light"] .username-field,[data-theme="light"] .custom-input{background:rgba(255,255,255,0.82);border-color:rgba(0,0,0,0.1);color:var(--text);}
+[data-theme="light"] .tabs,[data-theme="light"] .v1-tab-row{position:relative;overflow:hidden;background:rgba(255,255,255,0.45)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important;border-color:rgba(255,255,255,0.62)!important;}
+[data-theme="light"] .sound-btn,[data-theme="light"] .theme-btn{background:rgba(255,255,255,0.55);border-color:rgba(255,255,255,0.72);color:var(--text-mid);}
+[data-theme="light"] .sound-btn:hover,[data-theme="light"] .theme-btn:hover{background:rgba(255,255,255,0.85);}
+[data-theme="light"] .auth-pill{background:rgba(224,48,42,0.1);border-color:rgba(224,48,42,0.3);color:var(--red);}
+[data-theme="light"] .profile-pill,[data-theme="light"] .user-chip{background:rgba(255,255,255,0.55);border-color:rgba(255,255,255,0.72);color:var(--text);}
+[data-theme="light"] .user-chip:hover{background:rgba(255,255,255,0.82);}
+[data-theme="light"] .share-toast{background:rgba(255,255,255,0.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:var(--green);}
+[data-theme="light"] .achievement-toast{background:rgba(255,255,255,0.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
+[data-theme="light"] .mf-stance.for{background:rgba(26,140,64,0.1);}
+[data-theme="light"] .mf-stance.against{background:rgba(224,48,42,0.1);}
+[data-theme="light"] .error-banner{background:rgba(224,48,42,0.07);}
+[data-theme="light"] .v1-player-chip.me{background:rgba(224,48,42,0.1);border-color:rgba(224,48,42,0.3);}
+[data-theme="light"] .v1-player-chip.opp{background:rgba(0,113,227,0.1);border-color:rgba(0,113,227,0.25);}
+[data-theme="light"] .arena-stats{border-color:rgba(255,255,255,0.5);}
+[data-theme="light"] .arena-stat+.arena-stat{border-color:rgba(255,255,255,0.5);}
 [data-theme="light"] .logo::after{background:var(--red);}
-[data-theme="light"] .sudden-btn{background:rgba(255,59,48,0.07);}
-[data-theme="light"] .best-arg{background:rgba(48,209,88,0.07);border-color:rgba(48,209,88,0.2);}
-[data-theme="light"] .worst-arg{background:rgba(255,59,48,0.07);border-color:rgba(255,59,48,0.2);}
+[data-theme="light"] .sudden-btn{background:rgba(224,48,42,0.07);}
+[data-theme="light"] .best-arg{background:rgba(26,140,64,0.09);border-color:rgba(26,140,64,0.2);}
+[data-theme="light"] .worst-arg{background:rgba(224,48,42,0.07);border-color:rgba(224,48,42,0.2);}
+[data-theme="light"] .profile-panel{position:relative;overflow:hidden;background:rgba(255,255,255,0.72)!important;backdrop-filter:blur(32px) saturate(200%)!important;-webkit-backdrop-filter:blur(32px) saturate(200%)!important;border:1px solid rgba(255,255,255,0.78)!important;box-shadow:0 16px 48px rgba(0,0,0,0.1)!important;}
+[data-theme="light"] .pp-username-field{background:rgba(255,255,255,0.82);border-color:rgba(0,0,0,0.1);}
 
 /* 1V1 LOBBY TABS */
 .v1-tab-row{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:20px;}
@@ -799,6 +802,33 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .seasonal-badge.silver{background:rgba(180,180,190,0.1);border:1px solid rgba(180,180,190,0.35);color:#ababbb;}
 .seasonal-badge.bronze{background:rgba(180,110,50,0.1);border:1px solid rgba(180,110,50,0.35);color:#b87333;}
 .seasonal-badge.blue{background:rgba(0,119,255,0.1);border:1px solid rgba(0,119,255,0.28);color:#60a5fa;}
+
+/* USER CHIP & PROFILE PANEL */
+.user-chip{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 5px;border:1px solid var(--border);border-radius:100px;background:transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text);transition:all 0.18s;-webkit-tap-highlight-color:transparent;flex-shrink:0;max-width:140px;}
+.user-chip:hover{border-color:var(--red);background:rgba(255,255,255,0.05);}
+.user-chip-av{width:22px;height:22px;border-radius:50%;background:var(--red-dim);border:1.5px solid rgba(230,57,70,0.4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--red);flex-shrink:0;line-height:1;font-family:'Barlow Condensed',sans-serif;}
+.user-chip-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.profile-overlay{position:fixed;inset:0;z-index:8000;}
+.profile-panel{position:fixed;top:62px;right:16px;z-index:8001;width:268px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.45),0 4px 16px rgba(0,0,0,0.2);animation:ppIn 0.18s cubic-bezier(0.34,1.2,0.64,1);}
+@keyframes ppIn{from{opacity:0;transform:scale(0.95) translateY(-8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.pp-header{padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.pp-avatar{width:40px;height:40px;border-radius:50%;background:var(--red-dim);border:2px solid rgba(230,57,70,0.35);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--red);flex-shrink:0;font-family:'Barlow Condensed',sans-serif;line-height:1;}
+.pp-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pp-email{font-size:10px;color:var(--text-dim);margin-top:2px;font-family:'Barlow',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px;}
+.pp-stats{display:flex;border-bottom:1px solid var(--border);}
+.pp-stat{flex:1;text-align:center;padding:10px 8px;border-right:1px solid var(--border);}
+.pp-stat:last-child{border-right:none;}
+.pp-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);display:block;line-height:1;}
+.pp-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:1px;}
+.pp-section{padding:10px 14px;border-bottom:1px solid var(--border);}
+.pp-section-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+.pp-username-row{display:flex;gap:6px;align-items:center;}
+.pp-username-field{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 9px;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--text);outline:none;transition:border-color 0.2s;}
+.pp-username-field:focus{border-color:var(--blue);}
+.pp-save-btn{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:6px 11px;background:var(--red);color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap;transition:background 0.18s;}
+.pp-save-btn:hover{background:#ff4655;}
+.pp-logout{display:block;width:100%;padding:12px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;cursor:pointer;transition:color 0.18s,background 0.18s;}
+.pp-logout:hover{color:var(--red);background:rgba(230,57,70,0.06);}
 `;
 
 function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
@@ -1449,6 +1479,8 @@ export default function App() {
   const [authPassword, setAuthPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
+  const [showProfilePanel, setShowProfilePanel] = useState(false);
+  const [regUsername, setRegUsername] = useState("");
 
   // Multiplayer room state
   const [currentRoom, setCurrentRoom] = useState<RoomState | null>(null);
@@ -2180,8 +2212,16 @@ export default function App() {
       const data = await apiAuthPost<{token: string; email: string; playerId: number}>("/auth/register", { email: authEmail, password: authPassword, deviceId: getOrCreateDeviceId() });
       localStorage.setItem("clash-auth-token", data.token);
       setAuthUser({ email: data.email, playerId: data.playerId });
+      const clean = regUsername.trim().toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 20);
+      if (clean.length >= 2) {
+        try {
+          await apiPatch("/players/username", { deviceId: getOrCreateDeviceId(), username: clean });
+          const profile = await apiGet<PlayerProfile>(`/players/${getOrCreateDeviceId()}`);
+          setPlayer(profile);
+        } catch {}
+      }
       setShowAuthModal(false);
-      setAuthEmail(""); setAuthPassword("");
+      setAuthEmail(""); setAuthPassword(""); setRegUsername("");
     } catch (e) { setAuthError((e as Error).message); }
     finally { setAuthLoading(false); }
   };
@@ -2190,6 +2230,7 @@ export default function App() {
     localStorage.removeItem("clash-auth-token");
     setAuthUser(null);
     setShowAuthModal(false);
+    setShowProfilePanel(false);
   };
 
   const createRoom = async () => {
@@ -2421,9 +2462,11 @@ export default function App() {
       <nav className="nav">
         <div className="logo">CL<span>A</span>SH</div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <button className="auth-pill" onClick={() => { setAuthError(""); setShowAuthModal(true); }}>
-            {authUser ? `⚡ ${authUser.email.split("@")[0]}` : "Sign In"}
-          </button>
+          {!authUser && (
+            <button className="auth-pill" onClick={() => { setAuthError(""); setAuthMode("login"); setShowAuthModal(true); }}>
+              Sign In
+            </button>
+          )}
           <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute" : "Unmute"}>
             {soundEnabled ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2454,13 +2497,23 @@ export default function App() {
               </svg>
             )}
           </button>
-          <button
-            className={`profile-pill${player?.username ? " named" : ""}`}
-            onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setShowUsernameModal(true); }}
-          >
-            <span className="pill-icon">👤</span>
-            {player?.username || "Set Name"}
-          </button>
+          {authUser ? (
+            <button
+              className="user-chip"
+              onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setShowProfilePanel(p => !p); }}
+            >
+              <span className="user-chip-av">{(player?.username || authUser.email)[0].toUpperCase()}</span>
+              <span className="user-chip-name">{player?.username || authUser.email.split("@")[0]}</span>
+            </button>
+          ) : (
+            <button
+              className={`profile-pill${player?.username ? " named" : ""}`}
+              onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setShowUsernameModal(true); }}
+            >
+              <span className="pill-icon">👤</span>
+              {player?.username || "Set Name"}
+            </button>
+          )}
         </div>
       </nav>
 
@@ -2501,7 +2554,6 @@ export default function App() {
               <div className="v1-icon">⚔</div>
               <div className="v1-info">
                 <div className="v1-title">1v1</div>
-                <div className="v1-desc">Challenge a friend · Room code · AI judge · IQ scores</div>
               </div>
               <div className="v1-arrow">›</div>
             </div>
@@ -3980,59 +4032,103 @@ export default function App() {
       </div>
     )}
 
-    {showAuthModal && (
+    {showAuthModal && !authUser && (
       <div className="auth-overlay" onClick={() => setShowAuthModal(false)}>
         <div className="auth-box" onClick={(e) => e.stopPropagation()}>
           <button className="auth-close" onClick={() => setShowAuthModal(false)}>✕</button>
           <div className="auth-title">CLASH</div>
-          {authUser ? (
-            <>
-              <div className="auth-sub">Signed in as <strong>{authUser.email}</strong></div>
-              <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "13px", color: "var(--text-mid)", marginBottom: "20px" }}>
-                ✓ Your progress is saved to your account.
-              </div>
-              <button className="btn btn-ghost" style={{ width: "100%" }} onClick={logoutFn}>Sign Out</button>
-            </>
-          ) : (
-            <>
-              <div className="auth-sub">Save your progress · Climb the leaderboard</div>
-              <div className="auth-tabs">
-                <button className={`auth-tab${authMode === "login" ? " active" : ""}`} onClick={() => { setAuthMode("login"); setAuthError(""); }}>Login</button>
-                <button className={`auth-tab${authMode === "register" ? " active" : ""}`} onClick={() => { setAuthMode("register"); setAuthError(""); }}>Register</button>
-              </div>
-              <input
-                className="auth-field"
-                type="email"
-                placeholder="email@example.com"
-                value={authEmail}
-                onChange={(e) => { setAuthEmail(e.target.value); setAuthError(""); }}
-                onKeyDown={(e) => { if (e.key === "Enter") authMode === "login" ? loginFn() : registerFn(); }}
-                autoFocus
-              />
-              <input
-                className="auth-field"
-                type="password"
-                placeholder={authMode === "register" ? "Password (6+ chars)" : "Password"}
-                value={authPassword}
-                onChange={(e) => { setAuthPassword(e.target.value); setAuthError(""); }}
-                onKeyDown={(e) => { if (e.key === "Enter") authMode === "login" ? loginFn() : registerFn(); }}
-              />
-              {authError && <div className="auth-err">{authError}</div>}
-              <button
-                className="btn btn-primary"
-                style={{ width: "100%", marginBottom: "12px" }}
-                disabled={authLoading}
-                onClick={authMode === "login" ? loginFn : registerFn}
-              >
-                {authLoading ? "..." : authMode === "login" ? "Sign In →" : "Create Account →"}
-              </button>
-              <button className="btn btn-ghost" style={{ width: "100%", fontSize: "12px", letterSpacing: "1px" }} onClick={() => setShowAuthModal(false)}>
-                Continue as Guest
-              </button>
-            </>
+          <div className="auth-sub">Save your progress · Climb the leaderboard</div>
+          <div className="auth-tabs">
+            <button className={`auth-tab${authMode === "login" ? " active" : ""}`} onClick={() => { setAuthMode("login"); setAuthError(""); }}>Login</button>
+            <button className={`auth-tab${authMode === "register" ? " active" : ""}`} onClick={() => { setAuthMode("register"); setAuthError(""); }}>Register</button>
+          </div>
+          <input
+            className="auth-field"
+            type="email"
+            placeholder="email@example.com"
+            value={authEmail}
+            onChange={(e) => { setAuthEmail(e.target.value); setAuthError(""); }}
+            onKeyDown={(e) => { if (e.key === "Enter") authMode === "login" ? loginFn() : registerFn(); }}
+            autoFocus
+          />
+          <input
+            className="auth-field"
+            type="password"
+            placeholder={authMode === "register" ? "Password (6+ chars)" : "Password"}
+            value={authPassword}
+            onChange={(e) => { setAuthPassword(e.target.value); setAuthError(""); }}
+            onKeyDown={(e) => { if (e.key === "Enter") authMode === "login" ? loginFn() : registerFn(); }}
+          />
+          {authMode === "register" && (
+            <input
+              className="auth-field"
+              type="text"
+              placeholder="Username (optional)"
+              maxLength={20}
+              value={regUsername}
+              onChange={(e) => setRegUsername(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") registerFn(); }}
+            />
           )}
+          {authError && <div className="auth-err">{authError}</div>}
+          <button
+            className="btn btn-primary"
+            style={{ width: "100%", marginBottom: "12px" }}
+            disabled={authLoading}
+            onClick={authMode === "login" ? loginFn : registerFn}
+          >
+            {authLoading ? "..." : authMode === "login" ? "Sign In →" : "Create Account →"}
+          </button>
+          <button className="btn btn-ghost" style={{ width: "100%", fontSize: "12px", letterSpacing: "1px" }} onClick={() => setShowAuthModal(false)}>
+            Continue as Guest
+          </button>
         </div>
       </div>
+    )}
+
+    {showProfilePanel && authUser && (
+      <>
+        <div className="profile-overlay" onClick={() => setShowProfilePanel(false)} />
+        <div className="profile-panel">
+          <div className="pp-header">
+            <div className="pp-avatar">{(player?.username || authUser.email)[0].toUpperCase()}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="pp-name">{player?.username || authUser.email.split("@")[0]}</div>
+              <div className="pp-email">{authUser.email}</div>
+            </div>
+          </div>
+          <div className="pp-stats">
+            <div className="pp-stat">
+              <span className="pp-stat-val">{stats.debates}</span>
+              <div className="pp-stat-lbl">Debates</div>
+            </div>
+            <div className="pp-stat">
+              <span className="pp-stat-val" style={{ color: "var(--green)" }}>{stats.wins}</span>
+              <div className="pp-stat-lbl">Wins</div>
+            </div>
+            <div className="pp-stat">
+              <span className="pp-stat-val" style={{ color: "var(--gold)" }}>{stats.bestScore || "—"}</span>
+              <div className="pp-stat-lbl">Best</div>
+            </div>
+          </div>
+          <div className="pp-section">
+            <div className="pp-section-lbl">Display Name</div>
+            <div className="pp-username-row">
+              <input
+                className="pp-username-field"
+                placeholder="YOURNAME"
+                maxLength={20}
+                value={usernameInput}
+                onChange={(e) => { setUsernameInput(e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, "")); setUsernameError(""); }}
+                onKeyDown={(e) => { if (e.key === "Enter") handleSetUsername(); }}
+              />
+              <button className="pp-save-btn" onClick={handleSetUsername}>Save</button>
+            </div>
+            {usernameError && <div style={{ fontSize: "11px", color: "var(--red)", marginTop: "4px" }}>{usernameError}</div>}
+          </div>
+          <button className="pp-logout" onClick={logoutFn}>Log Out</button>
+        </div>
+      </>
     )}
 
     {showUsernameModal && (
