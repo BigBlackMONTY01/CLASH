@@ -636,7 +636,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .achievement-toast-name{font-size:15px;font-weight:600;}.achievement-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .ach-badge{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:4px 12px 4px 8px;display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;}.ach-badge.gold-ach{border-color:var(--gold);background:rgba(244,197,66,0.08);}
 /* SOUND TOGGLE */
-.sound-btn{background:none;border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-size:15px;cursor:pointer;transition:border-color 0.2s;color:var(--text-dim);line-height:1;-webkit-tap-highlight-color:transparent;}.sound-btn:hover{border-color:var(--text-dim);color:var(--text);}
+.sound-btn{background:none;border:1px solid var(--border);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.18s,color 0.18s,background 0.18s;color:var(--text-dim);-webkit-tap-highlight-color:transparent;flex-shrink:0;}.sound-btn:hover{border-color:var(--text-mid);color:var(--text);background:rgba(255,255,255,0.04);}.sound-btn.muted{color:var(--text-dim);opacity:0.5;}
 /* Personal record */
 .nemesis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-top:10px;}
 .nemesis-icon{font-size:26px;flex-shrink:0;}
@@ -1641,16 +1641,23 @@ export default function App() {
   }, [timeLeft]);
 
   const generateVerdict = async (scores: RoundScore[], _msgs: Message[]) => {
-    const avgScore = Math.round(scores.reduce((s, r) => s + r.score, 0) / scores.length);
-    const avgLogic = Math.round(scores.reduce((s, r) => s + r.logic, 0) / scores.length);
-    const avgPersuasion = Math.round(scores.reduce((s, r) => s + r.persuasion, 0) / scores.length);
-    const avgDelivery = Math.round(scores.reduce((s, r) => s + r.delivery, 0) / scores.length);
+    const safeNum = (v: number, fallback = 50) => (Number.isFinite(v) ? v : fallback);
+    const safeAvg = (vals: number[]) => {
+      if (vals.length === 0) return 50;
+      const sum = vals.reduce((s, v) => s + safeNum(v), 0);
+      return Math.round(sum / vals.length);
+    };
+    const avgScore = safeAvg(scores.map((r) => r.score));
+    const avgLogic = safeAvg(scores.map((r) => r.logic));
+    const avgPersuasion = safeAvg(scores.map((r) => r.persuasion));
+    const avgDelivery = safeAvg(scores.map((r) => r.delivery));
     const won = avgScore >= 65;
 
     try {
       const userArguments = _msgs.filter((m) => m.role === "user").map((m) => m.text);
+      const safeTopic = selectedTopic?.text?.trim() || "General debate";
       const judgeVerdict = await apiPost<{ verdict: string; improve: string; rank: string; outcome: string }>("/debate/verdict", {
-        topic: selectedTopic?.text ?? "",
+        topic: safeTopic,
         avgScore, avgLogic, avgPersuasion, avgDelivery,
         roundScores: scores,
       });
@@ -1847,7 +1854,11 @@ export default function App() {
     const trimmed = usernameInput.trim();
     if (trimmed.length < 2) { setUsernameError("Must be at least 2 characters."); return; }
     try {
-      const updated = await apiPatch<PlayerProfile>("/players/username", { deviceId, username: trimmed });
+      // Ensure the player row exists before patching
+      await apiPost("/players/register", { deviceId }).catch(() => {});
+      await apiPatch("/players/username", { deviceId, username: trimmed });
+      // Always re-fetch the full profile (includes stats) so state stays consistent
+      const updated = await apiGet<PlayerProfile>(`/players/${deviceId}`);
       setPlayer(updated);
       setShowUsernameModal(false);
       setUsernameInput("");
@@ -1856,10 +1867,10 @@ export default function App() {
       const msg = (err as Error).message || "";
       if (msg.includes("taken") || msg.includes("23505")) {
         setUsernameError("That username is already taken — try another.");
-      } else if (msg.includes("fetch") || msg.includes("NetworkError") || msg.includes("Failed")) {
+      } else if (msg.includes("not found") || msg.includes("404")) {
+        setUsernameError("Could not find your profile. Refresh the page and try again.");
+      } else if (msg.includes("fetch") || msg.includes("NetworkError") || msg.includes("Failed to fetch")) {
         setUsernameError("Could not reach the server. Check your connection.");
-      } else if (msg.includes("DB") || msg.includes("500")) {
-        setUsernameError("Server error saving your name — please try again.");
       } else {
         setUsernameError(msg || "Something went wrong. Try again.");
       }
@@ -1968,8 +1979,20 @@ export default function App() {
           {stats.debates > 0 && (
             <div className="nav-rank">{stats.wins}W {stats.debates - stats.wins}L</div>
           )}
-          <button className="sound-btn" onClick={toggleSound} title={soundEnabled ? "Mute sounds" : "Enable sounds"}>
-            {soundEnabled ? "🔊" : "🔇"}
+          <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute sounds" : "Enable sounds"}>
+            {soundEnabled ? (
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              </svg>
+            ) : (
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <line x1="23" y1="9" x2="17" y2="15"/>
+                <line x1="17" y1="9" x2="23" y2="15"/>
+              </svg>
+            )}
           </button>
           <button
             className={`profile-pill${player?.username ? " named" : ""}`}
