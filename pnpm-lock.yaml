@@ -166,6 +166,9 @@ importers:
 
   artifacts/api-server:
     dependencies:
+      '@neondatabase/serverless':
+        specifier: ^1.1.0
+        version: 1.1.0
       '@workspace/api-zod':
         specifier: workspace:*
         version: link:../../lib/api-zod

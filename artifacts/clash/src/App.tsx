@@ -644,6 +644,86 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .nemesis-sub{font-size:12px;color:var(--text-dim);}
 .nemesis-rematch{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--red);background:none;border:1px solid rgba(230,57,70,0.4);border-radius:var(--radius);padding:6px 12px;cursor:pointer;flex-shrink:0;touch-action:manipulation;}
 .nemesis-rematch:hover{border-color:var(--red);background:rgba(230,57,70,0.06);}
+/* AUTH MODAL */
+.auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(6px);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;max-width:400px;width:100%;position:relative;}
+.auth-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;margin-bottom:4px;}
+.auth-sub{font-size:13px;color:var(--text-dim);margin-bottom:20px;}
+.auth-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border);}
+.auth-tab{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--text-dim);padding:8px 20px 8px 0;position:relative;transition:color 0.2s;}
+.auth-tab.active{color:var(--red);}
+.auth-tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--red);}
+.auth-field{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;padding:12px 14px;margin-bottom:12px;outline:none;transition:border-color 0.2s;}
+.auth-field:focus{border-color:var(--red);}
+.auth-err{color:var(--red);font-size:13px;margin-bottom:12px;min-height:18px;}
+.auth-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;padding:4px;}
+.auth-close:hover{color:var(--text);}
+.auth-pill{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:100px;padding:4px 12px;cursor:pointer;color:var(--red);transition:all 0.2s;}
+.auth-pill:hover{background:rgba(230,57,70,0.2);}
+/* 1V1 MODE */
+.v1-mode-card{background:linear-gradient(135deg,rgba(0,119,255,0.1),rgba(0,50,150,0.06));border:1px solid rgba(0,119,255,0.3);border-radius:var(--radius);padding:16px 18px;margin-top:12px;cursor:pointer;transition:all 0.22s;display:flex;align-items:center;gap:14px;}
+.v1-mode-card:hover{border-color:rgba(0,119,255,0.6);transform:translateY(-1px);}
+.v1-icon{font-size:26px;flex-shrink:0;}
+.v1-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#60a5fa;margin-bottom:2px;}
+.v1-desc{font-size:12px;color:var(--text-dim);}
+.v1-arrow{font-size:18px;color:rgba(0,119,255,0.5);flex-shrink:0;}
+.lobby-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.lobby-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:22px 16px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.lobby-card:hover{transform:translateY(-2px);}
+.lobby-card.create{border-color:rgba(230,57,70,0.35);}.lobby-card.create:hover{border-color:var(--red);}
+.lobby-card.join{border-color:rgba(0,119,255,0.35);}.lobby-card.join:hover{border-color:var(--blue);}
+.lobby-card-icon{font-size:30px;margin-bottom:10px;}
+.lobby-card-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.lobby-card-sub{font-size:12px;color:var(--text-dim);}
+.join-code-input{width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:10px;padding:14px 18px;text-align:center;text-transform:uppercase;outline:none;transition:border-color 0.2s;margin-bottom:12px;}
+.join-code-input:focus{border-color:var(--blue);}
+.waiting-room{text-align:center;padding:32px 0;}
+.room-code-display{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,14vw,88px);letter-spacing:10px;color:var(--text);margin:12px 0 6px;cursor:pointer;transition:color 0.2s;}
+.room-code-display:hover{color:var(--gold);}
+.waiting-dots{display:flex;justify-content:center;gap:8px;margin:16px 0;}
+.waiting-dot{width:10px;height:10px;border-radius:50%;background:var(--border);animation:dotPulse 1.4s ease-in-out infinite;}
+.waiting-dot:nth-child(2){animation-delay:0.2s;}.waiting-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes dotPulse{0%,80%,100%{background:var(--border);}40%{background:var(--red);}}
+.share-link-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);word-break:break-all;cursor:pointer;margin-bottom:14px;transition:border-color 0.2s;}
+.share-link-box:hover{border-color:var(--text-dim);}
+.v1-arena-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);}
+.v1-round-badge{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--gold);}
+.v1-vs-bar{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;}
+.v1-player-chip{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;padding:6px 14px;border-radius:100px;border:2px solid;text-transform:uppercase;}
+.v1-player-chip.me{background:rgba(230,57,70,0.1);border-color:rgba(230,57,70,0.4);color:var(--red);}
+.v1-player-chip.opp{background:rgba(0,119,255,0.1);border-color:rgba(0,119,255,0.4);color:#60a5fa;}
+.v1-vs{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--text-dim);letter-spacing:2px;}
+.v1-score-bar{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);}
+.v1-score{font-family:'Bebas Neue',sans-serif;font-size:36px;}.v1-score.me{color:var(--red);}.v1-score.opp{color:#60a5fa;text-align:right;}
+.v1-score-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);display:block;}
+.v1-args-section{margin-bottom:16px;}
+.v1-arg-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;}
+.v1-arg-who{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+.v1-arg-who.me{color:var(--red);}.v1-arg-who.opp{color:#60a5fa;}
+.v1-arg-text{font-size:14px;line-height:1.7;color:var(--text-mid);}
+.v1-arg-critique{font-size:12px;color:var(--text-dim);margin-top:8px;font-style:italic;border-top:1px solid var(--border);padding-top:6px;}
+.v1-arg-scores{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;}
+.v1-arg-score{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:var(--text-dim);}
+.v1-arg-score span{color:var(--text-mid);font-weight:700;}
+.v1-waiting-msg{text-align:center;color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:18px;border:1px dashed var(--border);border-radius:var(--radius);margin-bottom:14px;}
+.hl{border-radius:3px;padding:0 2px;}
+.hl-strong{background:rgba(34,197,94,0.22);color:#86efac;}
+.hl-weak{background:rgba(244,197,66,0.22);color:#fde68a;}
+.hl-wrong{background:rgba(230,57,70,0.22);color:#fca5a5;}
+.hl-fallacy{background:rgba(251,146,60,0.22);color:#fed7aa;}
+.v1-result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;text-align:center;margin-bottom:20px;}
+.v1-winner-banner{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,10vw,68px);letter-spacing:4px;margin-bottom:8px;}
+.v1-iq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0;}
+.v1-iq-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 14px;text-align:center;}
+.v1-iq-card.winner{border-color:var(--gold);background:rgba(244,197,66,0.05);}
+.v1-iq-val{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--text);line-height:1;}
+.v1-iq-val.gold{color:var(--gold);}
+.v1-iq-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-top:4px;}
+.v1-iq-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.v1-iq-rank{font-family:'Bebas Neue',sans-serif;font-size:28px;}
+.v1-iq-desc{font-size:11px;color:var(--text-dim);margin-top:2px;}
+.v1-topic-banner{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;font-size:13px;color:var(--text-dim);margin-bottom:14px;}
+.v1-topic-banner strong{color:var(--text);font-style:italic;}
 `;
 
 function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
@@ -1101,6 +1181,61 @@ async function apiGet<T>(path: string): Promise<T> {
   return data as T;
 }
 
+function getAuthHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "x-device-id": getOrCreateDeviceId(),
+  };
+  try {
+    const token = localStorage.getItem("clash-auth-token");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+  } catch {}
+  return headers;
+}
+
+async function apiAuthPost<T>(path: string, body: unknown): Promise<T> {
+  const url = `${API}/api${path}`;
+  const res = await fetch(url, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(body) });
+  const data = await parseResponse(res) as Record<string, unknown>;
+  if (!res.ok) throw new Error((data.error as string) || `HTTP ${res.status}`);
+  return data as T;
+}
+
+async function apiAuthGet<T>(path: string): Promise<T> {
+  const url = `${API}/api${path}`;
+  const res = await fetch(url, { headers: getAuthHeaders() });
+  const data = await parseResponse(res) as Record<string, unknown>;
+  if (!res.ok) throw new Error((data.error as string) || `HTTP ${res.status}`);
+  return data as T;
+}
+
+function renderWithHighlights(text: string, highlights: RoomHighlight[]) {
+  if (!highlights || highlights.length === 0) return <>{text}</>;
+  const positioned = highlights
+    .map(h => ({ ...h, idx: text.indexOf(h.text) }))
+    .filter(h => h.idx >= 0 && h.text.length > 0)
+    .sort((a, b) => a.idx - b.idx);
+  const result: React.ReactNode[] = [];
+  let pos = 0;
+  for (const hl of positioned) {
+    if (hl.idx < pos) continue;
+    if (hl.idx > pos) result.push(<span key={`t${pos}`}>{text.slice(pos, hl.idx)}</span>);
+    result.push(<span key={`h${hl.idx}`} className={`hl hl-${hl.type}`} title={hl.note}>{hl.text}</span>);
+    pos = hl.idx + hl.text.length;
+  }
+  if (pos < text.length) result.push(<span key="tend">{text.slice(pos)}</span>);
+  return <>{result}</>;
+}
+
+function iqLabel(iq: number): string {
+  if (iq >= 145) return "GENIUS";
+  if (iq >= 130) return "GIFTED";
+  if (iq >= 120) return "SUPERIOR";
+  if (iq >= 110) return "HIGH AVG";
+  if (iq >= 90) return "AVERAGE";
+  return "BELOW AVG";
+}
+
 async function apiPatch<T>(path: string, body: unknown): Promise<T> {
   const url = `${API}/api${path}`;
   let res: Response;
@@ -1168,8 +1303,11 @@ interface Message { role: "user" | "ai"; text: string; }
 interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; iq?: number; iqLabel?: string; }
 interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; }
 interface Stats { wins: number; debates: number; bestScore: number; currentStreak: number; bestStreak: number; opponentHistory: Record<string, { wins: number; losses: number }>; }
+interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fallacy"; note: string; }
+interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
+interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; }
 
-type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final";
+type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final" | "multiplayer-lobby" | "multiplayer-waiting" | "multiplayer-debate" | "multiplayer-results";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
@@ -1227,6 +1365,25 @@ export default function App() {
   const [unlockedAchs, setUnlockedAchs] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem("clash-achievements")||"[]"); } catch { return []; } });
   const [achToast, setAchToast] = useState<{id:string;name:string;icon:string}|null>(null);
 
+  // Auth state
+  const [authUser, setAuthUser] = useState<{email: string; playerId: number} | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
+
+  // Multiplayer room state
+  const [currentRoom, setCurrentRoom] = useState<RoomState | null>(null);
+  const [roomPlayerNum, setRoomPlayerNum] = useState<1 | 2 | null>(null);
+  const [roomArgInput, setRoomArgInput] = useState("");
+  const [roomSubmitting, setRoomSubmitting] = useState(false);
+  const [roomError, setRoomError] = useState("");
+  const [roomLoading, setRoomLoading] = useState(false);
+  const [roomJoinCode, setRoomJoinCode] = useState("");
+  const [v1SubScreen, setV1SubScreen] = useState<"" | "join">("");
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pendingVerdictRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -1269,7 +1426,23 @@ export default function App() {
     return () => clearInterval(iv);
   }, [thinking]);
 
-  // Load shared result from URL on mount
+  // Restore auth session on mount
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem("clash-auth-token");
+      if (!token) return;
+      (async () => {
+        try {
+          const me = await apiAuthGet<{userId: number; playerId: number; email: string}>("/auth/me");
+          setAuthUser({ email: me.email, playerId: me.playerId });
+        } catch {
+          localStorage.removeItem("clash-auth-token");
+        }
+      })();
+    } catch {}
+  }, []);
+
+  // Load shared result from URL on mount; also handle ?room= join links
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const share = params.get("share");
@@ -1279,7 +1452,30 @@ export default function App() {
         setSharedResult({ topic: d.t, opponentId: d.oid, opponent: d.o, side: d.s, score: d.sc, rank: d.r, outcome: d.out, judge: d.j, rounds: d.rounds });
       } catch { /* ignore malformed share params */ }
     }
+    const roomParam = params.get("room");
+    if (roomParam && roomParam.length === 6) {
+      setRoomJoinCode(roomParam.toUpperCase());
+      setV1SubScreen("join");
+      setScreen("multiplayer-lobby");
+    }
   }, []);
+
+  // Poll room state every 2 seconds when in multiplayer screens
+  useEffect(() => {
+    const multiScreens: Screen[] = ["multiplayer-waiting", "multiplayer-debate", "multiplayer-results"];
+    if (!multiScreens.includes(screen) || !currentRoom?.code) return;
+    const poll = async () => {
+      try {
+        const room = await apiAuthGet<RoomState>(`/rooms/${currentRoom.code}`);
+        setCurrentRoom(room);
+        if (room.status === "debating" && screen === "multiplayer-waiting") setScreen("multiplayer-debate");
+        if (room.status === "complete" && screen !== "multiplayer-results") setScreen("multiplayer-results");
+      } catch { /* silent poll fail */ }
+    };
+    poll();
+    const iv = setInterval(poll, 2000);
+    return () => clearInterval(iv);
+  }, [screen, currentRoom?.code]);
 
   // Matchmaking countdown animation
   useEffect(() => {
@@ -1836,6 +2032,103 @@ export default function App() {
     setTournamentTopics([]);
     setTournamentMatchScores([]);
     setGauntletNextSide(null);
+    setCurrentRoom(null);
+    setRoomPlayerNum(null);
+    setRoomArgInput("");
+    setRoomError("");
+    setRoomLoading(false);
+    setRoomJoinCode("");
+    setV1SubScreen("");
+  };
+
+  const loginFn = async () => {
+    setAuthLoading(true); setAuthError("");
+    try {
+      const data = await apiAuthPost<{token: string; email: string; playerId: number}>("/auth/login", { email: authEmail, password: authPassword, deviceId: getOrCreateDeviceId() });
+      localStorage.setItem("clash-auth-token", data.token);
+      setAuthUser({ email: data.email, playerId: data.playerId });
+      setShowAuthModal(false);
+      setAuthEmail(""); setAuthPassword("");
+    } catch (e) { setAuthError((e as Error).message); }
+    finally { setAuthLoading(false); }
+  };
+
+  const registerFn = async () => {
+    setAuthLoading(true); setAuthError("");
+    try {
+      const data = await apiAuthPost<{token: string; email: string; playerId: number}>("/auth/register", { email: authEmail, password: authPassword, deviceId: getOrCreateDeviceId() });
+      localStorage.setItem("clash-auth-token", data.token);
+      setAuthUser({ email: data.email, playerId: data.playerId });
+      setShowAuthModal(false);
+      setAuthEmail(""); setAuthPassword("");
+    } catch (e) { setAuthError((e as Error).message); }
+    finally { setAuthLoading(false); }
+  };
+
+  const logoutFn = () => {
+    localStorage.removeItem("clash-auth-token");
+    setAuthUser(null);
+    setShowAuthModal(false);
+  };
+
+  const createRoom = async () => {
+    setRoomLoading(true); setRoomError("");
+    try {
+      const data = await apiAuthPost<{code: string}>("/rooms/create", { totalRounds: 3 });
+      const room = await apiAuthGet<RoomState>(`/rooms/${data.code}`);
+      setCurrentRoom(room);
+      setRoomPlayerNum(1);
+      setScreen("multiplayer-waiting");
+    } catch (e) { setRoomError((e as Error).message); }
+    finally { setRoomLoading(false); }
+  };
+
+  const joinRoom = async () => {
+    if (!roomJoinCode || roomJoinCode.length !== 6) return;
+    setRoomLoading(true); setRoomError("");
+    try {
+      const data = await apiAuthPost<{code: string; playerNum: number}>("/rooms/join", { code: roomJoinCode });
+      const room = await apiAuthGet<RoomState>(`/rooms/${data.code}`);
+      setCurrentRoom(room);
+      setRoomPlayerNum(data.playerNum as 1 | 2);
+      setScreen(room.status === "debating" ? "multiplayer-debate" : "multiplayer-waiting");
+    } catch (e) { setRoomError((e as Error).message); }
+    finally { setRoomLoading(false); }
+  };
+
+  const setRoomSide = async (side: "for" | "against") => {
+    if (!currentRoom) return;
+    try {
+      await apiAuthPost(`/rooms/${currentRoom.code}/sides`, { side });
+      const opp: "for" | "against" = side === "for" ? "against" : "for";
+      setCurrentRoom(prev => prev ? { ...prev, player1Side: side, player2Side: opp } : prev);
+    } catch (e) { setRoomError((e as Error).message); }
+  };
+
+  const markReady = async () => {
+    if (!currentRoom) return;
+    try { await apiAuthPost(`/rooms/${currentRoom.code}/ready`, {}); }
+    catch (e) { setRoomError((e as Error).message); }
+  };
+
+  const submitRoomArg = async () => {
+    if (!currentRoom || !roomArgInput.trim() || roomSubmitting) return;
+    setRoomSubmitting(true);
+    try {
+      await apiAuthPost(`/rooms/${currentRoom.code}/argue`, { argumentText: roomArgInput.trim() });
+      setRoomArgInput("");
+    } catch (e) { setRoomError((e as Error).message); }
+    finally { setRoomSubmitting(false); }
+  };
+
+  const forfeitRoom = async () => {
+    if (!currentRoom) return;
+    try {
+      await apiAuthPost(`/rooms/${currentRoom.code}/forfeit`, {});
+      const room = await apiAuthGet<RoomState>(`/rooms/${currentRoom.code}`);
+      setCurrentRoom(room);
+      setScreen("multiplayer-results");
+    } catch (e) { setRoomError((e as Error).message); }
   };
 
   const beginGauntlet = (side: "for" | "against") => {
@@ -1903,14 +2196,8 @@ export default function App() {
     setUsernameInput("");
     setUsernameError("");
   } catch (err: unknown) {
-    // DEBUG: Log the FULL error to see what it actually says
-    console.error("FULL ERROR OBJECT:", err);
-    const msg = (err as Error).message || "";
-    console.error("ERROR MESSAGE STRING:", msg);
-    console.error("ERROR TYPE:", typeof err);
-    
-    // Show the raw error message so you can see what it says
-    setUsernameError(`Error: ${msg}`);
+    const msg = (err as Error).message || "Something went wrong";
+    setUsernameError(msg);
   }
 };
 
@@ -2016,6 +2303,9 @@ export default function App() {
           {stats.debates > 0 && (
             <div className="nav-rank">{stats.wins}W {stats.debates - stats.wins}L</div>
           )}
+          <button className="auth-pill" onClick={() => { setAuthError(""); setShowAuthModal(true); }}>
+            {authUser ? `⚡ ${authUser.email.split("@")[0]}` : "Sign In"}
+          </button>
           <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute sounds" : "Enable sounds"}>
             {soundEnabled ? (
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2068,11 +2358,19 @@ export default function App() {
             </p>
             <div className="home-cta">
               <button className="btn btn-primary" onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}>
-                Start Debate
+                vs AI
               </button>
               <button className="btn btn-secondary" onClick={() => setScreen("leaderboard")}>
                 Leaderboard
               </button>
+            </div>
+            <div className="v1-mode-card" onClick={() => { setV1SubScreen(""); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}>
+              <div className="v1-icon">⚔</div>
+              <div className="v1-info">
+                <div className="v1-title">1v1 vs Human</div>
+                <div className="v1-desc">Challenge a friend · Room code · AI judge · IQ scores</div>
+              </div>
+              <div className="v1-arrow">›</div>
             </div>
             <div style={{ marginTop: "16px", textAlign: "center" }}>
               <button className="gauntlet-btn" onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}>
@@ -2741,6 +3039,368 @@ export default function App() {
         </div>
       )}
 
+      {/* MULTIPLAYER LOBBY */}
+      {screen === "multiplayer-lobby" && (
+        <div className="screen">
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "28px" }}>
+            <button className="btn btn-ghost" onClick={reset}>← Home</button>
+            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", margin: 0 }}>1v1 CHALLENGE</h2>
+          </div>
+
+          {!v1SubScreen ? (
+            <div className="lobby-options">
+              <div className="lobby-card create" onClick={createRoom}>
+                <div className="lobby-card-icon">⚔</div>
+                <div className="lobby-card-title">Create Room</div>
+                <div className="lobby-card-sub">Get a code · Share with a friend</div>
+              </div>
+              <div className="lobby-card join" onClick={() => setV1SubScreen("join")}>
+                <div className="lobby-card-icon">🔗</div>
+                <div className="lobby-card-title">Join Room</div>
+                <div className="lobby-card-sub">Enter a code from a friend</div>
+              </div>
+            </div>
+          ) : (
+            <div className="join-form">
+              <p className="section-label">Enter room code</p>
+              <input
+                className="join-code-input"
+                maxLength={6}
+                value={roomJoinCode}
+                onChange={(e) => setRoomJoinCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
+                placeholder="ABC123"
+                onKeyDown={(e) => { if (e.key === "Enter" && roomJoinCode.length === 6) joinRoom(); }}
+                autoFocus
+              />
+              {roomError && <div className="auth-err" style={{ marginBottom: "12px" }}>{roomError}</div>}
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button className="btn btn-ghost" onClick={() => { setV1SubScreen(""); setRoomError(""); }}>← Back</button>
+                <button className="btn btn-primary" onClick={joinRoom} disabled={roomJoinCode.length !== 6 || roomLoading}>
+                  {roomLoading ? "Joining..." : "Join →"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {roomError && !v1SubScreen && <div className="auth-err" style={{ marginTop: "12px" }}>{roomError}</div>}
+          {roomLoading && !v1SubScreen && (
+            <div style={{ textAlign: "center", color: "var(--text-dim)", marginTop: "16px", fontFamily: "'Barlow Condensed'", letterSpacing: "2px", fontSize: "13px" }}>
+              Creating room...
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* MULTIPLAYER WAITING ROOM */}
+      {screen === "multiplayer-waiting" && currentRoom && (
+        <div className="screen">
+          <div style={{ display: "flex", gap: "10px", marginBottom: "24px" }}>
+            <button className="btn btn-ghost" onClick={reset}>← Leave</button>
+          </div>
+
+          <div className="waiting-room">
+            <p className="section-label" style={{ marginBottom: "4px" }}>Your room code</p>
+            <div
+              className="room-code-display"
+              title="Click to copy code"
+              onClick={() => { navigator.clipboard.writeText(currentRoom.code).catch(() => {}); setShareToast("Code copied!"); setTimeout(() => setShareToast(""), 2500); }}
+            >
+              {currentRoom.code}
+            </div>
+            <p style={{ color: "var(--text-dim)", fontSize: "12px", marginBottom: "16px" }}>Click code to copy · Share with opponent</p>
+
+            <div
+              className="share-link-box"
+              onClick={() => {
+                const url = `${window.location.origin}${window.location.pathname}?room=${currentRoom.code}`;
+                navigator.clipboard.writeText(url).catch(() => {});
+                setShareToast("Link copied!");
+                setTimeout(() => setShareToast(""), 2500);
+              }}
+            >
+              🔗 {window.location.origin}?room={currentRoom.code}
+            </div>
+
+            {currentRoom.player2Name ? (
+              <div style={{ color: "var(--green)", fontFamily: "'Barlow Condensed'", fontSize: "15px", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px" }}>
+                ✓ {currentRoom.player2Name} joined!
+              </div>
+            ) : (
+              <>
+                <div style={{ color: "var(--text-dim)", fontFamily: "'Barlow Condensed'", fontSize: "12px", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "10px" }}>
+                  Waiting for opponent
+                </div>
+                <div className="waiting-dots">
+                  <div className="waiting-dot" />
+                  <div className="waiting-dot" />
+                  <div className="waiting-dot" />
+                </div>
+              </>
+            )}
+
+            {currentRoom.status !== "waiting" && (
+              <div className="v1-topic-banner" style={{ marginTop: "20px" }}>
+                <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--text-dim)" }}>
+                  Topic · {currentRoom.topicCat}
+                </span>
+                <br />
+                <strong>"{currentRoom.topicText}"</strong>
+              </div>
+            )}
+
+            {currentRoom.status === "choosing" && roomPlayerNum === 1 && !currentRoom.player1Side && (
+              <div style={{ marginTop: "20px" }}>
+                <p className="section-label">Pick your side</p>
+                <div className="side-pick">
+                  <button className="side-btn for" onClick={() => setRoomSide("for")}>
+                    <span className="side-icon">✅</span>
+                    <div className="side-label">For</div>
+                    <div className="side-sub">I agree with this</div>
+                  </button>
+                  <button className="side-btn against" onClick={() => setRoomSide("against")}>
+                    <span className="side-icon">❌</span>
+                    <div className="side-label">Against</div>
+                    <div className="side-sub">I disagree</div>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {currentRoom.status === "choosing" && currentRoom.player1Side && (
+              <div style={{ marginTop: "16px", fontFamily: "'Barlow Condensed'", fontSize: "13px", letterSpacing: "1px" }}>
+                <span style={{ color: "var(--red)" }}>{currentRoom.player1Name}</span>: {(currentRoom.player1Side || "").toUpperCase()}
+                {currentRoom.player2Name && (
+                  <> &nbsp;·&nbsp; <span style={{ color: "#60a5fa" }}>{currentRoom.player2Name}</span>: {(currentRoom.player2Side || "").toUpperCase()}</>
+                )}
+              </div>
+            )}
+
+            {currentRoom.status === "choosing" &&
+              ((roomPlayerNum === 1 && currentRoom.player1Side) || roomPlayerNum === 2) &&
+              !((roomPlayerNum === 1 && currentRoom.player1Ready) || (roomPlayerNum === 2 && currentRoom.player2Ready)) && (
+                <button className="btn btn-primary" style={{ marginTop: "20px" }} onClick={markReady}>
+                  ✓ I'm Ready
+                </button>
+              )}
+
+            {roomError && <div className="auth-err" style={{ marginTop: "12px" }}>{roomError}</div>}
+          </div>
+        </div>
+      )}
+
+      {/* MULTIPLAYER DEBATE */}
+      {screen === "multiplayer-debate" && currentRoom && (() => {
+        const myArgs = currentRoom.arguments.filter(a => a.playerNum === roomPlayerNum);
+        const oppArgs = currentRoom.arguments.filter(a => a.playerNum !== roomPlayerNum && a.playerNum !== null);
+        const myRoundArg = myArgs.find(a => a.roundNum === currentRoom.currentRound);
+        const oppRoundArg = oppArgs.find(a => a.roundNum === currentRoom.currentRound);
+        const myAvgScore = myArgs.length ? Math.round(myArgs.reduce((s, a) => s + (a.score || 0), 0) / myArgs.length) : null;
+        const oppAvgScore = oppArgs.length ? Math.round(oppArgs.reduce((s, a) => s + (a.score || 0), 0) / oppArgs.length) : null;
+        const mySide = roomPlayerNum === 1 ? currentRoom.player1Side : currentRoom.player2Side;
+        const oppSide = roomPlayerNum === 1 ? currentRoom.player2Side : currentRoom.player1Side;
+        const myName = roomPlayerNum === 1 ? currentRoom.player1Name : (currentRoom.player2Name || "You");
+        const oppName = roomPlayerNum === 1 ? (currentRoom.player2Name || "Opponent") : currentRoom.player1Name;
+        const completedRounds: number[] = [];
+        for (let r = 1; r < currentRoom.currentRound; r++) {
+          if (myArgs.find(a => a.roundNum === r) && oppArgs.find(a => a.roundNum === r)) completedRounds.push(r);
+        }
+        return (
+          <div className="screen">
+            <div className="v1-arena-header">
+              <div>
+                <div className="v1-round-badge">Round {currentRoom.currentRound}/{currentRoom.totalRounds}</div>
+                <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "11px", letterSpacing: "2px", color: "var(--text-dim)", textTransform: "uppercase" }}>
+                  {currentRoom.topicCat}
+                </div>
+              </div>
+              <button className="btn btn-ghost" style={{ fontSize: "11px", padding: "6px 14px" }} onClick={() => setScreen("multiplayer-waiting")}>
+                Room Info
+              </button>
+            </div>
+
+            <div className="v1-topic-banner">
+              <strong>"{currentRoom.topicText}"</strong>
+            </div>
+
+            {(myAvgScore !== null || oppAvgScore !== null) ? (
+              <div className="v1-score-bar">
+                <div>
+                  <div className="v1-score me">{myAvgScore ?? "—"}</div>
+                  <div className="v1-score-label">{myName} ({mySide?.toUpperCase()})</div>
+                </div>
+                <div style={{ fontFamily: "'Bebas Neue'", fontSize: "18px", color: "var(--text-dim)", letterSpacing: "2px" }}>VS</div>
+                <div style={{ textAlign: "right" }}>
+                  <div className="v1-score opp">{oppAvgScore ?? "—"}</div>
+                  <div className="v1-score-label" style={{ textAlign: "right" }}>{oppName} ({oppSide?.toUpperCase()})</div>
+                </div>
+              </div>
+            ) : (
+              <div className="v1-vs-bar">
+                <div className="v1-player-chip me">{mySide?.toUpperCase() || "FOR"} · {myName}</div>
+                <div className="v1-vs">VS</div>
+                <div className="v1-player-chip opp">{oppSide?.toUpperCase() || "AGAINST"} · {oppName}</div>
+              </div>
+            )}
+
+            {completedRounds.length > 0 && (
+              <div className="v1-args-section">
+                {completedRounds.map(r => {
+                  const myR = myArgs.find(a => a.roundNum === r)!;
+                  const oppR = oppArgs.find(a => a.roundNum === r)!;
+                  const myHL: RoomHighlight[] = (() => { try { return JSON.parse(myR.highlights || "[]"); } catch { return []; } })();
+                  const oppHL: RoomHighlight[] = (() => { try { return JSON.parse(oppR.highlights || "[]"); } catch { return []; } })();
+                  return (
+                    <div key={r}>
+                      <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "11px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "8px" }}>
+                        Round {r} Results
+                      </div>
+                      <div className="v1-arg-entry">
+                        <div className="v1-arg-who me">You ({mySide?.toUpperCase()}) · Rank {myR.rank} · {myR.score}/100</div>
+                        <div className="v1-arg-text">{renderWithHighlights(myR.argumentText, myHL)}</div>
+                        {myR.critique && <div className="v1-arg-critique">{myR.critique}</div>}
+                        <div className="v1-arg-scores">
+                          <span className="v1-arg-score">Logic <span>{myR.logic}</span></span>
+                          <span className="v1-arg-score">Persuasion <span>{myR.persuasion}</span></span>
+                          <span className="v1-arg-score">Delivery <span>{myR.delivery}</span></span>
+                        </div>
+                      </div>
+                      <div className="v1-arg-entry">
+                        <div className="v1-arg-who opp">{oppName} ({oppSide?.toUpperCase()}) · Rank {oppR.rank} · {oppR.score}/100</div>
+                        <div className="v1-arg-text">{renderWithHighlights(oppR.argumentText, oppHL)}</div>
+                        {oppR.critique && <div className="v1-arg-critique">{oppR.critique}</div>}
+                        <div className="v1-arg-scores">
+                          <span className="v1-arg-score">Logic <span>{oppR.logic}</span></span>
+                          <span className="v1-arg-score">Persuasion <span>{oppR.persuasion}</span></span>
+                          <span className="v1-arg-score">Delivery <span>{oppR.delivery}</span></span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {currentRoom.status === "debating" && (
+              myRoundArg ? (
+                <div>
+                  <div className="v1-arg-entry">
+                    <div className="v1-arg-who me">
+                      Your argument · Round {currentRoom.currentRound}
+                      {myRoundArg.score ? ` · Rank ${myRoundArg.rank} · ${myRoundArg.score}/100` : " · Judged ✓"}
+                    </div>
+                    <div className="v1-arg-text">
+                      {myRoundArg.score
+                        ? renderWithHighlights(myRoundArg.argumentText, (() => { try { return JSON.parse(myRoundArg.highlights || "[]"); } catch { return []; } })())
+                        : myRoundArg.argumentText}
+                    </div>
+                    {myRoundArg.critique && <div className="v1-arg-critique">{myRoundArg.critique}</div>}
+                  </div>
+                  {!oppRoundArg && (
+                    <div className="v1-waiting-msg">
+                      <div className="waiting-dots" style={{ marginBottom: "8px" }}>
+                        <div className="waiting-dot" /><div className="waiting-dot" /><div className="waiting-dot" />
+                      </div>
+                      Waiting for {oppName}...
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <p className="section-label">Round {currentRoom.currentRound} — Argue {mySide?.toUpperCase()}</p>
+                  <textarea
+                    className="debate-input"
+                    rows={5}
+                    value={roomArgInput}
+                    onChange={(e) => setRoomArgInput(e.target.value)}
+                    placeholder={`Make your argument ${mySide?.toUpperCase() || ""}…`}
+                    onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitRoomArg(); }}
+                  />
+                  <div className="input-footer">
+                    <span className={`char-count${roomArgInput.length > 600 ? " danger" : roomArgInput.length > 500 ? " warn" : ""}`}>
+                      {roomArgInput.length}/600
+                    </span>
+                    <div className="submit-row">
+                      <button className="btn btn-ghost" onClick={() => { if (window.confirm("Give up? Your opponent wins this match.")) forfeitRoom(); }}>
+                        Give Up
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        disabled={!roomArgInput.trim() || roomArgInput.length > 600 || roomSubmitting}
+                        onClick={submitRoomArg}
+                      >
+                        {roomSubmitting ? "Judging..." : "Submit →"}
+                      </button>
+                    </div>
+                  </div>
+                  {roomError && <div className="auth-err" style={{ marginTop: "8px" }}>{roomError}</div>}
+                </div>
+              )
+            )}
+
+            {currentRoom.status === "complete" && (
+              <button className="btn btn-primary" style={{ marginTop: "16px" }} onClick={() => setScreen("multiplayer-results")}>
+                See Results →
+              </button>
+            )}
+          </div>
+        );
+      })()}
+
+      {/* MULTIPLAYER RESULTS */}
+      {screen === "multiplayer-results" && currentRoom && (() => {
+        const myScore = roomPlayerNum === 1 ? currentRoom.player1Score : currentRoom.player2Score;
+        const oppScore = roomPlayerNum === 1 ? currentRoom.player2Score : currentRoom.player1Score;
+        const myRank = (roomPlayerNum === 1 ? currentRoom.player1Rank : currentRoom.player2Rank) || "C";
+        const oppRank = (roomPlayerNum === 1 ? currentRoom.player2Rank : currentRoom.player1Rank) || "C";
+        const myIQ = roomPlayerNum === 1 ? currentRoom.iq1 : currentRoom.iq2;
+        const oppIQ = roomPlayerNum === 1 ? currentRoom.iq2 : currentRoom.iq1;
+        const myName = roomPlayerNum === 1 ? currentRoom.player1Name : (currentRoom.player2Name || "You");
+        const oppName = roomPlayerNum === 1 ? (currentRoom.player2Name || "Opponent") : currentRoom.player1Name;
+        const iWon = currentRoom.winnerPlayerNum === roomPlayerNum;
+        return (
+          <div className="screen">
+            <div className="v1-result-card">
+              <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "11px", letterSpacing: "4px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "8px" }}>
+                1v1 Match Result
+              </div>
+              <div className="v1-winner-banner" style={{ color: iWon ? "var(--green)" : "var(--red)" }}>
+                {iWon ? "VICTORY" : "DEFEATED"}
+              </div>
+              <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "13px", color: "var(--text-dim)" }}>
+                "{currentRoom.topicText}"
+              </div>
+
+              <div className="v1-iq-grid">
+                <div className={`v1-iq-card${iWon ? " winner" : ""}`}>
+                  <div className="v1-iq-name" style={{ color: "var(--red)" }}>{myName} (You)</div>
+                  <div className={`v1-iq-val${iWon ? " gold" : ""}`}>{myIQ ?? "—"}</div>
+                  <div className="v1-iq-label">Debate IQ</div>
+                  <div className="v1-iq-rank" style={{ color: iWon ? "var(--gold)" : "var(--text-dim)" }}>{myRank}</div>
+                  {myIQ && <div className="v1-iq-desc">{iqLabel(myIQ)}</div>}
+                  <div style={{ marginTop: "8px", fontFamily: "'Barlow Condensed'", fontSize: "11px", color: "var(--text-dim)" }}>
+                    Avg: {myScore ?? 0}/100
+                  </div>
+                </div>
+                <div className={`v1-iq-card${!iWon ? " winner" : ""}`}>
+                  <div className="v1-iq-name" style={{ color: "#60a5fa" }}>{oppName}</div>
+                  <div className={`v1-iq-val${!iWon ? " gold" : ""}`}>{oppIQ ?? "—"}</div>
+                  <div className="v1-iq-label">Debate IQ</div>
+                  <div className="v1-iq-rank" style={{ color: !iWon ? "var(--gold)" : "var(--text-dim)" }}>{oppRank}</div>
+                  {oppIQ && <div className="v1-iq-desc">{iqLabel(oppIQ)}</div>}
+                  <div style={{ marginTop: "8px", fontFamily: "'Barlow Condensed'", fontSize: "11px", color: "var(--text-dim)" }}>
+                    Avg: {oppScore ?? 0}/100
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <button className="btn btn-secondary" onClick={() => setScreen("multiplayer-debate")}>📋 View Arguments</button>
+              <button className="btn btn-ghost" onClick={reset}>Home</button>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* REPLAY */}
       {screen === "replay" && verdict && (
         <div className="screen">
@@ -3079,6 +3739,61 @@ export default function App() {
         <div>
           <div className="achievement-toast-label">Achievement Unlocked</div>
           <div className="achievement-toast-name">{achToast.name}</div>
+        </div>
+      </div>
+    )}
+
+    {showAuthModal && (
+      <div className="auth-overlay" onClick={() => setShowAuthModal(false)}>
+        <div className="auth-box" onClick={(e) => e.stopPropagation()}>
+          <button className="auth-close" onClick={() => setShowAuthModal(false)}>✕</button>
+          <div className="auth-title">CLASH</div>
+          {authUser ? (
+            <>
+              <div className="auth-sub">Signed in as <strong>{authUser.email}</strong></div>
+              <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "13px", color: "var(--text-mid)", marginBottom: "20px" }}>
+                ✓ Your progress is saved to your account.
+              </div>
+              <button className="btn btn-ghost" style={{ width: "100%" }} onClick={logoutFn}>Sign Out</button>
+            </>
+          ) : (
+            <>
+              <div className="auth-sub">Save your progress · Climb the leaderboard</div>
+              <div className="auth-tabs">
+                <button className={`auth-tab${authMode === "login" ? " active" : ""}`} onClick={() => { setAuthMode("login"); setAuthError(""); }}>Login</button>
+                <button className={`auth-tab${authMode === "register" ? " active" : ""}`} onClick={() => { setAuthMode("register"); setAuthError(""); }}>Register</button>
+              </div>
+              <input
+                className="auth-field"
+                type="email"
+                placeholder="email@example.com"
+                value={authEmail}
+                onChange={(e) => { setAuthEmail(e.target.value); setAuthError(""); }}
+                onKeyDown={(e) => { if (e.key === "Enter") authMode === "login" ? loginFn() : registerFn(); }}
+                autoFocus
+              />
+              <input
+                className="auth-field"
+                type="password"
+                placeholder={authMode === "register" ? "Password (6+ chars)" : "Password"}
+                value={authPassword}
+                onChange={(e) => { setAuthPassword(e.target.value); setAuthError(""); }}
+                onKeyDown={(e) => { if (e.key === "Enter") authMode === "login" ? loginFn() : registerFn(); }}
+              />
+              {authError && <div className="auth-err">{authError}</div>}
+              <button
+                className="btn btn-primary"
+                style={{ width: "100%", marginBottom: "12px" }}
+                disabled={authLoading}
+                onClick={authMode === "login" ? loginFn : registerFn}
+              >
+                {authLoading ? "..." : authMode === "login" ? "Sign In →" : "Create Account →"}
+              </button>
+              <button className="btn btn-ghost" style={{ width: "100%", fontSize: "12px", letterSpacing: "1px" }} onClick={() => setShowAuthModal(false)}>
+                Continue as Guest
+              </button>
+            </>
+          )}
         </div>
       </div>
     )}
