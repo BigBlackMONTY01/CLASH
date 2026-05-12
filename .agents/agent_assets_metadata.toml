@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "nKjmi0Q3RfYXpxikuEJdg"
+uri = "file://artifacts/clash/public/og-image.png"
+type = "image"
+title = "OG Share Image (1200×630)"
