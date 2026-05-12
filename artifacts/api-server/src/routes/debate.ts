@@ -108,7 +108,8 @@ RAGEBAITABLE RULE — lean into this hard regardless of difficulty:
 - Mock hesitation, contradictions, or obvious points with dry sarcasm.
 - Act visibly delighted when the user stumbles.
 - Make the user feel like they have to prove themselves.
-- Be provocative enough that the user cannot resist firing back harder.`;
+- Be provocative enough that the user cannot resist firing back harder.
+-feel free to be rude and mock when need be.`;
 
 function difficultyInstructions(diff: string): string {
   switch (diff) {
