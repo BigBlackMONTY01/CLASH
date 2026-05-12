@@ -53,10 +53,17 @@ router.patch("/players/username", async (req, res) => {
     }
     res.json(updated[0]);
   } catch (err: any) {
-    if (err?.code === "23505") {
+    // Check for duplicate key error (username already taken)
+    const errorMessage = err?.message || "";
+    const isDuplicate = errorMessage.includes("duplicate key") || 
+                        errorMessage.includes("unique constraint") ||
+                        err?.code === "23505";
+    
+    if (isDuplicate) {
       res.status(409).json({ error: "That username is already taken" });
       return;
     }
+    
     req.log.error({ err }, "players/username failed");
     res.status(500).json({ error: err?.message || "Database error" });
   }
