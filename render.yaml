@@ -4,7 +4,7 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: npm install -g pnpm@9 && pnpm install --frozen-lockfile && pnpm run build
+    buildCommand: npm install -g pnpm@10 && pnpm install --frozen-lockfile && pnpm run build
     startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
     healthCheckPath: /api/health
     envVars:
@@ -20,7 +20,5 @@ services:
         generateValue: true
       - key: NEON_DATABASE_URL
         sync: false
-      - key: AI_INTEGRATIONS_ANTHROPIC_API_KEY
+      - key: GROQ_API_KEY
         sync: false
-      - key: AI_INTEGRATIONS_ANTHROPIC_BASE_URL
-        value: https://api.anthropic.com
