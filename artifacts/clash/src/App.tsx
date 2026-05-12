@@ -1830,7 +1830,16 @@ export default function App() {
       setUsernameInput("");
       setUsernameError("");
     } catch (err: unknown) {
-      setUsernameError((err as Error).message || "That name is taken.");
+      const msg = (err as Error).message || "";
+      if (msg.includes("taken") || msg.includes("23505")) {
+        setUsernameError("That username is already taken — try another.");
+      } else if (msg.includes("fetch") || msg.includes("NetworkError") || msg.includes("Failed")) {
+        setUsernameError("Could not reach the server. Check your connection.");
+      } else if (msg.includes("DB") || msg.includes("500")) {
+        setUsernameError("Server error saving your name — please try again.");
+      } else {
+        setUsernameError(msg || "Something went wrong. Try again.");
+      }
     }
   };
 

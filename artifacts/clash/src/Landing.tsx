@@ -61,33 +61,25 @@ const LP_CSS = `
   --lp-border:#1e1e1e; --lp-green:#22c55e;
 }
 
-.lp-cursor {
-  position:fixed; width:10px; height:10px;
-  background:var(--lp-red); border-radius:50%;
-  pointer-events:none; z-index:99999;
-  transform:translate(-50%,-50%);
-  transition:width 0.2s,height 0.2s,background 0.2s;
-}
-.lp-cursor-ring {
-  position:fixed; width:32px; height:32px;
-  border:1px solid rgba(230,57,70,0.5); border-radius:50%;
-  pointer-events:none; z-index:99998;
-  transform:translate(-50%,-50%);
-  transition:width 0.3s,height 0.3s;
-}
-.lp-cursor.lp-cursor-big { width:18px; height:18px; background:var(--lp-red2); }
-.lp-cursor-ring.lp-ring-big { width:48px; height:48px; }
-
 /* LASER */
 .lp-laser {
   position:fixed; width:14px; height:14px; border-radius:50%;
   background:var(--lp-red); pointer-events:none; z-index:9997;
   box-shadow:0 0 8px 4px rgba(230,57,70,0.9),0 0 24px 8px rgba(230,57,70,0.5),0 0 60px 20px rgba(230,57,70,0.2);
   animation:lp-laser-pulse 0.6s ease-in-out infinite;
+  cursor:pointer;
 }
 @keyframes lp-laser-pulse {
   0%,100%{box-shadow:0 0 8px 4px rgba(230,57,70,0.9),0 0 24px 8px rgba(230,57,70,0.5),0 0 60px 20px rgba(230,57,70,0.2);}
   50%{box-shadow:0 0 14px 7px rgba(255,70,85,1),0 0 40px 14px rgba(230,57,70,0.7),0 0 80px 30px rgba(230,57,70,0.3);}
+}
+.lp-laser-caught {
+  animation:lp-laser-burst 0.45s ease-out forwards !important;
+}
+@keyframes lp-laser-burst {
+  0%  { transform:scale(1);   opacity:1; }
+  40% { transform:scale(4);   opacity:0.9; }
+  100%{ transform:scale(0.1); opacity:0; }
 }
 
 /* FEATURE GRID */
@@ -105,7 +97,7 @@ const LP_CSS = `
 
 .lp-wrap {
   background:var(--lp-bg); color:var(--lp-text);
-  font-family:'Barlow',sans-serif; overflow-x:hidden; cursor:none;
+  font-family:'Barlow',sans-serif; overflow-x:hidden;
   min-height:100vh;
 }
 html { scroll-behavior:smooth; }
@@ -500,16 +492,12 @@ html { scroll-behavior:smooth; }
 `;
 
 export function Landing() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const ringRef   = useRef<HTMLDivElement>(null);
   const laserRef  = useRef<HTMLDivElement>(null);
-  const mouseX = useRef(0);
-  const mouseY = useRef(0);
-  const ringX  = useRef(0);
-  const ringY  = useRef(0);
-  const rafRef = useRef<number>(0);
-  const laserPos = useRef({ x: 200, y: 300, vx: 3.2, vy: 2.4 });
-  const laserRaf = useRef<number>(0);
+  const mouseX    = useRef(window.innerWidth / 2);
+  const mouseY    = useRef(window.innerHeight / 2);
+  const laserPos  = useRef({ x: 200, y: 300, vx: 3.2, vy: 2.4 });
+  const laserRaf  = useRef<number>(0);
+  const laserCaught = useRef(false);
 
   const [stats, setStats] = useState<GlobalStats>({
     totalDebates: 0,
@@ -530,14 +518,19 @@ export function Landing() {
   }, []);
 
   useEffect(() => {
-    document.body.style.cursor = "none";
-    return () => { document.body.style.cursor = ""; };
+    const onMove = (e: MouseEvent) => {
+      mouseX.current = e.clientX;
+      mouseY.current = e.clientY;
+    };
+    document.addEventListener("mousemove", onMove);
+    return () => document.removeEventListener("mousemove", onMove);
   }, []);
 
   useEffect(() => {
     const el = laserRef.current;
     if (!el) return;
     const size = 14;
+    const catchRadius = 48;
     laserPos.current = {
       x: Math.random() * (window.innerWidth - size),
       y: Math.random() * (window.innerHeight - size),
@@ -545,6 +538,7 @@ export function Landing() {
       vy: (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2),
     };
     const animate = () => {
+      if (laserCaught.current) return;
       const p = laserPos.current;
       const W = window.innerWidth;
       const H = window.innerHeight;
@@ -556,52 +550,18 @@ export function Landing() {
       if (p.y >= H - size) { p.y = H-size; p.vy = -Math.abs(p.vy); }
       el.style.left = p.x + "px";
       el.style.top  = p.y + "px";
+      const dx = mouseX.current - (p.x + size / 2);
+      const dy = mouseY.current - (p.y + size / 2);
+      if (Math.sqrt(dx * dx + dy * dy) < catchRadius) {
+        laserCaught.current = true;
+        el.classList.add("lp-laser-caught");
+        setTimeout(() => { el.style.display = "none"; }, 460);
+        return;
+      }
       laserRaf.current = requestAnimationFrame(animate);
     };
     laserRaf.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(laserRaf.current);
-  }, []);
-
-  useEffect(() => {
-    const cursor = cursorRef.current;
-    const ring   = ringRef.current;
-    if (!cursor || !ring) return;
-
-    const onMove = (e: MouseEvent) => {
-      mouseX.current = e.clientX;
-      mouseY.current = e.clientY;
-      cursor.style.left = e.clientX + "px";
-      cursor.style.top  = e.clientY + "px";
-    };
-
-    const animate = () => {
-      ringX.current += (mouseX.current - ringX.current) * 0.12;
-      ringY.current += (mouseY.current - ringY.current) * 0.12;
-      ring.style.left = ringX.current + "px";
-      ring.style.top  = ringY.current + "px";
-      rafRef.current = requestAnimationFrame(animate);
-    };
-
-    const onEnterInteractive = () => {
-      cursor.classList.add("lp-cursor-big");
-      ring.classList.add("lp-ring-big");
-    };
-    const onLeaveInteractive = () => {
-      cursor.classList.remove("lp-cursor-big");
-      ring.classList.remove("lp-ring-big");
-    };
-
-    document.addEventListener("mousemove", onMove);
-    document.querySelectorAll("a,button,.lp-step,.lp-opp-card,.lp-go-chip").forEach(el => {
-      el.addEventListener("mouseenter", onEnterInteractive);
-      el.addEventListener("mouseleave", onLeaveInteractive);
-    });
-    rafRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      document.removeEventListener("mousemove", onMove);
-      cancelAnimationFrame(rafRef.current);
-    };
   }, []);
 
   useEffect(() => {
@@ -620,9 +580,7 @@ export function Landing() {
     <>
       <style>{LP_CSS}</style>
       <div className="lp-grain" />
-      <div ref={laserRef}  className="lp-laser" />
-      <div ref={cursorRef} className="lp-cursor" />
-      <div ref={ringRef}   className="lp-cursor-ring" />
+      <div ref={laserRef} className="lp-laser" />
 
       <div className="lp-wrap">
 
