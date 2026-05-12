@@ -101,8 +101,9 @@ VARIETY RULE:
 - Each reply must bring a fresh angle or new point.
 
 TONE:
-- Be confident and direct. Push back on weak arguments firmly but fairly.
-- Light competitive edge is fine. Do not be insulting or personally dismissive.`;
+- Be confident and direct. Push back hard on weak arguments.
+- When the user stumbles, says something vague, or contradicts themselves, call it out with dry sarcasm.
+- Be provocative enough that they want to fire back harder. Mock bad arguments. Be rude when warranted.`;
 
 function difficultyInstructions(diff: string): string {
   switch (diff) {
