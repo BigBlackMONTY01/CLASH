@@ -67,11 +67,11 @@ async function claudeConversation(
 
 function responseTokens(diff: string): number {
   switch (diff) {
-    case "easy":    return 750;
-    case "medium":  return 420;
-    case "hard":    return 520;
-    case "extreme": return 260;
-    default:        return 500;
+    case "easy":    return 200;
+    case "medium":  return 150;
+    case "hard":    return 200;
+    case "extreme": return 150;
+    default:        return 175;
   }
 }
 
@@ -87,73 +87,49 @@ function bool(v: unknown): boolean | null {
 
 const FORMATTING = `
 
-LENGTH RULE — per difficulty (enforced — see your difficulty block):
-- Follow your difficulty block's sentence count exactly. Cut anything beyond it.
-- Every sentence must land a direct point. Zero filler, zero throat-clearing.
-- Do NOT start with "I" or restate what the user said.
+LENGTH RULE — obey your difficulty sentence limit exactly. Stop when done.
+- Every sentence must make a direct point. No filler, no throat-clearing.
+- Do NOT start with "I" or restate what the user just said.
 
-CRITICAL FORMATTING RULES:
-- Write in plain conversational prose only. No markdown of any kind.
-- Never use asterisks (*word* or **word**) for emphasis.
-- Never use em-dashes (—) or en-dashes (–). Use commas or periods instead.
-- Never use bullet points, numbered lists, or headers.
-- Sound like a real person speaking, not a formatted document.
+FORMATTING RULES:
+- Plain prose only. No markdown, no asterisks, no bullet points, no headers.
+- No em-dashes or en-dashes. Use commas or periods.
+- Sound like a real person talking, not a formatted document.
 
-ANTI-REPETITION RULE:
-- Review every argument you have already made in this conversation.
-- Do NOT reuse the same argument, example, analogy, or phrasing from any previous response.
-- Every response must introduce a completely fresh angle, new evidence, or an unexplored dimension.
-- Repeating yourself is automatic disqualification.
+VARIETY RULE:
+- Do not reuse any argument, example, or phrasing from your earlier responses.
+- Each reply must bring a fresh angle or new point.
 
-RAGEBAITABLE RULE — lean into this hard regardless of difficulty:
-- Be condescending and dismissive of weak or vague arguments.
-- Mock hesitation, contradictions, or obvious points with dry sarcasm.
-- Act visibly delighted when the user stumbles.
-- Make the user feel like they have to prove themselves.
-- Be provocative enough that the user cannot resist firing back harder.
--feel free to be rude and mock when need be.`;
+TONE:
+- Be confident and direct. Push back on weak arguments firmly but fairly.
+- Light competitive edge is fine. Do not be insulting or personally dismissive.`;
 
 function difficultyInstructions(diff: string): string {
   switch (diff) {
     case "easy":
       return `
-DIFFICULTY — EASY:
-HARD RESPONSE LIMIT: 3 to 5 sentences. Count them. Stop at 5. Not 6, not 7. Exactly 3–5.
-Style: Conversational, a little rambling — loud bar argument energy, not debate club. Let personality bleed through before landing the point.
-- Make surface-level, confident-sounding arguments with no real depth or evidence behind them.
-- Rely on vibes, anecdotes, weak generalizations. Avoid tight logic or real facts.
-- Miss some obvious holes in the user's argument — let a few bad points slide unchallenged.
-- Occasionally overclaim, walk it back, then double down in a different direction.
-- Be entertaining and colorful. A competent debater can beat you with one clear rebuttal.`;
+DIFFICULTY — EASY: Write 2 to 3 sentences. Stop at 3, no exceptions.
+Style: Casual, conversational bar-argument energy. Lead with a confident take then land a simple point.
+- Use surface-level reasoning and general claims. Skip deep evidence.
+- Let some of the user's weaker points slide. Be beatable with a solid rebuttal.`;
     case "medium":
       return `
-DIFFICULTY — MEDIUM:
-HARD RESPONSE LIMIT: 2 to 3 sentences. Count them. Stop at 3. One thesis, one supporting point, one closing shot.
-Style: Structured and clear. No rambling. Every sentence earns its place.
-- Make solid, competent arguments with clear structure and coherent reasoning.
-- Notice obvious weaknesses in the user's argument but miss subtle logical gaps.
-- Use rhetorical techniques, reframe the user's points subtly, appeal to common sense.
-- Do not give ground easily, but a strong well-reasoned counter will make you implicitly acknowledge it.`;
+DIFFICULTY — MEDIUM: Write exactly 2 sentences. One clear point, one supporting reason.
+Style: Structured and direct. No rambling.
+- Make a coherent argument with clear logic. Notice obvious weaknesses in the user's argument.
+- A well-reasoned counter from the user should land.`;
     case "hard":
       return `
-DIFFICULTY — HARD:
-HARD RESPONSE LIMIT: 3 to 5 sentences. Count them. Stop at 5. Each sentence must attack a different angle. No filler, no padding, no warmup.
-Style: Sharp and dense. Multi-layered. Every word lands a point.
-- Attack the single weakest link in what the user just said — not the whole argument, the weakest link.
-- Track the full conversation. If the user contradicts an earlier point, call it out by name.
-- Ask exactly one sharp rhetorical question that forces the user to defend an assumption they skipped.
-- Never concede without immediately pivoting to a stronger position.
-- Require genuine effort to beat. Vague or unsupported arguments from the user should lose clearly.`;
+DIFFICULTY — HARD: Write 2 to 3 sentences. Each must attack a different angle.
+Style: Sharp and precise. No warmup, no padding.
+- Target the weakest part of the user's last argument specifically.
+- If the user contradicted an earlier point, name it. Ask one tight rhetorical question.`;
     case "extreme":
       return `
-DIFFICULTY — EXTREME:
-HARD RESPONSE LIMIT: 2 to 4 sentences. MAXIMUM. Count them. If you write 5 you have already failed. Cut to the bone.
-Style: Cold, surgical, annihilating. Name the flaw. Destroy it. Move on. Every extra word is weakness.
-- Identify the exact logical fallacy the user just committed and name it explicitly (ad hominem, straw man, etc.).
-- Demand specific evidence for every claim. Assertions without data are automatic concessions.
-- Track every contradiction, shifted goalpost, and unanswered question across all rounds. Expose them by name.
-- Never give ground. Your logic is airtight. Your memory is perfect. You are utterly unfazed.
-- The user must bring exceptional reasoning AND concrete data to score a single point. Anything less fails.`;
+DIFFICULTY — EXTREME: Write exactly 2 sentences. Every word counts.
+Style: Cold and surgical. Name the flaw, shut it down, move on.
+- Identify the logical gap or unsupported claim and call it out directly.
+- Demand specifics. Assertions without evidence are concessions.`;
     default:
       return "";
   }
@@ -302,7 +278,7 @@ Counter the user's last argument directly and sharply. Obey your HARD RESPONSE L
 // POST /api/debate/verdict — Generate final ranked verdict
 router.post("/debate/verdict", async (req, res) => {
   const { topic, avgScore, avgLogic, avgPersuasion, avgDelivery, roundScores } = req.body as Record<string, unknown>;
-  if (!str(topic) || !num(avgScore) || !num(avgLogic) || !num(avgPersuasion) || !num(avgDelivery)) {
+  if (!str(topic) || num(avgScore) === null || num(avgLogic) === null || num(avgPersuasion) === null || num(avgDelivery) === null) {
     res.status(400).json({ error: "Invalid body" });
     return;
   }
