@@ -2462,11 +2462,6 @@ export default function App() {
       <nav className="nav">
         <div className="logo">CL<span>A</span>SH</div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          {!authUser && (
-            <button className="auth-pill" onClick={() => { setAuthError(""); setAuthMode("login"); setShowAuthModal(true); }}>
-              Sign In
-            </button>
-          )}
           <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute" : "Unmute"}>
             {soundEnabled ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2506,12 +2501,8 @@ export default function App() {
               <span className="user-chip-name">{player?.username || authUser.email.split("@")[0]}</span>
             </button>
           ) : (
-            <button
-              className={`profile-pill${player?.username ? " named" : ""}`}
-              onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setShowUsernameModal(true); }}
-            >
-              <span className="pill-icon">👤</span>
-              {player?.username || "Set Name"}
+            <button className="auth-pill" onClick={() => { setAuthError(""); setAuthMode("login"); setShowAuthModal(true); }}>
+              Sign In
             </button>
           )}
         </div>
@@ -2550,13 +2541,9 @@ export default function App() {
                 Leaderboard
               </button>
             </div>
-            <div className="v1-mode-card" onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}>
-              <div className="v1-icon">⚔</div>
-              <div className="v1-info">
-                <div className="v1-title">1v1</div>
-              </div>
-              <div className="v1-arrow">›</div>
-            </div>
+            <button className="btn btn-secondary" style={{ width: "100%", marginTop: "12px" }} onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}>
+              ⚔ 1V1 vs Human
+            </button>
             <div style={{ marginTop: "16px", textAlign: "center" }}>
               <button className="gauntlet-btn" onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}>
                 ⚔ Gauntlet Mode
@@ -2887,11 +2874,11 @@ export default function App() {
                   <div className="side-sub">I disagree with this</div>
                 </button>
               </div>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button className="btn btn-ghost" onClick={() => setSetupStep(1)}>← Back</button>
-                <button className="btn btn-primary" disabled={!selectedSide} onClick={() => launchMatchmaking()}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
+                <button className="btn btn-primary" style={{ width: "100%" }} disabled={!selectedSide} onClick={() => launchMatchmaking()}>
                   ⚡ Start Clash
                 </button>
+                <button className="btn btn-ghost" style={{ alignSelf: "flex-start" }} onClick={() => setSetupStep(1)}>← Back</button>
               </div>
             </>
           )}
