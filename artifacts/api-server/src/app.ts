@@ -35,7 +35,7 @@ const ALLOWED_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$|\.replit\.(
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || ALLOWED_ORIGIN.test(origin)) {
+      if (!origin || process.env.NODE_ENV === "development" || ALLOWED_ORIGIN.test(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
