@@ -1058,32 +1058,67 @@ function generateShareCard(params: {
   return canvas.toDataURL("image/png");
 }
 
+async function parseResponse(res: Response): Promise<unknown> {
+  const text = await res.text();
+  try { return JSON.parse(text); } catch { return { _raw: text }; }
+}
+
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${API}/api${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  const url = `${API}/api${path}`;
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (networkErr) {
+    console.error(`[CLASH] POST ${url} — network error:`, networkErr);
+    throw new Error(`Network error: ${(networkErr as Error).message}`);
+  }
+  const data = await parseResponse(res) as Record<string, unknown>;
+  if (!res.ok) {
+    console.error(`[CLASH] POST ${url} — HTTP ${res.status}:`, data);
+    throw new Error((data.error as string) || (data._raw as string) || `HTTP ${res.status}`);
+  }
   return data as T;
 }
 
 async function apiGet<T>(path: string): Promise<T> {
-  const res = await fetch(`${API}/api${path}`);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  const url = `${API}/api${path}`;
+  let res: Response;
+  try {
+    res = await fetch(url);
+  } catch (networkErr) {
+    console.error(`[CLASH] GET ${url} — network error:`, networkErr);
+    throw new Error(`Network error: ${(networkErr as Error).message}`);
+  }
+  const data = await parseResponse(res) as Record<string, unknown>;
+  if (!res.ok) {
+    console.error(`[CLASH] GET ${url} — HTTP ${res.status}:`, data);
+    throw new Error((data.error as string) || (data._raw as string) || `HTTP ${res.status}`);
+  }
   return data as T;
 }
 
 async function apiPatch<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${API}/api${path}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  const url = `${API}/api${path}`;
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (networkErr) {
+    console.error(`[CLASH] PATCH ${url} — network error:`, networkErr);
+    throw new Error(`Network error: ${(networkErr as Error).message}`);
+  }
+  const data = await parseResponse(res) as Record<string, unknown>;
+  if (!res.ok) {
+    console.error(`[CLASH] PATCH ${url} — HTTP ${res.status}:`, data);
+    throw new Error((data.error as string) || (data._raw as string) || `HTTP ${res.status}`);
+  }
   return data as T;
 }
 
@@ -1545,12 +1580,12 @@ export default function App() {
       setMessages([{ role: "ai", text: result.text }]);
       setScreen("debate");
     } catch (e) {
+      console.error("[CLASH] debate/start failed:", e);
       const raw = e instanceof Error ? e.message : "Something went wrong";
       const isRate = raw.includes("429") || raw.toLowerCase().includes("quota") || raw.toLowerCase().includes("rate");
       setError(isRate
         ? "The AI is rate-limited right now. Wait a moment, then tap Retry."
-        : "Couldn't reach the AI. Check your connection and tap Retry.");
-      // Stay on matchmaking screen so the user can retry without losing their setup
+        : `Couldn't reach the AI: ${raw}`);
     }
   }, [selectedAI, selectedTopic, selectedSide, selectedRounds]);
 
@@ -1861,13 +1896,14 @@ export default function App() {
       setUsernameInput("");
       setUsernameError("");
     } catch (err: unknown) {
+      console.error("[CLASH] username save failed:", err);
       const msg = (err as Error).message || "";
       if (msg.includes("taken") || msg.includes("23505")) {
         setUsernameError("That username is already taken — try another.");
       } else if (msg.includes("network") || msg.includes("fetch") || msg.includes("Failed to fetch")) {
-        setUsernameError("Could not reach the server. Check your connection.");
+        setUsernameError(`No server connection: ${msg}`);
       } else {
-        setUsernameError("Couldn't save your name — please try again.");
+        setUsernameError(`Save failed: ${msg}`);
       }
     }
   };
