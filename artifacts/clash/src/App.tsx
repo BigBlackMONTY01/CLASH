@@ -3194,7 +3194,7 @@ export default function App() {
           <div className="screen">
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
               <button className="btn btn-ghost" onClick={reset}>← Home</button>
-              <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", margin: 0 }}>1v1</h2>
+              <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", margin: 0 }}>1v1 CHALLENGE</h2>
             </div>
 
             <div className="v1-tab-row">
@@ -3597,7 +3597,7 @@ export default function App() {
           <div className="screen">
             <div className="v1-result-card">
               <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "11px", letterSpacing: "4px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "8px" }}>
-                1v1 Result
+                1v1 Match Result
               </div>
               <div className="v1-winner-banner" style={{ color: iWon ? "var(--green)" : "var(--red)" }}>
                 {iWon ? "VICTORY" : "DEFEATED"}
