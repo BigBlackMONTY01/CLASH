@@ -9,5 +9,5 @@ if (!url) {
 export default defineConfig({
   schema: path.join(__dirname, "./src/schema/index.ts"),
   dialect: "postgresql",
-  dbCredentials: { url },
+  dbCredentials: { url, ssl: { rejectUnauthorized: false } },
 });

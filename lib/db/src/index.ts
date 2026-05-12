@@ -1,5 +1,5 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { Pool } from "pg";
+import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
 
 function getDb() {
@@ -9,8 +9,8 @@ function getDb() {
       "NEON_DATABASE_URL or DATABASE_URL must be set.",
     );
   }
-  const sql = neon(connectionString);
-  return drizzle(sql, { schema });
+  const pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
+  return drizzle(pool, { schema });
 }
 
 let _db: ReturnType<typeof getDb> | null = null;
