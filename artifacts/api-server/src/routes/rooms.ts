@@ -1,12 +1,13 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-import { anthropic } from "@workspace/integrations-anthropic-ai";
+import Groq from "groq-sdk";
 import { db, players, rooms, roomArguments } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
 import { JWT_SECRET } from "./auth";
 
 const router = Router();
-const MODEL = "claude-sonnet-4-6";
+const MODEL = "llama-3.3-70b-versatile";
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 async function withRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
   let last: unknown;
@@ -21,13 +22,16 @@ async function withRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
 }
 
 async function claudeJSON(system: string, user: string): Promise<string> {
-  const msg = await withRetry(() => anthropic.messages.create({
-    model: MODEL, max_tokens: 600, system,
-    messages: [{ role: "user", content: user }],
+  const msg = await withRetry(() => groq.chat.completions.create({
+    model: MODEL, max_tokens: 600,
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: user },
+    ],
   }));
-  const block = msg.content.find(b => b.type === "text");
-  if (!block || block.type !== "text") throw new Error("No text response");
-  return block.text;
+  const text = msg.choices[0]?.message?.content;
+  if (!text) throw new Error("No text response");
+  return text;
 }
 
 function generateCode(): string {
