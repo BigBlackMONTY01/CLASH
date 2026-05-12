@@ -1,20 +1,26 @@
 services:
   - type: web
-    name: clash-api
+    name: clash
     runtime: node
-    buildCommand: npm install && npm run build
-    startCommand: npm start
-    healthCheckPath: /health
+    region: oregon
+    plan: free
+    buildCommand: npm install -g pnpm@9 && pnpm install --frozen-lockfile && pnpm run build
+    startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
-      - key: DATABASE_URL
-        sync: false
-      - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: JWT_SECRET
-        generateValue: true
+      - key: RENDER
+        value: true
       - key: FRONTEND_DIST
         value: artifacts/clash/dist/public
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NEON_DATABASE_URL
+        sync: false
+      - key: AI_INTEGRATIONS_ANTHROPIC_API_KEY
+        sync: false
+      - key: AI_INTEGRATIONS_ANTHROPIC_BASE_URL
+        value: https://api.anthropic.com
