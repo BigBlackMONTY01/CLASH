@@ -99,6 +99,8 @@ router.get("/players/:deviceId", async (req, res) => {
         wins: agg[0]?.totalWins ?? 0,
         bestScore: agg[0]?.bestScore ?? 0,
         avgScore: agg[0]?.avgScore ?? 0,
+        currentStreak: player[0].currentStreak ?? 0,
+        bestStreak: player[0].bestStreak ?? 0,
         opponentHistory: oppMap,
       },
     });
@@ -138,7 +140,15 @@ router.post("/debates/save", async (req, res) => {
       won: Boolean(won),
       isGauntlet: Boolean(isGauntlet),
     }).returning();
-    res.json(inserted[0]);
+
+    const newStreak = Boolean(won) ? (player[0].currentStreak ?? 0) + 1 : 0;
+    const newBestStreak = Math.max(player[0].bestStreak ?? 0, newStreak);
+    await db
+      .update(players)
+      .set({ currentStreak: newStreak, bestStreak: newBestStreak, updatedAt: new Date() })
+      .where(eq(players.id, player[0].id));
+
+    res.json({ ...inserted[0], currentStreak: newStreak, bestStreak: newBestStreak });
   } catch (err) {
     req.log.error({ err }, "debates/save failed");
     res.status(500).json({ error: "DB error" });
@@ -186,6 +196,8 @@ router.get("/leaderboard", async (req, res) => {
         id: players.id,
         username: players.username,
         deviceId: players.deviceId,
+        currentStreak: players.currentStreak,
+        bestStreak: players.bestStreak,
         wins: sql<number>`sum(case when ${debates.won} then 1 else 0 end)::int`,
         totalDebates: sql<number>`count(${debates.id})::int`,
         bestScore: sql<number>`coalesce(max(${debates.avgScore}), 0)::int`,

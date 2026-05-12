@@ -146,6 +146,9 @@ text-transform:uppercase;color:var(--text-dim);white-space:nowrap;}
 .rs-score{font-family:'Bebas Neue',sans-serif;font-size:20px;white-space:nowrap;}
 .iq-badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;
 padding:2px 8px;border-radius:3px;background:rgba(168,85,247,0.12);color:#a855f7;border:1px solid rgba(168,85,247,0.25);white-space:nowrap;animation:fadeIn 0.5s ease;}
+.streak-badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;
+padding:2px 8px;border-radius:3px;background:rgba(251,146,60,0.12);color:#fb923c;border:1px solid rgba(251,146,60,0.3);white-space:nowrap;}
+.streak-badge.hot{background:rgba(239,68,68,0.14);color:#ef4444;border-color:rgba(239,68,68,0.35);}
 
 .input-area{position:relative;}
 .timer-bar{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
@@ -1040,9 +1043,9 @@ interface PlayerProfile {
   id: number;
   deviceId: string;
   username: string | null;
-  stats: { debates: number; wins: number; bestScore: number; avgScore: number; opponentHistory: Record<string, { wins: number; losses: number }> };
+  stats: { debates: number; wins: number; bestScore: number; avgScore: number; currentStreak: number; bestStreak: number; opponentHistory: Record<string, { wins: number; losses: number }> };
 }
-interface LbEntry { id: number; username: string | null; deviceId: string; wins: number; totalDebates: number; bestScore: number; score: number; }
+interface LbEntry { id: number; username: string | null; deviceId: string; wins: number; totalDebates: number; bestScore: number; score: number; currentStreak: number; bestStreak: number; }
 interface GlobalStats { totalDebates: number; globalWinRate: number; uniqueTopics: number; activePlayers: number; }
 interface RecentActivity { username: string | null; deviceId: string; opponentName: string; topic: string; avgScore: number; won: boolean; isGauntlet: boolean; rank: string; createdAt: string; }
 
@@ -1072,7 +1075,7 @@ function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
 interface Message { role: "user" | "ai"; text: string; }
 interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; iq?: number; iqLabel?: string; }
 interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; }
-interface Stats { wins: number; debates: number; bestScore: number; opponentHistory: Record<string, { wins: number; losses: number }>; }
+interface Stats { wins: number; debates: number; bestScore: number; currentStreak: number; bestStreak: number; opponentHistory: Record<string, { wins: number; losses: number }>; }
 
 type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final";
 
@@ -1088,7 +1091,7 @@ export default function App() {
   const [thinking, setThinking] = useState(false);
   const [error, setError] = useState("");
   const [verdict, setVerdict] = useState<Verdict | null>(null);
-  const [stats, setStats] = useState<Stats>({ wins: 0, debates: 0, bestScore: 0, opponentHistory: {} });
+  const [stats, setStats] = useState<Stats>({ wins: 0, debates: 0, bestScore: 0, currentStreak: 0, bestStreak: 0, opponentHistory: {} });
   const [selectedRounds, setSelectedRounds] = useState(3);
   const [displayTopics, setDisplayTopics] = useState(() => pickTopics());
   const [timerStarted, setTimerStarted] = useState(false);
@@ -1207,6 +1210,8 @@ export default function App() {
             wins: profile.stats.wins,
             debates: profile.stats.debates,
             bestScore: profile.stats.bestScore,
+            currentStreak: profile.stats.currentStreak ?? 0,
+            bestStreak: profile.stats.bestStreak ?? 0,
             opponentHistory: profile.stats.opponentHistory,
           });
         } else {
@@ -1955,6 +1960,14 @@ export default function App() {
                     <span className="val">{Math.round((stats.wins / stats.debates) * 100)}%</span>
                     <span className="lbl">Win Rate</span>
                   </div>
+                  {(stats.currentStreak ?? 0) >= 1 && (
+                    <div className="stat-card">
+                      <span className="val" style={{ color: (stats.currentStreak ?? 0) >= 5 ? "#ef4444" : "#fb923c" }}>
+                        🔥{stats.currentStreak}
+                      </span>
+                      <span className="lbl">Streak</span>
+                    </div>
+                  )}
                 </div>
                 {nemesisBot && (
                   <div className="nemesis-card">
@@ -2743,7 +2756,14 @@ export default function App() {
                 <div className="lb-avatar">{emoji}</div>
                 <div className="lb-info">
                   <div className="lb-name">{displayName}{isMe ? " ◀ YOU" : ""}</div>
-                  <div className="lb-meta">{p.wins} win{p.wins !== 1 ? "s" : ""} · {p.totalDebates} debate{p.totalDebates !== 1 ? "s" : ""}</div>
+                  <div className="lb-meta" style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                    <span>{p.wins} win{p.wins !== 1 ? "s" : ""} · {p.totalDebates} debate{p.totalDebates !== 1 ? "s" : ""}</span>
+                    {p.currentStreak >= 2 && (
+                      <span className={`streak-badge${p.currentStreak >= 5 ? " hot" : ""}`}>
+                        🔥 {p.currentStreak} streak
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div className="lb-score">{p.score.toLocaleString()}</div>
