@@ -273,7 +273,16 @@ Counter the user's last argument directly and sharply. Obey your HARD RESPONSE L
       { role: "user", content: userArgument as string },
     ], tokens);
 
-    res.json({ aiText, roundScore });
+    const iq = Math.round(60 + roundScore.score * 0.9);
+    const iqLabel =
+      iq >= 145 ? "Genius" :
+      iq >= 130 ? "Very Superior" :
+      iq >= 120 ? "Superior" :
+      iq >= 110 ? "High Average" :
+      iq >= 90  ? "Average" :
+      iq >= 80  ? "Low Average" : "Below Average";
+
+    res.json({ aiText, roundScore: { ...roundScore, iq, iqLabel } });
   } catch (err) {
     req.log.error({ err }, "debate/round failed");
     res.status(500).json({ error: "AI error" });

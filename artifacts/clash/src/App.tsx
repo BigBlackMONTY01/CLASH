@@ -144,6 +144,8 @@ text-transform:uppercase;color:var(--text-dim);white-space:nowrap;}
 .rs-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
 .rs-fill{height:100%;border-radius:3px;transition:width 0.8s ease;}
 .rs-score{font-family:'Bebas Neue',sans-serif;font-size:20px;white-space:nowrap;}
+.iq-badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;
+padding:2px 8px;border-radius:3px;background:rgba(168,85,247,0.12);color:#a855f7;border:1px solid rgba(168,85,247,0.25);white-space:nowrap;animation:fadeIn 0.5s ease;}
 
 .input-area{position:relative;}
 .timer-bar{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
@@ -1065,7 +1067,7 @@ function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
 }
 
 interface Message { role: "user" | "ai"; text: string; }
-interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; }
+interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; iq?: number; iqLabel?: string; }
 interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; }
 interface Stats { wins: number; debates: number; bestScore: number; opponentHistory: Record<string, { wins: number; losses: number }>; }
 
@@ -2197,6 +2199,9 @@ export default function App() {
                 <div className="rs-fill" style={{ width: `${rs.score}%`, background: getScoreColor(rs.score) }} />
               </div>
               <span className="rs-score" style={{ color: getScoreColor(rs.score) }}>{rs.score}</span>
+              {rs.iq && (
+                <span className="iq-badge">IQ {rs.iq} · {rs.iqLabel}</span>
+              )}
             </div>
           ))}
 

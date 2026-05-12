@@ -7,6 +7,16 @@ interface GlobalStats {
   activePlayers: number;
 }
 
+interface LbEntry {
+  id: number;
+  username: string | null;
+  deviceId: string;
+  wins: number;
+  totalDebates: number;
+  bestScore: number;
+  score: number;
+}
+
 const APP_URL = "/play";
 
 const MARQUEE_ITEMS = [
@@ -24,7 +34,7 @@ const MARQUEE_ITEMS = [
 const HOW_STEPS = [
   { title: "Pick Your Battle",  body: "Choose from 12 topics across Ethics, Philosophy, Hot Takes, Tech, and Pop Culture. Or jump straight into Today's Clash." },
   { title: "Choose Your Side",  body: "FOR or AGAINST. Pick your opponent — from a calm professor to a relentless prosecutor. Then argue your case round by round." },
-  { title: "Get Judged",        body: "An AI judge scores every round on Logic, Persuasion, and Delivery. Get a rank from S to F. See exactly where you won and lost." },
+  { title: "Get Judged",        body: "An AI judge scores every round on Logic, Persuasion, and Delivery. Get a rank from S to F — plus an IQ rating for every argument you make." },
 ];
 
 const OPPONENTS = [
@@ -371,6 +381,67 @@ html { scroll-behavior:smooth; }
 @keyframes lp-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.4);}50%{box-shadow:0 0 0 6px rgba(34,197,94,0);} }
 @keyframes lp-marquee { from{transform:translateX(0);}to{transform:translateX(-50%);} }
 
+/* LEADERBOARD SECTION */
+.lp-lb-table { display:flex; flex-direction:column; gap:2px; }
+.lp-lb-row {
+  display:flex; align-items:center; gap:16px;
+  background:var(--lp-surface); border:1px solid var(--lp-border);
+  border-radius:10px; padding:14px 20px; transition:border-color 0.2s;
+}
+.lp-lb-row:hover { border-color:#333; }
+.lp-lb-rank {
+  font-family:'Bebas Neue',sans-serif; font-size:22px; width:32px;
+  text-align:center; color:var(--lp-dim); flex-shrink:0;
+}
+.lp-lb-rank.lp-lb-top { color:var(--lp-gold); }
+.lp-lb-avatar {
+  width:36px; height:36px; border-radius:50%;
+  background:var(--lp-surface2); border:1px solid var(--lp-border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+}
+.lp-lb-info { flex:1; min-width:0; }
+.lp-lb-name {
+  font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+}
+.lp-lb-meta { font-size:12px; color:var(--lp-dim); margin-top:2px; }
+.lp-lb-score-col { text-align:right; flex-shrink:0; }
+.lp-lb-pts { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--lp-gold); line-height:1; }
+.lp-lb-pts-lbl { font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:1px; color:var(--lp-dim); }
+.lp-lb-empty {
+  text-align:center; padding:40px 20px; color:var(--lp-dim);
+  font-family:'Barlow Condensed',sans-serif; font-size:14px; letter-spacing:2px; text-transform:uppercase;
+  background:var(--lp-surface); border:1px solid var(--lp-border); border-radius:10px;
+}
+.lp-lb-cta {
+  margin-top:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+}
+.lp-lb-cta-text { font-size:14px; color:var(--lp-dim); }
+.lp-lb-cta-text strong { color:var(--lp-text); }
+
+/* IQ FEATURE STRIP */
+.lp-iq-strip {
+  background:var(--lp-surface); border:1px solid var(--lp-border); border-radius:12px;
+  padding:32px 40px; display:flex; align-items:center; gap:40px; flex-wrap:wrap;
+}
+.lp-iq-left { flex:1; min-width:220px; }
+.lp-iq-label {
+  font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:5px;
+  text-transform:uppercase; color:#a855f7; margin-bottom:12px;
+  display:flex; align-items:center; gap:10px;
+}
+.lp-iq-label::after { content:''; flex:1; max-width:40px; height:1px; background:#a855f7; opacity:0.4; }
+.lp-iq-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,6vw,56px); letter-spacing:2px; line-height:0.95; margin-bottom:12px; }
+.lp-iq-body { font-size:15px; color:var(--lp-mid); line-height:1.6; }
+.lp-iq-right { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.lp-iq-pill {
+  background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.25);
+  border-radius:8px; padding:10px 16px; text-align:center; min-width:80px;
+}
+.lp-iq-pill-val { font-family:'Bebas Neue',sans-serif; font-size:28px; color:#a855f7; display:block; line-height:1; }
+.lp-iq-pill-lbl { font-family:'Barlow Condensed',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--lp-dim); margin-top:4px; }
+
 /* RESPONSIVE */
 @media(max-width:640px){
   .lp-nav{padding:16px 20px;}
@@ -379,6 +450,7 @@ html { scroll-behavior:smooth; }
   .lp-vp-scores{grid-template-columns:repeat(2,1fr);}
   .lp-gauntlet-section{padding:40px 20px;}
   .lp-footer{flex-direction:column;text-align:center;}
+  .lp-iq-strip{padding:24px 20px;gap:24px;}
 }
 `;
 
@@ -396,11 +468,16 @@ export function Landing() {
     globalWinRate: 61,
     activePlayers: 0,
   });
+  const [lbData, setLbData] = useState<LbEntry[]>([]);
 
   useEffect(() => {
     fetch(`${API}/api/stats/global`)
       .then(r => r.ok ? r.json() : null)
       .then((data: GlobalStats | null) => { if (data) setStats(data); })
+      .catch(() => {});
+    fetch(`${API}/api/leaderboard`)
+      .then(r => r.ok ? r.json() : null)
+      .then((data: LbEntry[] | null) => { if (data) setLbData(data.slice(0, 5)); })
       .catch(() => {});
   }, []);
 
@@ -479,6 +556,7 @@ export function Landing() {
             <a href="#how">How It Works</a>
             <a href="#opponents">Opponents</a>
             <a href="#gauntlet">Gauntlet</a>
+            <a href="#leaderboard">Leaderboard</a>
           </div>
           <a href={APP_URL} className="lp-nav-cta">Play Free</a>
         </nav>
@@ -640,6 +718,63 @@ export function Landing() {
               ))}
             </div>
             <a href={APP_URL} className="lp-btn-gold">Enter the Gauntlet</a>
+          </div>
+        </section>
+
+        {/* IQ FEATURE */}
+        <section className="lp-section">
+          <div className="lp-iq-strip lp-reveal">
+            <div className="lp-iq-left">
+              <div className="lp-iq-label">New Feature</div>
+              <div className="lp-iq-title">YOUR ARGUMENT<br />HAS AN IQ.</div>
+              <p className="lp-iq-body">After every round, the AI judge calculates an IQ rating for your argument — from <strong>Below Average</strong> to <strong>Genius</strong>. Find out how your reasoning stacks up.</p>
+            </div>
+            <div className="lp-iq-right">
+              {[["145", "Genius"], ["127", "Superior"], ["103", "Average"], ["88", "Low Avg"], ["71", "Below Avg"]].map(([val, lbl]) => (
+                <div key={lbl} className="lp-iq-pill">
+                  <span className="lp-iq-pill-val">{val}</span>
+                  <span className="lp-iq-pill-lbl">{lbl}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* LEADERBOARD */}
+        <section id="leaderboard" className="lp-section">
+          <div className="lp-reveal"><div className="lp-section-label">Rankings</div></div>
+          <div className="lp-reveal lp-rd-1"><h2 className="lp-section-title">WHO'S THE<br />BEST DEBATER?</h2></div>
+          <div className="lp-reveal lp-rd-2"><p className="lp-section-sub">Win debates, climb the board. Points are earned by wins and peak score. Only the sharpest make it to the top.</p></div>
+          <div className="lp-reveal lp-rd-3">
+            {lbData.length === 0 ? (
+              <div className="lp-lb-empty">Be the first on the board — start a debate now.</div>
+            ) : (
+              <div className="lp-lb-table">
+                {lbData.map((p, i) => {
+                  const AVATARS = ["🦁","🐺","🦊","🎯","⚡","🔥","🧠","🏆","👊","💎"];
+                  const emoji = AVATARS[p.id % AVATARS.length];
+                  const name = p.username || ("GUEST#" + p.deviceId.slice(-4).toUpperCase());
+                  return (
+                    <div key={p.id} className="lp-lb-row">
+                      <div className={`lp-lb-rank${i < 3 ? " lp-lb-top" : ""}`}>{i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1}</div>
+                      <div className="lp-lb-avatar">{emoji}</div>
+                      <div className="lp-lb-info">
+                        <div className="lp-lb-name">{name}</div>
+                        <div className="lp-lb-meta">{p.wins} win{p.wins !== 1 ? "s" : ""} · {p.totalDebates} debate{p.totalDebates !== 1 ? "s" : ""} · Best {p.bestScore}</div>
+                      </div>
+                      <div className="lp-lb-score-col">
+                        <div className="lp-lb-pts">{p.score.toLocaleString()}</div>
+                        <div className="lp-lb-pts-lbl">pts</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            <div className="lp-lb-cta">
+              <p className="lp-lb-cta-text">Full rankings in the app. <strong>Win to earn points.</strong></p>
+              <a href={APP_URL} className="lp-btn lp-btn-red">Climb the Board</a>
+            </div>
           </div>
         </section>
 
