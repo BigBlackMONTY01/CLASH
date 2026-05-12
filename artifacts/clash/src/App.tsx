@@ -831,6 +831,8 @@ function generateShareCard(params: {
   avgScore: number;
   avgLogic: number;
   avgPersuasion: number;
+  avgIq?: number;
+  iqLabel?: string;
   topic: string;
   opponentName: string;
   opponentIcon: string;
@@ -940,22 +942,23 @@ function generateShareCard(params: {
   ctx.fillStyle = "#1c1c1c";
   ctx.fillRect(PAD, 768, W - PAD * 2, 1);
 
-  const cols = [
+  const cols: { label: string; val: number; color?: string }[] = [
     { label: "OVERALL",    val: params.avgScore },
     { label: "LOGIC",      val: params.avgLogic },
     { label: "PERSUASION", val: params.avgPersuasion },
+    ...(params.avgIq ? [{ label: params.iqLabel ?? "IQ", val: params.avgIq, color: "#a855f7" }] : []),
   ];
-  const colW = (W - PAD * 2) / 3;
+  const colW = (W - PAD * 2) / cols.length;
   cols.forEach((col, i) => {
     const sx = PAD + colW * i + colW / 2;
-    const sColor = col.val >= 80 ? "#22c55e" : col.val >= 60 ? "#f4c542" : "#e63946";
-    ctx.font = "bold 112px Impact, 'Arial Black', sans-serif";
+    const sColor = col.color ?? (col.val >= 80 ? "#22c55e" : col.val >= 60 ? "#f4c542" : "#e63946");
+    ctx.font = `bold ${cols.length === 4 ? 96 : 112}px Impact, 'Arial Black', sans-serif`;
     ctx.fillStyle = sColor;
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
     ctx.fillText(String(col.val), sx, 900);
     ctx.font = "bold 20px Arial, sans-serif";
-    ctx.fillStyle = "#3a3a3a";
+    ctx.fillStyle = col.color ? col.color + "99" : "#3a3a3a";
     ctx.fillText(col.label, sx, 934);
   });
 
@@ -1711,12 +1714,23 @@ export default function App() {
 
   const shareImage = useCallback(async () => {
     if (!verdict || !ai || !selectedTopic) return;
+    const iqScores = roundScores.map(r => r.iq).filter((v): v is number => v != null);
+    const avgIq = iqScores.length ? Math.round(iqScores.reduce((a, b) => a + b, 0) / iqScores.length) : undefined;
+    const iqLabel = avgIq == null ? undefined :
+      avgIq >= 145 ? "GENIUS" :
+      avgIq >= 130 ? "V.SUPERIOR" :
+      avgIq >= 120 ? "SUPERIOR" :
+      avgIq >= 110 ? "HIGH AVG" :
+      avgIq >= 90  ? "AVERAGE" :
+      avgIq >= 80  ? "LOW AVG" : "BELOW AVG";
     const dataUrl = generateShareCard({
       won: verdict.won,
       rank: verdict.rank,
       avgScore: verdict.avgScore,
       avgLogic: verdict.avgLogic,
       avgPersuasion: verdict.avgPersuasion,
+      avgIq,
+      iqLabel,
       topic: selectedTopic.text,
       opponentName: ai.name,
       opponentIcon: ai.icon,
