@@ -1,14 +1,10 @@
-# Netlify proxies /api/* → Replit API server
-# The SPA fallback must come last.
-
 [[redirects]]
-  from   = "/api/*"
-  to     = "https://clash--ladytrissh.replit.app/api/:splat"
+  from = "/api/*"
+  to = "https://clash--ladytrissh.replit.app/api/:splat"
   status = 200
-  force  = true
+  force = true
 
-# SPA fallback — must come last
 [[redirects]]
-  from   = "/*"
-  to     = "/index.html"
+  from = "/*"
+  to = "/index.html"
   status = 200
