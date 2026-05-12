@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { API } from "./lib/api";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap');`;
 
@@ -993,7 +994,7 @@ function generateShareCard(params: {
 }
 
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${API}/api${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -1004,14 +1005,14 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
 }
 
 async function apiGet<T>(path: string): Promise<T> {
-  const res = await fetch(`/api${path}`);
+  const res = await fetch(`${API}/api${path}`);
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   return data as T;
 }
 
 async function apiPatch<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${API}/api${path}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
