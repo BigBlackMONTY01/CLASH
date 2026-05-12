@@ -28,7 +28,7 @@ app.use(
   }),
 );
 
-const ALLOWED_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$|\.replit\.(app|dev)$/;
+const ALLOWED_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$|\.replit\.(app|dev)$|\.netlify\.app$/;
 
 app.use(
   cors({
