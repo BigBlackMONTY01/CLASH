@@ -397,7 +397,8 @@ export function Landing() {
   });
 
   useEffect(() => {
-    fetch("/api/stats/global")
+    const base = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
+    fetch(`${base}/api/stats/global`)
       .then(r => r.ok ? r.json() : null)
       .then((data: GlobalStats | null) => { if (data) setStats(data); })
       .catch(() => {});
