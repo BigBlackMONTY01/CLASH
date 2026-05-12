@@ -464,8 +464,8 @@ export function Landing() {
   const rafRef = useRef<number>(0);
 
   const [stats, setStats] = useState<GlobalStats>({
-    totalDebates: 2847,
-    globalWinRate: 61,
+    totalDebates: 0,
+    globalWinRate: 0,
     activePlayers: 0,
   });
   const [lbData, setLbData] = useState<LbEntry[]>([]);

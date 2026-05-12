@@ -1268,14 +1268,14 @@ export default function App() {
     let cancelled = false;
 
     (async () => {
-      let target = { debates: 100, winRate: 0, topics: 10 };
+      let target = { debates: 0, winRate: 0, topics: 0 };
       try {
         const gs = await apiGet<GlobalStats>("/stats/global");
         if (!cancelled) {
           target = {
-            debates: Math.max(gs.totalDebates, 1),
+            debates: gs.totalDebates,
             winRate: gs.globalWinRate || 0,
-            topics: Math.max(gs.uniqueTopics, 1),
+            topics: gs.uniqueTopics,
           };
         }
       } catch {}
