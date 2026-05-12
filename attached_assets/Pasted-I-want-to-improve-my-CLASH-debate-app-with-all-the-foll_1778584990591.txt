@@ -1,0 +1,84 @@
+I want to improve my CLASH debate app with all the following changes:
+
+THEME & VISUAL UPGRADES
+
+Light Mode with Liquid Glass (iOS 26 Style)
+
+Recreate a premium Liquid Glass UI system inspired by iOS 26 Light Mode, but apply it only when my web app is in Light Mode. Dark mode must remain untouched and continue using its existing styling. Detect theme state automatically and scope every glass effect strictly to light theme only.
+
+When users switch to Light Mode, the app transforms into a clean Apple-style liquid glass experience:
+
+· Elegant, frosted, bright, layered, responsive, native-feeling, smooth, premium
+· App background: #f5f5f7
+· Elevated surfaces: rgba(255,255,255,0.55)
+· Strong glass: rgba(255,255,255,0.68)
+· Borders: rgba(255,255,255,0.65)
+· Text primary: #111111
+· Text secondary: rgba(0,0,0,0.58)
+· Accent glow: soft blue / cyan / silver
+
+Liquid glass effects for Light Mode only:
+
+· backdrop-filter: blur(22px) saturate(180%) on all surfaces (navbar, cards, modals, sidebars, inputs, menus)
+· translucent white layered surfaces with soft ambient shadows
+· subtle internal shine and realistic glass edges
+· premium rounded corners with depth between stacked layers
+· hover/touch effects: slight scale lift, brighter glass tint, smoother shadow, 250ms spring motion
+· refraction details: top-left highlight edge, lower-right subtle shade, faint radial reflection following cursor
+
+Component rules for Light Mode only:
+
+· Navbar: floating sticky top glass navbar, translucent white strip, blur background, thin border, premium spacing, elegant icon capsules
+· Buttons: glass pill buttons, glossy top edge, hover brighten, active press effect
+· Cards: floating content cards, layered glass panel, suspended shadow, hover elevation
+· Inputs: Apple-style glass search/input fields, pill shape, focus glow
+· Modals: centered glass sheets, stronger blur, soft backdrop dim, smooth entrance animation
+
+Responsiveness: Perfect on iPhone Safari, Android Chrome, tablets, desktop, large monitors. No clipping, blur bugs, overflow, or layout shifts.
+
+Performance: Optimize blur usage, use GPU transforms, graceful fallback if backdrop-filter unsupported.
+
+Important: Keep it subtle and believable. No exaggerated neon glassmorphism. No messy transparency. Should feel like official Apple Light Mode UI.
+
+Theme Toggle Button
+
+Add a light mode toggle button next to the existing sound button — optimized the same way (same positioning, same icon style). Use a sun/moon icon that switches between light and dark mode. Theme switching should animate smoothly with no flicker. Use proper theme separation with CSS variables / data-theme / class toggles. If user uses system theme preference, follow device theme automatically.
+
+Fix Cluttered Top Navigation
+
+The top navigation bar is too clustered — fix it. Reduce visual noise, better spacing, move less important items elsewhere (maybe into a menu). Keep only essential items visible: logo, sound toggle, light mode toggle, and profile/sign-in button.
+
+TEXT CHANGES
+
+Change "1v1 vs Human" to just "1v1" everywhere:
+
+· On the landing page home screen CTA button
+· On the 1v1 page itself
+· Any card descriptions or headers that say "1v1 vs Human"
+
+1v1 PAGE IMPROVEMENTS
+
+The current 1v1 page is too basic — rebuild it to be more engaging and visually polished. Add:
+
+Match History Tab
+
+· Show past 1v1 matches
+· For each match display: opponent name, who won, final scores, date played
+· Make it accessible as a tab on the 1v1 page
+
+Rematch Button
+
+· Add a rematch button after 1v1 matches
+· One click to queue the same opponent again
+· Should appear on the match results screen
+
+Seasonal Badges
+
+· Add seasonal badges that reset each month
+· Badge examples: "Season 1 Champion", "Undefeated", "10 Wins", "First Blood"
+· Display earned badges on player profiles
+· Create a badge showcase area
+
+Design Summary
+
+Keep the app feeling premium and engaging.

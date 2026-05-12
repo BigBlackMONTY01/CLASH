@@ -724,6 +724,81 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .v1-iq-desc{font-size:11px;color:var(--text-dim);margin-top:2px;}
 .v1-topic-banner{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;font-size:13px;color:var(--text-dim);margin-bottom:14px;}
 .v1-topic-banner strong{color:var(--text);font-style:italic;}
+
+/* THEME TOGGLE BUTTON */
+.theme-btn{background:none;border:1px solid var(--border);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.18s,color 0.18s,background 0.18s;color:var(--text-dim);-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+.theme-btn:hover{border-color:var(--text-mid);color:var(--text);background:rgba(255,255,255,0.05);}
+
+/* LIGHT MODE — iOS 26 Liquid Glass */
+[data-theme="light"]{
+  --bg:#f0f2f7;
+  --surface:rgba(255,255,255,0.75);
+  --surface2:rgba(255,255,255,0.55);
+  --border:rgba(0,0,0,0.09);
+  --red:#ff3b30;
+  --red-dim:rgba(255,59,48,0.14);
+  --blue:#007aff;
+  --blue-dim:rgba(0,122,255,0.14);
+  --gold:#ff9500;
+  --text:#1c1c1e;
+  --text-dim:#8e8e93;
+  --text-mid:#48484a;
+  --green:#30d158;
+}
+[data-theme="light"] body{background:linear-gradient(155deg,#dde5f5 0%,#ede8f8 40%,#d8e9f5 100%);background-attachment:fixed;}
+[data-theme="light"] body::after{background:none;}
+[data-theme="light"] .nav{background:rgba(255,255,255,0.72);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.65);box-shadow:0 1px 0 rgba(0,0,0,0.06),0 4px 20px rgba(0,0,0,0.04);}
+[data-theme="light"] .featured-card,[data-theme="light"] .stat-card,[data-theme="light"] .ai-card,[data-theme="light"] .topic-card,[data-theme="light"] .lb-row,[data-theme="light"] .round-score,[data-theme="light"] .live-scoreboard,[data-theme="light"] .arena-header,[data-theme="light"] .feed-item,[data-theme="light"] .lobby-card,[data-theme="light"] .v1-result-card,[data-theme="light"] .v1-arg-entry,[data-theme="light"] .v1-arena-header,[data-theme="light"] .nemesis-card,[data-theme="light"] .challenge-banner,[data-theme="light"] .verdict-card,[data-theme="light"] .replay-intro,[data-theme="light"] .replay-round,[data-theme="light"] .trending-item,[data-theme="light"] .v1-history-entry,[data-theme="light"] .gauntlet-bot-card,[data-theme="light"] .gp-bot,[data-theme="light"] .gf-match,[data-theme="light"] .ach-badge{background:rgba(255,255,255,0.72);backdrop-filter:blur(22px) saturate(170%);-webkit-backdrop-filter:blur(22px) saturate(170%);border-color:rgba(255,255,255,0.7);box-shadow:0 2px 14px rgba(0,0,0,0.07),inset 0 1px 0 rgba(255,255,255,0.9);}
+[data-theme="light"] .msg-text,[data-theme="light"] .score-pill,[data-theme="light"] .custom-form,[data-theme="light"] .auth-box,[data-theme="light"] .username-dialog,[data-theme="light"] .v1-iq-card,[data-theme="light"] .v1-score-bar,[data-theme="light"] .share-link-box,[data-theme="light"] .waiting-room{background:rgba(255,255,255,0.72);backdrop-filter:blur(22px) saturate(170%);-webkit-backdrop-filter:blur(22px) saturate(170%);border-color:rgba(255,255,255,0.7);box-shadow:0 2px 14px rgba(0,0,0,0.07);}
+[data-theme="light"] .v1-mode-card{background:linear-gradient(135deg,rgba(0,122,255,0.11),rgba(0,70,180,0.05));border-color:rgba(0,122,255,0.22);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);}
+[data-theme="light"] .btn-primary{background:var(--red);box-shadow:0 4px 16px rgba(255,59,48,0.35);}
+[data-theme="light"] .btn-secondary{background:rgba(255,255,255,0.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:rgba(0,0,0,0.1);color:var(--text);}
+[data-theme="light"] .btn-ghost{background:rgba(255,255,255,0.55);border-color:rgba(0,0,0,0.1);color:var(--text-dim);}
+[data-theme="light"] .btn-ghost:hover{background:rgba(255,255,255,0.88);color:var(--text);}
+[data-theme="light"] .debate-input,[data-theme="light"] .join-code-input,[data-theme="light"] .auth-field,[data-theme="light"] .username-field,[data-theme="light"] .custom-input{background:rgba(255,255,255,0.88);border-color:rgba(0,0,0,0.12);color:var(--text);}
+[data-theme="light"] .tabs,[data-theme="light"] .v1-tab-row{background:rgba(255,255,255,0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:rgba(0,0,0,0.08);}
+[data-theme="light"] .sound-btn,[data-theme="light"] .theme-btn{background:rgba(255,255,255,0.65);border-color:rgba(0,0,0,0.1);}
+[data-theme="light"] .sound-btn:hover,[data-theme="light"] .theme-btn:hover{background:rgba(255,255,255,0.92);border-color:rgba(0,0,0,0.18);}
+[data-theme="light"] .auth-pill{background:rgba(255,59,48,0.09);border-color:rgba(255,59,48,0.25);}
+[data-theme="light"] .profile-pill{background:rgba(255,255,255,0.65);border-color:rgba(0,0,0,0.1);}
+[data-theme="light"] .share-toast{background:rgba(255,255,255,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:var(--green);}
+[data-theme="light"] .achievement-toast{background:rgba(255,255,255,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
+[data-theme="light"] .mf-vs-card{background:rgba(255,255,255,0.72);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-color:rgba(255,255,255,0.7);}
+[data-theme="light"] .mf-stance.for{background:rgba(48,209,88,0.1);}
+[data-theme="light"] .mf-stance.against{background:rgba(255,59,48,0.1);}
+[data-theme="light"] .error-banner{background:rgba(255,59,48,0.07);}
+[data-theme="light"] .v1-player-chip.me{background:rgba(255,59,48,0.1);border-color:rgba(255,59,48,0.3);}
+[data-theme="light"] .v1-player-chip.opp{background:rgba(0,122,255,0.1);border-color:rgba(0,122,255,0.25);}
+[data-theme="light"] .arena-stats{border-color:rgba(0,0,0,0.08);}
+[data-theme="light"] .arena-stat+.arena-stat{border-color:rgba(0,0,0,0.08);}
+[data-theme="light"] .logo::after{background:var(--red);}
+[data-theme="light"] .sudden-btn{background:rgba(255,59,48,0.07);}
+[data-theme="light"] .best-arg{background:rgba(48,209,88,0.07);border-color:rgba(48,209,88,0.2);}
+[data-theme="light"] .worst-arg{background:rgba(255,59,48,0.07);border-color:rgba(255,59,48,0.2);}
+
+/* 1V1 LOBBY TABS */
+.v1-tab-row{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:20px;}
+.v1-tab{flex:1;padding:10px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;border-radius:6px;cursor:pointer;border:none;background:transparent;color:var(--text-dim);transition:all 0.2s;}
+.v1-tab.active{background:var(--red);color:#fff;}
+
+/* 1V1 MATCH HISTORY */
+.v1-history-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;animation:fadeIn 0.3s ease;}
+.v1-hist-result{font-family:'Bebas Neue',sans-serif;font-size:15px;width:52px;flex-shrink:0;text-align:center;border-radius:var(--radius);padding:5px 0;letter-spacing:1px;}
+.v1-hist-result.win{color:var(--green);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.22);}
+.v1-hist-result.loss{color:var(--red);background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);}
+.v1-hist-info{flex:1;min-width:0;}
+.v1-hist-topic{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.v1-hist-meta{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:var(--text-dim);}
+.v1-hist-rank{font-family:'Bebas Neue',sans-serif;font-size:26px;flex-shrink:0;}
+
+/* SEASONAL BADGES */
+.seasonal-section{margin-top:24px;}
+.seasonal-badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.seasonal-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 13px 5px 9px;border-radius:100px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;cursor:default;}
+.seasonal-badge.gold{background:rgba(244,197,66,0.12);border:1px solid rgba(244,197,66,0.4);color:var(--gold);}
+.seasonal-badge.silver{background:rgba(180,180,190,0.1);border:1px solid rgba(180,180,190,0.35);color:#ababbb;}
+.seasonal-badge.bronze{background:rgba(180,110,50,0.1);border:1px solid rgba(180,110,50,0.35);color:#b87333;}
+.seasonal-badge.blue{background:rgba(0,119,255,0.1);border:1px solid rgba(0,119,255,0.28);color:#60a5fa;}
 `;
 
 function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
@@ -1306,6 +1381,7 @@ interface Stats { wins: number; debates: number; bestScore: number; currentStrea
 interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fallacy"; note: string; }
 interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
 interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; }
+interface V1HistoryEntry { code: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
 
 type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final" | "multiplayer-lobby" | "multiplayer-waiting" | "multiplayer-debate" | "multiplayer-results";
 
@@ -1383,11 +1459,18 @@ export default function App() {
   const [roomLoading, setRoomLoading] = useState(false);
   const [roomJoinCode, setRoomJoinCode] = useState("");
   const [v1SubScreen, setV1SubScreen] = useState<"" | "join">("");
+  const [v1Tab, setV1Tab] = useState<"play" | "history">("play");
+  const [v1History, setV1History] = useState<V1HistoryEntry[]>(() => { try { return JSON.parse(localStorage.getItem("clash-1v1-history") || "[]"); } catch { return []; } });
+  const [themeMode, setThemeMode] = useState<"dark" | "light">(() => { try { return (localStorage.getItem("clash-theme") as "dark" | "light") || "dark"; } catch { return "dark"; } });
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pendingVerdictRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", themeMode);
+  }, [themeMode]);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -1459,6 +1542,34 @@ export default function App() {
       setScreen("multiplayer-lobby");
     }
   }, []);
+
+  // Save v1 match to history when results screen opens
+  useEffect(() => {
+    if (screen !== "multiplayer-results" || !currentRoom || currentRoom.status !== "complete") return;
+    const myScore = roomPlayerNum === 1 ? currentRoom.player1Score : currentRoom.player2Score;
+    const oppScore = roomPlayerNum === 1 ? currentRoom.player2Score : currentRoom.player1Score;
+    const myRank = (roomPlayerNum === 1 ? currentRoom.player1Rank : currentRoom.player2Rank) || "C";
+    const myIQ = roomPlayerNum === 1 ? currentRoom.iq1 : currentRoom.iq2;
+    const oppName = roomPlayerNum === 1 ? (currentRoom.player2Name || "Opponent") : currentRoom.player1Name;
+    const iWon = currentRoom.winnerPlayerNum === roomPlayerNum;
+    setV1History(prev => {
+      if (prev.find(e => e.code === currentRoom.code)) return prev;
+      const entry: V1HistoryEntry = {
+        code: currentRoom.code,
+        topic: currentRoom.topicText,
+        opponentName: oppName,
+        myScore,
+        oppScore,
+        won: iWon,
+        date: new Date().toISOString(),
+        myRank,
+        myIQ,
+      };
+      const next = [entry, ...prev].slice(0, 50);
+      try { localStorage.setItem("clash-1v1-history", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, [screen, currentRoom, roomPlayerNum]);
 
   // Poll room state every 2 seconds when in multiplayer screens
   useEffect(() => {
@@ -1672,6 +1783,15 @@ export default function App() {
     setSoundEnabled(prev => {
       const next = !prev;
       try { localStorage.setItem("clash-sound", next ? "on" : "off"); } catch {}
+      return next;
+    });
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setThemeMode(prev => {
+      const next = prev === "dark" ? "light" : "dark";
+      try { localStorage.setItem("clash-theme", next); } catch {}
+      document.documentElement.setAttribute("data-theme", next);
       return next;
     });
   }, []);
@@ -2039,6 +2159,7 @@ export default function App() {
     setRoomLoading(false);
     setRoomJoinCode("");
     setV1SubScreen("");
+    setV1Tab("play");
   };
 
   const loginFn = async () => {
@@ -2299,25 +2420,37 @@ export default function App() {
     <div className="app">
       <nav className="nav">
         <div className="logo">CL<span>A</span>SH</div>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          {stats.debates > 0 && (
-            <div className="nav-rank">{stats.wins}W {stats.debates - stats.wins}L</div>
-          )}
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <button className="auth-pill" onClick={() => { setAuthError(""); setShowAuthModal(true); }}>
             {authUser ? `⚡ ${authUser.email.split("@")[0]}` : "Sign In"}
           </button>
-          <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute sounds" : "Enable sounds"}>
+          <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute" : "Unmute"}>
             {soundEnabled ? (
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
                 <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
                 <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
               </svg>
             ) : (
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
                 <line x1="23" y1="9" x2="17" y2="15"/>
                 <line x1="17" y1="9" x2="23" y2="15"/>
+              </svg>
+            )}
+          </button>
+          <button className="theme-btn" onClick={toggleTheme} title={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
+            {themeMode === "dark" ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               </svg>
             )}
           </button>
@@ -2364,10 +2497,10 @@ export default function App() {
                 Leaderboard
               </button>
             </div>
-            <div className="v1-mode-card" onClick={() => { setV1SubScreen(""); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}>
+            <div className="v1-mode-card" onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}>
               <div className="v1-icon">⚔</div>
               <div className="v1-info">
-                <div className="v1-title">1v1 vs Human</div>
+                <div className="v1-title">1v1</div>
                 <div className="v1-desc">Challenge a friend · Room code · AI judge · IQ scores</div>
               </div>
               <div className="v1-arrow">›</div>
@@ -3040,56 +3173,159 @@ export default function App() {
       )}
 
       {/* MULTIPLAYER LOBBY */}
-      {screen === "multiplayer-lobby" && (
-        <div className="screen">
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "28px" }}>
-            <button className="btn btn-ghost" onClick={reset}>← Home</button>
-            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", margin: 0 }}>1v1 CHALLENGE</h2>
+      {screen === "multiplayer-lobby" && (() => {
+        const seasonWins = v1History.filter(e => {
+          const d = new Date(e.date);
+          return e.won && d >= new Date("2026-03-01") && d <= new Date("2026-05-31");
+        }).length;
+        const seasonMatches = v1History.filter(e => {
+          const d = new Date(e.date);
+          return d >= new Date("2026-03-01") && d <= new Date("2026-05-31");
+        }).length;
+        const badges: { label: string; icon: string; tier: "gold" | "silver" | "bronze" | "blue" }[] = [];
+        if (seasonMatches >= 1) badges.push({ label: "First Match", icon: "⚔", tier: "blue" });
+        if (seasonMatches >= 5) badges.push({ label: "Veteran", icon: "🛡", tier: "bronze" });
+        if (seasonWins >= 1) badges.push({ label: "First Win", icon: "✓", tier: "blue" });
+        if (seasonWins >= 3) badges.push({ label: "Champion", icon: "🏆", tier: "silver" });
+        if (seasonWins >= 5) badges.push({ label: "Dominator", icon: "👑", tier: "gold" });
+        if (v1History.length > 0 && v1History.filter(e => e.won).length / v1History.length >= 0.7 && v1History.length >= 5)
+          badges.push({ label: "70%+ Win Rate", icon: "⚡", tier: "gold" });
+        return (
+          <div className="screen">
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+              <button className="btn btn-ghost" onClick={reset}>← Home</button>
+              <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", margin: 0 }}>1v1</h2>
+            </div>
+
+            <div className="v1-tab-row">
+              <button className={`v1-tab${v1Tab === "play" ? " active" : ""}`} onClick={() => setV1Tab("play")}>Play</button>
+              <button className={`v1-tab${v1Tab === "history" ? " active" : ""}`} onClick={() => setV1Tab("history")}>
+                History {v1History.length > 0 && `(${v1History.length})`}
+              </button>
+            </div>
+
+            {v1Tab === "play" && (
+              <>
+                {!v1SubScreen ? (
+                  <div className="lobby-options">
+                    <div className="lobby-card create" onClick={createRoom}>
+                      <div className="lobby-card-icon">⚔</div>
+                      <div className="lobby-card-title">Create Room</div>
+                      <div className="lobby-card-sub">Get a code · Share with a friend</div>
+                    </div>
+                    <div className="lobby-card join" onClick={() => setV1SubScreen("join")}>
+                      <div className="lobby-card-icon">🔗</div>
+                      <div className="lobby-card-title">Join Room</div>
+                      <div className="lobby-card-sub">Enter a code from a friend</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="join-form">
+                    <p className="section-label">Enter room code</p>
+                    <input
+                      className="join-code-input"
+                      maxLength={6}
+                      value={roomJoinCode}
+                      onChange={(e) => setRoomJoinCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
+                      placeholder="ABC123"
+                      onKeyDown={(e) => { if (e.key === "Enter" && roomJoinCode.length === 6) joinRoom(); }}
+                      autoFocus
+                    />
+                    {roomError && <div className="auth-err" style={{ marginBottom: "12px" }}>{roomError}</div>}
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <button className="btn btn-ghost" onClick={() => { setV1SubScreen(""); setRoomError(""); }}>← Back</button>
+                      <button className="btn btn-primary" onClick={joinRoom} disabled={roomJoinCode.length !== 6 || roomLoading}>
+                        {roomLoading ? "Joining..." : "Join →"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {roomError && !v1SubScreen && <div className="auth-err" style={{ marginTop: "12px" }}>{roomError}</div>}
+                {roomLoading && !v1SubScreen && (
+                  <div style={{ textAlign: "center", color: "var(--text-dim)", marginTop: "16px", fontFamily: "'Barlow Condensed'", letterSpacing: "2px", fontSize: "13px" }}>
+                    Creating room...
+                  </div>
+                )}
+              </>
+            )}
+
+            {v1Tab === "history" && (
+              <>
+                {badges.length > 0 && (
+                  <div className="seasonal-section">
+                    <p className="section-label" style={{ marginBottom: "6px" }}>Spring 2026 Badges</p>
+                    <div className="seasonal-badge-row">
+                      {badges.map(b => (
+                        <span key={b.label} className={`seasonal-badge ${b.tier}`}>
+                          <span>{b.icon}</span>
+                          {b.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {v1History.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "48px 16px", color: "var(--text-dim)" }}>
+                    <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "26px", letterSpacing: "2px", marginBottom: "8px" }}>NO MATCHES YET</div>
+                    <div style={{ fontSize: "13px" }}>Play your first 1v1 match to start your history.</div>
+                    <button className="btn btn-primary" style={{ marginTop: "20px" }} onClick={() => setV1Tab("play")}>Play Now →</button>
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ display: "flex", gap: "16px", marginBottom: "16px", marginTop: badges.length > 0 ? "20px" : 0 }}>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", color: "var(--text)" }}>{v1History.length}</div>
+                        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>Played</div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", color: "var(--green)" }}>{v1History.filter(e => e.won).length}</div>
+                        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>Wins</div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", color: "var(--red)" }}>{v1History.filter(e => !e.won).length}</div>
+                        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>Losses</div>
+                      </div>
+                      {v1History.length >= 2 && (
+                        <div style={{ textAlign: "center" }}>
+                          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", color: "var(--gold)" }}>
+                            {Math.round((v1History.filter(e => e.won).length / v1History.length) * 100)}%
+                          </div>
+                          <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>Win Rate</div>
+                        </div>
+                      )}
+                    </div>
+                    {v1History.map((entry, i) => {
+                      const ago = (() => {
+                        const ms = Date.now() - new Date(entry.date).getTime();
+                        const m = Math.floor(ms / 60000);
+                        if (m < 60) return `${Math.max(1, m)}m ago`;
+                        if (m < 1440) return `${Math.floor(m / 60)}h ago`;
+                        return `${Math.floor(m / 1440)}d ago`;
+                      })();
+                      return (
+                        <div key={i} className="v1-history-entry">
+                          <div className={`v1-hist-result ${entry.won ? "win" : "loss"}`}>
+                            {entry.won ? "WIN" : "LOSS"}
+                          </div>
+                          <div className="v1-hist-info">
+                            <div className="v1-hist-topic" title={entry.topic}>"{entry.topic}"</div>
+                            <div className="v1-hist-meta">
+                              vs {entry.opponentName} · {entry.myScore ?? "—"}/100
+                              {entry.myIQ ? ` · IQ ${entry.myIQ}` : ""} · {ago}
+                            </div>
+                          </div>
+                          <div className={`v1-hist-rank rank-${entry.myRank}`}>{entry.myRank}</div>
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+              </>
+            )}
           </div>
-
-          {!v1SubScreen ? (
-            <div className="lobby-options">
-              <div className="lobby-card create" onClick={createRoom}>
-                <div className="lobby-card-icon">⚔</div>
-                <div className="lobby-card-title">Create Room</div>
-                <div className="lobby-card-sub">Get a code · Share with a friend</div>
-              </div>
-              <div className="lobby-card join" onClick={() => setV1SubScreen("join")}>
-                <div className="lobby-card-icon">🔗</div>
-                <div className="lobby-card-title">Join Room</div>
-                <div className="lobby-card-sub">Enter a code from a friend</div>
-              </div>
-            </div>
-          ) : (
-            <div className="join-form">
-              <p className="section-label">Enter room code</p>
-              <input
-                className="join-code-input"
-                maxLength={6}
-                value={roomJoinCode}
-                onChange={(e) => setRoomJoinCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
-                placeholder="ABC123"
-                onKeyDown={(e) => { if (e.key === "Enter" && roomJoinCode.length === 6) joinRoom(); }}
-                autoFocus
-              />
-              {roomError && <div className="auth-err" style={{ marginBottom: "12px" }}>{roomError}</div>}
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button className="btn btn-ghost" onClick={() => { setV1SubScreen(""); setRoomError(""); }}>← Back</button>
-                <button className="btn btn-primary" onClick={joinRoom} disabled={roomJoinCode.length !== 6 || roomLoading}>
-                  {roomLoading ? "Joining..." : "Join →"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {roomError && !v1SubScreen && <div className="auth-err" style={{ marginTop: "12px" }}>{roomError}</div>}
-          {roomLoading && !v1SubScreen && (
-            <div style={{ textAlign: "center", color: "var(--text-dim)", marginTop: "16px", fontFamily: "'Barlow Condensed'", letterSpacing: "2px", fontSize: "13px" }}>
-              Creating room...
-            </div>
-          )}
-        </div>
-      )}
+        );
+      })()}
 
       {/* MULTIPLAYER WAITING ROOM */}
       {screen === "multiplayer-waiting" && currentRoom && (
@@ -3361,7 +3597,7 @@ export default function App() {
           <div className="screen">
             <div className="v1-result-card">
               <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "11px", letterSpacing: "4px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "8px" }}>
-                1v1 Match Result
+                1v1 Result
               </div>
               <div className="v1-winner-banner" style={{ color: iWon ? "var(--green)" : "var(--red)" }}>
                 {iWon ? "VICTORY" : "DEFEATED"}
@@ -3394,6 +3630,7 @@ export default function App() {
               </div>
             </div>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <button className="btn btn-primary" onClick={() => { setCurrentRoom(null); setRoomPlayerNum(null); setRoomArgInput(""); setRoomError(""); setV1SubScreen(""); setV1Tab("play"); setScreen("multiplayer-lobby"); }}>⚔ Rematch</button>
               <button className="btn btn-secondary" onClick={() => setScreen("multiplayer-debate")}>📋 View Arguments</button>
               <button className="btn btn-ghost" onClick={reset}>Home</button>
             </div>
