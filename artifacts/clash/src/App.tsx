@@ -570,6 +570,12 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .gauntlet-btn:hover{background:rgba(244,197,66,0.07);color:var(--gold);transform:translateY(-1px);}
 .gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;margin-top:6px;}
 
+/* 1V1 home button — same style as gauntlet but red */
+@keyframes redPulse{0%,100%{box-shadow:0 0 0 0 rgba(230,57,70,0);border-color:rgba(230,57,70,0.45);color:rgba(230,57,70,0.8);}50%{box-shadow:0 0 18px 3px rgba(230,57,70,0.18);border-color:rgba(230,57,70,0.75);color:var(--red);}}
+.v1-home-btn{display:block;background:rgba(230,57,70,0.03);border:1.5px solid rgba(230,57,70,0.45);color:rgba(230,57,70,0.8);border-radius:var(--radius);padding:14px 24px;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;width:100%;max-width:400px;text-align:center;transition:all 0.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;animation:redPulse 2.4s ease-in-out infinite;}
+.v1-home-btn:hover{background:rgba(230,57,70,0.07);color:var(--red);transform:translateY(-1px);}
+[data-theme="light"] .v1-home-btn{border-color:rgba(224,48,42,0.5);color:rgba(224,48,42,0.9);}
+
 /* Featured topic card */
 @keyframes featuredSlideLeft{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
 @keyframes featuredSlideRight{from{opacity:0;transform:translateX(-40px);}to{opacity:1;transform:translateX(0);}}
@@ -2541,10 +2547,12 @@ export default function App() {
                 Leaderboard
               </button>
             </div>
-            <button className="btn btn-secondary" style={{ width: "100%", marginTop: "12px" }} onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}>
-              ⚔ 1V1 vs Human
-            </button>
-            <div style={{ marginTop: "16px", textAlign: "center" }}>
+            <div style={{ marginTop: "12px", textAlign: "center" }}>
+              <button className="v1-home-btn" onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}>
+                ⚔️ 1V1
+              </button>
+            </div>
+            <div style={{ marginTop: "12px", textAlign: "center" }}>
               <button className="gauntlet-btn" onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}>
                 ⚔ Gauntlet Mode
               </button>
@@ -2875,10 +2883,15 @@ export default function App() {
                 </button>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
-                <button className="btn btn-primary" style={{ width: "100%" }} disabled={!selectedSide} onClick={() => launchMatchmaking()}>
-                  ⚡ Start Clash
+                <button
+                  className="btn btn-primary"
+                  style={{ width: "100%", background: selectedSide ? "#C0392B" : undefined, fontSize: "17px", letterSpacing: "4px", padding: "18px 32px", fontWeight: 700 }}
+                  disabled={!selectedSide}
+                  onClick={() => launchMatchmaking()}
+                >
+                  ⚡ START CLASH
                 </button>
-                <button className="btn btn-ghost" style={{ alignSelf: "flex-start" }} onClick={() => setSetupStep(1)}>← Back</button>
+                <button className="btn btn-ghost" style={{ alignSelf: "flex-start", fontSize: "13px" }} onClick={() => setSetupStep(1)}>← Back</button>
               </div>
             </>
           )}
