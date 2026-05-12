@@ -1854,12 +1854,9 @@ export default function App() {
     const trimmed = usernameInput.trim();
     if (trimmed.length < 2) { setUsernameError("Must be at least 2 characters."); return; }
     try {
-      // Ensure the player row exists before patching
       await apiPost("/players/register", { deviceId }).catch(() => {});
       await apiPatch("/players/username", { deviceId, username: trimmed });
-      // Always re-fetch the full profile (includes stats) so state stays consistent
-      const updated = await apiGet<PlayerProfile>(`/players/${deviceId}`);
-      setPlayer(updated);
+      setPlayer((prev) => prev ? { ...prev, username: trimmed } : prev);
       setShowUsernameModal(false);
       setUsernameInput("");
       setUsernameError("");
@@ -1867,12 +1864,10 @@ export default function App() {
       const msg = (err as Error).message || "";
       if (msg.includes("taken") || msg.includes("23505")) {
         setUsernameError("That username is already taken — try another.");
-      } else if (msg.includes("not found") || msg.includes("404")) {
-        setUsernameError("Could not find your profile. Refresh the page and try again.");
-      } else if (msg.includes("fetch") || msg.includes("NetworkError") || msg.includes("Failed to fetch")) {
+      } else if (msg.includes("network") || msg.includes("fetch") || msg.includes("Failed to fetch")) {
         setUsernameError("Could not reach the server. Check your connection.");
       } else {
-        setUsernameError(msg || "Something went wrong. Try again.");
+        setUsernameError("Couldn't save your name — please try again.");
       }
     }
   };
