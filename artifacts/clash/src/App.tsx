@@ -1903,17 +1903,14 @@ export default function App() {
     setUsernameInput("");
     setUsernameError("");
   } catch (err: unknown) {
-    console.error("Username error:", err);
+    // DEBUG: Log the FULL error to see what it actually says
+    console.error("FULL ERROR OBJECT:", err);
     const msg = (err as Error).message || "";
+    console.error("ERROR MESSAGE STRING:", msg);
+    console.error("ERROR TYPE:", typeof err);
     
-    if (msg.includes("taken") || 
-        msg.includes("23505") || 
-        msg.includes("duplicate") ||
-        msg.includes("already exists")) {
-      setUsernameError("That username is already taken — try another.");
-    } else {
-      setUsernameError(`Save failed: ${msg}`);
-    }
+    // Show the raw error message so you can see what it says
+    setUsernameError(`Error: ${msg}`);
   }
 };
 
