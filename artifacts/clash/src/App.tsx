@@ -108,10 +108,10 @@ padding:24px 16px;cursor:pointer;transition:all 0.2s;text-align:center;font-fami
 .side-btn .side-label{font-size:20px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
 .side-btn .side-sub{font-size:12px;color:var(--text-dim);margin-top:4px;}
 
-.arena-header{display:flex;align-items:center;justify-content:space-between;
+.arena-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
 background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
 padding:16px 20px;margin-bottom:20px;}
-.arena-topic{font-size:15px;font-weight:500;flex:1;margin:0 16px;}
+.arena-topic{font-size:15px;font-weight:500;flex:1;margin:0 16px;min-width:0;word-break:break-word;}
 .round-badge{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red);white-space:nowrap;}
 .vs-badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;
 color:var(--text-dim);text-transform:uppercase;}
@@ -130,7 +130,7 @@ min-height:300px;max-height:420px;overflow-y:auto;padding-right:4px;}
 justify-content:center;font-size:16px;flex-shrink:0;margin-top:2px;}
 .msg-avatar.user-av{background:var(--blue-dim);border:1px solid var(--blue);}
 .msg-avatar.ai-av{background:var(--red-dim);border:1px solid var(--red);}
-.msg-bubble{max-width:80%;}
+.msg-bubble{max-width:80%;min-width:0;word-break:break-word;overflow-wrap:break-word;}
 .msg-name{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;
 text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
 .msg-text{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);
@@ -166,7 +166,7 @@ color:var(--text);resize:none;outline:none;transition:border-color 0.2s;line-hei
 .debate-input.extreme-urgent{border-color:var(--red) !important;animation:urgentBorder 0.6s ease infinite alternate;}
 @keyframes urgentBorder{from{box-shadow:0 0 0 0 rgba(230,57,70,0);}to{box-shadow:0 0 12px 2px rgba(230,57,70,0.35);}}
 .debate-input::placeholder{color:var(--text-dim);}
-.input-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.input-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px;flex-wrap:wrap;}
 .char-count{font-size:12px;color:var(--text-dim);transition:color 0.2s;}
 .char-count.warn{color:var(--gold);}
 .char-count.danger{color:var(--red);}
@@ -214,6 +214,9 @@ border-radius:var(--radius);padding:14px 16px;}
 text-transform:uppercase;margin-bottom:6px;}
 .arg-label.best{color:var(--green);}
 .arg-label.worst{color:var(--red);}
+
+.verdict-moments{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.verdict-actions{display:flex;gap:10px;flex-wrap:wrap;}
 
 .lb-row{display:flex;align-items:center;gap:16px;padding:14px 16px;
 background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
@@ -376,6 +379,11 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   .featured-topic-text{font-size:16px;}
   .live-feed{gap:7px;}
   .feed-text{font-size:13px;}
+  .ai-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+  .topic-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}
+  .verdict-moments{grid-template-columns:1fr 1fr;}
+  .verdict-actions{flex-wrap:wrap;}
+  .mf-vs-card{padding:16px 20px;}
 }
 
 /* === DESKTOP (>900px) === */
@@ -458,6 +466,16 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   .score-pill{padding:10px 8px;}
   .score-pill .sp-val{font-size:28px;}
 
+  .verdict-moments{grid-template-columns:1fr;}
+  .verdict-actions{gap:8px;}
+  .verdict-actions .btn{flex:1;min-width:calc(50% - 4px);text-align:center;}
+
+  .input-footer{gap:6px;}
+  .submit-row{margin-left:auto;}
+
+  .arena-header{padding:10px 12px;gap:6px;}
+  .arena-topic{margin:0 4px;font-size:12px;}
+
   .matchmaking{min-height:50vh;}
   .mf-vs-card{padding:14px 16px;gap:10px;}
   .mf-icon{font-size:28px;}
@@ -479,8 +497,11 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   .stat-card{padding:12px 14px;}
   .stat-card .val{font-size:26px;}
 
-  .lb-row{gap:10px;padding:12px;}
+  .lb-row{gap:8px;padding:10px 12px;}
   .lb-score{font-size:20px;}
+  .lb-name{font-size:14px;}
+  .lb-avatar{width:30px;height:30px;font-size:15px;}
+  .lb-rank{width:26px;font-size:18px;}
 
   .share-toast{font-size:11px;padding:8px 16px;bottom:16px;}
   .featured-card{padding:14px 16px;gap:12px;margin-top:16px;}
@@ -1560,6 +1581,8 @@ export default function App() {
           wins: prev.wins + (won ? 1 : 0),
           debates: prev.debates + 1,
           bestScore: Math.max(prev.bestScore, avgScore),
+          currentStreak: prev.currentStreak,
+          bestStreak: prev.bestStreak,
           opponentHistory: oppHistory,
         };
       });
@@ -2400,7 +2423,7 @@ export default function App() {
               <p style={{ fontSize: "15px", lineHeight: 1.5, color: "var(--text-mid)", margin: 0 }}>{verdict.judgeText}</p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "12px" }}>
+            <div className="verdict-moments">
               <div className="best-arg">
                 <div className="arg-label best">✓ Best Moment</div>
                 <div style={{ fontSize: "13px", color: "var(--text-mid)" }}>{verdict.bestArg}</div>
@@ -2432,7 +2455,7 @@ export default function App() {
             </button>
           )}
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <div className="verdict-actions">
             <button className="btn btn-primary" onClick={instantRematch}>⚡ Instant Rematch</button>
             <button className="btn btn-secondary" onClick={swapSidesRematch}>↕ Swap Sides</button>
             <button className="btn btn-secondary" onClick={() => setScreen("replay")}>📋 Replay</button>

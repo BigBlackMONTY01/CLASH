@@ -442,15 +442,40 @@ html { scroll-behavior:smooth; }
 .lp-iq-pill-val { font-family:'Bebas Neue',sans-serif; font-size:28px; color:#a855f7; display:block; line-height:1; }
 .lp-iq-pill-lbl { font-family:'Barlow Condensed',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--lp-dim); margin-top:4px; }
 
-/* RESPONSIVE */
-@media(max-width:640px){
-  .lp-nav{padding:16px 20px;}
-  .lp-nav-links{display:none;}
-  .lp-section{padding:64px 20px;}
+/* RESPONSIVE — tablet */
+@media(min-width:641px) and (max-width:900px){
+  .lp-nav{padding:16px 28px;}
+  .lp-nav-links{gap:20px;}
+  .lp-section{padding:80px 28px;}
+  .lp-verdict-preview{padding:28px;}
   .lp-vp-scores{grid-template-columns:repeat(2,1fr);}
-  .lp-gauntlet-section{padding:40px 20px;}
-  .lp-footer{flex-direction:column;text-align:center;}
-  .lp-iq-strip{padding:24px 20px;gap:24px;}
+}
+
+/* RESPONSIVE — mobile */
+@media(max-width:640px){
+  .lp-nav{padding:14px 16px;}
+  .lp-nav-links{display:none;}
+  .lp-nav-cta{padding:8px 16px;font-size:12px;letter-spacing:2px;}
+  .lp-section{padding:60px 16px;}
+  .lp-step{padding:28px 20px;}
+  .lp-opp-card{padding:24px 20px;}
+  .lp-verdict-preview{padding:20px 16px;}
+  .lp-vp-scores{grid-template-columns:repeat(2,1fr);}
+  .lp-gauntlet-section{padding:40px 16px;}
+  .lp-gauntlet-opponents{gap:6px;}
+  .lp-go-chip{padding:6px 12px;font-size:12px;}
+  .lp-btn{padding:14px 24px;font-size:13px;letter-spacing:3px;}
+  .lp-btn-gold{padding:14px 32px;font-size:13px;}
+  .lp-footer{flex-direction:column;text-align:center;padding:24px 16px;}
+  .lp-iq-strip{padding:20px 16px;gap:20px;}
+  .lp-lb-row{gap:10px;padding:12px 14px;}
+  .lp-lb-meta{display:none;}
+  .lp-hero{padding:100px 16px 60px;}
+  .lp-hero-btns{flex-direction:column;align-items:center;}
+  .lp-hero-btns .lp-btn{width:100%;max-width:320px;text-align:center;}
+  .lp-final-cta{padding:80px 16px;}
+  .lp-final-btns{flex-direction:column;align-items:center;}
+  .lp-final-btns .lp-btn{width:100%;max-width:320px;text-align:center;}
 }
 `;
 
