@@ -369,4 +369,33 @@ router.post("/1v1/:code/forfeit", (req, res) => {
   res.json({ ok: true });
 });
 
+router.post("/1v1/:code/set-topic", (req, res) => {
+  const callerId = getCallerId(req);
+  if (!callerId) { res.status(401).json({ error: "Not authenticated" }); return; }
+  const { code } = req.params;
+  const { topicText, topicCat } = req.body as { topicText: string; topicCat?: string };
+  if (!topicText?.trim()) { res.status(400).json({ error: "Topic text required" }); return; }
+  const room = store.get(code.toUpperCase());
+  if (!room) { res.status(404).json({ error: "Room not found" }); return; }
+  if (room.creator !== callerId) { res.status(403).json({ error: "Only the host can change the topic" }); return; }
+  if (room.status !== "waiting") { res.status(400).json({ error: "Cannot change topic after opponent joins" }); return; }
+  room.topicText = topicText.trim();
+  room.topicCat = topicCat || "Custom";
+  res.json({ ok: true });
+});
+
+router.post("/1v1/:code/set-rounds", (req, res) => {
+  const callerId = getCallerId(req);
+  if (!callerId) { res.status(401).json({ error: "Not authenticated" }); return; }
+  const { code } = req.params;
+  const { totalRounds } = req.body as { totalRounds: number };
+  const room = store.get(code.toUpperCase());
+  if (!room) { res.status(404).json({ error: "Room not found" }); return; }
+  if (room.creator !== callerId) { res.status(403).json({ error: "Only the host can change rounds" }); return; }
+  if (room.status !== "waiting") { res.status(400).json({ error: "Cannot change rounds after opponent joins" }); return; }
+  const rounds = Math.min(5, Math.max(1, Number(totalRounds) || 3));
+  room.totalRounds = rounds;
+  res.json({ ok: true });
+});
+
 export default router;

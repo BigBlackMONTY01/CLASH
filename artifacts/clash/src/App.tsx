@@ -735,55 +735,54 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .theme-btn{background:none;border:1px solid var(--border);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.18s,color 0.18s,background 0.18s;color:var(--text-dim);-webkit-tap-highlight-color:transparent;flex-shrink:0;}
 .theme-btn:hover{border-color:var(--text-mid);color:var(--text);background:rgba(255,255,255,0.05);}
 
-/* LIGHT MODE — Warm Editorial Arena */
+/* LIGHT MODE — Clean White Arena */
 [data-theme="light"]{
-  --bg:transparent;
-  --surface:rgba(255,251,240,0.88);
-  --surface2:rgba(250,244,228,0.82);
-  --border:rgba(110,70,20,0.12);
-  --red:#c0392b;
-  --red-dim:rgba(192,57,43,0.1);
-  --blue:#1a56db;
-  --blue-dim:rgba(26,86,219,0.1);
-  --gold:#a16207;
-  --text:#1a110a;
-  --text-dim:#705840;
-  --text-mid:#3d2c18;
-  --green:#166534;
+  --bg:#ffffff;
+  --surface:#f9fafb;
+  --surface2:#f1f3f5;
+  --border:rgba(0,0,0,0.08);
+  --red:#e63946;
+  --red-dim:rgba(230,57,70,0.1);
+  --blue:#2563eb;
+  --blue-dim:rgba(37,99,235,0.08);
+  --gold:#d97706;
+  --text:#0f0f0f;
+  --text-dim:#6b7280;
+  --text-mid:#374151;
+  --green:#16a34a;
 }
-[data-theme="light"] body{background:linear-gradient(160deg,#fefcf5 0%,#f8f0da 35%,#fef4e8 65%,#f9f2e4 100%);min-height:100dvh;}
+[data-theme="light"] body{background:#ffffff;min-height:100dvh;}
 [data-theme="light"] body::after{background:none;}
-[data-theme="light"] .nav{position:relative;overflow:hidden;background:rgba(255,251,235,0.84);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border-bottom:1px solid rgba(120,80,30,0.1);box-shadow:0 1px 0 rgba(255,245,210,0.9),0 3px 18px rgba(80,50,10,0.06);}
-[data-theme="light"] .nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,230,150,0.6),transparent);pointer-events:none;}
-[data-theme="light"] .featured-card,[data-theme="light"] .stat-card,[data-theme="light"] .ai-card,[data-theme="light"] .topic-card,[data-theme="light"] .lb-row,[data-theme="light"] .round-score,[data-theme="light"] .live-scoreboard,[data-theme="light"] .arena-header,[data-theme="light"] .feed-item,[data-theme="light"] .lobby-card,[data-theme="light"] .v1-result-card,[data-theme="light"] .v1-arg-entry,[data-theme="light"] .v1-arena-header,[data-theme="light"] .nemesis-card,[data-theme="light"] .challenge-banner,[data-theme="light"] .verdict-card,[data-theme="light"] .replay-intro,[data-theme="light"] .replay-round,[data-theme="light"] .trending-item,[data-theme="light"] .v1-history-entry,[data-theme="light"] .gauntlet-bot-card,[data-theme="light"] .gp-bot,[data-theme="light"] .gf-match,[data-theme="light"] .ach-badge,[data-theme="light"] .msg-text,[data-theme="light"] .score-pill,[data-theme="light"] .custom-form,[data-theme="light"] .auth-box,[data-theme="light"] .username-dialog,[data-theme="light"] .v1-iq-card,[data-theme="light"] .v1-score-bar,[data-theme="light"] .share-link-box,[data-theme="light"] .waiting-room,[data-theme="light"] .mf-vs-card{position:relative;overflow:hidden;background:rgba(255,251,238,0.86)!important;backdrop-filter:blur(18px) saturate(150%)!important;-webkit-backdrop-filter:blur(18px) saturate(150%)!important;border:1px solid rgba(110,70,20,0.1)!important;box-shadow:0 4px 20px rgba(80,50,10,0.06)!important;}
-[data-theme="light"] .featured-card::before,[data-theme="light"] .stat-card::before,[data-theme="light"] .ai-card::before,[data-theme="light"] .topic-card::before,[data-theme="light"] .lb-row::before,[data-theme="light"] .arena-header::before,[data-theme="light"] .lobby-card::before,[data-theme="light"] .v1-result-card::before,[data-theme="light"] .verdict-card::before,[data-theme="light"] .v1-history-entry::before,[data-theme="light"] .gf-match::before,[data-theme="light"] .auth-box::before,[data-theme="light"] .v1-iq-card::before,[data-theme="light"] .mf-vs-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,220,140,0.6),transparent);pointer-events:none;z-index:1;}
-[data-theme="light"] .v1-mode-card{position:relative;overflow:hidden;background:rgba(240,228,195,0.52)!important;backdrop-filter:blur(18px) saturate(150%)!important;-webkit-backdrop-filter:blur(18px) saturate(150%)!important;border:1px solid rgba(140,100,30,0.14)!important;box-shadow:0 4px 20px rgba(80,50,10,0.06)!important;}
-[data-theme="light"] .btn-primary{background:var(--red);box-shadow:0 4px 14px rgba(192,57,43,0.25);}
-[data-theme="light"] .btn-secondary{position:relative;overflow:hidden;background:rgba(255,251,235,0.82);backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);border:1px solid rgba(110,70,20,0.14);color:var(--text);}
-[data-theme="light"] .btn-ghost{background:rgba(255,248,222,0.55);border-color:rgba(110,70,20,0.12);color:var(--text-dim);}
-[data-theme="light"] .btn-ghost:hover{background:rgba(255,244,200,0.82);color:var(--text);}
-[data-theme="light"] .debate-input,[data-theme="light"] .join-code-input,[data-theme="light"] .auth-field,[data-theme="light"] .username-field,[data-theme="light"] .custom-input{background:rgba(255,252,240,0.92);border-color:rgba(110,70,20,0.14);color:var(--text);}
-[data-theme="light"] .tabs,[data-theme="light"] .v1-tab-row{position:relative;overflow:hidden;background:rgba(255,249,228,0.65)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;border-color:rgba(110,70,20,0.1)!important;}
-[data-theme="light"] .sound-btn,[data-theme="light"] .theme-btn{background:rgba(255,251,232,0.75);border-color:rgba(110,70,20,0.14);color:var(--text-mid);}
-[data-theme="light"] .sound-btn:hover,[data-theme="light"] .theme-btn:hover{background:rgba(255,246,210,0.9);}
-[data-theme="light"] .auth-pill{background:rgba(192,57,43,0.08);border-color:rgba(192,57,43,0.28);color:var(--red);}
-[data-theme="light"] .profile-pill,[data-theme="light"] .user-chip{background:rgba(255,251,232,0.72);border-color:rgba(110,70,20,0.14);color:var(--text);}
-[data-theme="light"] .user-chip:hover{background:rgba(255,245,210,0.88);}
-[data-theme="light"] .share-toast{background:rgba(255,251,235,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:var(--green);}
-[data-theme="light"] .achievement-toast{background:rgba(255,251,235,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
-[data-theme="light"] .mf-stance.for{background:rgba(22,101,52,0.08);}
-[data-theme="light"] .mf-stance.against{background:rgba(192,57,43,0.08);}
-[data-theme="light"] .error-banner{background:rgba(192,57,43,0.06);}
-[data-theme="light"] .v1-player-chip.me{background:rgba(192,57,43,0.08);border-color:rgba(192,57,43,0.25);}
-[data-theme="light"] .v1-player-chip.opp{background:rgba(26,86,219,0.08);border-color:rgba(26,86,219,0.2);}
-[data-theme="light"] .arena-stats{border-color:rgba(110,70,20,0.1);}
-[data-theme="light"] .arena-stat+.arena-stat{border-color:rgba(110,70,20,0.1);}
+[data-theme="light"] .nav{position:relative;overflow:hidden;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 1px 0 rgba(255,255,255,1),0 2px 16px rgba(0,0,0,0.05);}
+[data-theme="light"] .nav::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,var(--red) 40%,#ff6b6b 60%,var(--red) 95%,transparent);pointer-events:none;opacity:0.7;}
+[data-theme="light"] .featured-card,[data-theme="light"] .stat-card,[data-theme="light"] .ai-card,[data-theme="light"] .topic-card,[data-theme="light"] .lb-row,[data-theme="light"] .round-score,[data-theme="light"] .live-scoreboard,[data-theme="light"] .arena-header,[data-theme="light"] .feed-item,[data-theme="light"] .lobby-card,[data-theme="light"] .v1-result-card,[data-theme="light"] .v1-arg-entry,[data-theme="light"] .v1-arena-header,[data-theme="light"] .nemesis-card,[data-theme="light"] .challenge-banner,[data-theme="light"] .verdict-card,[data-theme="light"] .replay-intro,[data-theme="light"] .replay-round,[data-theme="light"] .trending-item,[data-theme="light"] .v1-history-entry,[data-theme="light"] .gauntlet-bot-card,[data-theme="light"] .gp-bot,[data-theme="light"] .gf-match,[data-theme="light"] .ach-badge,[data-theme="light"] .msg-text,[data-theme="light"] .score-pill,[data-theme="light"] .custom-form,[data-theme="light"] .auth-box,[data-theme="light"] .username-dialog,[data-theme="light"] .v1-iq-card,[data-theme="light"] .v1-score-bar,[data-theme="light"] .share-link-box,[data-theme="light"] .waiting-room,[data-theme="light"] .mf-vs-card{background:#ffffff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid rgba(0,0,0,0.07)!important;box-shadow:0 2px 12px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04)!important;}
+[data-theme="light"] .v1-mode-card{background:#f9fafb!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid rgba(0,0,0,0.07)!important;box-shadow:0 2px 12px rgba(0,0,0,0.05)!important;}
+[data-theme="light"] .btn-primary{background:var(--red);box-shadow:0 4px 14px rgba(230,57,70,0.3);}
+[data-theme="light"] .btn-secondary{background:#f9fafb;border:1px solid rgba(0,0,0,0.1);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+[data-theme="light"] .btn-ghost{background:transparent;border-color:rgba(0,0,0,0.1);color:var(--text-dim);}
+[data-theme="light"] .btn-ghost:hover{background:#f9fafb;color:var(--text);}
+[data-theme="light"] .debate-input,[data-theme="light"] .join-code-input,[data-theme="light"] .auth-field,[data-theme="light"] .username-field,[data-theme="light"] .custom-input{background:#ffffff;border-color:rgba(0,0,0,0.12);color:var(--text);}
+[data-theme="light"] .tabs,[data-theme="light"] .v1-tab-row{background:#f1f3f5!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:rgba(0,0,0,0.07)!important;}
+[data-theme="light"] .sound-btn,[data-theme="light"] .theme-btn{background:#f9fafb;border-color:rgba(0,0,0,0.1);color:var(--text-mid);}
+[data-theme="light"] .sound-btn:hover,[data-theme="light"] .theme-btn:hover{background:#f1f3f5;}
+[data-theme="light"] .auth-pill{background:rgba(230,57,70,0.08);border-color:rgba(230,57,70,0.3);color:var(--red);}
+[data-theme="light"] .profile-pill,[data-theme="light"] .user-chip{background:#f9fafb;border-color:rgba(0,0,0,0.1);color:var(--text);}
+[data-theme="light"] .user-chip:hover{background:#f1f3f5;}
+[data-theme="light"] .share-toast{background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:var(--green);box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+[data-theme="light"] .achievement-toast{background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+[data-theme="light"] .mf-stance.for{background:rgba(22,163,74,0.08);}
+[data-theme="light"] .mf-stance.against{background:rgba(230,57,70,0.07);}
+[data-theme="light"] .error-banner{background:rgba(230,57,70,0.06);}
+[data-theme="light"] .v1-player-chip.me{background:rgba(230,57,70,0.08);border-color:rgba(230,57,70,0.25);}
+[data-theme="light"] .v1-player-chip.opp{background:rgba(37,99,235,0.07);border-color:rgba(37,99,235,0.2);}
+[data-theme="light"] .arena-stats{border-color:rgba(0,0,0,0.07);}
+[data-theme="light"] .arena-stat+.arena-stat{border-color:rgba(0,0,0,0.07);}
 [data-theme="light"] .logo::after{background:var(--red);}
-[data-theme="light"] .sudden-btn{background:rgba(192,57,43,0.06);}
-[data-theme="light"] .best-arg{background:rgba(22,101,52,0.07);border-color:rgba(22,101,52,0.18);}
-[data-theme="light"] .worst-arg{background:rgba(192,57,43,0.06);border-color:rgba(192,57,43,0.18);}
-[data-theme="light"] .profile-panel{position:relative;overflow:hidden;background:rgba(255,251,230,0.58)!important;backdrop-filter:blur(36px) saturate(160%)!important;-webkit-backdrop-filter:blur(36px) saturate(160%)!important;border:1px solid rgba(220,190,120,0.4)!important;box-shadow:0 12px 40px rgba(80,50,10,0.1)!important;}
-[data-theme="light"] .pp-username-field{background:rgba(255,252,235,0.88);border-color:rgba(110,70,20,0.12);}
+[data-theme="light"] .sudden-btn{background:rgba(230,57,70,0.06);}
+[data-theme="light"] .best-arg{background:rgba(22,163,74,0.07);border-color:rgba(22,163,74,0.18);}
+[data-theme="light"] .worst-arg{background:rgba(230,57,70,0.06);border-color:rgba(230,57,70,0.16);}
+[data-theme="light"] .profile-panel{position:relative;overflow:hidden;background:rgba(255,255,255,0.78)!important;backdrop-filter:blur(48px) saturate(200%)!important;-webkit-backdrop-filter:blur(48px) saturate(200%)!important;border:1px solid rgba(0,0,0,0.1)!important;box-shadow:0 24px 64px rgba(0,0,0,0.15),0 1px 0 rgba(255,255,255,0.9) inset!important;}
+[data-theme="light"] .pp-username-field{background:#ffffff;border-color:rgba(0,0,0,0.1);}
 
 /* 1V1 LOBBY TABS */
 .v1-tab-row{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:20px;}
@@ -815,7 +814,19 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .user-chip-av{width:22px;height:22px;border-radius:50%;background:var(--red-dim);border:1.5px solid rgba(230,57,70,0.4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--red);flex-shrink:0;line-height:1;font-family:'Barlow Condensed',sans-serif;}
 .user-chip-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .profile-overlay{position:fixed;inset:0;z-index:8000;}
-.profile-panel{position:fixed;top:62px;right:16px;z-index:8001;width:268px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.45),0 4px 16px rgba(0,0,0,0.2);animation:ppIn 0.18s cubic-bezier(0.34,1.2,0.64,1);}
+.profile-panel{position:fixed;top:62px;right:16px;z-index:8001;width:280px;background:rgba(14,14,14,0.84);backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.7),0 1px 0 rgba(255,255,255,0.06) inset;animation:ppIn 0.18s cubic-bezier(0.34,1.2,0.64,1);}
+.pp-record-row{display:flex;gap:0;border-bottom:1px solid var(--border);}
+.pp-record-cell{flex:1;text-align:center;padding:8px 6px;border-right:1px solid var(--border);}
+.pp-record-cell:last-child{border-right:none;}
+.pp-record-val{font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--text);display:block;line-height:1;}
+.pp-record-lbl{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:1px;}
+.pp-nemesis{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);background:rgba(230,57,70,0.04);}
+.pp-nemesis-icon{font-size:22px;flex-shrink:0;}
+.pp-nemesis-info{flex:1;min-width:0;}
+.pp-nemesis-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);}
+.pp-nemesis-sub{font-size:10px;color:var(--text-dim);margin-top:1px;}
+.pp-nemesis-btn{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);background:none;border:1px solid rgba(230,57,70,0.35);border-radius:6px;padding:5px 9px;cursor:pointer;flex-shrink:0;transition:all 0.18s;}
+.pp-nemesis-btn:hover{border-color:var(--red);background:rgba(230,57,70,0.08);}
 @keyframes ppIn{from{opacity:0;transform:scale(0.95) translateY(-8px);}to{opacity:1;transform:scale(1) translateY(0);}}
 .pp-header{padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
 .pp-avatar{width:40px;height:40px;border-radius:50%;background:var(--red-dim);border:2px solid rgba(230,57,70,0.35);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--red);flex-shrink:0;font-family:'Barlow Condensed',sans-serif;line-height:1;}
@@ -835,7 +846,27 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .pp-save-btn:hover{background:#ff4655;}
 .pp-logout{display:block;width:100%;padding:12px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;cursor:pointer;transition:color 0.18s,background 0.18s;}
 .pp-logout:hover{color:var(--red);background:rgba(230,57,70,0.06);}
+
+/* WAITING ROOM HOST SETUP */
+.v1-setup-block{margin-top:20px;border-top:1px solid var(--border);padding-top:16px;}
+.v1-setup-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;}
+.v1-rounds-row{display:flex;gap:6px;margin-bottom:4px;flex-wrap:wrap;}
+.v1-rounds-btn{font-family:'Bebas Neue',sans-serif;font-size:18px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);cursor:pointer;transition:all 0.18s;letter-spacing:1px;}
+.v1-rounds-btn:hover{border-color:var(--text-mid);color:var(--text);}
+.v1-rounds-btn.active{border-color:var(--red);background:rgba(230,57,70,0.12);color:var(--red);}
+.v1-topic-pool{display:flex;flex-direction:column;gap:6px;}
+.v1-topic-opt{padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.18s;line-height:1.4;}
+.v1-topic-opt:hover{border-color:var(--text-mid);}
+.v1-topic-opt.active{border-color:var(--red);background:rgba(230,57,70,0.06);}
+.v1-topic-opt-cat{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:3px;}
+.v1-topic-opt-text{font-size:13px;color:var(--text);line-height:1.4;}
+.v1-topic-shuffle{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;cursor:pointer;padding:6px 0 2px;transition:color 0.18s;}
+.v1-topic-shuffle:hover{color:var(--text);}
+.v1-opp-arg-reveal{margin-top:10px;animation:fadeIn 0.3s ease;}
+.v1-opp-typing{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-top:10px;}
+.v1-opp-typing-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);}
 `;
+
 
 function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
   const t = text.toLowerCase();
@@ -1497,6 +1528,7 @@ export default function App() {
   const [roomLoading, setRoomLoading] = useState(false);
   const [roomJoinCode, setRoomJoinCode] = useState("");
   const [v1SubScreen, setV1SubScreen] = useState<"" | "join">("");
+  const [waitingTopics, setWaitingTopics] = useState<{cat: string; text: string}[]>([]);
   const [v1Tab, setV1Tab] = useState<"play" | "history">("play");
   const [v1History, setV1History] = useState<V1HistoryEntry[]>(() => { try { return JSON.parse(localStorage.getItem("clash-1v1-history") || "[]"); } catch { return []; } });
   const [themeMode, setThemeMode] = useState<"dark" | "light">(() => { try { return (localStorage.getItem("clash-theme") as "dark" | "light") || "dark"; } catch { return "dark"; } });
@@ -2239,11 +2271,36 @@ export default function App() {
     setShowProfilePanel(false);
   };
 
+  const shuffleWaitingTopics = () => {
+    const pool = TOPIC_POOL.slice();
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    setWaitingTopics(pool.slice(0, 5));
+  };
+
+  const setRoomTopicFn = async (topic: { cat: string; text: string }) => {
+    if (!currentRoom || roomPlayerNum !== 1) return;
+    try {
+      await apiAuthPost(`/1v1/${currentRoom.code}/set-topic`, { topicText: topic.text, topicCat: topic.cat });
+      setCurrentRoom(prev => prev ? { ...prev, topicText: topic.text, topicCat: topic.cat } : prev);
+    } catch {}
+  };
+
+  const setRoomRoundsFn = async (rounds: number) => {
+    if (!currentRoom || roomPlayerNum !== 1) return;
+    try {
+      await apiAuthPost(`/1v1/${currentRoom.code}/set-rounds`, { totalRounds: rounds });
+      setCurrentRoom(prev => prev ? { ...prev, totalRounds: rounds } : prev);
+    } catch {}
+  };
+
   const createRoom = async () => {
     setRoomLoading(true); setRoomError("");
     try {
       const data = await apiAuthPost<{code: string}>("/1v1/create", { totalRounds: 3 });
       const room = await apiAuthGet<RoomState>(`/1v1/room/${data.code}`);
+      const pool = TOPIC_POOL.slice();
+      for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+      setWaitingTopics(pool.slice(0, 5));
       setCurrentRoom(room);
       setRoomPlayerNum(1);
       setScreen("multiplayer-waiting");
@@ -2653,50 +2710,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* PERSONAL STATS */}
-            {stats.debates > 0 && (
-              <div style={{ marginTop: "24px" }}>
-                <p className="section-label">Your record</p>
-                <div className="stats-row">
-                  <div className="stat-card">
-                    <span className="val red">{stats.debates}</span>
-                    <span className="lbl">Debates</span>
-                  </div>
-                  <div className="stat-card">
-                    <span className="val green">{stats.wins}</span>
-                    <span className="lbl">Wins</span>
-                  </div>
-                  <div className="stat-card">
-                    <span className="val gold">{stats.bestScore || "—"}</span>
-                    <span className="lbl">MASTEDEBATOR!</span>
-                  </div>
-                  <div className="stat-card">
-                    <span className="val">{Math.round((stats.wins / stats.debates) * 100)}%</span>
-                    <span className="lbl">Win Rate</span>
-                  </div>
-                  {(stats.currentStreak ?? 0) >= 1 && (
-                    <div className="stat-card">
-                      <span className="val" style={{ color: (stats.currentStreak ?? 0) >= 5 ? "#ef4444" : "#fb923c" }}>
-                        🔥{stats.currentStreak}
-                      </span>
-                      <span className="lbl">Streak</span>
-                    </div>
-                  )}
-                </div>
-                {nemesisBot && (
-                  <div className="nemesis-card">
-                    <div className="nemesis-icon">{nemesisBot.icon}</div>
-                    <div>
-                      <div className="nemesis-name">{nemesisBot.name}</div>
-                      <div className="nemesis-sub">{nemesisBot.losses} loss{nemesisBot.losses !== 1 ? "es" : ""} · Unfinished business</div>
-                    </div>
-                    <button className="nemesis-rematch" onClick={() => { setSelectedAI(nemesisBot.id); setSetupStep(1); setScreen("setup"); }}>
-                      Rematch →
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
             {unlockedAchs.length > 0 && (
               <div style={{ marginTop: "24px" }}>
                 <p className="section-label">Achievements</p>
@@ -2724,6 +2737,18 @@ export default function App() {
           {setupStep === 0 && (
             <>
               <p className="section-label">Choose your opponent</p>
+              {nemesisBot && (
+                <div className="nemesis-card" style={{ marginBottom: "16px", cursor: "pointer" }} onClick={() => { setSelectedAI(nemesisBot.id); setSetupStep(1); }}>
+                  <div className="nemesis-icon">{nemesisBot.icon}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="nemesis-name" style={{ color: "var(--red)" }}>Rematch · {nemesisBot.name}</div>
+                    <div className="nemesis-sub">{nemesisBot.losses} loss{nemesisBot.losses !== 1 ? "es" : ""} · Unfinished business</div>
+                  </div>
+                  <button className="nemesis-rematch" onClick={(e) => { e.stopPropagation(); setSelectedAI(nemesisBot.id); setSetupStep(1); }}>
+                    Go →
+                  </button>
+                </div>
+              )}
               <div className="ai-grid">
                 {AI_OPPONENTS.map((a) => (
                   <div key={a.id} className={`ai-card ${selectedAI === a.id ? "selected" : ""}`} onClick={() => setSelectedAI(a.id)}>
@@ -3433,10 +3458,48 @@ export default function App() {
             {currentRoom.status !== "waiting" && (
               <div className="v1-topic-banner" style={{ marginTop: "20px" }}>
                 <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--text-dim)" }}>
-                  Topic · {currentRoom.topicCat}
+                  Topic · {currentRoom.topicCat} · {currentRoom.totalRounds} Round{currentRoom.totalRounds !== 1 ? "s" : ""}
                 </span>
                 <br />
                 <strong>"{currentRoom.topicText}"</strong>
+              </div>
+            )}
+
+            {currentRoom.status === "waiting" && roomPlayerNum === 1 && (
+              <div className="v1-setup-block">
+                <div className="v1-setup-lbl">Rounds</div>
+                <div className="v1-rounds-row">
+                  {[1,2,3,4,5].map(r => (
+                    <button
+                      key={r}
+                      className={`v1-rounds-btn${currentRoom.totalRounds === r ? " active" : ""}`}
+                      onClick={() => setRoomRoundsFn(r)}
+                    >{r}</button>
+                  ))}
+                </div>
+                <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px", color: "var(--text-dim)", marginBottom: "16px" }}>
+                  {currentRoom.totalRounds} round{currentRoom.totalRounds !== 1 ? "s" : ""} · Give Up unlocks at round 3
+                </div>
+
+                <div className="v1-setup-lbl" style={{ marginTop: "4px" }}>Topic</div>
+                <div className="v1-topic-banner" style={{ marginBottom: "10px" }}>
+                  <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>Current · {currentRoom.topicCat}</span>
+                  <br />
+                  <strong style={{ fontSize: "13px" }}>"{currentRoom.topicText}"</strong>
+                </div>
+                <div className="v1-topic-pool">
+                  {waitingTopics.map((t) => (
+                    <div
+                      key={t.text}
+                      className={`v1-topic-opt${currentRoom.topicText === t.text ? " active" : ""}`}
+                      onClick={() => setRoomTopicFn(t)}
+                    >
+                      <div className="v1-topic-opt-cat">{t.cat}</div>
+                      <div className="v1-topic-opt-text">"{t.text}"</div>
+                    </div>
+                  ))}
+                </div>
+                <button className="v1-topic-shuffle" onClick={shuffleWaitingTopics}>↻ Shuffle topics</button>
               </div>
             )}
 
@@ -3493,7 +3556,8 @@ export default function App() {
         const myName = roomPlayerNum === 1 ? currentRoom.player1Name : (currentRoom.player2Name || "You");
         const oppName = roomPlayerNum === 1 ? (currentRoom.player2Name || "Opponent") : currentRoom.player1Name;
         const completedRounds: number[] = [];
-        for (let r = 1; r < currentRoom.currentRound; r++) {
+        const maxCR = currentRoom.status === "complete" ? currentRoom.currentRound : currentRoom.currentRound - 1;
+        for (let r = 1; r <= maxCR; r++) {
           if (myArgs.find(a => a.roundNum === r) && oppArgs.find(a => a.roundNum === r)) completedRounds.push(r);
         }
         return (
@@ -3587,12 +3651,27 @@ export default function App() {
                     </div>
                     {myRoundArg.critique && <div className="v1-arg-critique">{myRoundArg.critique}</div>}
                   </div>
-                  {!oppRoundArg && (
-                    <div className="v1-waiting-msg">
-                      <div className="waiting-dots" style={{ marginBottom: "8px" }}>
+                  {oppRoundArg ? (
+                    <div className="v1-opp-arg-reveal">
+                      <div className="v1-arg-entry">
+                        <div className="v1-arg-who opp">
+                          {oppName} ({oppSide?.toUpperCase()}) · Round {currentRoom.currentRound}
+                          {oppRoundArg.score ? ` · Rank ${oppRoundArg.rank} · ${oppRoundArg.score}/100` : " · Judged ✓"}
+                        </div>
+                        <div className="v1-arg-text">
+                          {oppRoundArg.score
+                            ? renderWithHighlights(oppRoundArg.argumentText, (() => { try { return JSON.parse(oppRoundArg.highlights || "[]"); } catch { return []; } })())
+                            : oppRoundArg.argumentText}
+                        </div>
+                        {oppRoundArg.critique && <div className="v1-arg-critique">{oppRoundArg.critique}</div>}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="v1-opp-typing">
+                      <div className="waiting-dots">
                         <div className="waiting-dot" /><div className="waiting-dot" /><div className="waiting-dot" />
                       </div>
-                      Waiting for {oppName}...
+                      <span className="v1-opp-typing-label">Waiting for {oppName}...</span>
                     </div>
                   )}
                 </div>
@@ -3612,9 +3691,11 @@ export default function App() {
                       {roomArgInput.length}/600
                     </span>
                     <div className="submit-row">
-                      <button className="btn btn-ghost" onClick={() => { if (window.confirm("Give up? Your opponent wins this match.")) forfeitRoom(); }}>
-                        Give Up
-                      </button>
+                      {currentRoom.currentRound >= 3 && (
+                        <button className="btn btn-ghost" onClick={() => { if (window.confirm("Give up? Your opponent wins this match.")) forfeitRoom(); }}>
+                          Give Up
+                        </button>
+                      )}
                       <button
                         className="btn btn-primary"
                         disabled={!roomArgInput.trim() || roomArgInput.length > 600 || roomSubmitting}
@@ -3687,7 +3768,19 @@ export default function App() {
             </div>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
               <button className="btn btn-primary" onClick={() => { setCurrentRoom(null); setRoomPlayerNum(null); setRoomArgInput(""); setRoomError(""); setV1SubScreen(""); setV1Tab("play"); setScreen("multiplayer-lobby"); }}>⚔ Rematch</button>
-              <button className="btn btn-secondary" onClick={() => setScreen("multiplayer-debate")}>📋 View Arguments</button>
+              <button className="btn btn-secondary" onClick={() => setScreen("multiplayer-debate")}>View Arguments</button>
+              <button className="btn btn-secondary" onClick={() => {
+                const iWon2 = currentRoom.winnerPlayerNum === roomPlayerNum;
+                const myN = roomPlayerNum === 1 ? currentRoom.player1Name : (currentRoom.player2Name || "You");
+                const oppN = roomPlayerNum === 1 ? (currentRoom.player2Name || "Opponent") : currentRoom.player1Name;
+                const myS = roomPlayerNum === 1 ? currentRoom.player1Score : currentRoom.player2Score;
+                const oppS = roomPlayerNum === 1 ? currentRoom.player2Score : currentRoom.player1Score;
+                const myI = roomPlayerNum === 1 ? currentRoom.iq1 : currentRoom.iq2;
+                const text = `CLASH 1v1 RESULT\n${iWon2 ? "VICTORY" : "DEFEATED"} · ${myN} vs ${oppN}\nTopic: "${currentRoom.topicText}"\nScore: ${myS ?? 0} vs ${oppS ?? 0} · Debate IQ: ${myI ?? "—"}\nPlay at: ${window.location.origin}`;
+                navigator.clipboard.writeText(text).catch(() => {});
+                setShareToast("Result copied!");
+                setTimeout(() => setShareToast(""), 2500);
+              }}>↗ Share</button>
               <button className="btn btn-ghost" onClick={reset}>Home</button>
             </div>
           </div>
@@ -4115,6 +4208,40 @@ export default function App() {
               <div className="pp-stat-lbl">Best</div>
             </div>
           </div>
+          {stats.debates > 0 && (
+            <div className="pp-record-row">
+              <div className="pp-record-cell">
+                <span className="pp-record-val">{Math.round((stats.wins / stats.debates) * 100)}%</span>
+                <div className="pp-record-lbl">Win Rate</div>
+              </div>
+              <div className="pp-record-cell">
+                <span className="pp-record-val" style={{ color: stats.debates - stats.wins === 0 ? "var(--green)" : "var(--red)" }}>{stats.debates - stats.wins}</span>
+                <div className="pp-record-lbl">Losses</div>
+              </div>
+              {(stats.currentStreak ?? 0) >= 2 && (
+                <div className="pp-record-cell">
+                  <span className="pp-record-val" style={{ color: (stats.currentStreak ?? 0) >= 5 ? "#ef4444" : "#fb923c" }}>🔥{stats.currentStreak}</span>
+                  <div className="pp-record-lbl">Streak</div>
+                </div>
+              )}
+              <div className="pp-record-cell">
+                <span className="pp-record-val" style={{ color: "var(--gold)" }}>{stats.bestStreak || "—"}</span>
+                <div className="pp-record-lbl">Best Run</div>
+              </div>
+            </div>
+          )}
+          {nemesisBot && (
+            <div className="pp-nemesis">
+              <div className="pp-nemesis-icon">{nemesisBot.icon}</div>
+              <div className="pp-nemesis-info">
+                <div className="pp-nemesis-name">{nemesisBot.name}</div>
+                <div className="pp-nemesis-sub">{nemesisBot.losses} loss{nemesisBot.losses !== 1 ? "es" : ""} · Nemesis</div>
+              </div>
+              <button className="pp-nemesis-btn" onClick={() => { setShowProfilePanel(false); setSelectedAI(nemesisBot.id); setSetupStep(1); setScreen("setup"); }}>
+                Rematch →
+              </button>
+            </div>
+          )}
           <div className="pp-section">
             <div className="pp-section-lbl">Display Name</div>
             <div className="pp-username-row">
