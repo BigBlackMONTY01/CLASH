@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://clash--ladytrissh.replit.app/api/:path*"
+      "destination": "https://clash-1xpu.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
