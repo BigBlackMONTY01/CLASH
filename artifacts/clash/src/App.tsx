@@ -58,6 +58,9 @@ border:none;cursor:pointer;transition:all 0.2s;font-weight:600;touch-action:mani
 .btn-secondary:hover{border-color:var(--text-dim);transform:translateY(-1px);}
 .btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);}
 .btn-ghost:hover{color:var(--text);border-color:var(--text-dim);}
+.btn-confirm-forfeit{background:#16a34a;color:#fff;border:none;min-width:120px;}
+.btn-confirm-forfeit:hover{background:#15803d;transform:translateY(-1px);box-shadow:0 6px 20px rgba(22,163,74,0.4);}
+.btn-forfeit-counting{background:transparent;color:var(--red);border:1px solid var(--red);min-width:60px;font-size:18px;letter-spacing:0;padding:10px 20px;}
 .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none !important;box-shadow:none !important;}
 
 .section-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:4px;
@@ -1166,6 +1169,8 @@ export default function App() {
   const [tournamentTopics, setTournamentTopics] = useState<{ cat: string; text: string }[]>([]);
   const [tournamentMatchScores, setTournamentMatchScores] = useState<{ score: number; rank: string; won: boolean; botId: string; botName: string; botIcon: string; topic: string }[]>([]);
   const [gauntletNextSide, setGauntletNextSide] = useState<"for" | "against" | null>(null);
+  const [forfeitCountdown, setForfeitCountdown] = useState<number | null>(null);
+  const forfeitIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [tauntIndex, setTauntIndex] = useState(0);
   const [tauntKey, setTauntKey] = useState(0);
   const [arenaDisplay, setArenaDisplay] = useState({ debates: 0, winRate: 0, topics: 0 });
@@ -1746,9 +1751,27 @@ export default function App() {
     }
   };
 
+  const startForfeit = () => {
+    if (forfeitIntervalRef.current) return;
+    setForfeitCountdown(3);
+    let count = 3;
+    forfeitIntervalRef.current = setInterval(() => {
+      count -= 1;
+      if (count <= 0) {
+        clearInterval(forfeitIntervalRef.current!);
+        forfeitIntervalRef.current = null;
+        setForfeitCountdown(0);
+      } else {
+        setForfeitCountdown(count);
+      }
+    }, 1000);
+  };
+
   const reset = () => {
     stopTimer();
     if (pendingVerdictRef.current) { clearTimeout(pendingVerdictRef.current); pendingVerdictRef.current = null; }
+    if (forfeitIntervalRef.current) { clearInterval(forfeitIntervalRef.current); forfeitIntervalRef.current = null; }
+    setForfeitCountdown(null);
     setScreen("home");
     setSetupStep(0);
     setSelectedAI(null);
@@ -2553,7 +2576,13 @@ export default function App() {
                   )}
                 </div>
                 <div className="submit-row">
-                  <button className="btn btn-ghost" onClick={reset}>Forfeit</button>
+                  {forfeitCountdown === null ? (
+                    <button className="btn btn-ghost" onClick={startForfeit}>Forfeit</button>
+                  ) : forfeitCountdown > 0 ? (
+                    <button className="btn btn-forfeit-counting" disabled>{forfeitCountdown}</button>
+                  ) : (
+                    <button className="btn btn-confirm-forfeit" onClick={reset}>✓ Confirm</button>
+                  )}
                   <button
                     className="btn btn-primary"
                     disabled={!inputText.trim() || inputText.length > charLimit}
