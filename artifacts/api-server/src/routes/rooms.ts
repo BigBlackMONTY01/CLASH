@@ -7,7 +7,12 @@ import { JWT_SECRET } from "./auth";
 
 const router = Router();
 const MODEL = "llama-3.3-70b-versatile";
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+let _groq: Groq | null = null;
+function getGroq(): Groq {
+  if (!_groq) _groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  return _groq;
+}
 
 async function withRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
   let last: unknown;
@@ -22,7 +27,7 @@ async function withRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
 }
 
 async function claudeJSON(system: string, user: string): Promise<string> {
-  const msg = await withRetry(() => groq.chat.completions.create({
+  const msg = await withRetry(() => getGroq().chat.completions.create({
     model: MODEL, max_tokens: 600,
     messages: [
       { role: "system", content: system },

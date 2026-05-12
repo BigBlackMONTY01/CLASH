@@ -4,9 +4,11 @@ import Groq from "groq-sdk";
 const router = Router();
 const MODEL = "llama-3.3-70b-versatile";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+let _groq: Groq | null = null;
+function getGroq(): Groq {
+  if (!_groq) _groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  return _groq;
+}
 
 async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 4): Promise<T> {
   let lastErr: unknown;
@@ -29,7 +31,7 @@ async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 4): Promise<T> {
 
 async function claudeText(system: string, userMsg: string, maxTokens = 600): Promise<string> {
   const msg = await withRetry(() =>
-    groq.chat.completions.create({
+    getGroq().chat.completions.create({
       model: MODEL,
       max_tokens: maxTokens,
       messages: [
@@ -49,7 +51,7 @@ async function claudeConversation(
   maxTokens = 600
 ): Promise<string> {
   const msg = await withRetry(() =>
-    groq.chat.completions.create({
+    getGroq().chat.completions.create({
       model: MODEL,
       max_tokens: maxTokens,
       messages: [
