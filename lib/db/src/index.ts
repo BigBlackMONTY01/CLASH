@@ -9,7 +9,9 @@ function getDb() {
       "NEON_DATABASE_URL or DATABASE_URL must be set.",
     );
   }
-  const pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
+  const isNeon = connectionString.includes("neon.tech") || connectionString.includes("neon.cloud");
+  const sslConfig = isNeon ? { rejectUnauthorized: false } : false;
+  const pool = new Pool({ connectionString, ssl: sslConfig });
   return drizzle(pool, { schema });
 }
 
