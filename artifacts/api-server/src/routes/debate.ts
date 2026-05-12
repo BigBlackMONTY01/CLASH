@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { anthropic } from "@workspace/integrations-anthropic-ai";
+import Groq from "groq-sdk";
 
 const router = Router();
-const MODEL = "claude-sonnet-4-6";
+const MODEL = "llama-3.3-70b-versatile";
+
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
 async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 4): Promise<T> {
   let lastErr: unknown;
@@ -25,16 +29,18 @@ async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 4): Promise<T> {
 
 async function claudeText(system: string, userMsg: string, maxTokens = 600): Promise<string> {
   const msg = await withRetry(() =>
-    anthropic.messages.create({
+    groq.chat.completions.create({
       model: MODEL,
       max_tokens: maxTokens,
-      system,
-      messages: [{ role: "user", content: userMsg }],
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: userMsg },
+      ],
     })
   );
-  const block = msg.content.find((b) => b.type === "text");
-  if (!block || block.type !== "text") throw new Error("No text in response");
-  return block.text;
+  const text = msg.choices[0]?.message?.content;
+  if (!text) throw new Error("No text in response");
+  return text;
 }
 
 async function claudeConversation(
@@ -43,16 +49,18 @@ async function claudeConversation(
   maxTokens = 600
 ): Promise<string> {
   const msg = await withRetry(() =>
-    anthropic.messages.create({
+    groq.chat.completions.create({
       model: MODEL,
       max_tokens: maxTokens,
-      system,
-      messages,
+      messages: [
+        { role: "system", content: system },
+        ...messages,
+      ],
     })
   );
-  const block = msg.content.find((b) => b.type === "text");
-  if (!block || block.type !== "text") throw new Error("No text in response");
-  return block.text;
+  const text = msg.choices[0]?.message?.content;
+  if (!text) throw new Error("No text in response");
+  return text;
 }
 
 function responseTokens(diff: string): number {
@@ -157,7 +165,6 @@ router.post("/debate/start", async (req, res) => {
   }
 
   const diff = str(difficulty) ?? "medium";
-
   const tokens = responseTokens(diff);
 
   const system = `${personality as string}
@@ -324,14 +331,6 @@ VERDICT FORMAT RULES — follow exactly:
 - "improve": Exactly 1 sentence. One specific, actionable technique. Start with a verb. No fluff.
 - Both fields must reference the topic specifically. Generic verdicts are rejected.
 - Write like a ranked game result screen, not a school essay. Fast. Sharp. Final.
-
-Examples of GOOD verdicts (match this energy):
-- "You dominated this debate with a clear command of the evidence. The opponent never recovered from your second-round counter."
-- "A sloppy performance — you argued with confidence but zero substance to back it up."
-
-Examples of BAD verdicts (avoid these):
-- "Overall, this was a decent attempt with some good moments..."
-- "While you made some valid points, there were areas for improvement..."
 
 Respond ONLY with valid JSON:
 {"verdict":"1-2 sentence blunt verdict","improve":"1 sentence tip starting with a verb"}`;
