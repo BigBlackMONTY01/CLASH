@@ -19,9 +19,13 @@ router.post("/players/register", async (req, res) => {
     }
     const inserted = await db.insert(players).values({ deviceId }).returning();
     res.json(inserted[0]);
-  } catch (err) {
+  } catch (err: any) {
     req.log.error({ err }, "players/register failed");
-    res.status(500).json({ error: "DB error" });
+    if (err?.code === "23505") {
+      res.status(409).json({ error: "Player already registered" });
+      return;
+    }
+    res.status(500).json({ error: err?.message || "Database error" });
   }
 });
 
@@ -54,7 +58,7 @@ router.patch("/players/username", async (req, res) => {
       return;
     }
     req.log.error({ err }, "players/username failed");
-    res.status(500).json({ error: "DB error" });
+    res.status(500).json({ error: err?.message || "Database error" });
   }
 });
 
@@ -104,9 +108,9 @@ router.get("/players/:deviceId", async (req, res) => {
         opponentHistory: oppMap,
       },
     });
-  } catch (err) {
+  } catch (err: any) {
     req.log.error({ err }, "players/:deviceId failed");
-    res.status(500).json({ error: "DB error" });
+    res.status(500).json({ error: err?.message || "Database error" });
   }
 });
 
@@ -149,9 +153,9 @@ router.post("/debates/save", async (req, res) => {
       .where(eq(players.id, player[0].id));
 
     res.json({ ...inserted[0], currentStreak: newStreak, bestStreak: newBestStreak });
-  } catch (err) {
+  } catch (err: any) {
     req.log.error({ err }, "debates/save failed");
-    res.status(500).json({ error: "DB error" });
+    res.status(500).json({ error: err?.message || "Database error" });
   }
 });
 
@@ -175,13 +179,12 @@ router.get("/stats/global", async (_req, res) => {
       uniqueTopics: debateStats[0]?.uniqueTopics ?? 0,
       activePlayers: playerCount[0]?.count ?? 0,
     });
-  } catch (err) {
-    res.status(500).json({ error: "DB error" });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Database error" });
   }
 });
 
 // GET /api/leaderboard — top players ranked by score (wins * 200 + bestScore * 10)
-// Query param: ?period=weekly  →  only debates from the last 7 days
 router.get("/leaderboard", async (req, res) => {
   try {
     const weekly = req.query.period === "weekly";
@@ -211,8 +214,8 @@ router.get("/leaderboard", async (req, res) => {
       .limit(20);
 
     res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: "DB error" });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Database error" });
   }
 });
 
@@ -238,8 +241,8 @@ router.get("/activity/recent", async (_req, res) => {
       .orderBy(desc(debates.createdAt))
       .limit(15);
     res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: "DB error" });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Database error" });
   }
 });
 
