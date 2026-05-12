@@ -1885,28 +1885,29 @@ export default function App() {
   };
 
   const handleSetUsername = async () => {
-    const deviceId = getOrCreateDeviceId();
-    const trimmed = usernameInput.trim();
-    if (trimmed.length < 2) { setUsernameError("Must be at least 2 characters."); return; }
-    try {
-      await apiPost("/players/register", { deviceId }).catch(() => {});
-      await apiPatch("/players/username", { deviceId, username: trimmed });
-      setPlayer((prev) => prev ? { ...prev, username: trimmed } : prev);
-      setShowUsernameModal(false);
-      setUsernameInput("");
-      setUsernameError("");
-    } catch (err: unknown) {
-      console.error("[CLASH] username save failed:", err);
-      const msg = (err as Error).message || "";
-      if (msg.includes("taken") || msg.includes("23505")) {
-        setUsernameError("That username is already taken — try another.");
-      } else if (msg.includes("network") || msg.includes("fetch") || msg.includes("Failed to fetch")) {
-        setUsernameError(`No server connection: ${msg}`);
-      } else {
-        setUsernameError(`Save failed: ${msg}`);
-      }
+  const deviceId = getOrCreateDeviceId();
+  const trimmed = usernameInput.trim();
+  if (trimmed.length < 2) { setUsernameError("Must be at least 2 characters."); return; }
+  try {
+    // Remove .catch(() => {}) - let it throw naturally
+    await apiPost("/players/register", { deviceId });
+    await apiPatch("/players/username", { deviceId, username: trimmed });
+    setPlayer((prev) => prev ? { ...prev, username: trimmed } : prev);
+    setShowUsernameModal(false);
+    setUsernameInput("");
+    setUsernameError("");
+  } catch (err: unknown) {
+    console.error("[CLASH] username save failed:", err);
+    const msg = (err as Error).message || "";
+    if (msg.includes("taken") || msg.includes("23505")) {
+      setUsernameError("That username is already taken — try another.");
+    } else if (msg.includes("network") || msg.includes("fetch") || msg.includes("Failed to fetch")) {
+      setUsernameError(`No server connection: ${msg}`);
+    } else {
+      setUsernameError(`Save failed: ${msg}`);
     }
-  };
+  }
+};
 
   const shareResult = () => {
     if (!verdict || !selectedTopic || !ai) return;
