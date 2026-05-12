@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CLASH — Argue. Win. Prove It.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#080808;
+  --surface:#111;
+  --surface2:#181818;
+  --red:#e63946;
+  --red2:#ff4655;
+  --gold:#f4c542;
+  --text:#f0f0f0;
+  --dim:#555;
+  --mid:#888;
+  --border:#1e1e1e;
+  --green:#22c55e;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Barlow',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* CUSTOM CURSOR */
+.cursor{
+position:fixed;width:10px;height:10px;
+background:var(–red);border-radius:50%;
+pointer-events:none;z-index:99999;
+transform:translate(-50%,-50%);
+transition:transform 0.1s,width 0.2s,height 0.2s,background 0.2s;
+}
+.cursor-ring{
+position:fixed;width:32px;height:32px;
+border:1px solid rgba(230,57,70,0.5);border-radius:50%;
+pointer-events:none;z-index:99998;
+transform:translate(-50%,-50%);
+transition:transform 0.15s ease,width 0.3s,height 0.3s;
+}
+body:has(a:hover) .cursor, body:has(button:hover) .cursor{width:18px;height:18px;background:var(–red2);}
+body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring{width:48px;height:48px;}
+
+/* GRAIN */
+body::before{
+content:’’;position:fixed;inset:0;
+background-image:url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 512 512’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.75’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’ opacity=‘0.035’/%3E%3C/svg%3E”);
+pointer-events:none;z-index:9998;opacity:1;
+}
+
+/* NAV */
+nav{
+position:fixed;top:0;left:0;right:0;z-index:1000;
+padding:20px 40px;
+display:flex;align-items:center;justify-content:space-between;
+background:linear-gradient(to bottom,rgba(8,8,8,0.95),transparent);
+backdrop-filter:blur(8px);
+}
+.nav-logo{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:28px;letter-spacing:4px;
+color:var(–text);
+}
+.nav-logo span{color:var(–red);}
+.nav-links{display:flex;gap:32px;align-items:center;}
+.nav-links a{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:13px;letter-spacing:3px;text-transform:uppercase;
+color:var(–mid);text-decoration:none;transition:color 0.2s;
+}
+.nav-links a:hover{color:var(–text);}
+.nav-cta{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:13px;letter-spacing:3px;text-transform:uppercase;
+background:var(–red);color:#fff;
+padding:10px 24px;border-radius:6px;
+text-decoration:none;transition:all 0.2s;
+border:none;cursor:none;
+}
+.nav-cta:hover{background:var(–red2);box-shadow:0 0 30px rgba(230,57,70,0.4);}
+
+/* HERO */
+.hero{
+min-height:100vh;
+display:flex;flex-direction:column;
+align-items:center;justify-content:center;
+text-align:center;
+padding:120px 24px 80px;
+position:relative;
+overflow:hidden;
+}
+.hero-bg{
+position:absolute;inset:0;
+background:radial-gradient(ellipse 80% 60% at 50% 40%, rgba(230,57,70,0.12) 0%, transparent 70%);
+pointer-events:none;
+}
+.hero-lines{
+position:absolute;inset:0;pointer-events:none;
+background:
+repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(255,255,255,0.015) 80px,rgba(255,255,255,0.015) 81px);
+}
+
+.hero-eyebrow{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:12px;letter-spacing:5px;text-transform:uppercase;
+color:var(–red);margin-bottom:24px;
+opacity:0;animation:up 0.7s ease 0.2s forwards;
+display:flex;align-items:center;gap:12px;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{content:’’;width:32px;height:1px;background:var(–red);opacity:0.5;}
+
+.hero-title{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:clamp(80px,18vw,200px);
+line-height:0.85;
+letter-spacing:-2px;
+margin-bottom:0;
+opacity:0;animation:up 0.8s ease 0.3s forwards;
+}
+.hero-title .t1{display:block;color:var(–text);}
+.hero-title .t2{
+display:block;color:transparent;
+-webkit-text-stroke:2px var(–red);
+position:relative;
+}
+
+.hero-sub{
+font-size:clamp(16px,2.5vw,20px);
+color:var(–mid);
+max-width:520px;
+line-height:1.6;
+margin:28px auto 48px;
+opacity:0;animation:up 0.8s ease 0.5s forwards;
+}
+.hero-sub strong{color:var(–text);}
+
+.hero-btns{
+display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+opacity:0;animation:up 0.8s ease 0.6s forwards;
+margin-bottom:64px;
+}
+.btn-big{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:15px;letter-spacing:4px;text-transform:uppercase;
+padding:18px 40px;border-radius:8px;
+border:none;cursor:none;transition:all 0.25s;
+text-decoration:none;display:inline-block;
+font-weight:700;
+}
+.btn-big-red{background:var(–red);color:#fff;}
+.btn-big-red:hover{background:var(–red2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(230,57,70,0.4);}
+.btn-big-outline{background:transparent;color:var(–text);border:1px solid var(–border);}
+.btn-big-outline:hover{border-color:var(–mid);transform:translateY(-2px);}
+
+/* LIVE TICKER */
+.ticker{
+position:relative;z-index:2;
+opacity:0;animation:up 0.8s ease 0.8s forwards;
+}
+.ticker-inner{
+display:inline-flex;align-items:center;gap:10px;
+background:var(–surface);border:1px solid var(–border);
+border-radius:100px;padding:10px 20px;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:13px;letter-spacing:2px;text-transform:uppercase;
+color:var(–mid);
+}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(–green);animation:pulse-dot 2s infinite;}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.4);}50%{box-shadow:0 0 0 6px rgba(34,197,94,0);}}
+.ticker-inner strong{color:var(–text);}
+
+/* APP PREVIEW */
+.preview-section{
+padding:80px 24px;
+display:flex;justify-content:center;
+position:relative;overflow:hidden;
+}
+.preview-wrap{
+position:relative;
+max-width:340px;width:100%;
+}
+.phone-frame{
+background:var(–surface);
+border:2px solid #222;
+border-radius:40px;
+overflow:hidden;
+box-shadow:
+0 0 0 8px #111,
+0 0 0 10px #1a1a1a,
+0 80px 120px rgba(0,0,0,0.8),
+0 0 80px rgba(230,57,70,0.1);
+position:relative;
+animation:float 4s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+.phone-screen{
+background:var(–bg);
+padding:28px 20px 20px;
+font-family:‘Bebas Neue’,sans-serif;
+}
+.ps-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
+.ps-logo{font-size:22px;letter-spacing:3px;}
+.ps-logo span{color:var(–red);}
+.ps-badge{background:var(–red);color:#fff;font-family:‘Barlow Condensed’,sans-serif;font-size:9px;letter-spacing:2px;padding:2px 7px;border-radius:3px;}
+.ps-user{background:var(–surface2);border:1px solid var(–border);border-radius:20px;padding:4px 12px 4px 8px;display:flex;align-items:center;gap:6px;font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:1px;color:var(–mid);}
+.ps-title{text-align:center;margin-bottom:24px;}
+.ps-t1{font-size:52px;display:block;line-height:0.9;}
+.ps-t2{font-size:52px;color:var(–red);display:block;line-height:0.9;}
+.ps-live{text-align:center;font-family:‘Barlow’,sans-serif;font-size:12px;color:var(–mid);margin-bottom:20px;}
+.ps-btn-red{background:var(–red);border-radius:8px;padding:14px;text-align:center;font-size:14px;letter-spacing:3px;margin-bottom:10px;}
+.ps-btn-dark{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:14px;text-align:center;font-size:14px;letter-spacing:3px;margin-bottom:10px;}
+.ps-btn-gold{background:transparent;border:1px solid var(–gold);border-radius:8px;padding:14px;text-align:center;font-size:14px;letter-spacing:3px;color:var(–gold);}
+.ps-card{background:var(–surface2);border:1px solid var(–border);border-radius:10px;padding:14px;margin-top:16px;}
+.ps-card-label{font-family:‘Barlow Condensed’,sans-serif;font-size:9px;letter-spacing:3px;color:var(–red);margin-bottom:8px;text-transform:uppercase;}
+.ps-card-topic{font-family:‘Barlow’,sans-serif;font-size:13px;font-weight:500;color:var(–text);line-height:1.4;}
+.ps-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(–border);margin-top:16px;border-radius:8px;overflow:hidden;}
+.ps-stat{background:var(–surface);padding:10px 8px;text-align:center;}
+.ps-stat-v{font-size:20px;color:var(–text);display:block;}
+.ps-stat-l{font-family:‘Barlow Condensed’,sans-serif;font-size:8px;letter-spacing:1px;color:var(–dim);text-transform:uppercase;}
+
+.preview-glow{
+position:absolute;
+width:300px;height:300px;
+background:radial-gradient(circle,rgba(230,57,70,0.2),transparent 70%);
+border-radius:50%;
+top:50%;left:50%;transform:translate(-50%,-50%);
+pointer-events:none;z-index:-1;
+animation:float 4s ease-in-out infinite;
+}
+
+/* SECTIONS */
+section{padding:100px 24px;max-width:1000px;margin:0 auto;}
+
+.section-label{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:11px;letter-spacing:5px;text-transform:uppercase;
+color:var(–red);margin-bottom:20px;
+display:flex;align-items:center;gap:12px;
+}
+.section-label::after{content:’’;flex:1;max-width:60px;height:1px;background:var(–red);opacity:0.4;}
+
+.section-title{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:clamp(40px,7vw,72px);
+line-height:0.9;
+letter-spacing:1px;
+margin-bottom:20px;
+}
+.section-sub{
+font-size:17px;color:var(–mid);
+max-width:480px;line-height:1.7;
+margin-bottom:56px;
+}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;background:var(–border);border-radius:12px;overflow:hidden;}
+.step{
+background:var(–surface);
+padding:40px 32px;
+position:relative;
+transition:background 0.3s;
+}
+.step:hover{background:var(–surface2);}
+.step-num{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:72px;
+color:var(–border);
+line-height:1;
+margin-bottom:16px;
+transition:color 0.3s;
+}
+.step:hover .step-num{color:var(–red);}
+.step-title{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:22px;font-weight:700;letter-spacing:2px;
+text-transform:uppercase;margin-bottom:10px;
+}
+.step-body{font-size:15px;color:var(–mid);line-height:1.6;}
+
+/* OPPONENTS */
+.opponents-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+gap:2px;
+background:var(–border);
+border-radius:12px;
+overflow:hidden;
+}
+.opp-card{
+background:var(–surface);
+padding:32px;
+transition:background 0.3s;
+position:relative;
+overflow:hidden;
+}
+.opp-card::before{
+content:’’;
+position:absolute;inset:0;
+background:linear-gradient(135deg,rgba(230,57,70,0.06),transparent);
+opacity:0;transition:opacity 0.3s;
+}
+.opp-card:hover{background:var(–surface2);}
+.opp-card:hover::before{opacity:1;}
+.opp-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.opp-icon{font-size:36px;}
+.opp-diff{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:2px;text-transform:uppercase;
+padding:3px 10px;border-radius:4px;
+}
+.d-easy{background:rgba(34,197,94,0.12);color:var(–green);}
+.d-medium{background:rgba(244,197,66,0.12);color:var(–gold);}
+.d-hard{background:rgba(230,57,70,0.12);color:var(–red);}
+.d-extreme{background:rgba(168,85,247,0.12);color:#a855f7;}
+.opp-name{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:20px;font-weight:700;letter-spacing:2px;
+text-transform:uppercase;margin-bottom:8px;
+}
+.opp-desc{font-size:14px;color:var(–mid);line-height:1.5;}
+.opp-style{
+margin-top:14px;padding-top:14px;border-top:1px solid var(–border);
+font-size:13px;font-style:italic;color:var(–dim);
+}
+
+/* VERDICT PREVIEW */
+.verdict-preview{
+background:var(–surface);
+border:1px solid var(–border);
+border-radius:12px;
+padding:40px;
+position:relative;
+overflow:hidden;
+}
+.verdict-preview::after{
+content:’’;
+position:absolute;top:0;left:0;right:0;height:3px;
+background:linear-gradient(90deg,var(–red),var(–gold),var(–green));
+}
+.vp-outcome{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:72px;letter-spacing:3px;
+color:var(–green);
+display:block;margin-bottom:4px;
+}
+.vp-meta{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:13px;letter-spacing:2px;text-transform:uppercase;
+color:var(–dim);margin-bottom:32px;
+}
+.vp-scores{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;}
+.vp-score{
+background:var(–surface2);border-radius:8px;
+padding:20px 12px;text-align:center;
+}
+.vp-score-val{
+font-family:‘Bebas Neue’,sans-serif;font-size:40px;
+display:block;margin-bottom:4px;
+}
+.vp-score-lbl{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(–dim);
+}
+.vp-feedback{
+background:var(–surface2);
+border-left:3px solid var(–gold);
+border-radius:0 8px 8px 0;
+padding:16px 20px;margin-bottom:12px;
+}
+.vp-fb-label{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:3px;text-transform:uppercase;
+color:var(–gold);margin-bottom:8px;
+}
+.vp-fb-text{font-size:15px;color:var(–mid);line-height:1.6;}
+.vp-best{background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.15);border-radius:8px;padding:14px 16px;margin-bottom:8px;}
+.vp-flaw{background:rgba(230,57,70,0.07);border:1px solid rgba(230,57,70,0.15);border-radius:8px;padding:14px 16px;}
+.vp-tag{font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;}
+.vp-tag.best{color:var(–green);}
+.vp-tag.flaw{color:var(–red);}
+.vp-tag-text{font-size:14px;color:var(–mid);}
+
+/* GAUNTLET */
+.gauntlet-section{
+background:var(–surface);
+border:1px solid var(–border);
+border-radius:12px;
+padding:64px 40px;
+text-align:center;
+position:relative;
+overflow:hidden;
+}
+.gauntlet-section::before{
+content:’’;
+position:absolute;inset:0;
+background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(244,197,66,0.08),transparent);
+pointer-events:none;
+}
+.gauntlet-icon{font-size:48px;display:block;margin-bottom:20px;}
+.gauntlet-title{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:clamp(48px,10vw,96px);
+letter-spacing:4px;
+color:var(–gold);
+text-shadow:0 0 60px rgba(244,197,66,0.3);
+display:block;margin-bottom:8px;
+}
+.gauntlet-sub{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:14px;letter-spacing:6px;text-transform:uppercase;
+color:var(–dim);margin-bottom:24px;
+}
+.gauntlet-desc{
+font-size:17px;color:var(–mid);
+max-width:480px;margin:0 auto 40px;line-height:1.7;
+}
+.gauntlet-opponents{
+display:flex;justify-content:center;gap:8px;
+flex-wrap:wrap;margin-bottom:40px;
+}
+.go-chip{
+background:var(–surface2);border:1px solid var(–border);
+border-radius:100px;padding:8px 16px;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:13px;letter-spacing:1px;text-transform:uppercase;
+display:flex;align-items:center;gap:8px;
+transition:border-color 0.2s;
+}
+.go-chip:hover{border-color:var(–gold);}
+.btn-gold{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:15px;letter-spacing:4px;text-transform:uppercase;
+background:transparent;color:var(–gold);
+border:1px solid var(–gold);
+padding:18px 48px;border-radius:8px;
+cursor:none;transition:all 0.25s;
+text-decoration:none;display:inline-block;font-weight:700;
+}
+.btn-gold:hover{background:rgba(244,197,66,0.1);box-shadow:0 0 40px rgba(244,197,66,0.2);transform:translateY(-2px);}
+
+/* TOPICS MARQUEE */
+.marquee-section{padding:40px 0;overflow:hidden;border-top:1px solid var(–border);border-bottom:1px solid var(–border);margin:40px 0;}
+.marquee-track{
+display:flex;gap:24px;
+animation:marquee 30s linear infinite;
+white-space:nowrap;
+}
+.marquee-track:hover{animation-play-state:paused;}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}  }
+.marquee-item{
+background:var(–surface);
+border:1px solid var(–border);
+border-radius:8px;padding:10px 20px;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:14px;letter-spacing:1px;
+white-space:nowrap;flex-shrink:0;
+display:flex;align-items:center;gap:10px;
+}
+.marquee-cat{
+font-size:10px;letter-spacing:2px;text-transform:uppercase;
+padding:2px 8px;border-radius:3px;
+}
+.cat-ethics{background:rgba(230,57,70,0.15);color:var(–red);}
+.cat-hot{background:rgba(255,100,0,0.15);color:#ff6400;}
+.cat-phil{background:rgba(168,85,247,0.15);color:#a855f7;}
+.cat-tech{background:rgba(0,119,255,0.15);color:#0077ff;}
+.cat-pop{background:rgba(244,197,66,0.15);color:var(–gold);}
+
+/* FINAL CTA */
+.final-cta{
+text-align:center;
+padding:120px 24px;
+position:relative;overflow:hidden;
+}
+.final-cta::before{
+content:’’;position:absolute;inset:0;
+background:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(230,57,70,0.1),transparent 70%);
+}
+.final-title{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:clamp(56px,12vw,120px);
+line-height:0.85;letter-spacing:2px;
+margin-bottom:24px;
+position:relative;z-index:1;
+}
+.final-sub{font-size:18px;color:var(–mid);margin-bottom:48px;position:relative;z-index:1;}
+.final-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;}
+
+/* FOOTER */
+footer{
+border-top:1px solid var(–border);
+padding:32px 40px;
+display:flex;align-items:center;justify-content:space-between;
+flex-wrap:wrap;gap:16px;
+}
+.footer-logo{font-family:‘Bebas Neue’,sans-serif;font-size:22px;letter-spacing:4px;}
+.footer-logo span{color:var(–red);}
+.footer-text{font-size:13px;color:var(–dim);}
+
+/* ANIMATIONS */
+@keyframes up{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:0.1s;}
+.reveal-delay-2{transition-delay:0.2s;}
+.reveal-delay-3{transition-delay:0.3s;}
+.reveal-delay-4{transition-delay:0.4s;}
+.reveal-delay-5{transition-delay:0.5s;}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+nav{padding:16px 20px;}
+.nav-links{display:none;}
+section{padding:64px 20px;}
+.vp-scores{grid-template-columns:repeat(2,1fr);}
+.gauntlet-section{padding:40px 20px;}
+footer{flex-direction:column;text-align:center;}
+}
+</style>
+
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+
+<nav>
+  <div class="nav-logo">CL<span>A</span>SH</div>
+  <div class="nav-links">
+    <a href="#how">How It Works</a>
+    <a href="#opponents">Opponents</a>
+    <a href="#gauntlet">Gauntlet</a>
+  </div>
+  <a href="#play" class="nav-cta">Play Free</a>
+</nav>
+
+<!-- HERO -->
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+
+  <div class="hero-eyebrow">The AI Debate Arena</div>
+
+  <h1 class="hero-title">
+    <span class="t1">ARGUE.</span>
+    <span class="t2">WIN.</span>
+  </h1>
+
+  <p class="hero-sub">
+    Go head-to-head against <strong>6 AI opponents</strong> with distinct personalities.
+    Get scored on logic, persuasion, and delivery. Climb the ranks.
+  </p>
+
+  <div class="hero-btns">
+    <a href="#play" class="btn-big btn-big-red">Start Your First Debate</a>
+    <a href="#how" class="btn-big btn-big-outline">See How It Works</a>
+  </div>
+
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="live-dot"></span>
+      <strong>2,847</strong> debates fought · <strong>61%</strong> global win rate
+    </div>
+  </div>
+</div>
+
+<!-- APP PREVIEW -->
+
+<div class="preview-section">
+  <div class="preview-wrap">
+    <div class="preview-glow"></div>
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="ps-nav">
+          <div class="ps-logo">CL<span>A</span>SH <span class="ps-badge">BETA</span></div>
+          <div class="ps-user">👤 MONTY</div>
+        </div>
+        <div class="ps-title">
+          <span class="ps-t1">ARGUE.</span>
+          <span class="ps-t2">WIN.</span>
+        </div>
+        <div class="ps-live" style="font-family:'Barlow',sans-serif;font-size:12px;">🔥 3 players in Gauntlet Mode</div>
+        <div class="ps-btn-red">START DEBATE</div>
+        <div class="ps-btn-dark">LEADERBOARD</div>
+        <div class="ps-btn-gold">⚔ GAUNTLET MODE</div>
+        <div class="ps-card">
+          <div class="ps-card-label">🔥 Hot Topic</div>
+          <div class="ps-card-topic">"The death penalty should be abolished worldwide"</div>
+        </div>
+        <div class="ps-stats">
+          <div class="ps-stat"><span class="ps-stat-v">4</span><span class="ps-stat-l">Debates</span></div>
+          <div class="ps-stat"><span class="ps-stat-v">75%</span><span class="ps-stat-l">Win Rate</span></div>
+          <div class="ps-stat"><span class="ps-stat-v">12</span><span class="ps-stat-l">Topics</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOPICS MARQUEE -->
+
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee">
+    <div class="marquee-item"><span class="marquee-cat cat-ethics">Ethics</span>Lying is sometimes morally justified</div>
+    <div class="marquee-item"><span class="marquee-cat cat-hot">Hot Take</span>Pineapple belongs on pizza</div>
+    <div class="marquee-item"><span class="marquee-cat cat-phil">Philosophy</span>Free will is an illusion</div>
+    <div class="marquee-item"><span class="marquee-cat cat-tech">Tech</span>AI will do more good than harm</div>
+    <div class="marquee-item"><span class="marquee-cat cat-pop">Pop Culture</span>Streaming killed the music industry</div>
+    <div class="marquee-item"><span class="marquee-cat cat-ethics">Ethics</span>Cancel culture has gone too far</div>
+    <div class="marquee-item"><span class="marquee-cat cat-phil">Philosophy</span>Money can buy happiness</div>
+    <div class="marquee-item"><span class="marquee-cat cat-tech">Tech</span>Privacy beats convenience</div>
+    <div class="marquee-item"><span class="marquee-cat cat-hot">Hot Take</span>Mornings are better than nights</div>
+    <div class="marquee-item"><span class="marquee-cat cat-ethics">Ethics</span>Lying is sometimes morally justified</div>
+    <div class="marquee-item"><span class="marquee-cat cat-hot">Hot Take</span>Pineapple belongs on pizza</div>
+    <div class="marquee-item"><span class="marquee-cat cat-phil">Philosophy</span>Free will is an illusion</div>
+    <div class="marquee-item"><span class="marquee-cat cat-tech">Tech</span>AI will do more good than harm</div>
+    <div class="marquee-item"><span class="marquee-cat cat-pop">Pop Culture</span>Streaming killed the music industry</div>
+    <div class="marquee-item"><span class="marquee-cat cat-ethics">Ethics</span>Cancel culture has gone too far</div>
+    <div class="marquee-item"><span class="marquee-cat cat-phil">Philosophy</span>Money can buy happiness</div>
+    <div class="marquee-item"><span class="marquee-cat cat-tech">Tech</span>Privacy beats convenience</div>
+    <div class="marquee-item"><span class="marquee-cat cat-hot">Hot Take</span>Mornings are better than nights</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+
+<section id="how">
+  <div class="reveal"><div class="section-label">How It Works</div></div>
+  <div class="reveal reveal-delay-1"><h2 class="section-title">THREE STEPS.<br>ZERO MERCY.</h2></div>
+  <div class="reveal reveal-delay-2"><p class="section-sub">No prep needed. Pick a topic, take a side, and argue your case. The AI judge decides who wins.</p></div>
+  <div class="steps reveal reveal-delay-3">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Pick Your Battle</div>
+      <div class="step-body">Choose from 12 topics across Ethics, Philosophy, Hot Takes, Tech, and Pop Culture. Or jump straight into Today's Clash.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Choose Your Side</div>
+      <div class="step-body">FOR or AGAINST. Pick your opponent — from a calm professor to a relentless prosecutor. Then argue your case round by round.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Get Judged</div>
+      <div class="step-body">An AI judge scores every round on Logic, Persuasion, and Delivery. Get a rank from S to F. See exactly where you won and lost.</div>
+    </div>
+  </div>
+</section>
+
+<!-- OPPONENTS -->
+
+<section id="opponents">
+  <div class="reveal"><div class="section-label">The Opponents</div></div>
+  <div class="reveal reveal-delay-1"><h2 class="section-title">SIX MINDS.<br>ALL WANT YOU TO FAIL.</h2></div>
+  <div class="reveal reveal-delay-2"><p class="section-sub">Each AI has a distinct debate style, personality, and difficulty. Start easy. Work your way up.</p></div>
+  <div class="opponents-grid reveal reveal-delay-3">
+    <div class="opp-card">
+      <div class="opp-top"><span class="opp-icon">🎓</span><span class="opp-diff d-medium">Medium</span></div>
+      <div class="opp-name">The Professor</div>
+      <div class="opp-desc">Calm, methodical, academic. Dismantles your logic with precision. Polite but devastating.</div>
+      <div class="opp-style">"Your premise contains a fundamental assumption you haven't justified."</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-top"><span class="opp-icon">🏛️</span><span class="opp-diff d-medium">Medium</span></div>
+      <div class="opp-name">The Politician</div>
+      <div class="opp-desc">Dodges, pivots, and spins. Never admits fault. Masters emotional rhetoric.</div>
+      <div class="opp-style">"What people really want to know is…"</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-top"><span class="opp-icon">⚖️</span><span class="opp-diff d-hard">Hard</span></div>
+      <div class="opp-name">The Prosecutor</div>
+      <div class="opp-desc">Aggressive, relentless. Finds your weakest point and hammers it until you break.</div>
+      <div class="opp-style">"You said X. But earlier you claimed Y. Which is it?"</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-top"><span class="opp-icon">🔮</span><span class="opp-diff d-hard">Hard</span></div>
+      <div class="opp-name">The Philosopher</div>
+      <div class="opp-desc">Questions your fundamental assumptions. Makes you doubt everything you thought you knew.</div>
+      <div class="opp-style">"But what do you mean by 'better'?"</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-top"><span class="opp-icon">😈</span><span class="opp-diff d-easy">Easy</span></div>
+      <div class="opp-name">The Devil</div>
+      <div class="opp-desc">Chaotic. Takes the most extreme opposing position. Unpredictable but sharper than you expect.</div>
+      <div class="opp-style">"Actually, the opposite is obviously true and here's why…"</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-top"><span class="opp-icon">🔬</span><span class="opp-diff d-extreme">Extreme</span></div>
+      <div class="opp-name">The Debunker</div>
+      <div class="opp-desc">Data-obsessed. Demands sources. Fact-checks everything in real time. Unforgiving.</div>
+      <div class="opp-style">"That statistic is from 2011 and the methodology was flawed."</div>
+    </div>
+  </div>
+</section>
+
+<!-- VERDICT PREVIEW -->
+
+<section>
+  <div class="reveal"><div class="section-label">The Verdict</div></div>
+  <div class="reveal reveal-delay-1"><h2 class="section-title">KNOW EXACTLY<br>WHERE YOU LOST.</h2></div>
+  <div class="reveal reveal-delay-2"><p class="section-sub">Not just a score. A full breakdown of your strongest moment, your fatal flaw, and how to do better next time.</p></div>
+  <div class="verdict-preview reveal reveal-delay-3">
+    <span class="vp-outcome">VICTORY</span>
+    <div class="vp-meta">vs 🔮 The Philosopher · "Free will is an illusion" · FOR</div>
+    <div class="vp-scores">
+      <div class="vp-score">
+        <span class="vp-score-val" style="color:var(--green)">82</span>
+        <span class="vp-score-lbl">Overall</span>
+      </div>
+      <div class="vp-score">
+        <span class="vp-score-val" style="color:var(--gold)">78</span>
+        <span class="vp-score-lbl">Logic</span>
+      </div>
+      <div class="vp-score">
+        <span class="vp-score-val" style="color:var(--green)">86</span>
+        <span class="vp-score-lbl">Persuasion</span>
+      </div>
+      <div class="vp-score">
+        <span class="vp-score-val" style="color:var(--green)">84</span>
+        <span class="vp-score-lbl">Delivery</span>
+      </div>
+    </div>
+    <div class="vp-feedback">
+      <div class="vp-fb-label">Judge's Verdict</div>
+      <div class="vp-fb-text">A commanding performance. You stayed on the offensive throughout and effectively neutralized the philosophical counterarguments with concrete real-world examples. Your closing round was decisive.</div>
+    </div>
+    <div class="vp-best">
+      <div class="vp-tag best">✓ Best Moment</div>
+      <div class="vp-tag-text">Citing neuroscience to counter the determinism argument — clean, specific, hard to refute.</div>
+    </div>
+    <div class="vp-flaw">
+      <div class="vp-tag flaw">✗ Fatal Flaw</div>
+      <div class="vp-tag-text">Round 2 relied too heavily on intuition without evidence — nearly cost you the debate.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GAUNTLET -->
+
+<section id="gauntlet" style="max-width:1000px;margin:0 auto;padding:100px 24px;">
+  <div class="gauntlet-section reveal">
+    <span class="gauntlet-icon">⚔️</span>
+    <span class="gauntlet-title">GAUNTLET</span>
+    <div class="gauntlet-sub">Mode</div>
+    <p class="gauntlet-desc">Six opponents. One continuous run. No breaks, no second chances. Lose once and it's over. For those who think they're actually good.</p>
+    <div class="gauntlet-opponents">
+      <div class="go-chip">🎓 The Professor</div>
+      <div class="go-chip">🏛️ The Politician</div>
+      <div class="go-chip">⚖️ The Prosecutor</div>
+      <div class="go-chip">🔮 The Philosopher</div>
+      <div class="go-chip">😈 The Devil</div>
+      <div class="go-chip">🔬 The Debunker</div>
+    </div>
+    <a href="#play" class="btn-gold">Enter the Gauntlet</a>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+
+<div class="final-cta" id="play">
+  <h2 class="final-title reveal">READY TO<br><span style="color:var(--red);">CLASH?</span></h2>
+  <p class="final-sub reveal reveal-delay-1">Free to play. No signup. Just you and the AI.</p>
+  <div class="final-btns reveal reveal-delay-2">
+    <a href="#" class="btn-big btn-big-red">Start Debating Now</a>
+    <a href="#opponents" class="btn-big btn-big-outline">Meet the Opponents</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+  <div class="footer-logo">CL<span>A</span>SH</div>
+  <div class="footer-text">Built different. Argue better.</div>
+</footer>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+},{threshold:0.1});
+reveals.forEach(el=>observer.observe(el));
+
+// Marquee duplicate
+const track = document.getElementById('marquee');
+track.innerHTML += track.innerHTML;
+</script>
+
+</body>
+</html>
