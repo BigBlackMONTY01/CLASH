@@ -1155,25 +1155,25 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 /* FORGE RIVAL FULL PAGE */
 .forge-page{padding-bottom:40px;}
 .forge-header{display:flex;align-items:center;gap:14px;padding:0 0 20px;}
-.forge-page-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:var(--red);margin:0;}
+.forge-page-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:#a855f7;margin:0;}
 .forge-page-sub{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);margin:2px 0 0;}
 .forge-section{margin-bottom:22px;}
 .forge-section-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;display:block;}
 .forge-avatar-grid{display:flex;flex-wrap:wrap;gap:6px;}
 .forge-avatar-opt{font-size:22px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,0.03);border:1.5px solid transparent;cursor:pointer;transition:all 0.15s;line-height:1;}
-.forge-avatar-opt.selected{border-color:var(--red);background:rgba(230,57,70,0.1);}
+.forge-avatar-opt.selected{border-color:#a855f7;background:rgba(168,85,247,0.1);}
 .forge-avatar-opt:hover{border-color:rgba(255,255,255,0.15);}
 .forge-tone-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
 .forge-tone-opt{padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:left;transition:all 0.18s;}
-.forge-tone-opt.selected{border-color:rgba(230,57,70,0.5);background:rgba(230,57,70,0.06);}
+.forge-tone-opt.selected{border-color:rgba(168,85,247,0.5);background:rgba(168,85,247,0.06);}
 .forge-tone-opt:hover{border-color:rgba(255,255,255,0.15);}
 .forge-tone-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);font-weight:700;display:block;}
 .forge-tone-desc{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--text-dim);margin-top:2px;display:block;line-height:1.4;}
 .forge-slider-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
 .forge-slider-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);width:80px;flex-shrink:0;}
 .forge-slider{flex:1;-webkit-appearance:none;appearance:none;height:3px;background:var(--border);border-radius:2px;outline:none;cursor:pointer;}
-.forge-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--red);cursor:pointer;border:none;}
-.forge-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--red);cursor:pointer;border:none;}
+.forge-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:#a855f7;cursor:pointer;border:none;}
+.forge-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#a855f7;cursor:pointer;border:none;}
 .forge-slider-val{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);width:20px;text-align:right;flex-shrink:0;}
 .forge-diff-row{display:flex;gap:7px;}
 .forge-diff-opt{flex:1;padding:8px 4px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;text-align:center;transition:all 0.15s;}
@@ -1186,7 +1186,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .forge-memory-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text);display:block;text-transform:uppercase;}
 .forge-memory-desc{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--text-dim);margin-top:2px;display:block;}
 .forge-toggle-btn{width:44px;height:24px;border-radius:12px;border:none;background:rgba(255,255,255,0.1);cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0;padding:0;}
-.forge-toggle-btn.on{background:var(--red);}
+.forge-toggle-btn.on{background:#a855f7;}
 .forge-toggle-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.2s;display:block;pointer-events:none;}
 .forge-toggle-btn.on .forge-toggle-knob{transform:translateX(20px);}
 /* FORGE RESULT */
@@ -1197,7 +1197,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .forge-stat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .forge-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);width:72px;text-align:right;flex-shrink:0;}
 .forge-stat-bar-bg{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
-.forge-stat-bar-fill{height:100%;background:var(--red);border-radius:2px;}
+.forge-stat-bar-fill{height:100%;background:#a855f7;border-radius:2px;}
 .forge-stat-num{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text);width:20px;flex-shrink:0;}
 .forge-mem-badge{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a855f7;border:1px solid rgba(168,85,247,0.3);padding:2px 10px;border-radius:4px;}
 /* HOT TOPIC CHIPS */
@@ -1282,7 +1282,7 @@ const AI_OPPONENTS = [
   { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Data obsessed. Demands evidence. Fact-checks everything.", diff: "extreme", diffLabel: "Extreme", timer: 45, personality: "You are a rigorous fact-checker and debunker. You demand sources, cite statistics, and dismantle arguments that lack evidence. You are skeptical of everything and can spot unsupported claims instantly. You are surgical and unforgiving." },
 ];
 
-function buildRivalPersonality(form: { name: string; tone: string; aggression: number; logicLevel: number; humorLevel: number; difficulty: string; memoryEnabled: boolean }): string {
+function buildRivalPersonality(form: { name: string; tone: string; aggression: number; logicLevel: number; humorLevel: number; difficulty: string; memoryEnabled: boolean; backstory?: string }): string {
   const toneMap: Record<string, string> = {
     calm: "You debate with ice-cold composure — controlled, deliberate, and devastating in your precision. You never raise your voice.",
     aggressive: "You debate with raw relentless aggression. You hammer every vulnerability, interrupt weak logic, and apply maximum psychological pressure.",
@@ -1292,7 +1292,8 @@ function buildRivalPersonality(form: { name: string; tone: string; aggression: n
   const aggrNote = form.aggression >= 8 ? "Attack hard and without mercy — leave no argument standing." : form.aggression >= 5 ? "Push back firmly and challenge weak points relentlessly." : "Let logic do the work. Pressure is measured, not frantic.";
   const logicNote = form.logicLevel >= 8 ? "Your arguments are airtight — structured, evidenced, and impossible to dismiss." : form.logicLevel >= 5 ? "Build clear logical chains with solid reasoning. Spot gaps in the opponent's arguments." : "Argue from conviction and gut. Logic matters less than impact and confidence.";
   const humorNote = form.humorLevel >= 8 ? "Use sharp cutting wit constantly. Make dismissiveness entertaining. Land punchlines mid-argument." : form.humorLevel >= 5 ? "Occasional dry humor punctuates your sharpest arguments." : "Take debate completely seriously. Zero jokes.";
-  return `You are ${form.name}. ${toneMap[form.tone] ?? toneMap.aggressive} ${aggrNote} ${logicNote} ${humorNote}`;
+  const backstoryNote = form.backstory?.trim() ? ` Background: ${form.backstory.trim()}` : "";
+  return `You are ${form.name}. ${toneMap[form.tone] ?? toneMap.aggressive} ${aggrNote} ${logicNote} ${humorNote}${backstoryNote}`;
 }
 
 const TOPIC_POOL = [
@@ -2029,6 +2030,7 @@ export default function App() {
     humorLevel: 3,
     difficulty: "medium" as "easy" | "medium" | "hard" | "extreme",
     memoryEnabled: false,
+    backstory: "",
   });
   const [createdRival, setCreatedRival] = useState<{
     id: number; shareCode: string; name: string; avatar: string; tone: string;
@@ -3432,27 +3434,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* HOT TOPIC QUICK LAUNCH */}
-          <div style={{ marginTop: "10px" }}>
-            <p className="section-label" style={{ marginBottom: "6px", fontSize: "9px", letterSpacing: "3px" }}>Hot Topics</p>
-            <div className="hot-chips-row">
-              {TOPIC_POOL.filter((t) => t.cat === "Hot Take").slice(0, 6).map((t, i) => (
-                <button
-                  key={i}
-                  className="hot-chip"
-                  onClick={() => {
-                    setSelectedTopic({ cat: t.cat, text: t.text });
-                    setDisplayTopics(pickTopics());
-                    setSetupStep(0);
-                    setScreen("setup");
-                  }}
-                >
-                  {t.text}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* ARENA STATS STRIP */}
           <div className="arena-stats">
             <div className="arena-stat">
@@ -3547,72 +3528,13 @@ export default function App() {
                     <span className={`ai-diff diff-${a.diff}`}>{a.diffLabel}</span>
                   </div>
                 ))}
-                <div className={`ai-card ${selectedAI === "custom" ? "selected" : ""}`} onClick={() => setSelectedAI("custom")}>
-                  <span className="ai-icon">🎭</span>
-                  <div className="ai-name">Build Your Own</div>
-                  <div className="ai-desc">Design a custom AI opponent with any personality and style.</div>
-                  <span className="ai-diff" style={{ background: "rgba(168,85,247,0.15)", color: "#a855f7" }}>Custom</span>
-                </div>
               </div>
-              {selectedAI === "custom" && (
-                <div className="custom-form">
-                  <label className="custom-form-lbl">Opponent name</label>
-                  <input
-                    className="custom-input"
-                    type="text"
-                    placeholder='e.g. "The Cynic" or "The Optimist"'
-                    maxLength={30}
-                    value={customOpponent.name}
-                    onChange={(e) => setCustomOpponent((p) => ({ ...p, name: e.target.value }))}
-                    style={{ marginBottom: "14px" }}
-                  />
-                  <label className="custom-form-lbl">Personality & debate style</label>
-                  <textarea
-                    className="custom-input"
-                    rows={3}
-                    placeholder="e.g. You are a cold, data-driven scientist who dismisses anything anecdotal and demands peer-reviewed evidence for every claim..."
-                    maxLength={400}
-                    value={customOpponent.personality}
-                    onChange={(e) => setCustomOpponent((p) => ({ ...p, personality: e.target.value }))}
-                    style={{ resize: "none", marginBottom: "14px" }}
-                  />
-                  <label className="custom-form-lbl">Difficulty</label>
-                  <div className="custom-diff-row">
-                    {(["easy", "medium", "hard", "extreme"] as const).map((d) => (
-                      <button
-                        key={d}
-                        className={`custom-diff-opt${customOpponent.diff === d ? ` sel-${d}` : ""}`}
-                        onClick={() => setCustomOpponent((p) => ({ ...p, diff: d }))}
-                      >
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {selectedAI === "custom" && customOpponent.name.trim() && customOpponent.personality.trim() && (
-                <div className="custom-share-row">
-                  <button
-                    className="custom-share-btn"
-                    onClick={() => {
-                      const encoded = btoa(JSON.stringify({ n: customOpponent.name, p: customOpponent.personality, d: customOpponent.diff, i: customOpponent.icon }));
-                      const url = `${window.location.origin}${window.location.pathname}?customAI=${encoded}`;
-                      navigator.clipboard.writeText(url).catch(() => {});
-                      setShareToast("Custom opponent link copied!");
-                      setTimeout(() => setShareToast(""), 3000);
-                    }}
-                  >
-                    🔗 Share This Opponent
-                  </button>
-                  <span style={{ fontSize: "11px", color: "var(--text-dim)" }}>Anyone with the link can face your creation</span>
-                </div>
-              )}
               <div style={{ display: "flex", gap: "10px", marginTop: "4px" }}>
                 <button className="btn btn-ghost" onClick={() => setScreen("home")}>← Home</button>
                 <button
                   className="btn btn-primary"
                   style={{ flex: 1 }}
-                  disabled={!selectedAI || (selectedAI === "custom" && (!customOpponent.name.trim() || !customOpponent.personality.trim()))}
+                  disabled={!selectedAI}
                   onClick={() => setSetupStep(selectedTopic ? 2 : 1)}
                 >
                   {selectedTopic ? "Next: Pick Side →" : "Next: Pick Topic →"}
