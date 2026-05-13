@@ -8,3 +8,4 @@ export * from "./rankings";
 export * from "./cards";
 export * from "./progression";
 export * from "./ai_personas";
+export * from "./custom_rivals";

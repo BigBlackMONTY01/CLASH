@@ -9,6 +9,7 @@ import rankingsRouter from "./rankings";
 import cardsRouter from "./cards";
 import progressionRouter from "./progression";
 import aiPersonasRouter from "./ai-personas";
+import rivalsRouter from "./rivals";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use(rankingsRouter);
 router.use(cardsRouter);
 router.use(progressionRouter);
 router.use(aiPersonasRouter);
+router.use(rivalsRouter);
 
 export default router;

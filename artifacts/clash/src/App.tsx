@@ -570,19 +570,13 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .gauntlet-btn:hover{background:rgba(244,197,66,0.07);color:var(--gold);transform:translateY(-1px);}
 .gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;margin-top:6px;}
 
-/* 1V1 GLOW BUTTON */
-@keyframes v1GlowPulse{
-  0%,100%{box-shadow:0 0 10px rgba(230,57,70,0.35),0 0 28px rgba(230,57,70,0.12);border-color:rgba(230,57,70,0.4);}
-  50%{box-shadow:0 0 26px rgba(230,57,70,0.68),0 0 64px rgba(230,57,70,0.28),0 0 96px rgba(230,57,70,0.08);border-color:rgba(230,57,70,0.78);}
-}
-@keyframes v1TextFlicker{
-  0%,88%,100%{opacity:1;text-shadow:0 0 14px rgba(230,57,70,0.55),0 0 38px rgba(230,57,70,0.25);}
-  50%{opacity:0.93;text-shadow:0 0 24px rgba(230,57,70,0.95),0 0 58px rgba(230,57,70,0.48),0 0 95px rgba(230,57,70,0.18);}
-}
-.v1-glow-btn{position:relative;display:block;width:100%;max-width:400px;margin:0 auto;cursor:pointer;background:rgba(230,57,70,0.06);border:1.5px solid rgba(230,57,70,0.4);border-radius:var(--radius);padding:14px 32px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background 0.18s,transform 0.12s;animation:v1GlowPulse 2.4s ease-in-out infinite;}
-.v1-glow-btn:hover{background:rgba(230,57,70,0.14);transform:translateY(-1px);}
+/* 1V1 BUTTON */
+.v1-glow-btn{position:relative;display:block;width:100%;max-width:400px;margin:0 auto;cursor:pointer;background:transparent;border:none;border-top:1.5px solid rgba(230,57,70,0.5);border-bottom:1.5px solid rgba(230,57,70,0.5);border-radius:0;padding:15px 32px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:all 0.2s;overflow:hidden;}
+.v1-glow-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(230,57,70,0.08) 50%,transparent);transform:translateX(-120%);transition:transform 0.55s ease;}
+.v1-glow-btn:hover::before{transform:translateX(120%);}
+.v1-glow-btn:hover{border-color:rgba(230,57,70,0.85);}
 .v1-glow-btn:active{transform:scale(0.98);}
-.v1-text{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:12px;color:#fff;display:inline-block;animation:v1TextFlicker 2.4s ease-in-out infinite;}
+.v1-text{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:14px;color:#fff;display:inline-block;}
 
 /* Featured topic card */
 @keyframes featuredSlideLeft{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
@@ -1158,6 +1152,59 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .forge-close-btn{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:9px 20px;border-radius:6px;cursor:pointer;transition:all 0.15s;width:100%;}
 .forge-close-btn:hover{border-color:rgba(255,255,255,0.2);color:var(--text);}
 
+/* FORGE RIVAL FULL PAGE */
+.forge-page{padding-bottom:40px;}
+.forge-header{display:flex;align-items:center;gap:14px;padding:0 0 20px;}
+.forge-page-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:var(--red);margin:0;}
+.forge-page-sub{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);margin:2px 0 0;}
+.forge-section{margin-bottom:22px;}
+.forge-section-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;display:block;}
+.forge-avatar-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.forge-avatar-opt{font-size:22px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,0.03);border:1.5px solid transparent;cursor:pointer;transition:all 0.15s;line-height:1;}
+.forge-avatar-opt.selected{border-color:var(--red);background:rgba(230,57,70,0.1);}
+.forge-avatar-opt:hover{border-color:rgba(255,255,255,0.15);}
+.forge-tone-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.forge-tone-opt{padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:left;transition:all 0.18s;}
+.forge-tone-opt.selected{border-color:rgba(230,57,70,0.5);background:rgba(230,57,70,0.06);}
+.forge-tone-opt:hover{border-color:rgba(255,255,255,0.15);}
+.forge-tone-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);font-weight:700;display:block;}
+.forge-tone-desc{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--text-dim);margin-top:2px;display:block;line-height:1.4;}
+.forge-slider-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.forge-slider-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);width:80px;flex-shrink:0;}
+.forge-slider{flex:1;-webkit-appearance:none;appearance:none;height:3px;background:var(--border);border-radius:2px;outline:none;cursor:pointer;}
+.forge-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--red);cursor:pointer;border:none;}
+.forge-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--red);cursor:pointer;border:none;}
+.forge-slider-val{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);width:20px;text-align:right;flex-shrink:0;}
+.forge-diff-row{display:flex;gap:7px;}
+.forge-diff-opt{flex:1;padding:8px 4px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;text-align:center;transition:all 0.15s;}
+.forge-diff-opt.sel-easy{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,0.08);}
+.forge-diff-opt.sel-medium{border-color:#3b82f6;color:#3b82f6;background:rgba(59,130,246,0.08);}
+.forge-diff-opt.sel-hard{border-color:#f97316;color:#f97316;background:rgba(249,115,22,0.08);}
+.forge-diff-opt.sel-extreme{border-color:var(--red);color:var(--red);background:rgba(230,57,70,0.08);}
+.forge-memory-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;}
+.forge-memory-info{flex:1;}
+.forge-memory-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text);display:block;text-transform:uppercase;}
+.forge-memory-desc{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--text-dim);margin-top:2px;display:block;}
+.forge-toggle-btn{width:44px;height:24px;border-radius:12px;border:none;background:rgba(255,255,255,0.1);cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0;padding:0;}
+.forge-toggle-btn.on{background:var(--red);}
+.forge-toggle-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.2s;display:block;pointer-events:none;}
+.forge-toggle-btn.on .forge-toggle-knob{transform:translateX(20px);}
+/* FORGE RESULT */
+.forge-result-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;}
+.forge-result-avatar{font-size:48px;line-height:1;margin-bottom:10px;}
+.forge-result-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--text);margin-bottom:6px;}
+.forge-result-diff{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:2px 10px;border-radius:4px;border:1px solid var(--border);color:var(--text-dim);margin-bottom:16px;}
+.forge-stat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.forge-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);width:72px;text-align:right;flex-shrink:0;}
+.forge-stat-bar-bg{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+.forge-stat-bar-fill{height:100%;background:var(--red);border-radius:2px;}
+.forge-stat-num{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text);width:20px;flex-shrink:0;}
+.forge-mem-badge{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a855f7;border:1px solid rgba(168,85,247,0.3);padding:2px 10px;border-radius:4px;}
+/* HOT TOPIC CHIPS */
+.hot-chips-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.hot-chip{display:inline-flex;align-items:center;padding:5px 12px;background:rgba(230,57,70,0.05);border:1px solid rgba(230,57,70,0.18);border-radius:100px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:0.5px;color:var(--text-dim);cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.hot-chip:hover{background:rgba(230,57,70,0.12);border-color:rgba(230,57,70,0.4);color:var(--text);}
+
 /* STREAK CONTINUE BANNER ON HOME */
 .streak-continue-btn{display:block;width:100%;background:linear-gradient(135deg,rgba(244,197,66,0.08),rgba(230,57,70,0.06));border:1.5px solid rgba(244,197,66,0.35);border-radius:var(--radius);padding:12px 20px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all 0.2s;text-align:center;margin-top:10px;animation:goldPulse 2.2s ease-in-out infinite;}
 @keyframes goldPulse{0%,100%{box-shadow:0 0 0 0 rgba(244,197,66,0);}50%{box-shadow:0 0 14px 2px rgba(244,197,66,0.15);}}
@@ -1234,6 +1281,19 @@ const AI_OPPONENTS = [
   { id: "troll", icon: "😈", name: "The Devil", desc: "Chaotic. Takes the most extreme opposing position always.", diff: "easy", diffLabel: "Easy", timer: 270, personality: "You are a chaotic devil's advocate who takes the most extreme, provocative opposing position possible. You are intentionally over-the-top but make surprisingly sharp points. You are fun but hard to pin down." },
   { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Data obsessed. Demands evidence. Fact-checks everything.", diff: "extreme", diffLabel: "Extreme", timer: 45, personality: "You are a rigorous fact-checker and debunker. You demand sources, cite statistics, and dismantle arguments that lack evidence. You are skeptical of everything and can spot unsupported claims instantly. You are surgical and unforgiving." },
 ];
+
+function buildRivalPersonality(form: { name: string; tone: string; aggression: number; logicLevel: number; humorLevel: number; difficulty: string; memoryEnabled: boolean }): string {
+  const toneMap: Record<string, string> = {
+    calm: "You debate with ice-cold composure — controlled, deliberate, and devastating in your precision. You never raise your voice.",
+    aggressive: "You debate with raw relentless aggression. You hammer every vulnerability, interrupt weak logic, and apply maximum psychological pressure.",
+    sarcastic: "You wield sarcasm as a weapon. Every agreement is a trap, every compliment a cut. You make opponents feel intellectually outmatched.",
+    analytical: "You are a pure logic engine. You decompose every argument, expose every unsupported assumption, and dismantle with surgical precision.",
+  };
+  const aggrNote = form.aggression >= 8 ? "Attack hard and without mercy — leave no argument standing." : form.aggression >= 5 ? "Push back firmly and challenge weak points relentlessly." : "Let logic do the work. Pressure is measured, not frantic.";
+  const logicNote = form.logicLevel >= 8 ? "Your arguments are airtight — structured, evidenced, and impossible to dismiss." : form.logicLevel >= 5 ? "Build clear logical chains with solid reasoning. Spot gaps in the opponent's arguments." : "Argue from conviction and gut. Logic matters less than impact and confidence.";
+  const humorNote = form.humorLevel >= 8 ? "Use sharp cutting wit constantly. Make dismissiveness entertaining. Land punchlines mid-argument." : form.humorLevel >= 5 ? "Occasional dry humor punctuates your sharpest arguments." : "Take debate completely seriously. Zero jokes.";
+  return `You are ${form.name}. ${toneMap[form.tone] ?? toneMap.aggressive} ${aggrNote} ${logicNote} ${humorNote}`;
+}
 
 const TOPIC_POOL = [
   { cat: "Hot Take", text: "Pineapple belongs on pizza" },
@@ -1855,7 +1915,7 @@ function calcXP(logic: number, persuasion: number, delivery: number, won: boolea
   return { logic: logicXP, persuasion: persuasionXP, delivery: deliveryXP, streak: streakBonus + winBonus, total: logicXP + persuasionXP + deliveryXP + streakBonus + winBonus };
 }
 
-type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final" | "multiplayer-lobby" | "multiplayer-waiting" | "multiplayer-debate" | "multiplayer-results" | "dashboard";
+type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final" | "multiplayer-lobby" | "multiplayer-waiting" | "multiplayer-debate" | "multiplayer-results" | "dashboard" | "forge-rival" | "forge-rival-result";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
@@ -1960,6 +2020,22 @@ export default function App() {
   const [newCard, setNewCard] = useState<DebateCard | null>(null);
   const [showCardReveal, setShowCardReveal] = useState(false);
   const [showForgeRival, setShowForgeRival] = useState(false);
+  const [forgeForm, setForgeForm] = useState({
+    name: "",
+    avatar: "🤖",
+    tone: "aggressive" as "calm" | "aggressive" | "sarcastic" | "analytical",
+    aggression: 7,
+    logicLevel: 6,
+    humorLevel: 3,
+    difficulty: "medium" as "easy" | "medium" | "hard" | "extreme",
+    memoryEnabled: false,
+  });
+  const [createdRival, setCreatedRival] = useState<{
+    id: number; shareCode: string; name: string; avatar: string; tone: string;
+    aggression: number; logicLevel: number; humorLevel: number; difficulty: string; memoryEnabled: boolean;
+  } | null>(null);
+  const [forgeCreating, setForgeCreating] = useState(false);
+  const [forgeError, setForgeError] = useState("");
   const [profileTab, setProfileTab] = useState<"overview" | "cards" | "graveyard">("overview");
   const [profileCards, setProfileCards] = useState<DebateCard[]>([]);
   const [profileCardsLoading, setProfileCardsLoading] = useState(false);
@@ -2062,6 +2138,19 @@ export default function App() {
           setScreen("setup");
         }
       } catch { /* ignore malformed */ }
+    }
+    const rivalParam = params.get("rival");
+    if (rivalParam && rivalParam.length > 0) {
+      apiGet<{ id: number; shareCode: string; name: string; avatar: string; tone: string; aggression: number; logicLevel: number; humorLevel: number; difficulty: string; memoryEnabled: boolean }>(`/rivals/${rivalParam.toUpperCase()}`)
+        .then((rival) => {
+          const personality = buildRivalPersonality({ name: rival.name, tone: rival.tone, aggression: rival.aggression, logicLevel: rival.logicLevel, humorLevel: rival.humorLevel, difficulty: rival.difficulty, memoryEnabled: rival.memoryEnabled });
+          setCustomOpponent({ name: rival.name, personality, diff: rival.difficulty as "easy" | "medium" | "hard" | "extreme", icon: rival.avatar });
+          setSelectedAI("custom");
+          setDisplayTopics(pickTopics());
+          setSetupStep(1);
+          setScreen("setup");
+        })
+        .catch(() => {});
     }
   }, []);
 
@@ -2349,6 +2438,31 @@ export default function App() {
       return next;
     });
   }, []);
+
+  const handleForgeCreate = useCallback(async () => {
+    if (!forgeForm.name.trim()) return;
+    setForgeCreating(true);
+    setForgeError("");
+    try {
+      const data = await apiPost<{ id: number; shareCode: string; name: string; avatar: string; tone: string; aggression: number; logicLevel: number; humorLevel: number; difficulty: string; memoryEnabled: boolean }>("/rivals", {
+        name: forgeForm.name.trim(),
+        avatar: forgeForm.avatar,
+        tone: forgeForm.tone,
+        aggression: forgeForm.aggression,
+        logicLevel: forgeForm.logicLevel,
+        humorLevel: forgeForm.humorLevel,
+        difficulty: forgeForm.difficulty,
+        memoryEnabled: forgeForm.memoryEnabled,
+        creatorDeviceId: deviceId,
+      });
+      setCreatedRival(data);
+      setScreen("forge-rival-result");
+    } catch {
+      setForgeError("Failed to create rival. Try again.");
+    } finally {
+      setForgeCreating(false);
+    }
+  }, [forgeForm, deviceId]);
 
 
   const ai = selectedAI === "custom"
@@ -3315,6 +3429,27 @@ export default function App() {
                   <button className="featured-arrow" onClick={() => navigateFeatured(1)}>›</button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* HOT TOPIC QUICK LAUNCH */}
+          <div style={{ marginTop: "10px" }}>
+            <p className="section-label" style={{ marginBottom: "6px", fontSize: "9px", letterSpacing: "3px" }}>Hot Topics</p>
+            <div className="hot-chips-row">
+              {TOPIC_POOL.filter((t) => t.cat === "Hot Take").slice(0, 6).map((t, i) => (
+                <button
+                  key={i}
+                  className="hot-chip"
+                  onClick={() => {
+                    setSelectedTopic({ cat: t.cat, text: t.text });
+                    setDisplayTopics(pickTopics());
+                    setSetupStep(0);
+                    setScreen("setup");
+                  }}
+                >
+                  {t.text}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -5552,10 +5687,207 @@ export default function App() {
       </div>
     )}
 
+    {screen === "forge-rival" && (
+      <div className="screen forge-page">
+        <div className="forge-header">
+          <button className="btn btn-ghost" style={{ padding: "6px 14px", fontSize: "11px", letterSpacing: "2px" }} onClick={() => setScreen("home")}>← Back</button>
+          <div>
+            <p className="forge-page-title">FORGE YOUR RIVAL</p>
+            <p className="forge-page-sub">Design your opponent. Share it with the world.</p>
+          </div>
+        </div>
+        <div className="forge-section">
+          <span className="forge-section-lbl">Name</span>
+          <input
+            className="custom-input"
+            type="text"
+            placeholder='e.g. "The Strategist" or "Chaos Lawyer"'
+            maxLength={40}
+            style={{ width: "100%", boxSizing: "border-box" }}
+            value={forgeForm.name}
+            onChange={(e) => setForgeForm((f) => ({ ...f, name: e.target.value }))}
+          />
+        </div>
+        <div className="forge-section">
+          <span className="forge-section-lbl">Avatar</span>
+          <div className="forge-avatar-grid">
+            {["🤖", "👾", "💀", "🦾", "🧠", "👁️", "⚡", "🔥", "🌀", "🎭", "👹", "🐺", "🦊", "🐉", "💎", "🌑"].map((em) => (
+              <button
+                key={em}
+                className={`forge-avatar-opt${forgeForm.avatar === em ? " selected" : ""}`}
+                onClick={() => setForgeForm((f) => ({ ...f, avatar: em }))}
+              >{em}</button>
+            ))}
+          </div>
+        </div>
+        <div className="forge-section">
+          <span className="forge-section-lbl">Debate Tone</span>
+          <div className="forge-tone-grid">
+            {([
+              { id: "calm", name: "Cold & Controlled", desc: "Precise, measured, quietly devastating" },
+              { id: "aggressive", name: "Relentless", desc: "Max pressure, attacks every weak point" },
+              { id: "sarcastic", name: "Sharp & Cutting", desc: "Wit as a weapon. Every word stings." },
+              { id: "analytical", name: "Logic Engine", desc: "Pure reasoning. Demolishes bad logic." },
+            ] as const).map((t) => (
+              <button
+                key={t.id}
+                className={`forge-tone-opt${forgeForm.tone === t.id ? " selected" : ""}`}
+                onClick={() => setForgeForm((f) => ({ ...f, tone: t.id }))}
+              >
+                <span className="forge-tone-name">{t.name}</span>
+                <span className="forge-tone-desc">{t.desc}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="forge-section">
+          <span className="forge-section-lbl">Behavior</span>
+          {([
+            { key: "aggression", label: "Aggression" },
+            { key: "logicLevel", label: "Logic" },
+            { key: "humorLevel", label: "Humor" },
+          ] as const).map(({ key, label }) => (
+            <div key={key} className="forge-slider-row">
+              <span className="forge-slider-lbl">{label}</span>
+              <input
+                type="range" min={1} max={10} step={1}
+                className="forge-slider"
+                value={forgeForm[key] as number}
+                onChange={(e) => setForgeForm((f) => ({ ...f, [key]: Number(e.target.value) }))}
+              />
+              <span className="forge-slider-val">{forgeForm[key]}</span>
+            </div>
+          ))}
+        </div>
+        <div className="forge-section">
+          <span className="forge-section-lbl">Difficulty</span>
+          <div className="forge-diff-row">
+            {(["easy", "medium", "hard", "extreme"] as const).map((d) => (
+              <button
+                key={d}
+                className={`forge-diff-opt${forgeForm.difficulty === d ? ` sel-${d}` : ""}`}
+                onClick={() => setForgeForm((f) => ({ ...f, difficulty: d }))}
+              >{d}</button>
+            ))}
+          </div>
+        </div>
+        <div className="forge-section">
+          <div className="forge-memory-row">
+            <div className="forge-memory-info">
+              <span className="forge-memory-title">Memory</span>
+              <span className="forge-memory-desc">{forgeForm.memoryEnabled ? "Remembers your past arguments" : "Resets every match"}</span>
+            </div>
+            <button
+              className={`forge-toggle-btn${forgeForm.memoryEnabled ? " on" : ""}`}
+              onClick={() => setForgeForm((f) => ({ ...f, memoryEnabled: !f.memoryEnabled }))}
+            >
+              <span className="forge-toggle-knob" />
+            </button>
+          </div>
+        </div>
+        <div className="forge-section">
+          <button
+            className="btn btn-primary"
+            style={{ width: "100%", fontSize: "13px", letterSpacing: "3px", padding: "14px" }}
+            disabled={!forgeForm.name.trim() || forgeCreating}
+            onClick={handleForgeCreate}
+          >
+            {forgeCreating ? "FORGING..." : "CREATE RIVAL →"}
+          </button>
+          {forgeError && (
+            <p style={{ color: "var(--red)", fontSize: "12px", marginTop: "8px", textAlign: "center", fontFamily: "'Barlow Condensed',sans-serif" }}>
+              {forgeError}
+            </p>
+          )}
+        </div>
+      </div>
+    )}
+
+    {screen === "forge-rival-result" && createdRival && (
+      <div className="screen forge-page">
+        <div className="forge-header">
+          <button className="btn btn-ghost" style={{ padding: "6px 14px", fontSize: "11px", letterSpacing: "2px" }} onClick={() => setScreen("home")}>← Home</button>
+          <div>
+            <p className="forge-page-title">RIVAL FORGED</p>
+            <p className="forge-page-sub">Your opponent is ready for battle.</p>
+          </div>
+        </div>
+        <div className="forge-section">
+          <div className="forge-result-card">
+            <div className="forge-result-avatar">{createdRival.avatar}</div>
+            <div className="forge-result-name">{createdRival.name}</div>
+            <div className="forge-result-diff">{createdRival.difficulty.toUpperCase()}</div>
+            <div style={{ marginTop: "8px" }}>
+              {([
+                { label: "Aggression", val: createdRival.aggression },
+                { label: "Logic", val: createdRival.logicLevel },
+                { label: "Humor", val: createdRival.humorLevel },
+              ]).map(({ label, val }) => (
+                <div key={label} className="forge-stat-row">
+                  <span className="forge-stat-lbl">{label}</span>
+                  <div className="forge-stat-bar-bg">
+                    <div className="forge-stat-bar-fill" style={{ width: `${val * 10}%` }} />
+                  </div>
+                  <span className="forge-stat-num">{val}</span>
+                </div>
+              ))}
+            </div>
+            {createdRival.memoryEnabled && (
+              <div className="forge-mem-badge">Memory On</div>
+            )}
+          </div>
+        </div>
+        <div className="forge-section" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <button
+            className="btn btn-primary"
+            style={{ width: "100%", fontSize: "13px", letterSpacing: "3px", padding: "14px" }}
+            onClick={() => {
+              const personality = buildRivalPersonality({ name: createdRival.name, tone: createdRival.tone, aggression: createdRival.aggression, logicLevel: createdRival.logicLevel, humorLevel: createdRival.humorLevel, difficulty: createdRival.difficulty, memoryEnabled: createdRival.memoryEnabled });
+              setCustomOpponent({ name: createdRival.name, personality, diff: createdRival.difficulty as "easy" | "medium" | "hard" | "extreme", icon: createdRival.avatar });
+              setSelectedAI("custom");
+              setDisplayTopics(pickTopics());
+              setSetupStep(1);
+              setScreen("setup");
+            }}
+          >
+            PLAY NOW →
+          </button>
+          <button
+            className="btn btn-secondary"
+            style={{ width: "100%", fontSize: "13px", letterSpacing: "3px", padding: "14px" }}
+            onClick={() => {
+              const link = `${window.location.origin}/play?rival=${createdRival.shareCode}`;
+              navigator.clipboard.writeText(link).catch(() => {});
+              setShareToast("Share link copied!");
+              setTimeout(() => setShareToast(""), 3000);
+            }}
+          >
+            SHARE NOW
+          </button>
+          <button
+            className="btn btn-ghost"
+            style={{ width: "100%", fontSize: "11px", letterSpacing: "2px" }}
+            onClick={() => {
+              setCreatedRival(null);
+              setForgeForm({ name: "", avatar: "🤖", tone: "aggressive", aggression: 7, logicLevel: 6, humorLevel: 3, difficulty: "medium", memoryEnabled: false });
+              setScreen("forge-rival");
+            }}
+          >
+            FORGE ANOTHER
+          </button>
+        </div>
+        <div className="forge-section" style={{ textAlign: "center" }}>
+          <p style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "1px", color: "var(--text-dim)" }}>
+            Share code: <span style={{ color: "var(--text)", fontFamily: "'Bebas Neue',sans-serif", letterSpacing: "3px" }}>{createdRival.shareCode}</span>
+          </p>
+        </div>
+      </div>
+    )}
+
     {screen === "home" && (
       <button
         className="float-rival-btn"
-        onClick={() => setShowForgeRival(true)}
+        onClick={() => setScreen("forge-rival")}
         title="Forge Your Rival"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -5568,7 +5900,6 @@ export default function App() {
           <line x1="1" y1="12" x2="3" y2="12"/>
           <line x1="21" y1="12" x2="23" y2="12"/>
         </svg>
-        Forge Your Rival
       </button>
     )}
 
