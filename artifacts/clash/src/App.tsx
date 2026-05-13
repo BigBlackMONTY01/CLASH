@@ -227,10 +227,10 @@ text-transform:uppercase;margin-bottom:6px;}
 .arg-label.worst{color:var(--red);}
 
 .verdict-moments{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.verdict-actions{display:flex;flex-direction:column;gap:8px;}
-.verdict-actions-primary{display:flex;gap:10px;}
-.verdict-actions-secondary{display:flex;gap:8px;flex-wrap:wrap;}
-.verdict-actions-primary .btn{flex:1;}
+.verdict-actions{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.verdict-actions-primary{display:flex;gap:8px;}
+.verdict-actions-primary .btn{flex:1;font-size:13px;letter-spacing:2px;}
+.verdict-actions-secondary{display:flex;gap:8px;}
 .verdict-actions-secondary .btn{flex:1;font-size:11px;padding:9px 14px;letter-spacing:1.5px;}
 
 .lb-row{display:flex;align-items:center;gap:16px;padding:14px 16px;
@@ -483,8 +483,8 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 
   .verdict-moments{grid-template-columns:1fr;}
   .verdict-actions{gap:8px;}
-  .verdict-actions-primary{flex-direction:column;}
-  .verdict-actions-secondary .btn{min-width:calc(50% - 4px);}
+  .verdict-actions-primary{flex-direction:row;}
+  .verdict-actions-secondary .btn{flex:1;}
 
   .input-footer{gap:6px;}
   .submit-row{margin-left:auto;}
@@ -1247,19 +1247,19 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .forge-header{display:flex;align-items:center;gap:14px;padding:0 0 20px;}
 .forge-page-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:#a855f7;margin:0;}
 .forge-page-sub{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);margin:2px 0 0;}
-.forge-section{margin-bottom:22px;}
-.forge-section-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;display:block;}
-.forge-avatar-grid{display:flex;flex-wrap:wrap;gap:6px;}
-.forge-avatar-opt{font-size:22px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,0.03);border:1.5px solid transparent;cursor:pointer;transition:all 0.15s;line-height:1;}
+.forge-section{margin-bottom:14px;}
+.forge-section-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;display:block;}
+.forge-avatar-grid{display:flex;flex-wrap:wrap;gap:5px;}
+.forge-avatar-opt{font-size:20px;padding:4px 8px;border-radius:8px;background:rgba(255,255,255,0.03);border:1.5px solid transparent;cursor:pointer;transition:all 0.15s;line-height:1;}
 .forge-avatar-opt.selected{border-color:#a855f7;background:rgba(168,85,247,0.1);}
 .forge-avatar-opt:hover{border-color:rgba(255,255,255,0.15);}
-.forge-tone-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-.forge-tone-opt{padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:left;transition:all 0.18s;}
+.forge-tone-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;}
+.forge-tone-opt{padding:7px 10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:left;transition:all 0.18s;}
 .forge-tone-opt.selected{border-color:rgba(168,85,247,0.5);background:rgba(168,85,247,0.06);}
 .forge-tone-opt:hover{border-color:rgba(255,255,255,0.15);}
 .forge-tone-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);font-weight:700;display:block;}
-.forge-tone-desc{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--text-dim);margin-top:2px;display:block;line-height:1.4;}
-.forge-slider-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.forge-tone-desc{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--text-dim);margin-top:1px;display:block;line-height:1.3;}
+.forge-slider-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
 .forge-slider-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);width:80px;flex-shrink:0;}
 .forge-slider{flex:1;-webkit-appearance:none;appearance:none;height:3px;background:var(--border);border-radius:2px;outline:none;cursor:pointer;}
 .forge-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:#a855f7;cursor:pointer;border:none;}
@@ -1307,6 +1307,13 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .nav-mmr-chip.gold{border-color:rgba(212,175,55,0.5);color:#d4af37;}
 .nav-mmr-chip.diamond{border-color:rgba(90,180,255,0.5);color:#5ab4ff;}
 .nav-mmr-chip.clash-master{border-color:rgba(230,57,70,0.55);color:var(--red);}
+
+/* NAV STREAK INDICATOR */
+.nav-streak{display:inline-flex;align-items:center;gap:3px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:100px;border:1px solid;cursor:default;user-select:none;animation:navStreakPulse 2.5s ease-in-out infinite;}
+.nav-streak.streak-fire{color:#fb923c;border-color:rgba(251,146,60,0.4);background:rgba(251,146,60,0.08);}
+.nav-streak.streak-green{color:#22c55e;border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);}
+.nav-streak.streak-blue{color:#5ab4ff;border-color:rgba(90,180,255,0.4);background:rgba(90,180,255,0.08);}
+@keyframes navStreakPulse{0%,100%{opacity:1;}50%{opacity:0.75;}}
 
 /* INLINE ARG TAG CHIPS */
 .inline-tag-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;}
@@ -3376,6 +3383,15 @@ export default function App() {
               </svg>
             )}
           </button>
+          {(stats.currentStreak ?? 0) >= 2 && (() => {
+            const s = stats.currentStreak;
+            const cls = s >= 10 ? "streak-blue" : s >= 5 ? "streak-green" : "streak-fire";
+            return (
+              <span className={`nav-streak ${cls}`}>
+                🔥{s}
+              </span>
+            );
+          })()}
           {authUser ? (
             <>
               {mmrResult && (
@@ -3467,17 +3483,6 @@ export default function App() {
               </button>
             </div>
           </div>
-          {(stats.currentStreak ?? 0) >= 2 && (
-            <div style={{ marginTop: "12px" }}>
-              <button
-                className="streak-continue-btn"
-                onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
-              >
-                🔥 Keep the {stats.currentStreak}-win streak alive
-              </button>
-            </div>
-          )}
-
           {/* RIVAL CHIP */}
           {authUser && (() => {
             const rivalEntry = Object.entries(stats.opponentHistory ?? {})
@@ -3785,7 +3790,7 @@ export default function App() {
                   className="btn btn-primary"
                   style={{ width: "100%", fontSize: "17px", letterSpacing: "4px", padding: "18px 32px" }}
                   disabled={!selectedSide}
-                  onClick={() => setShowWarRoom(true)}
+                  onClick={() => launchMatchmaking()}
                 >
                   START CLASH
                 </button>
@@ -3793,69 +3798,6 @@ export default function App() {
               </div>
             </>
           )}
-        </div>
-      )}
-
-      {/* WAR ROOM MODAL */}
-      {showWarRoom && selectedTopic && selectedSide && ai && (
-        <div className="war-room-overlay" onClick={() => setShowWarRoom(false)}>
-          <div className="war-room-box" onClick={e => e.stopPropagation()}>
-            <div className="war-room-title">War Room</div>
-            <div className="war-room-sub">
-              Topic: "{selectedTopic.text}" · You are arguing <strong style={{ color: selectedSide === "for" ? "var(--green)" : "var(--red)" }}>{selectedSide === "for" ? "FOR" : "AGAINST"}</strong> · vs {ai.icon} {ai.name}
-            </div>
-            <div className="war-room-tip">
-              <div className="war-room-tip-icon">⚡</div>
-              <div className="war-room-tip-text">
-                <div className="war-room-tip-lbl">Open Strong</div>
-                Lead with your clearest, most undeniable claim — don't bury it in the middle.
-              </div>
-            </div>
-            <div className="war-room-tip">
-              <div className="war-room-tip-icon">🧠</div>
-              <div className="war-room-tip-text">
-                <div className="war-room-tip-lbl">Anticipate</div>
-                The AI will attack your weakest point — address it before it can.
-              </div>
-            </div>
-            <div className="war-room-tip">
-              <div className="war-room-tip-icon">📌</div>
-              <div className="war-room-tip-text">
-                <div className="war-room-tip-lbl">Evidence Wins</div>
-                Concrete examples and data score 15+ points higher than abstract claims alone.
-              </div>
-            </div>
-            <div className="war-room-tip">
-              <div className="war-room-tip-icon">🎯</div>
-              <div className="war-room-tip-text">
-                <div className="war-room-tip-lbl">Counter-Attack</div>
-                Directly refuting the AI's last point earns a delivery bonus — don't ignore it.
-              </div>
-            </div>
-            {devilsAdvocateMode && (
-              <div className="war-room-tip" style={{ background: "rgba(230,57,70,0.06)", borderRadius: "var(--radius)", marginTop: "8px", padding: "10px 12px" }}>
-                <div className="war-room-tip-icon">😈</div>
-                <div className="war-room-tip-text">
-                  <div className="war-room-tip-lbl" style={{ color: "var(--red)" }}>Devil's Advocate Active</div>
-                  The AI will argue your same side — every weakness in your logic will be exposed.
-                </div>
-              </div>
-            )}
-            <button
-              className="btn btn-primary"
-              style={{ width: "100%", marginTop: "20px", fontSize: "15px", letterSpacing: "3px", padding: "16px" }}
-              onClick={() => { setShowWarRoom(false); launchMatchmaking(); }}
-            >
-              Enter the Arena →
-            </button>
-            <button
-              className="btn btn-ghost"
-              style={{ width: "100%", marginTop: "8px", fontSize: "12px" }}
-              onClick={() => setShowWarRoom(false)}
-            >
-              Cancel
-            </button>
-          </div>
         </div>
       )}
 
@@ -4139,17 +4081,6 @@ export default function App() {
       {screen === "verdict" && verdict && (
         <div className="screen">
           <div className={`verdict-card ${verdict.won ? "win-card" : "lose-card"}`}>
-            {verdict.won && stats.currentStreak >= 2 && (
-              <div className="streak-banner">
-                <div className="streak-banner-fire">🔥</div>
-                <div className="streak-banner-text">
-                  <div className="streak-banner-count">{stats.currentStreak}-Win Streak</div>
-                  <div className="streak-banner-sub">
-                    {stats.currentStreak >= 5 ? "Unstoppable — keep it going!" : stats.currentStreak >= 3 ? "You're on fire — don't stop now." : "Momentum is building — defend it."}
-                  </div>
-                </div>
-              </div>
-            )}
             {progressionResult && progressionResult.dynastyStreak > 0 && (
               <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 14px", background: "rgba(244,197,66,0.07)", border: "1px solid rgba(244,197,66,0.2)", borderRadius: "var(--radius)", marginBottom: "12px" }}>
                 <span style={{ fontSize: "20px" }}>👑</span>
@@ -4195,30 +4126,6 @@ export default function App() {
               <p style={{ fontSize: "15px", lineHeight: 1.5, color: "var(--text-mid)", margin: 0 }}>{verdict.judgeText}</p>
             </div>
 
-            <div className="verdict-moments">
-              <div className="best-arg">
-                <div className="arg-label best">✓ Best Moment</div>
-                <div style={{ fontSize: "13px", color: "var(--text-mid)" }}>{verdict.bestArg}</div>
-              </div>
-              <div className="worst-arg">
-                <div className="arg-label worst">✗ Fatal Flaw</div>
-                <div style={{ fontSize: "13px", color: "var(--text-mid)" }}>{verdict.weakArg}</div>
-              </div>
-            </div>
-
-            <div style={{
-              background: "rgba(0,119,255,0.07)",
-              border: "1px solid rgba(0,119,255,0.2)",
-              borderRadius: "var(--radius)",
-              padding: "10px 14px",
-              display: "flex",
-              gap: "10px",
-              alignItems: "baseline",
-            }}>
-              <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--blue)", whiteSpace: "nowrap" }}>IMPROVE</span>
-              <span style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.improve}</span>
-            </div>
-
             {/* MATCH DETAILS COLLAPSIBLE */}
             <button className="match-details-btn" onClick={() => setShowMatchDetails(m => !m)}>
               <span>Match Details</span>
@@ -4226,7 +4133,51 @@ export default function App() {
             </button>
             {showMatchDetails && (
               <div className="match-details-panel">
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+                <div className="verdict-moments" style={{ marginBottom: "12px" }}>
+                  <div className="best-arg">
+                    <div className="arg-label best">✓ Best Moment</div>
+                    <div style={{ fontSize: "13px", color: "var(--text-mid)" }}>{verdict.bestArg}</div>
+                  </div>
+                  <div className="worst-arg">
+                    <div className="arg-label worst">✗ Fatal Flaw</div>
+                    <div style={{ fontSize: "13px", color: "var(--text-mid)" }}>{verdict.weakArg}</div>
+                  </div>
+                </div>
+
+                <div style={{ background: "rgba(0,119,255,0.07)", border: "1px solid rgba(0,119,255,0.2)", borderRadius: "var(--radius)", padding: "10px 14px", display: "flex", gap: "10px", alignItems: "baseline", marginBottom: "12px" }}>
+                  <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--blue)", whiteSpace: "nowrap" }}>IMPROVE</span>
+                  <span style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.improve}</span>
+                </div>
+
+                <div className="coach-panel">
+                  <div className="coach-panel-title"><span>🎯</span> COACH ANALYSIS</div>
+                  {verdict.coachWorked && (
+                    <div className="coach-row">
+                      <div className="coach-row-label worked">✓ What Worked</div>
+                      <div className="coach-row-text">{verdict.coachWorked}</div>
+                    </div>
+                  )}
+                  {verdict.coachFailed && (
+                    <div className="coach-row">
+                      <div className="coach-row-label failed">✗ What Failed</div>
+                      <div className="coach-row-text">{verdict.coachFailed}</div>
+                    </div>
+                  )}
+                  {(verdict.coachDrill || verdict.improve) && (
+                    <div className="coach-row">
+                      <div className="coach-row-label drill">⚡ Drill for Next Match</div>
+                      <div className="coach-row-text">{verdict.coachDrill || verdict.improve}</div>
+                    </div>
+                  )}
+                  {!verdict.coachWorked && !verdict.coachFailed && (
+                    <div className="coach-row">
+                      <div className="coach-row-label drill">⚡ Focus Area</div>
+                      <div className="coach-row-text">{verdict.improve || "Ground your claims with concrete evidence in each round."}</div>
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "12px 0 10px" }}>
                   {(() => { const tier = getRankedTier(verdict.avgScore); return <span className={`tier-badge ${tier.cls}`}>{tier.icon} {tier.tier}</span>; })()}
                   <div style={{ display: "flex", gap: "14px" }}>
                     {[{ label: "Logic", val: verdict.avgLogic, color: "#5ab4ff" }, { label: "Persuasion", val: verdict.avgPersuasion, color: "#e9c46a" }, { label: "Delivery", val: verdict.avgDelivery, color: "#2a9d8f" }].map(({ label, val, color }) => (
@@ -4288,60 +4239,6 @@ export default function App() {
               </div>
             )}
 
-            {/* ARGUMENT GRAVEYARD */}
-            {graveyardArgs.length > 0 && (
-              <div className="graveyard-section">
-                <div className="graveyard-header">
-                  <span style={{ fontSize: "14px" }}>💀</span>
-                  <span className="graveyard-title">Argument Graveyard — {graveyardArgs.length} Dead Argument{graveyardArgs.length !== 1 ? "s" : ""}</span>
-                </div>
-                {graveyardArgs.map((g, i) => (
-                  <div key={i} className="graveyard-entry">
-                    <span className="graveyard-skull">💀</span>
-                    <span className="graveyard-text">Rd {g.round}: "{g.text.length > 80 ? g.text.slice(0, 80) + "…" : g.text}"</span>
-                    <span className="graveyard-score">{g.score}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* COACH REVEAL — gated button */}
-            {!showCoachReveal ? (
-              <button className="coach-reveal-btn" onClick={() => setShowCoachReveal(true)}>
-                🎯 Reveal Coach Analysis
-              </button>
-            ) : (
-              <div className="coach-panel" style={{ marginTop: "12px" }}>
-                <div className="coach-panel-title">
-                  <span>🎯</span> COACH ANALYSIS
-                </div>
-                {verdict.coachWorked && (
-                  <div className="coach-row">
-                    <div className="coach-row-label worked">✓ What Worked</div>
-                    <div className="coach-row-text">{verdict.coachWorked}</div>
-                  </div>
-                )}
-                {verdict.coachFailed && (
-                  <div className="coach-row">
-                    <div className="coach-row-label failed">✗ What Failed</div>
-                    <div className="coach-row-text">{verdict.coachFailed}</div>
-                  </div>
-                )}
-                {(verdict.coachDrill || verdict.improve) && (
-                  <div className="coach-row">
-                    <div className="coach-row-label drill">⚡ Drill for Next Match</div>
-                    <div className="coach-row-text">{verdict.coachDrill || verdict.improve}</div>
-                  </div>
-                )}
-                {!verdict.coachWorked && !verdict.coachFailed && (
-                  <div className="coach-row">
-                    <div className="coach-row-label drill">⚡ Focus Area</div>
-                    <div className="coach-row-text">{verdict.improve || "Ground your claims with concrete evidence in each round."}</div>
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* MMR UPDATE CARD — only for logged-in users */}
             {mmrResult && (
               <div className={`mmr-update-card${mmrResult.rankUp ? " mmr-rankup" : ""}`}>
@@ -4393,14 +4290,12 @@ export default function App() {
           )}
 
           <div className="verdict-actions">
+            <button className="btn btn-primary" style={{ width: "100%" }} onClick={instantRematch}>⚡ Instant Rematch</button>
             <div className="verdict-actions-primary">
-              <button className="btn btn-primary" onClick={instantRematch}>⚡ Instant Rematch</button>
               <button className="btn btn-secondary" onClick={swapSidesRematch}>↕ Swap Sides</button>
+              <button className="btn btn-secondary" onClick={() => setScreen("replay")}>↺ Replay</button>
             </div>
             <div className="verdict-actions-secondary">
-              <button className="btn btn-ghost" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>New Match</button>
-              <button className="btn btn-ghost" onClick={() => setScreen("replay")}>Replay</button>
-              <button className="btn btn-ghost" onClick={shareResult}>Share</button>
               <button className="btn btn-ghost" onClick={shareImage}>Share Card</button>
               <button className="btn btn-ghost" onClick={reset}>Home</button>
             </div>
