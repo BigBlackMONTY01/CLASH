@@ -406,6 +406,33 @@ Respond ONLY with valid JSON:
   }
 });
 
+// POST /api/debate/verdict — add pentagon dims to response (computed client-side from round data)
+// POST /api/debate/whisper-round — Score both arguments simultaneously (Whisper Mode)
+router.post("/debate/whisper-score", async (req, res) => {
+  const { topic, arg1, arg2 } = req.body as Record<string, unknown>;
+  if (!str(topic) || !str(arg1) || !str(arg2)) { res.status(400).json({ error: "Invalid body" }); return; }
+  try {
+    const prompt = `You are a ranked competitive debate judge evaluating a WHISPER MATCH — both debaters argued blind with no knowledge of the other's argument.
+
+Topic: "${topic as string}"
+Argument 1: "${arg1 as string}"
+Argument 2: "${arg2 as string}"
+
+Score each argument ONLY on its own merit — logic, evidence, clarity. No credit for counter-arguments since both were blind.
+
+Respond ONLY with valid JSON:
+{"score1":0-100,"score2":0-100,"logic1":0-100,"logic2":0-100,"persuasion1":0-100,"persuasion2":0-100,"delivery1":0-100,"delivery2":0-100,"verdict":"2-sentence comparison of the two arguments","winner":1|2}`;
+    const result = await claudeText("You are a debate judge. Respond only with valid JSON.", prompt, 400);
+    const jMatch = result.match(/\{[\s\S]*\}/);
+    let parsed = { score1: 55, score2: 55, logic1: 55, logic2: 55, persuasion1: 55, persuasion2: 55, delivery1: 55, delivery2: 55, verdict: "Both arguments showed merit.", winner: 1 };
+    if (jMatch) { try { parsed = { ...parsed, ...JSON.parse(jMatch[0]) }; } catch {} }
+    res.json(parsed);
+  } catch (err) {
+    req.log.error({ err }, "whisper-score failed");
+    res.status(500).json({ error: "AI error" });
+  }
+});
+
 // POST /api/debate/dead-argument — Check if argument reuses previous angles
 router.post("/debate/dead-argument", async (req, res) => {
   const { currentArgument, previousArguments } = req.body as Record<string, unknown>;
