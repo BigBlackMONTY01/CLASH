@@ -5,6 +5,10 @@ import playersRouter from "./players";
 import authRouter from "./auth";
 import roomsRouter from "./rooms";
 import oneVOneRouter from "./1v1";
+import rankingsRouter from "./rankings";
+import cardsRouter from "./cards";
+import progressionRouter from "./progression";
+import aiPersonasRouter from "./ai-personas";
 
 const router: IRouter = Router();
 
@@ -14,5 +18,9 @@ router.use(playersRouter);
 router.use(authRouter);
 router.use(roomsRouter);
 router.use(oneVOneRouter);
+router.use(rankingsRouter);
+router.use(cardsRouter);
+router.use(progressionRouter);
+router.use(aiPersonasRouter);
 
 export default router;

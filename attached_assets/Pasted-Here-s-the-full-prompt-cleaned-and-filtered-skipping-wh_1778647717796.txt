@@ -1,0 +1,177 @@
+Here’s the full prompt, cleaned and filtered — skipping what you already have:
+
+I’m building CLASH, a debate web app. Stack: React + Vite + TypeScript frontend, Express + Drizzle ORM backend, PostgreSQL on Neon, pnpm monorepo. Auth exists with JWT. Groq for AI. Keep all existing routes and logic unless explicitly replacing.
+Build everything below in order. Keep the existing dark aesthetic, Bebas Neue + Barlow Condensed fonts, red accent #e63946, gold #f4c542. Do not touch what already exists unless told to.
+
+PHASE 1 — DATABASE
+Add these tables via Drizzle schema. Run drizzle-kit push after:
+	•	rankings: user_id, mmr, rank (Bronze/Silver/Gold/Diamond/Clash Master), season_id, wins, losses, peak_mmr
+	•	seasons: name, start_date, end_date, is_active
+	•	cards: user_id, match_id, opponent_id, opponent_name, topic, score, rank, rarity (Common/Rare/Epic/Legendary), best_quote, created_at
+	•	shield_tokens: user_id, count, last_granted_at
+	•	signature_titles: user_id, title, assigned_at
+	•	dynasty: user_id, opponent_id, wins, losses
+	•	ai_personas: user_id, name, avatar, tone, aggression, logic_level, humor_level, difficulty, memory_enabled, created_at
+	•	ai_memory: persona_id, user_id, pattern_summary, updated_at
+
+PHASE 2 — MMR + RANKED SYSTEM
+Ranks: Bronze → Silver → Gold → Diamond → Clash Master
+MMR logic:
+	•	Base win = +25 MMR, base loss = -20 MMR
+	•	Win vs higher rank = up to +40, lose vs lower rank = up to -35
+	•	Store peak_mmr separately
+Season resets every 90 days. Top 3 each season get a permanent seasonal badge on profile.
+Show rank badge next to username everywhere — leaderboard, profile, nav pill, verdict screen.
+Progress bar showing MMR to next rank threshold on profile.
+
+PHASE 3 — TRADING CARDS
+After every completed debate generate a collectible card and save to user’s collection.
+Card fields: opponent name + icon, topic, final score, rank earned, best argument quote from highest scoring round, date, rarity.
+Rarity logic:
+	•	Common — standard match
+	•	Rare — win streak 3+ or score 80+
+	•	Epic — beat higher ranked opponent or score 90+
+	•	Legendary — score 95+, Gauntlet completion, or upset win
+Visual style per rarity:
+	•	Common: flat dark, white border
+	•	Rare: blue shimmer border, subtle glow
+	•	Epic: red gradient, animated border pulse
+	•	Legendary: gold foil shimmer, particle effect
+Card Collection screen on profile. Grid layout, filter by rarity. Tap card = full screen expand.
+
+PHASE 4 — PROPAGANDA DETECTOR
+After each round, analyze the user’s argument and tag key sentences:
+	•	✓ Solid — well-reasoned
+	•	⚠ Fallacy — logical error
+	•	~ Weak Evidence — assertion without support
+	•	⚡ Emotional Bait — emotion over logic
+	•	💀 Killer Point — strongest argument
+Run as part of existing scoring API call, not a separate request. Show tags inline on the round score card after AI responds. One tag per sentence max.
+
+PHASE 5 — ARGUMENT DNA CARD
+After every completed debate generate a radar/pentagon chart showing 5 dimensions:
+Logic, Aggression, Consistency, Efficiency, Comeback
+Calculate from round scores and argument patterns. Show on verdict screen. Compare to user’s all-time average. Include in Share Card image export.
+
+PHASE 6 — COACH MODE
+After every debate show a Coach section on verdict screen:
+	•	What worked: 1-2 sentences
+	•	What failed: 1-2 sentences
+	•	Drill for next time: one specific actionable technique
+Add as extra fields to existing verdict API call. No separate request. Distinct visual style from judge verdict — different border color, label it “Coach”.
+
+PHASE 7 — SIGNATURE MOVE TITLES
+After 5+ completed debates, analyze style across all matches and assign one title:
+	•	The Pivot — frequently changes angle
+	•	Evidence Machine — consistently uses examples
+	•	Chaos Agent — unpredictable, high variance
+	•	Avalanche — starts slow, finishes strong
+	•	Sniper — one devastating argument per round
+Show on profile and leaderboard. Update every 5 debates. Badge with short description.
+
+PHASE 8 — STREAK SHIELD
+At 5-win streak, grant one Shield Token automatically. Max 2 tokens held at once.
+If next match is a loss, consume token and keep streak. Show frozen crack animation on streak number, then shatter and reform when token consumed.
+Show token count near streak on home screen.
+
+PHASE 9 — DEBATE DYNASTY
+Track W/L record vs each AI opponent. Show on profile: “7W 2L vs The Professor”
+At 10 wins vs one opponent: unlock permanent Nemesis badge for that opponent on profile.
+At 5 losses in a row vs one opponent: show Rivalry tag — that AI becomes marked rival on home screen with rematch CTA.
+
+PHASE 10 — AI SYSTEMS
+Custom AI Builder — full editor:
+Fields: Name, Avatar emoji, Tone, Aggression (1-10), Logic level (1-10), Humor level (1-10), Difficulty (Easy/Medium/Hard/Extreme), Memory on/off
+Save to DB. Share via link. Use in debates same as existing opponents.
+AI Memory — after 3+ matches vs same custom AI, it remembers user’s argument patterns and starts specifically countering them. Reference previous arguments.
+Mirror Match — new mode. AI is trained on user’s own best arguments from past debates. User fights their own ghost. Show “vs YOUR GHOST” in matchmaking screen.
+Dead Argument Detector — before submitting, detect if argument reuses same core point from a previous round. Show warning: “You said this in Round 1 — find a new angle.” Non-blocking, just a warning.
+
+PHASE 11 — MATCH EXPERIENCE UPGRADES
+Typing area:
+	•	Auto-grow textarea
+	•	Word count display
+	•	Argument strength inline preview — thin bar below textarea shifts red→green as user types, estimating quality in real time
+	•	Quality meter updates every 2 seconds using simple heuristic (length, vocabulary variety, punctuation)
+Battle effects:
+	•	Round transition wipe — cinematic red slash wipes across screen with round number between rounds
+	•	Dark arena fog — animated low-opacity smoke drifting across debate screen background, intensity increases each round
+	•	Opponent idle animations — each AI has unique idle: Professor adjusts glasses emoji, Politician smirks, Devil taps fingers
+	•	Trash talk bubbles — between rounds AI sends one taunting one-liner as a floating speech bubble that fades after 3 seconds
+1V1 PvP border:
+	•	Animated laser running around the button/arena border, leaving light trails as it goes. Loops continuously during active PvP match.
+
+PHASE 12 — NEW MODES
+Whisper Mode — standalone mode in 1v1:
+Both players write arguments blind (hidden from each other). Both revealed simultaneously. Judged on pure content, no counter-arguing. Show countdown reveal animation.
+War Room — 2 humans vs 1 Extreme AI:
+Alternating arguments from both players. Shared score. One winner certificate. Requires invite link to join.
+Devil’s Advocate Mode — solo mode:
+AI picks your side randomly, forcing you to argue something you might disagree with. Score weighted for difficulty. Show “FORCED SIDE” badge during match.
+Hot Mic Event — random mid-debate trigger:
+Next argument worth double points. Gets posted publicly to live activity feed. Show glitch popup notification when activated.
+Comeback Multiplier — automatic:
+If losing by 20+ points after round 2, LAST STAND mode activates. Boosts score ceiling for final round. Show dramatic visual when triggered.
+
+PHASE 13 — SOCIAL + COMMUNITY
+Spectator Mode:
+	•	Share link to watch live 1v1
+	•	Live feed, viewer count
+	•	Audience live poll — viewers vote who’s winning each round, % bar visible to both players as psychological pressure
+Post-match argument highlight voting:
+After 1v1, both players vote on the single best argument from the match. Top arguments go to a Hall of Fame feed on landing page.
+Argument Graveyard:
+Personal hall of shame. Lowest scoring arguments displayed as tombstones with round score carved in. Accessible from profile.
+
+PHASE 14 — LANDING PAGE REBUILD
+Two completely separate experiences: public landing page and logged-in dashboard. Same brand, different layouts.
+Public landing page:
+Nav: Home, Features, Live, Rankings, Sign In
+Hero: Bold headline, short subheadline, Start Debate CTA, Watch Live Match CTA, lightweight animated background.
+Features section — tabbed, not long scroll:
+Tabs: Modes / AI / Ranked / Rewards / Social / Events
+Animate cards in when tab clicked.
+Modes tab: VS AI, 1v1 PvP, Whisper Mode, War Room, Devil’s Advocate, Mirror Match
+AI tab: Persona Battles, AI Memory, Coach Mode, Custom AI Rival, Adaptive Counters, Dead Argument Detector
+Ranked tab: MMR System, Seasons, Rank Badges, Dynasty Records, Streak Shield
+Rewards tab: Trading Cards, Signature Titles, Nemesis Badges, Argument DNA Card
+Social tab: Spectator Mode, Hall of Fame, Argument Graveyard, Live Community Feed
+Events tab: Hot Mic Events, Tournament Mode, Daily Challenge, War Room
+Live Community section: ongoing matches, spectate buttons, best arguments today, top players preview.
+How It Works: 3 steps only — Pick Mode / Debate / Climb
+Social Proof Feed: rotating wins, streaks, achievements.
+Rules: lightweight, fast, mobile perfect, smooth, CTA visible always, no clutter. No live stats bar — already exists in app.
+
+PHASE 15 — LOGGED-IN DASHBOARD
+Player command center replacing current home screen for logged-in users.
+Top area: Welcome back [name], Continue Streak button, Quick Play, Current Rank badge, MMR progress bar, Daily Challenge, Notifications icon.
+Main grid: VS AI, 1v1 Ranked, Whisper Mode, Live Matches, Cards Collection, Match History, Profile, Rivals.
+Secondary modules: Weekly leaderboard preview, Season countdown, Nemesis AI tracker, Signature move card, Streak Shield status.
+Dynamic contextual text that rotates — examples:
+“Your rival wants revenge”
+“1 win from Gold”
+“Whisper Mode trending”
+“Hot Mic active”
+
+PHASE 16 — GHOST REVEAL SYSTEM
+Hidden interactive reveals. All subtle, rare, smooth, mobile friendly. Disableable in settings.
+	1.	Create AI Rival — tiny flickering silhouette in bottom corner of dashboard. Tap opens “Forge Your Rival” modal.
+	2.	Mirror Match — faint shadow appears behind profile card after 3+ losses. Tap enters Mirror Match.
+	3.	Dynasty Records — tap rank badge anywhere. Smoke reveal animation shows full W/L records vs all AIs.
+	4.	Streak Shield — frozen crack animation on streak number when shield is active. Tap shows protection status and token count.
+	5.	Hot Mic Event — random glitch popup during active session (max once per hour). Tap to activate double points on next match.
+	6.	Hidden Card Vault — swipe left on profile screen reveals hidden panel with rarest cards.
+	7.	Coach Reveal — after 2 consecutive losses, user avatar glows faintly. Tap opens coaching tips modal with specific advice based on recent match history.
+
+PERFORMANCE + BACKEND
+	•	Mobile first, fast load, lazy loading, skeleton loaders, no lag animations
+	•	WebSocket for live PvP battles
+	•	Rate limiting on all AI calls
+	•	Anti-abuse: spam detection, copy-paste repeat detection, rage quit cooldowns
+	•	Caching for leaderboard and stats
+	•	Logging for all match outcomes
+
+FINAL RULE
+When existing users return they must feel: “This is still my app — just elite now.” Do not change the personality, tone, or energy of anything that already exists. Only add and upgrade.
+
+That’s everything. Clean, ordered, nothing duplicated, nothing you already have. Give that to Replit AI and let it cook. 👀​​​​​​​​​​​​​​​​

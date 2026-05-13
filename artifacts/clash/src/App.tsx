@@ -900,6 +900,92 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .coach-tip-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
 .coach-tip-text{font-size:13px;color:var(--text-mid);line-height:1.45;}
 .coach-tip-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:4px;}
+
+/* PROPAGANDA TAGS */
+.prop-tag{display:inline;border-radius:2px;padding:0 2px;cursor:help;position:relative;}
+.prop-tag.solid{background:rgba(34,197,94,0.12);color:var(--green);}
+.prop-tag.fallacy{background:rgba(230,57,70,0.15);color:var(--red);text-decoration:underline dotted;}
+.prop-tag.weak_evidence{background:rgba(244,197,66,0.15);color:var(--gold);}
+.prop-tag.emotional_bait{background:rgba(168,85,247,0.15);color:#a855f7;}
+.prop-tag.killer_point{background:rgba(0,119,255,0.15);color:var(--blue);font-weight:600;}
+.prop-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius);}
+.prop-legend-item{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:2px;display:flex;align-items:center;gap:4px;}
+.prop-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;margin-top:8px;}
+
+/* MMR DISPLAY */
+.mmr-chip{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;padding:3px 10px;border-radius:100px;border:1px solid var(--border);color:var(--text-dim);background:transparent;}
+.mmr-chip.bronze{border-color:rgba(176,122,87,0.5);color:#c49a6c;}
+.mmr-chip.silver{border-color:rgba(160,170,180,0.5);color:#a0aab4;}
+.mmr-chip.gold{border-color:rgba(212,175,55,0.5);color:#d4af37;}
+.mmr-chip.diamond{border-color:rgba(90,180,255,0.5);color:#5ab4ff;}
+.mmr-chip.clash-master{border-color:rgba(230,57,70,0.5);color:var(--red);}
+.mmr-delta{font-family:'Bebas Neue',sans-serif;font-size:16px;animation:mmrPop 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes mmrPop{from{transform:scale(0.5) translateY(6px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+.mmr-update-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-top:12px;animation:fadeIn 0.4s ease;}
+.mmr-rankup{border-color:var(--gold);background:rgba(244,197,66,0.06);animation:rankUpGlow 1.2s ease;}
+@keyframes rankUpGlow{0%,100%{box-shadow:none;}50%{box-shadow:0 0 24px 4px rgba(244,197,66,0.3);}}
+
+/* SHIELD INDICATOR */
+.shield-bar{display:flex;gap:4px;align-items:center;margin-top:6px;}
+.shield-pip{font-size:14px;transition:filter 0.3s;}
+.shield-pip.empty{filter:grayscale(1);opacity:0.25;}
+.shield-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:var(--radius);margin-top:8px;}
+.shield-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+.shield-consumed{background:rgba(230,57,70,0.06);border-color:rgba(230,57,70,0.2);}
+.shield-consumed .shield-label{color:var(--red);}
+
+/* DYNASTY CARD */
+.dynasty-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;}
+.dynasty-opp{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;flex:1;}
+.dynasty-record{font-family:'Bebas Neue',sans-serif;font-size:16px;}
+.dynasty-record .dw{color:var(--green);}
+.dynasty-record .dl{color:var(--red);}
+
+/* GHOST REVEAL */
+.ghost-overlay{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.92);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.3s ease;}
+.ghost-modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;}
+.ghost-modal-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;margin-bottom:6px;}
+.ghost-arg-entry{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;}
+.ghost-arg-who{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+.ghost-arg-text{font-size:13px;color:var(--text-mid);line-height:1.5;}
+.ghost-arg-score{font-family:'Bebas Neue',sans-serif;font-size:16px;margin-top:4px;}
+
+/* DASHBOARD SCREEN */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px;}
+.dash-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;text-align:center;}
+.dash-stat-val{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;margin-bottom:2px;}
+.dash-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+.dash-section-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:12px;margin-top:20px;}
+.dash-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.dash-action{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.dash-action:hover{transform:translateY(-2px);border-color:var(--text-dim);}
+.dash-action.primary{border-color:rgba(230,57,70,0.4);}
+.dash-action.primary:hover{border-color:var(--red);}
+.dash-action-icon{font-size:26px;margin-bottom:8px;}
+.dash-action-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.dash-action-sub{font-size:11px;color:var(--text-dim);margin-top:2px;}
+.recent-match-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;}
+.rm-result{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;padding:2px 7px;border-radius:3px;flex-shrink:0;}
+.rm-result.win{background:rgba(34,197,94,0.1);color:var(--green);}
+.rm-result.loss{background:rgba(230,57,70,0.1);color:var(--red);}
+.rm-topic{flex:1;font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rm-score{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--text-dim);flex-shrink:0;}
+
+/* COACH FULL PANEL */
+.coach-panel{background:rgba(0,119,255,0.05);border:1px solid rgba(0,119,255,0.18);border-radius:var(--radius);padding:16px;margin-top:12px;}
+.coach-panel-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.coach-row{margin-bottom:12px;}
+.coach-row-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.coach-row-label.worked{color:var(--green);}
+.coach-row-label.failed{color:var(--red);}
+.coach-row-label.drill{color:var(--gold);}
+.coach-row-text{font-size:13px;color:var(--text-mid);line-height:1.5;}
+
+/* USER CHIP */
+.user-chip{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 10px 4px 4px;cursor:pointer;transition:all 0.2s;}
+.user-chip:hover{border-color:var(--text-dim);}
+.user-chip-av{width:22px;height:22px;border-radius:50%;background:var(--red-dim);border:1px solid rgba(230,57,70,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--red);font-family:'Barlow Condensed',sans-serif;flex-shrink:0;}
+.user-chip-name{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 `;
 
 
@@ -1486,8 +1572,11 @@ function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
 }
 
 interface Message { role: "user" | "ai"; text: string; }
-interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; iq?: number; iqLabel?: string; }
-interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; }
+interface PropagandaTag { sentence: string; tag: string; }
+interface RoundScore { round: number; score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; iq?: number; iqLabel?: string; propaganda?: PropagandaTag[]; }
+interface Verdict { won: boolean; avgScore: number; avgLogic: number; avgPersuasion: number; avgDelivery: number; judgeText: string; improve: string; bestArg: string; weakArg: string; rank: string; outcome: string; coachWorked?: string; coachFailed?: string; coachDrill?: string; }
+interface MmrResult { newMmr: number; delta: number; newTier: string; prevTier: string; rankUp: boolean; rankDown: boolean; }
+interface ProgressionResult { shieldTokens: number; shieldConsumed: boolean; signatureTitle: string | null; dynastyStreak: number; xpGained: number; }
 interface Stats { wins: number; debates: number; bestScore: number; currentStreak: number; bestStreak: number; opponentHistory: Record<string, { wins: number; losses: number }>; }
 interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fallacy"; note: string; }
 interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
@@ -1540,7 +1629,7 @@ function calcXP(logic: number, persuasion: number, delivery: number, won: boolea
   return { logic: logicXP, persuasion: persuasionXP, delivery: deliveryXP, streak: streakBonus + winBonus, total: logicXP + persuasionXP + deliveryXP + streakBonus + winBonus };
 }
 
-type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final" | "multiplayer-lobby" | "multiplayer-waiting" | "multiplayer-debate" | "multiplayer-results";
+type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final" | "multiplayer-lobby" | "multiplayer-waiting" | "multiplayer-debate" | "multiplayer-results" | "dashboard";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
@@ -1602,6 +1691,10 @@ export default function App() {
   const [showRoundFlash, setShowRoundFlash] = useState<number | null>(null);
   const [sigStyle, setSigStyle] = useState<{ name: string; icon: string; desc: string } | null>(null);
   const [earnedXP, setEarnedXP] = useState<{ logic: number; persuasion: number; delivery: number; streak: number; total: number } | null>(null);
+  const [mmrResult, setMmrResult] = useState<MmrResult | null>(null);
+  const [progressionResult, setProgressionResult] = useState<ProgressionResult | null>(null);
+  const [propagandaTags, setPropagandaTags] = useState<PropagandaTag[][]>([]);
+  const [showGhostReveal, setShowGhostReveal] = useState(false);
 
   // Auth state
   const [authUser, setAuthUser] = useState<{email: string; playerId: number} | null>(null);
@@ -2094,7 +2187,7 @@ export default function App() {
       const thinkStart = Date.now();
       const { aiText, roundScore } = await apiPost<{
         aiText: string;
-        roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string };
+        roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; propaganda?: PropagandaTag[] };
       }>("/debate/round", {
         personality: ai.personality,
         topic: selectedTopic.text,
@@ -2128,8 +2221,11 @@ export default function App() {
       setConsecutiveLow(newConsecLow);
       setAdaptiveLevel(newAdaptLevel);
 
-      const newRoundScores: RoundScore[] = [...roundScores, { round: roundNumber, ...roundScore }];
+      const newRoundScores: RoundScore[] = [...roundScores, { round: roundNumber, ...roundScore, propaganda: roundScore.propaganda || [] }];
       setRoundScores(newRoundScores);
+      if (roundScore.propaganda && roundScore.propaganda.length > 0) {
+        setPropagandaTags(prev => [...prev, roundScore.propaganda!]);
+      }
       playSound(roundScore.score >= 60 ? "round-win" : "round-loss");
       if (roundScore.score >= 95) unlockAch("perfect-round");
       setMessages([...newMessages, { role: "ai", text: aiText }]);
@@ -2195,7 +2291,7 @@ export default function App() {
     try {
       const userArguments = _msgs.filter((m) => m.role === "user").map((m) => m.text);
       const safeTopic = selectedTopic?.text?.trim() || "General debate";
-      const judgeVerdict = await apiPost<{ verdict: string; improve: string; rank: string; outcome: string }>("/debate/verdict", {
+      const judgeVerdict = await apiPost<{ verdict: string; improve: string; rank: string; outcome: string; coachWorked?: string; coachFailed?: string; coachDrill?: string }>("/debate/verdict", {
         topic: safeTopic,
         avgScore, avgLogic, avgPersuasion, avgDelivery,
         roundScores: scores,
@@ -2214,6 +2310,9 @@ export default function App() {
         weakArg: allWeak[allWeak.length - 1] || "Opening argument needed more evidence.",
         rank: judgeVerdict.rank || (won ? "B" : "D"),
         outcome: judgeVerdict.outcome || (won ? "clear win" : "clear loss"),
+        coachWorked: judgeVerdict.coachWorked,
+        coachFailed: judgeVerdict.coachFailed,
+        coachDrill: judgeVerdict.coachDrill,
       });
 
       const finalRank = judgeVerdict.rank || (won ? "B" : "D");
@@ -2273,6 +2372,12 @@ export default function App() {
           .then(() => {
             if (isLoggedIn) {
               apiAuthGet<PlayerProfile>("/auth/player").then((p) => setPlayer(p)).catch(() => {});
+              // Update MMR ranking
+              apiAuthPost<MmrResult>("/rankings/update", { won, avgScore, avgLogic, avgPersuasion, avgDelivery, opponentDifficulty: ai?.diff || "medium" })
+                .then((mmr) => setMmrResult(mmr)).catch(() => {});
+              // Update progression (shield tokens, dynasty, title)
+              apiAuthPost<ProgressionResult>("/progression/post-debate", { won, avgScore, currentStreak: won ? (stats.currentStreak ?? 0) + 1 : 0, opponentId: selectedAI || "unknown" })
+                .then((prog) => setProgressionResult(prog)).catch(() => {});
             } else {
               apiGet<PlayerProfile>(`/players/${getOrCreateDeviceId()}`).then((p) => setPlayer(p)).catch(() => {});
             }
@@ -2341,6 +2446,10 @@ export default function App() {
     setSuddenDeathAvailable(false);
     setIsOvertime(false);
     setCustomOpponent({ name: "", personality: "", diff: "medium", icon: "🎭" });
+    setMmrResult(null);
+    setProgressionResult(null);
+    setPropagandaTags([]);
+    setShowGhostReveal(false);
     setTournamentMode(false);
     setTournamentBotIndex(0);
     setTournamentTopics([]);
@@ -2742,6 +2851,15 @@ export default function App() {
                 ⚔ Gauntlet Mode
               </button>
               <p className="gauntlet-sub">6 Opponents. 1 Run. No Excuses.</p>
+            </div>
+            <div style={{ marginTop: "12px", textAlign: "center" }}>
+              <button
+                className="btn btn-ghost"
+                style={{ fontSize: "11px", letterSpacing: "2px" }}
+                onClick={() => setScreen("dashboard")}
+              >
+                📊 Dashboard
+              </button>
             </div>
           </div>
 
@@ -3442,15 +3560,87 @@ export default function App() {
               </div>
             )}
 
-            {/* COACH MODE — post-loss tip */}
-            {!verdict.won && (
-              <div className="coach-tip">
-                <div className="coach-tip-icon">🎯</div>
-                <div>
-                  <div className="coach-tip-lbl">Coach Mode</div>
-                  <div className="coach-tip-text">{verdict.improve || "Focus on grounding your claims with concrete evidence in each round."}</div>
+            {/* COACH FULL PANEL — appears after every match */}
+            <div className="coach-panel">
+              <div className="coach-panel-title">
+                <span>🎯</span> COACH ANALYSIS
+              </div>
+              {verdict.coachWorked && (
+                <div className="coach-row">
+                  <div className="coach-row-label worked">✓ What Worked</div>
+                  <div className="coach-row-text">{verdict.coachWorked}</div>
+                </div>
+              )}
+              {verdict.coachFailed && (
+                <div className="coach-row">
+                  <div className="coach-row-label failed">✗ What Failed</div>
+                  <div className="coach-row-text">{verdict.coachFailed}</div>
+                </div>
+              )}
+              {(verdict.coachDrill || verdict.improve) && (
+                <div className="coach-row">
+                  <div className="coach-row-label drill">⚡ Drill for Next Match</div>
+                  <div className="coach-row-text">{verdict.coachDrill || verdict.improve}</div>
+                </div>
+              )}
+              {!verdict.coachWorked && !verdict.coachFailed && (
+                <div className="coach-row">
+                  <div className="coach-row-label drill">⚡ Focus Area</div>
+                  <div className="coach-row-text">{verdict.improve || "Ground your claims with concrete evidence in each round."}</div>
+                </div>
+              )}
+            </div>
+
+            {/* MMR UPDATE CARD — only for logged-in users */}
+            {mmrResult && (
+              <div className={`mmr-update-card${mmrResult.rankUp ? " mmr-rankup" : ""}`}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "9px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "10px" }}>
+                  Ranked Rating
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span className={`mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`}>
+                    {mmrResult.newTier.toUpperCase()}
+                  </span>
+                  <span className="mmr-delta" style={{ color: mmrResult.delta >= 0 ? "var(--green)" : "var(--red)" }}>
+                    {mmrResult.delta >= 0 ? "+" : ""}{mmrResult.delta} MMR
+                  </span>
+                  {mmrResult.rankUp && <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", color: "var(--gold)" }}>▲ RANK UP</span>}
+                  {mmrResult.rankDown && <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", color: "var(--red)" }}>▼ RANK DOWN</span>}
                 </div>
               </div>
+            )}
+
+            {/* SHIELD TOKEN DISPLAY — only if progression returned data */}
+            {progressionResult && (progressionResult.shieldTokens > 0 || progressionResult.shieldConsumed) && (
+              <div className={`shield-row${progressionResult.shieldConsumed ? " shield-consumed" : ""}`}>
+                <div>
+                  <div className="shield-label">{progressionResult.shieldConsumed ? "🛡 Shield Consumed" : "🛡 Shield Tokens"}</div>
+                  <div className="shield-bar">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <span key={i} className={`shield-pip${i < progressionResult.shieldTokens ? "" : " empty"}`}>🛡</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SIGNATURE TITLE — only if earned */}
+            {progressionResult?.signatureTitle && (
+              <div style={{ padding: "10px 14px", background: "rgba(244,197,66,0.07)", border: "1px solid rgba(244,197,66,0.25)", borderRadius: "var(--radius)", marginTop: "10px", textAlign: "center" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "9px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--gold)", marginBottom: "4px" }}>Title Earned</div>
+                <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "22px", letterSpacing: "3px", color: "var(--gold)" }}>{progressionResult.signatureTitle}</div>
+              </div>
+            )}
+
+            {/* GHOST REVEAL BUTTON */}
+            {roundScores.length > 0 && propagandaTags.some(t => t.length > 0) && (
+              <button
+                className="btn btn-ghost"
+                style={{ marginTop: "10px", width: "100%", fontSize: "12px", letterSpacing: "2px" }}
+                onClick={() => setShowGhostReveal(true)}
+              >
+                🔍 Ghost Reveal — See Hidden Argument Tags
+              </button>
             )}
           </div>
 
@@ -4517,6 +4707,146 @@ export default function App() {
           <button className="pp-logout" onClick={logoutFn}>Log Out</button>
         </div>
       </>
+    )}
+
+    {/* GHOST REVEAL MODAL */}
+    {showGhostReveal && (
+      <div className="ghost-overlay" onClick={() => setShowGhostReveal(false)}>
+        <div className="ghost-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="ghost-modal-title">🔍 GHOST REVEAL</div>
+          <p style={{ fontSize: "13px", color: "var(--text-dim)", marginBottom: "18px", lineHeight: 1.5 }}>
+            Hidden argument tags detected in your debate. These reveal patterns the AI identified in real-time.
+          </p>
+          {propagandaTags.length === 0 ? (
+            <div style={{ color: "var(--text-dim)", fontSize: "13px" }}>No tags detected in this debate.</div>
+          ) : (
+            propagandaTags.map((tags, ri) => (
+              <div key={ri} style={{ marginBottom: "14px" }}>
+                <div className="prop-label">Round {ri + 1}</div>
+                {tags.map((t, j) => {
+                  const cls = t.tag === "killer_point" ? "killer_point" : t.tag === "fallacy" ? "fallacy" : t.tag === "weak_evidence" ? "weak_evidence" : t.tag === "emotional_bait" ? "emotional_bait" : "solid";
+                  const label = t.tag === "killer_point" ? "⚡ Killer Point" : t.tag === "fallacy" ? "⚠ Fallacy" : t.tag === "weak_evidence" ? "⚡ Weak Evidence" : t.tag === "emotional_bait" ? "💔 Emotional Bait" : "✓ Solid";
+                  return (
+                    <div key={j} className="ghost-arg-entry">
+                      <span className={`prop-tag ${cls}`}>{label}</span>
+                      <div className="ghost-arg-text" style={{ marginTop: "6px" }}>"{t.sentence}"</div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))
+          )}
+          <button className="btn btn-ghost" style={{ marginTop: "8px", width: "100%" }} onClick={() => setShowGhostReveal(false)}>Close</button>
+        </div>
+      </div>
+    )}
+
+    {/* DASHBOARD SCREEN */}
+    {screen === "dashboard" && (
+      <div className="screen">
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+          <button className="btn btn-ghost" onClick={reset}>← Home</button>
+          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", margin: 0 }}>DASHBOARD</h2>
+        </div>
+
+        <div className="dash-grid">
+          <div className="dash-stat-card">
+            <div className="dash-stat-val">{stats.debates}</div>
+            <div className="dash-stat-lbl">Debates</div>
+          </div>
+          <div className="dash-stat-card">
+            <div className="dash-stat-val" style={{ color: "var(--green)" }}>{stats.wins}</div>
+            <div className="dash-stat-lbl">Wins</div>
+          </div>
+          <div className="dash-stat-card">
+            <div className="dash-stat-val" style={{ color: "var(--red)" }}>{stats.debates - stats.wins}</div>
+            <div className="dash-stat-lbl">Losses</div>
+          </div>
+          <div className="dash-stat-card">
+            <div className="dash-stat-val" style={{ color: "var(--gold)" }}>{stats.bestScore || "—"}</div>
+            <div className="dash-stat-lbl">Best Score</div>
+          </div>
+          <div className="dash-stat-card">
+            <div className="dash-stat-val" style={{ color: stats.debates > 0 ? "var(--text)" : "var(--text-dim)" }}>
+              {stats.debates > 0 ? Math.round((stats.wins / stats.debates) * 100) + "%" : "—"}
+            </div>
+            <div className="dash-stat-lbl">Win Rate</div>
+          </div>
+          <div className="dash-stat-card">
+            <div className="dash-stat-val" style={{ color: (stats.currentStreak ?? 0) >= 3 ? "#ef4444" : "var(--text)" }}>
+              {(stats.currentStreak ?? 0) >= 1 ? `🔥${stats.currentStreak}` : stats.currentStreak || 0}
+            </div>
+            <div className="dash-stat-lbl">Streak</div>
+          </div>
+        </div>
+
+        <div className="dash-section-title">QUICK PLAY</div>
+        <div className="dash-action-grid">
+          <div className="dash-action primary" onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}>
+            <div className="dash-action-icon">⚔️</div>
+            <div className="dash-action-label">VS AI</div>
+            <div className="dash-action-sub">Classic debate</div>
+          </div>
+          <div className="dash-action" onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}>
+            <div className="dash-action-icon">🏆</div>
+            <div className="dash-action-label">Gauntlet</div>
+            <div className="dash-action-sub">6 opponents</div>
+          </div>
+          <div className="dash-action" onClick={() => { setV1SubScreen(""); setV1Tab("play"); setScreen("multiplayer-lobby"); }}>
+            <div className="dash-action-icon">🤜</div>
+            <div className="dash-action-label">1v1</div>
+            <div className="dash-action-sub">Challenge a friend</div>
+          </div>
+          <div className="dash-action" onClick={() => setScreen("leaderboard")}>
+            <div className="dash-action-icon">📊</div>
+            <div className="dash-action-label">Leaderboard</div>
+            <div className="dash-action-sub">Global rankings</div>
+          </div>
+        </div>
+
+        {/* OPPONENT HISTORY */}
+        {stats.opponentHistory && Object.keys(stats.opponentHistory).length > 0 && (
+          <>
+            <div className="dash-section-title">OPPONENT RECORD</div>
+            {Object.entries(stats.opponentHistory).map(([id, rec]) => {
+              const opp = AI_OPPONENTS.find(a => a.id === id);
+              if (!opp) return null;
+              const total = rec.wins + rec.losses;
+              const winRate = total > 0 ? Math.round((rec.wins / total) * 100) : 0;
+              return (
+                <div key={id} className="dynasty-row" onClick={() => { setSelectedAI(id); setSetupStep(1); setScreen("setup"); }} style={{ cursor: "pointer" }}>
+                  <span style={{ fontSize: "20px" }}>{opp.icon}</span>
+                  <span className="dynasty-opp">{opp.name}</span>
+                  <span className="dynasty-record">
+                    <span className="dw">{rec.wins}W</span> <span className="dl">{rec.losses}L</span>
+                  </span>
+                  <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", color: winRate >= 60 ? "var(--green)" : winRate <= 40 ? "var(--red)" : "var(--text-dim)" }}>
+                    {winRate}%
+                  </span>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {/* ACHIEVEMENTS */}
+        {unlockedAchs.length > 0 && (
+          <>
+            <div className="dash-section-title">ACHIEVEMENTS ({unlockedAchs.length}/{ACHIEVEMENTS.length})</div>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              {ACHIEVEMENTS.map(a => {
+                const unlocked = unlockedAchs.includes(a.id);
+                return (
+                  <div key={a.id} title={a.name} style={{ padding: "8px 12px", background: unlocked ? "var(--surface)" : "transparent", border: `1px solid ${unlocked ? "var(--border)" : "rgba(255,255,255,0.05)"}`, borderRadius: "var(--radius)", opacity: unlocked ? 1 : 0.3, fontSize: "11px", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span>{a.icon}</span>
+                    <span style={{ fontFamily: "'Barlow Condensed',sans-serif", letterSpacing: "1px" }}>{a.name}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </div>
     )}
 
     {showUsernameModal && (
