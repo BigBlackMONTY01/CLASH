@@ -2132,6 +2132,8 @@ export default function App() {
   const [trashTalkBubble, setTrashTalkBubble] = useState<string | null>(null);
   const [v1SendLine, setV1SendLine] = useState<string | null>(null);
   const lastTrashRoundRef = useRef(0);
+  const viewingArgsAfterMatch = useRef(false);
+  const [viewingArgsMode, setViewingArgsMode] = useState(false);
   const [graveyardArgs, setGraveyardArgs] = useState<{text: string; round: number; score: number}[]>([]);
   const [newCard, setNewCard] = useState<DebateCard | null>(null);
   const [showCardReveal, setShowCardReveal] = useState(false);
@@ -2309,7 +2311,7 @@ export default function App() {
         const room = await apiAuthGet<RoomState>(`/1v1/room/${currentRoom.code}`);
         setCurrentRoom(room);
         if (room.status === "debating" && screen === "multiplayer-waiting") setScreen("multiplayer-debate");
-        if (room.status === "complete" && screen !== "multiplayer-results") setScreen("multiplayer-results");
+        if (room.status === "complete" && screen !== "multiplayer-results" && !viewingArgsAfterMatch.current) setScreen("multiplayer-results");
       } catch { /* silent poll fail */ }
     };
     poll();
@@ -2381,8 +2383,8 @@ export default function App() {
       "You're helping me practice my yawning.",
     ];
     const show = () => {
-      setTrashTalkBubble(TRASH_MULTIPLAYER[Math.floor(Math.random() * TRASH_MULTIPLAYER.length)]);
-      setTimeout(() => setTrashTalkBubble(null), 4000);
+      setV1SendLine(TRASH_MULTIPLAYER[Math.floor(Math.random() * TRASH_MULTIPLAYER.length)]);
+      setTimeout(() => setV1SendLine(null), 8000);
     };
     const delay = 8000 + Math.random() * 6000;
     const t = setTimeout(() => {
@@ -4703,9 +4705,15 @@ export default function App() {
                   {currentRoom.topicCat}
                 </div>
               </div>
-              <button className="btn btn-ghost" style={{ fontSize: "11px", padding: "6px 14px" }} onClick={() => setScreen("multiplayer-waiting")}>
-                Room Info
-              </button>
+              {viewingArgsMode ? (
+                <button className="btn btn-ghost" style={{ fontSize: "11px", padding: "6px 14px" }} onClick={() => { viewingArgsAfterMatch.current = false; setViewingArgsMode(false); setScreen("multiplayer-results"); }}>
+                  ← Results
+                </button>
+              ) : (
+                <button className="btn btn-ghost" style={{ fontSize: "11px", padding: "6px 14px" }} onClick={() => setScreen("multiplayer-waiting")}>
+                  Room Info
+                </button>
+              )}
             </div>
 
             <div className="v1-topic-banner">
@@ -4908,7 +4916,7 @@ export default function App() {
             </div>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
               <button className="btn btn-primary" onClick={() => { setCurrentRoom(null); setRoomPlayerNum(null); setRoomArgInput(""); setRoomError(""); setV1SubScreen(""); setV1Tab("play"); setScreen("multiplayer-lobby"); }}>⚔ Rematch</button>
-              <button className="btn btn-secondary" onClick={() => setScreen("multiplayer-debate")}>View Arguments</button>
+              <button className="btn btn-secondary" onClick={() => { viewingArgsAfterMatch.current = true; setViewingArgsMode(true); setScreen("multiplayer-debate"); }}>View Arguments</button>
               <button className="btn btn-secondary" onClick={() => {
                 const iWon2 = currentRoom.winnerPlayerNum === roomPlayerNum;
                 const myN = roomPlayerNum === 1 ? currentRoom.player1Name : (currentRoom.player2Name || "You");
