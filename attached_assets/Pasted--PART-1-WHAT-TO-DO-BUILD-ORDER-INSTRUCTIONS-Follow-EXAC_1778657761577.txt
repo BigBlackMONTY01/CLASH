@@ -1,0 +1,393 @@
+
+
+PART 1 — WHAT TO DO (BUILD ORDER + INSTRUCTIONS)
+
+Follow EXACT order. Do not skip steps.
+
+⸻
+
+🧱 STEP 1: CORE DATA + MATCH PIPELINE (BUILD FIRST)
+
+🎯 Goal:
+
+Make matches work end-to-end before UI upgrades.
+
+Build:
+
+1. Match Result Engine
+
+After every match:
+	•	Calculate winner
+	•	Calculate score difference
+	•	Save match to database
+
+
+3. POST-MATCH PIPELINE (CRITICAL)
+
+Run after every match:
+
+calculate_score()
+update_rank()
+save_match()
+generate_card()
+update_ai_memory()
+update_streak()
+update_style()
+
+
+
+🧱 STEP 2: VS AI SYSTEMS
+
+⸻
+
+4. DEVIL’S ADVOCATE MODE
+
+Add toggle in VS AI start screen.
+
+Logic:
+user_side = random(PRO, CON) ai_side = opposite(user_side)
+
+Store match flag:
+	•	mode = “devils_advocate”
+
+⸻
+
+5. MIRROR MATCH MODE,shoudn't be availabe until after 5 matches 
+
+AI uses user past best arguments.
+
+Logic:
+	•	fetch user.top_arguments (should be compiled from user's 5 matches)
+	•	AI trains responses on them
+
+Store:
+	•	mode = “mirror_match”
+
+🧱 STEP 3: 1v1 HUMANS MODES
+
+
+6. WAR ROOM MODE
+
+Add option in 1v1 menu.
+
+Flow:
+	•	Player 1 → AI → Player 2 → AI
+
+Logic:
+
+turn_order = [p1, ai, p2, ai]
+team_score = p1 + p2
+
+
+
+7. WHISPER MODE
+	•	Players cannot see each other’s arguments
+	•	Reveal both at same time
+
+
+🧱 STEP 4: AI MEMORY SYSTEM
+
+⸻
+
+8. AI MEMORY 
+
+After 3 matches vs same AI:
+
+Store:
+	•	user argument patterns
+	•	weaknesses
+	•	style tags
+
+Then AI adapts:
+	•	counters patterns
+	•	references past habits lightly
+
+⸻
+
+🧱 STEP 5: CARD SYSTEM
+
+⸻
+
+9. GENERATE CARD AFTER EVERY MATCH
+Card should be fancy, with blitz or lighning designs according to rarity
+Card fields:
+	•	opponent
+	•	topic
+	•	score
+	•	result
+	•	best quote
+	•	rarity
+
+Rarity rules:
+	•	Common: normal match
+	•	Rare: streak 3+ or score 80+
+	•	Epic: 90+ or rank upset
+	•	Legendary: 95+ or special mode win
+
+Store in DB.
+
+⸻
+
+🧱 STEP 6: PROFILE META SYSTEMS
+
+⸻
+
+10. STYLE CLASSIFICATION (every 5 matches)
+Assign:
+	•	Sniper
+	•	Chaos Agent
+	•	Pivot
+	•	Avalanche
+	•	Evidence Machine
+
+⸻
+
+11. DEBATE DYNASTY
+
+Track:
+	•	wins/losses per AI opponent
+
+Example:
+	•	“7W 2L vs The Professor”
+
+Unlock:
+	•	10 wins → Nemesis badge
+	•	5 loss streak → Rival tag
+
+⸻
+
+12. GRAVEYARD
+
+Store worst arguments:
+	•	topic
+	•	score
+	•	“tombstone entry”
+
+
+13. CARD COLLECTION
+	•	Grid UI
+	•	Filter by rarity
+	•	Tap → expand card
+
+
+🧱 STEP 7: MATCH EXPERIENCE POLISH
+
+⸻
+
+
+
+15. AI TRASH TALK
+
+After each round in 1v1:
+	•	AI sends 1 line bubble of toxic trash talking for user to send to other user 
+	•	disappears after 3 seconds
+
+
+
+16. ARGUMENT TAGGING
+
+Each sentence gets:
+	•	✓ Solid
+	•	⚠ Fallacy
+	•	~ Weak Evidence
+	•	⚡ Emotional
+	•	💀 Killer Point
+
+⸻
+
+🧱 STEP 8: UI UPGRADES
+
+⸻
+
+17. HOME PAGE
+
+Add:
+
+Top:
+	•	Rank badge
+	•	MMR bar
+
+Main:
+	•	Continue Streak
+
+Floating:
+	•	BOT ICON, used to Create AI Rival button
+
+Remove:
+	•	live stats duplicates and streak line
+
+⸻
+
+18. VS AI PAGE
+
+Add toggles:
+	•	Devil’s Advocate
+	•	Mirror Match
+
+⸻
+
+19. 1v1 PAGE
+
+Add:
+	•	War Room mode
+	•	Whisper mode
+
+
+
+20. MATCH PAGE
+
+Add:
+	•	auto-growing input
+	•	AI idle animations, varies per ai
+	•	trash talk bubbles
+	•	argument tagging
+
+⸻
+
+21. RESULTS PAGE (SIMPLIFY)
+
+REMOVE:
+	•	XP stats
+	•	coach analysis
+	•	ghost reveal
+	•	argument breakdown clutter
+
+KEEP:
+	•	Winner
+	•	Score
+	•	Rank change
+
+ADD:
+	•	Match Details button
+	•	Radar chart
+	•	Card generation animation adust the ui/ux to accomodate these
+
+⸻
+
+22. PROFILE PAGE
+
+Add tabs:
+	•	Match History
+	•	Card Collection
+	•	Debate Dynasty
+	•	Graveyard
+
+Swipe feature:
+	•	Hidden Card Vault
+
+⸻
+
+🧭 PART 2 — FINAL UI + SYSTEM MAP (WHERE EVERYTHING LIVES)
+
+⸻
+
+🏠 HOME PAGE
+
+TOP HEADER
+	•	Username
+	•	Rank badge
+	•	MMR bar
+
+
+
+MAIN ACTIONS
+	•	Continue Streak
+	
+
+
+FLOATING
+	•	Create AI Rival (bottom-right)
+
+
+
+🤖 VS AI PAGE
+	•	Normal mode
+	•	Devil’s Advocate toggle
+	•	Mirror Match toggle
+
+⸻
+
+👥 1v1 PAGE
+	•	Normal 1v1
+	•	War Room (2v1 AI)
+	•	Whisper Mode
+
+⸻
+
+⚔️ MATCH SCREEN
+
+TOP
+	•	Rank badge
+	•	Mode label
+	•	Round number
+
+⸻
+
+CENTER
+	•	Argument input (auto-grow)
+	•	Opponent AI animation panel
+
+⸻
+
+OVERLAYS
+	•	red slash round transition
+	•	trash talk bubble
+
+⸻
+
+SCORING
+	•	sentence-level tags
+
+⸻
+
+🏁 RESULTS SCREEN
+	•	Winner
+	•	Score
+	•	Rank change
+
+BUTTON:
+	•	Match Details
+
+ADD:
+	•	Radar chart
+	•	Card generation
+
+⸻
+
+👤 PROFILE PAGE
+
+HEADER
+	•	Rank badge
+	•	MMR bar
+	•	Style badge
+
+⸻
+
+TABS
+	•	Match History
+	•	Cards
+	•	Dynasty
+	•	Graveyard
+
+⸻
+
+EXTRA
+	•	Hidden Card Vault (swipe left in profile section)
+
+⸻
+
+🧠 SYSTEM LAYER (NO UI)
+	•	MMR engine
+	•	AI memory
+	•	card generator
+	•	style classifier
+	•	post-match pipeline
+
+⸻
+
+⚠️ FINAL RULES FOR REPLIT AI
+	•	Do NOT create new pages
+	•	ONLY enhance existing ones
+	•	EVERYTHING must connect to match pipeline
+	•	ALL features must persist in DB
+	•	NO feature is visual-only — it must affect gameplay or stats
