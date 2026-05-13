@@ -1022,7 +1022,7 @@ const ACHIEVEMENTS = [
 function pickTopics() {
   const pool = [...TOPIC_POOL];
   const picked: typeof TOPIC_POOL = [];
-  while (picked.length < 5 && pool.length > 0) {
+  while (picked.length < 3 && pool.length > 0) {
     const idx = Math.floor(Math.random() * pool.length);
     picked.push(pool.splice(idx, 1)[0]);
   }
@@ -1544,6 +1544,7 @@ export default function App() {
   const [roomJoinCode, setRoomJoinCode] = useState("");
   const [v1SubScreen, setV1SubScreen] = useState<"" | "join">("");
   const [waitingTopics, setWaitingTopics] = useState<{cat: string; text: string}[]>([]);
+  const [customTopicInput, setCustomTopicInput] = useState("");
   const [v1Tab, setV1Tab] = useState<"play" | "history">("play");
   const [v1History, setV1History] = useState<V1HistoryEntry[]>(() => { try { return JSON.parse(localStorage.getItem("clash-1v1-history") || "[]"); } catch { return []; } });
   const [themeMode, setThemeMode] = useState<"dark" | "light">(() => { try { return (localStorage.getItem("clash-theme") as "dark" | "light") || "dark"; } catch { return "dark"; } });
@@ -2289,7 +2290,7 @@ export default function App() {
   const shuffleWaitingTopics = () => {
     const pool = TOPIC_POOL.slice();
     for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-    setWaitingTopics(pool.slice(0, 5));
+    setWaitingTopics(pool.slice(0, 3));
   };
 
   const setRoomTopicFn = async (topic: { cat: string; text: string }) => {
@@ -2315,7 +2316,7 @@ export default function App() {
       const room = await apiAuthGet<RoomState>(`/1v1/room/${data.code}`);
       const pool = TOPIC_POOL.slice();
       for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-      setWaitingTopics(pool.slice(0, 5));
+      setWaitingTopics(pool.slice(0, 3));
       setCurrentRoom(room);
       setRoomPlayerNum(1);
       setScreen("multiplayer-waiting");
@@ -3493,7 +3494,7 @@ export default function App() {
               <div className="v1-setup-block">
                 <div className="v1-setup-lbl">Rounds</div>
                 <div className="v1-rounds-row">
-                  {[1,2,3,4,5].map(r => (
+                  {[1,2,3,4,5,7,12,15].map(r => (
                     <button
                       key={r}
                       className={`v1-rounds-btn${currentRoom.totalRounds === r ? " active" : ""}`}
@@ -3524,6 +3525,34 @@ export default function App() {
                   ))}
                 </div>
                 <button className="v1-topic-shuffle" onClick={shuffleWaitingTopics}>↻ Shuffle topics</button>
+                <div style={{ marginTop: "14px" }}>
+                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "6px" }}>Custom Topic</div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <input
+                      type="text"
+                      value={customTopicInput}
+                      onChange={e => setCustomTopicInput(e.target.value)}
+                      placeholder="Type any debate topic…"
+                      maxLength={120}
+                      style={{ flex: 1, background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "9px 12px", fontSize: "13px", color: "var(--text)", fontFamily: "'Barlow',sans-serif", outline: "none" }}
+                      onKeyDown={e => {
+                        if (e.key === "Enter" && customTopicInput.trim()) {
+                          setRoomTopicFn({ cat: "Custom", text: customTopicInput.trim() });
+                          setCustomTopicInput("");
+                        }
+                      }}
+                    />
+                    <button
+                      style={{ background: "rgba(230,57,70,0.1)", border: "1px solid rgba(230,57,70,0.35)", borderRadius: "var(--radius)", color: "var(--red)", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "2px", textTransform: "uppercase", padding: "9px 14px", cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.15s" }}
+                      onClick={() => {
+                        if (customTopicInput.trim()) {
+                          setRoomTopicFn({ cat: "Custom", text: customTopicInput.trim() });
+                          setCustomTopicInput("");
+                        }
+                      }}
+                    >Set</button>
+                  </div>
+                </div>
               </div>
             )}
 
