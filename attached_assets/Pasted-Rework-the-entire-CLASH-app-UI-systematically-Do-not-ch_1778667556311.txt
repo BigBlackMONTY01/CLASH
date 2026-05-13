@@ -1,0 +1,125 @@
+Rework the entire CLASH app UI systematically. Do not change any functionality, logic, or backend. Only fix visual design, spacing, consistency, and layout. Keep the dark aesthetic, red accent #e63946, gold #f4c542, Bebas Neue for headings, Barlow Condensed for labels, Barlow for body text.
+STEP 1 — ESTABLISH DESIGN SYSTEM FIRST
+Before touching any screen, define these reusable styles and apply them everywhere:
+Buttons:
+	•	Primary: full width, 52px height, background #e63946, white text, border-radius 8px, Barlow Condensed 14px, letter-spacing 3px, uppercase
+	•	Secondary: full width, 52px height, background #111, border 1px solid #222, white text, same font
+	•	Ghost: full width, 48px height, transparent background, border 1px solid #333, color #666, same font
+	•	Danger: same as primary but background #7a1a1a
+	•	Gold: same as secondary but border rgba(244,197,66,0.4), color #f4c542
+	•	Never mix these. Never create one-off button styles for individual screens.
+Cards:
+	•	Background #111, border 1px solid #1e1e1e, border-radius 8px, padding 16px 20px
+	•	Selected state: border #e63946, background rgba(230,57,70,0.08)
+	•	Hover state: border #333
+Spacing:
+	•	Page padding: 20px horizontal, 40px top, 32px bottom
+	•	Section gap: 24px between major sections
+	•	Element gap: 12px between related elements
+	•	Label to content gap: 10px
+Typography:
+	•	Page titles: Bebas Neue 36px, letter-spacing 3px
+	•	Section labels: Barlow Condensed 11px, letter-spacing 4px, uppercase, color #555
+	•	Card titles: Barlow Condensed 16px, font-weight 700, letter-spacing 1px, uppercase
+	•	Body text: Barlow 15px, color #999
+	•	Small labels: Barlow Condensed 10px, letter-spacing 2px, uppercase, color #444
+Navigation pattern — apply to EVERY screen:
+	•	Primary CTA: full width at bottom, always red primary button
+	•	Back: small ghost button, left aligned, above primary CTA
+	•	Never show HOME button on any screen that already has BACK
+	•	Never show more than 2 navigation options on any screen
+
+STEP 2 — HOME SCREEN
+Layout from top to bottom:
+	1.	Nav bar — logo left, sound + profile right. No extra buttons.
+	2.	Hero — “ARGUE. WIN.” headline, taunt line below. Same as now.
+	3.	Primary actions row — two equal buttons side by side: VS AI (primary red) and LEADERBOARD (secondary dark). Equal width, equal height 52px.
+	4.	Modes section — label “MODES” above. Three buttons stacked:
+	•	1V1 CHALLENGE — full width, secondary style with animated laser border. Remove floating “1 V 1” text completely.
+	•	GAUNTLET MODE — full width, gold style. Keep existing.
+	•	MIRROR MATCH — full width, secondary style. Show lock state inline if locked — grey out the button, show “🔒 Unlocks after X debates” as small text below the button. Do not show it as a separate centered element.
+	5.	Streak section — only show if user has active streak. One card, consistent card style. “🔥 KEEP THE X-WIN STREAK ALIVE” inside the card. Not a button — a card with a CTA inside.
+	6.	Today’s Clash — existing carousel. Keep as is.
+	7.	Arena stats strip — existing. Keep as is.
+	8.	Live activity feed — existing. Keep as is.
+	9.	Personal stats — existing. Keep as is.
+Remove: floating purple button. Move Forge AI access to profile mini page or a dedicated icon in nav.
+
+STEP 3 — SETUP FLOW
+Apply consistent layout to all 3 setup steps. Each step:
+	•	Page label top left: “STEP X OF 3”
+	•	Section label above each selection
+	•	Content fills middle
+	•	Bottom navigation: BACK (ghost, left) + PRIMARY CTA (red, right) side by side. Nothing else. No HOME button.
+Step 1 — Choose Opponent:
+	•	Grid of opponent cards, 2 columns
+	•	Each card: emoji icon centered top, name in Barlow Condensed bold, description in Barlow small, difficulty badge bottom
+	•	Selected card gets red border and red tint
+	•	Custom opponent card at end of grid, same size
+	•	Bottom: “← BACK” ghost + “NEXT: PICK TOPIC →” primary
+Step 2 — Choose Topic:
+	•	Topics in single column list, not grid
+	•	Each topic card: category label small top, topic text medium, rating badge bottom left, vote button bottom right
+	•	Custom topic input below list, same card style
+	•	Bottom: “← BACK” ghost + “NEXT: PICK SIDE →” primary
+Step 3 — Rounds + Side:
+	•	Rounds picker: 4 equal boxes in a row. Selected = red border.
+	•	Topic display card: shows selected topic in a card
+	•	Side picker: two equal cards side by side. FOR green border when selected, AGAINST red border when selected.
+	•	Devil’s Advocate toggle: one card below side picker, consistent card style
+	•	Bottom: “← BACK” ghost + “⚡ START CLASH” primary full width
+
+STEP 4 — FORGE YOUR RIVAL
+Compact everything for mobile. Target: minimal scrolling on iPhone.
+	•	Page title: “FORGE YOUR RIVAL” Bebas Neue 28px. Subtitle smaller below.
+	•	NAME field: standard input, 44px height, less padding
+	•	AVATAR section: label + emoji grid. Emojis 32px, grid 8 columns, 2 rows max, horizontal scroll if more. Tight gap 6px between emojis.
+	•	DEBATE TONE: label + 2x2 grid of compact cards. Each card 64px height max. Title Barlow Condensed 13px, description Barlow 11px.
+	•	BEHAVIOR sliders: label + 3 sliders. Each slider row 40px height max. Reduce gap between sliders to 8px.
+	•	All section gaps: 16px max
+	•	Bottom: full width primary “FORGE RIVAL” button
+
+STEP 5 — OPPONENT SELECTOR CARDS
+The existing 2-column grid is fine structurally. Fix:
+	•	Consistent padding inside each card: 16px all sides
+	•	Icon size: 32px
+	•	Name: Barlow Condensed 15px bold uppercase
+	•	Description: Barlow 12px color #666 centered
+	•	Difficulty badge: consistent size, consistent colors across all cards
+	•	Selected state: red border, red tint — same as design system
+	•	Remove any purple or non-standard colors from difficulty badges. Use only: green=easy, gold=medium, red=hard, purple=extreme
+
+STEP 6 — VERDICT SCREEN
+Clean up spacing and hierarchy:
+	•	Win/Loss title: Bebas Neue 48px, centered
+	•	Rank badge: centered below title
+	•	Score breakdown: 3 equal cards in a row
+	•	Judge verdict: card with gold left border
+	•	Best moment + Fatal flaw: two equal cards side by side
+	•	Coach section: card with blue left border, clearly separated from judge
+	•	Improve tip: card with blue left border
+	•	Actions: wrap in consistent button styles. Primary = Instant Rematch. Secondary = Swap Sides, Replay, Share. Ghost = New Match, Home.
+	•	Remove any inconsistent one-off button styles
+
+STEP 7 — LEADERBOARD
+	•	Consistent tab style matching design system
+	•	Each row: rank number, avatar, name, meta, score — same layout every row
+	•	Your row highlighted with red border, same card style
+	•	Loading state: skeleton loader, not spinner
+
+STEP 8 — PROFILE MINI PAGE
+	•	Avatar circle: 52px, initials, red background
+	•	Username: Barlow Condensed 18px bold uppercase
+	•	Email: Barlow 13px color #555
+	•	Stats grid: 3 columns, consistent card style
+	•	Nemesis card: consistent card style
+	•	Display name input: consistent input style
+	•	Buttons: Edit Name = primary red. Log Out = ghost. Consistent sizes.
+
+FINAL RULES
+	•	Never create one-off button styles
+	•	Never show more than 2 navigation buttons on any screen
+	•	Never show HOME button when BACK exists
+	•	Every card same border-radius and padding
+	•	Every section label same size and color
+	•	No airy desktop spacing — this is a mobile app
