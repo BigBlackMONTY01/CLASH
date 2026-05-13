@@ -30,7 +30,7 @@ background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0
 
 .app{max-width:780px;margin:0 auto;padding:40px 20px 32px;flex:1;width:100%;}
 
-.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;padding-bottom:20px;border-bottom:1px solid var(--border);}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:4px;color:var(--text);position:relative;}
 .logo span{color:var(--red);}
 .logo::after{content:'BETA';font-family:'Barlow Condensed',sans-serif;font-size:10px;
@@ -62,9 +62,14 @@ border:none;cursor:pointer;transition:all 0.2s;font-weight:600;touch-action:mani
 .btn-confirm-forfeit:hover{background:#15803d;transform:translateY(-1px);box-shadow:0 6px 20px rgba(22,163,74,0.4);}
 .btn-forfeit-counting{background:transparent;color:var(--red);border:1px solid var(--red);min-width:60px;font-size:18px;letter-spacing:0;padding:10px 20px;}
 .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none !important;box-shadow:none !important;}
+.btn-gold{background:var(--gold);color:#0a0a0a;font-weight:700;}
+.btn-gold:hover{background:#f7d060;transform:translateY(-1px);box-shadow:0 8px 24px rgba(244,197,66,0.4);}
+.btn-danger{background:#7a1a20;color:#fff;border:1px solid #991b1b;}
+.btn-danger:hover{background:#991b1b;transform:translateY(-1px);}
 
 .section-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:4px;
-text-transform:uppercase;color:var(--text-dim);margin-bottom:16px;}
+text-transform:uppercase;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.section-label::after{content:'';flex:1;max-width:48px;height:1px;background:var(--red);opacity:0.35;}
 
 .stats-row{display:flex;gap:12px;margin-bottom:40px;flex-wrap:wrap;}
 .stat-card{flex:1;min-width:100px;background:var(--surface);border:1px solid var(--border);
@@ -193,14 +198,17 @@ color:var(--text);resize:none;outline:none;transition:border-color 0.2s;line-hei
 .rank-F{background:rgba(230,57,70,0.08);border:2px solid rgba(230,57,70,0.3);color:#ff4655;}
 
 .verdict-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-padding:28px;margin-bottom:20px;}
+padding:28px;margin-bottom:20px;overflow:hidden;position:relative;}
+.verdict-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.verdict-card.win-card::before{background:var(--green);}
+.verdict-card.lose-card::before{background:var(--red);}
 .verdict-header{text-align:center;margin-bottom:28px;}
 .verdict-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:3px;}
 .verdict-title.win{color:var(--green);}
 .verdict-title.lose{color:var(--red);}
 .verdict-sub{font-size:14px;color:var(--text-dim);margin-top:4px;}
 .score-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
-.score-pill{background:var(--surface2);border-radius:var(--radius);padding:14px;text-align:center;}
+.score-pill{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;}
 .score-pill .sp-val{font-family:'Bebas Neue',sans-serif;font-size:36px;display:block;}
 .score-pill .sp-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;
 text-transform:uppercase;color:var(--text-dim);}
@@ -219,7 +227,11 @@ text-transform:uppercase;margin-bottom:6px;}
 .arg-label.worst{color:var(--red);}
 
 .verdict-moments{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.verdict-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.verdict-actions{display:flex;flex-direction:column;gap:8px;}
+.verdict-actions-primary{display:flex;gap:10px;}
+.verdict-actions-secondary{display:flex;gap:8px;flex-wrap:wrap;}
+.verdict-actions-primary .btn{flex:1;}
+.verdict-actions-secondary .btn{flex:1;font-size:11px;padding:9px 14px;letter-spacing:1.5px;}
 
 .lb-row{display:flex;align-items:center;gap:16px;padding:14px 16px;
 background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
@@ -471,7 +483,8 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 
   .verdict-moments{grid-template-columns:1fr;}
   .verdict-actions{gap:8px;}
-  .verdict-actions .btn{flex:1;min-width:calc(50% - 4px);text-align:center;}
+  .verdict-actions-primary{flex-direction:column;}
+  .verdict-actions-secondary .btn{min-width:calc(50% - 4px);}
 
   .input-footer{gap:6px;}
   .submit-row{margin-left:auto;}
@@ -514,10 +527,17 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   .feed-text{font-size:12px;}
   .live-feed-wrap{margin-top:18px;}
   .home-cta .btn{min-height:48px;}
+  .home-modes{gap:8px;}
+  .home-mode-btn{padding:13px 8px 11px;}
+  .home-mode-icon{font-size:18px;margin-bottom:5px;}
+  .home-mode-title{font-size:11px;letter-spacing:1.5px;}
+  .home-mode-sub{font-size:8px;}
+  .setup-steps{margin-bottom:20px;}
 }
 @media (max-width:360px){
   .ai-grid{grid-template-columns:1fr 1fr;}
   .gauntlet-bots{grid-template-columns:repeat(2,1fr);}
+  .home-modes{grid-template-columns:repeat(3,1fr);}
   .mf-vs-card{padding:10px 12px;}
   .messages{max-height:240px;}
   .featured-topic-text{font-size:13px;}
@@ -570,13 +590,40 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .gauntlet-btn:hover{background:rgba(244,197,66,0.07);color:var(--gold);transform:translateY(-1px);}
 .gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;margin-top:6px;}
 
-/* 1V1 BUTTON */
+/* 1V1 BUTTON (legacy, kept for any residual use) */
 .v1-glow-btn{position:relative;display:block;width:100%;max-width:400px;margin:0 auto;cursor:pointer;background:transparent;border:none;border-top:1.5px solid rgba(230,57,70,0.5);border-bottom:1.5px solid rgba(230,57,70,0.5);border-radius:0;padding:15px 32px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:all 0.2s;overflow:hidden;}
 .v1-glow-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(230,57,70,0.08) 50%,transparent);transform:translateX(-120%);transition:transform 0.55s ease;}
 .v1-glow-btn:hover::before{transform:translateX(120%);}
 .v1-glow-btn:hover{border-color:rgba(230,57,70,0.85);}
 .v1-glow-btn:active{transform:scale(0.98);}
 .v1-text{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:14px;color:#fff;display:inline-block;}
+
+/* HOME MODES GRID */
+.home-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;margin-bottom:8px;}
+.home-mode-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 10px 14px;cursor:pointer;transition:all 0.2s;text-align:center;font-family:'Barlow Condensed',sans-serif;touch-action:manipulation;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;}
+.home-mode-btn:hover:not(:disabled){transform:translateY(-2px);}
+.home-mode-btn.red{border-color:rgba(230,57,70,0.3);}
+.home-mode-btn.red:hover{border-color:var(--red);background:rgba(230,57,70,0.05);}
+.home-mode-btn.gold{border-color:rgba(244,197,66,0.25);}
+.home-mode-btn.gold:hover{border-color:rgba(244,197,66,0.6);background:rgba(244,197,66,0.04);}
+.home-mode-btn.purple{border-color:rgba(168,85,247,0.2);}
+.home-mode-btn.purple:hover:not(:disabled){border-color:rgba(168,85,247,0.5);background:rgba(168,85,247,0.04);}
+.home-mode-btn:disabled{opacity:0.38;cursor:not-allowed;}
+.home-mode-icon{font-size:20px;margin-bottom:7px;line-height:1;}
+.home-mode-title{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:3px;line-height:1;}
+.home-mode-title.red{color:var(--red);}
+.home-mode-title.gold{color:var(--gold);}
+.home-mode-title.purple{color:#a855f7;}
+.home-mode-sub{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);line-height:1.3;}
+
+/* SETUP STEP INDICATOR */
+.setup-steps{display:flex;align-items:center;margin-bottom:28px;gap:0;}
+.setup-step-seg{flex:1;height:2px;background:var(--border);transition:background 0.3s;}
+.setup-step-seg.done,.setup-step-seg.active{background:var(--red);}
+.setup-step-node{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:1px;color:var(--text-dim);flex-shrink:0;transition:all 0.3s;}
+.setup-step-node.done{border-color:var(--red);background:var(--red);color:#fff;}
+.setup-step-node.active{border-color:var(--red);color:var(--red);}
+.setup-step-label{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:4px;white-space:nowrap;}
 
 /* Featured topic card */
 @keyframes featuredSlideLeft{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
@@ -589,7 +636,8 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .featured-left{flex:1;min-width:0;}
 .featured-badge{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--red);background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);border-radius:3px;padding:2px 8px;margin-bottom:8px;}
 .featured-topic-text{font-size:15px;font-weight:500;line-height:1.4;color:var(--text);}
-.featured-cat{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:6px;}
+.featured-cat{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+.featured-meta-row{display:flex;align-items:center;gap:8px;margin-top:7px;}
 .featured-cta{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--red);white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:4px;}
 .featured-nav{display:flex;align-items:center;justify-content:space-between;padding:10px 4px 0;}
 .featured-dots{display:flex;gap:5px;align-items:center;}
@@ -646,7 +694,8 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 /* SOUND TOGGLE */
 .sound-btn{background:none;border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color 0.18s,opacity 0.18s;color:var(--text-dim);-webkit-tap-highlight-color:transparent;flex-shrink:0;}.sound-btn:hover{color:var(--text);}.sound-btn.muted{color:var(--text-dim);opacity:0.4;}
 /* Personal record */
-.nemesis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-top:10px;}
+.nemesis-card{background:var(--surface);border:1px solid rgba(230,57,70,0.3);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-top:10px;transition:border-color 0.2s;}
+.nemesis-card:hover{border-color:rgba(230,57,70,0.6);}
 .nemesis-icon{font-size:26px;flex-shrink:0;}
 .nemesis-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
 .nemesis-sub{font-size:12px;color:var(--text-dim);}
@@ -738,6 +787,13 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 /* 1V1 LOBBY TABS */
 .v1-tab-row{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:20px;}
 .v1-tab{flex:1;padding:10px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;border-radius:6px;cursor:pointer;border:none;background:transparent;color:var(--text-dim);transition:all 0.2s;}
+.v1-history-stats{display:flex;gap:16px;margin-bottom:16px;}
+.v1-history-stat{text-align:center;}
+.v1-history-stat-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text);display:block;line-height:1;}
+.v1-history-stat-val.green{color:var(--green);}
+.v1-history-stat-val.red{color:var(--red);}
+.v1-history-stat-val.gold{color:var(--gold);}
+.v1-history-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:2px;}
 .v1-tab.active{background:var(--red);color:#fff;}
 
 /* 1V1 MATCH HISTORY */
@@ -814,6 +870,29 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .v1-topic-shuffle{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:none;border:none;cursor:pointer;padding:6px 0 2px;transition:color 0.18s;}
 .v1-topic-shuffle:hover{color:var(--text);}
 .v1-opp-arg-reveal{margin-top:10px;animation:fadeIn 0.3s ease;}
+
+/* SCREEN TITLES */
+.screen-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;text-align:center;margin-bottom:24px;color:var(--text);}
+.screen-title.gold{color:var(--gold);}
+
+/* TOPIC PREVIEW CARD */
+.topic-preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;}
+.topic-preview-card .tpc-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+.topic-preview-card .tpc-text{font-size:17px;font-weight:500;line-height:1.4;color:var(--text);}
+
+/* GAUNTLET INTRO HEADER */
+.gauntlet-intro-header{text-align:center;margin-bottom:28px;}
+.gauntlet-intro-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.gauntlet-intro-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,12vw,72px);letter-spacing:4px;line-height:1;margin:0;}
+.gauntlet-intro-sub{color:var(--text-dim);margin-top:10px;font-size:15px;line-height:1.5;}
+
+/* NEXT OPPONENT CARD */
+.next-opp-card{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid rgba(244,197,66,0.25);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;}
+.next-opp-icon{font-size:36px;flex-shrink:0;}
+.next-opp-info{flex:1;min-width:0;}
+.next-opp-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.next-opp-desc{font-size:13px;color:var(--text-dim);margin-bottom:4px;line-height:1.4;}
+.next-opp-topic{font-size:12px;color:var(--text-dim);font-style:italic;}
 .v1-opp-typing{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-top:10px;}
 .v1-opp-typing-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);}
 
@@ -1022,6 +1101,11 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .da-toggle.active .da-toggle-title{color:var(--red);}
 .da-toggle-sub{font-size:11px;color:var(--text-dim);margin-top:2px;line-height:1.4;}
 
+/* UTILITY TYPOGRAPHY CLASSES */
+.eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--text-dim);}
+.eyebrow-sm{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);}
+.bebas-title{font-family:'Bebas Neue',sans-serif;letter-spacing:3px;text-align:center;margin-bottom:20px;}
+
 /* WHISPER MODE */
 .whisper-btn{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid var(--border);color:var(--text-dim);background:transparent;cursor:pointer;transition:all 0.2s;}
 .whisper-btn:hover{border-color:rgba(168,85,247,0.5);color:#a855f7;}
@@ -1072,6 +1156,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .ai-card.selected{border-color:var(--red) !important;background:rgba(230,57,70,0.09) !important;transform:translateY(-3px) scale(1.02) !important;box-shadow:0 8px 24px rgba(230,57,70,0.18);}
 
 /* RIVAL CHIP */
+.rival-chip-wrap{display:flex;justify-content:center;margin-top:8px;}
 .rival-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px 4px 8px;border-radius:100px;background:rgba(244,197,66,0.08);border:1px solid rgba(244,197,66,0.28);font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .rival-chip:hover{background:rgba(244,197,66,0.14);border-color:rgba(244,197,66,0.5);}
 
@@ -3347,26 +3432,27 @@ export default function App() {
                 Leaderboard
               </button>
             </div>
-            <div style={{ marginTop: "12px", textAlign: "center" }}>
+            <div className="home-modes">
               <button
-                className="v1-glow-btn"
+                className="home-mode-btn red"
                 onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}
               >
-                <span className="v1-text">1V1</span>
+                <span className="home-mode-icon">⚔</span>
+                <div className="home-mode-title red">1V1</div>
+                <div className="home-mode-sub">vs Human</div>
               </button>
-            </div>
-            <div style={{ marginTop: "12px", textAlign: "center" }}>
-              <button className="gauntlet-btn" onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}>
-                ⚔ Gauntlet Mode
-              </button>
-              <p className="gauntlet-sub">6 Opponents. 1 Run. No Excuses.</p>
-            </div>
-            <div style={{ marginTop: "10px", textAlign: "center" }}>
               <button
-                className="mirror-btn"
-                title={stats.debates < 5 ? "Complete 5 debates to unlock Mirror Match" : "Fight an AI trained on your own argument style"}
+                className="home-mode-btn gold"
+                onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}
+              >
+                <span className="home-mode-icon">🏆</span>
+                <div className="home-mode-title gold">Gauntlet</div>
+                <div className="home-mode-sub">6 opponents</div>
+              </button>
+              <button
+                className="home-mode-btn purple"
+                title={stats.debates < 5 ? `Unlocks after ${5 - stats.debates} more debate${5 - stats.debates !== 1 ? "s" : ""}` : "Fight an AI trained on your own argument style"}
                 disabled={stats.debates < 5}
-                style={stats.debates < 5 ? { opacity: 0.45, cursor: "not-allowed" } : {}}
                 onClick={() => {
                   if (stats.debates < 5) return;
                   setMirrorMatchMode(true);
@@ -3375,11 +3461,10 @@ export default function App() {
                   setScreen("setup");
                 }}
               >
-                🪞 Mirror Match
+                <span className="home-mode-icon">🪞</span>
+                <div className="home-mode-title purple">Mirror</div>
+                <div className="home-mode-sub">{stats.debates < 5 ? `${5 - stats.debates} left` : "Your style"}</div>
               </button>
-              <p className="gauntlet-sub" style={{ marginTop: "4px", fontSize: "11px" }}>
-                {stats.debates < 5 ? `🔒 Unlocks after ${5 - stats.debates} more debate${5 - stats.debates !== 1 ? "s" : ""}` : "Face an AI trained on YOUR arguments"}
-              </p>
             </div>
           </div>
           {(stats.currentStreak ?? 0) >= 2 && (
@@ -3402,7 +3487,7 @@ export default function App() {
             if (!rival) return null;
             const rh = rivalEntry[1] as {wins:number;losses:number};
             return (
-              <div style={{ display: "flex", justifyContent: "center", marginTop: "8px" }}>
+              <div className="rival-chip-wrap">
                 <button
                   className="rival-chip"
                   onClick={() => { setSelectedAI(rival.id); setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
@@ -3440,7 +3525,7 @@ export default function App() {
                 <div className="featured-left">
                   <div className="featured-badge">🔥 Hot Topic</div>
                   <div className="featured-topic-text">"{FEATURED_TOPICS[featuredIdx].text}"</div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "7px" }}>
+                  <div className="featured-meta-row">
                     <span className="featured-cat">{FEATURED_TOPICS[featuredIdx].cat}</span>
                     <span className={`topic-rating rating-${FEATURED_TOPICS[featuredIdx].heat.toLowerCase()}`}>{FEATURED_TOPICS[featuredIdx].heat}</span>
                   </div>
@@ -3535,6 +3620,13 @@ export default function App() {
       {/* SETUP */}
       {screen === "setup" && (
         <div className="screen">
+          <div className="setup-steps">
+            <div className={`setup-step-node ${setupStep > 0 ? "done" : "active"}`}>1</div>
+            <div className={`setup-step-seg ${setupStep > 0 ? "done" : ""}`} />
+            <div className={`setup-step-node ${setupStep > 1 ? "done" : setupStep === 1 ? "active" : ""}`}>2</div>
+            <div className={`setup-step-seg ${setupStep > 1 ? "done" : ""}`} />
+            <div className={`setup-step-node ${setupStep === 2 ? "active" : ""}`}>3</div>
+          </div>
           {setupStep === 0 && (
             <>
               <p className="section-label">Choose your opponent</p>
@@ -3659,8 +3751,9 @@ export default function App() {
                 ))}
               </div>
               <p className="section-label">Pick your side</p>
-              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "16px 20px", marginBottom: "24px" }}>
-                <div style={{ fontSize: "18px", fontWeight: 500 }}>{selectedTopic?.text}</div>
+              <div className="topic-preview-card">
+                <div className="tpc-label">Topic</div>
+                <div className="tpc-text">{selectedTopic?.text}</div>
               </div>
               <div className="side-pick">
                 <button className={`side-btn for ${selectedSide === "for" ? "selected" : ""}`} onClick={() => setSelectedSide("for")}>
@@ -3690,11 +3783,11 @@ export default function App() {
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
                 <button
                   className="btn btn-primary"
-                  style={{ width: "100%", background: selectedSide ? "#C0392B" : undefined, fontSize: "17px", letterSpacing: "4px", padding: "18px 32px", fontWeight: 700 }}
+                  style={{ width: "100%", fontSize: "17px", letterSpacing: "4px", padding: "18px 32px" }}
                   disabled={!selectedSide}
                   onClick={() => setShowWarRoom(true)}
                 >
-                  ⚡ START CLASH
+                  START CLASH
                 </button>
                 <button className="btn btn-ghost" style={{ alignSelf: "flex-start", fontSize: "13px" }} onClick={() => setSetupStep(1)}>← Back</button>
               </div>
@@ -4045,7 +4138,7 @@ export default function App() {
       {/* VERDICT */}
       {screen === "verdict" && verdict && (
         <div className="screen">
-          <div className="verdict-card">
+          <div className={`verdict-card ${verdict.won ? "win-card" : "lose-card"}`}>
             {verdict.won && stats.currentStreak >= 2 && (
               <div className="streak-banner">
                 <div className="streak-banner-fire">🔥</div>
@@ -4300,13 +4393,17 @@ export default function App() {
           )}
 
           <div className="verdict-actions">
-            <button className="btn btn-primary" onClick={instantRematch}>⚡ Instant Rematch</button>
-            <button className="btn btn-secondary" onClick={swapSidesRematch}>↕ Swap Sides</button>
-            <button className="btn btn-secondary" onClick={() => setScreen("replay")}>📋 Replay</button>
-            <button className="btn btn-secondary" onClick={shareResult}>🔗 Share</button>
-            <button className="btn btn-secondary" onClick={shareImage}>📸 Share Card</button>
-            <button className="btn btn-ghost" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>New Match</button>
-            <button className="btn btn-ghost" onClick={reset}>Home</button>
+            <div className="verdict-actions-primary">
+              <button className="btn btn-primary" onClick={instantRematch}>⚡ Instant Rematch</button>
+              <button className="btn btn-secondary" onClick={swapSidesRematch}>↕ Swap Sides</button>
+            </div>
+            <div className="verdict-actions-secondary">
+              <button className="btn btn-ghost" onClick={() => { setSetupStep(0); setScreen("setup"); setMessages([]); setRoundScores([]); setVerdict(null); }}>New Match</button>
+              <button className="btn btn-ghost" onClick={() => setScreen("replay")}>Replay</button>
+              <button className="btn btn-ghost" onClick={shareResult}>Share</button>
+              <button className="btn btn-ghost" onClick={shareImage}>Share Card</button>
+              <button className="btn btn-ghost" onClick={reset}>Home</button>
+            </div>
           </div>
         </div>
       )}
@@ -4331,7 +4428,7 @@ export default function App() {
           badges.push({ label: "70%+ Win Rate", icon: "⚡", tier: "gold" });
         return (
           <div className="screen">
-            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", textAlign: "center", marginBottom: "20px" }}>1v1 CHALLENGE</h2>
+            <h2 className="screen-title">1V1 CHALLENGE</h2>
 
             <div className="v1-tab-row">
               <button className={`v1-tab${v1Tab === "play" ? " active" : ""}`} onClick={() => setV1Tab("play")}>Play</button>
@@ -4409,25 +4506,25 @@ export default function App() {
                   </div>
                 ) : (
                   <>
-                    <div style={{ display: "flex", gap: "16px", marginBottom: "16px", marginTop: badges.length > 0 ? "20px" : 0 }}>
-                      <div style={{ textAlign: "center" }}>
-                        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", color: "var(--text)" }}>{v1History.length}</div>
-                        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>Played</div>
+                    <div className="v1-history-stats" style={{ marginTop: badges.length > 0 ? "20px" : 0 }}>
+                      <div className="v1-history-stat">
+                        <span className="v1-history-stat-val">{v1History.length}</span>
+                        <div className="v1-history-stat-lbl">Played</div>
                       </div>
-                      <div style={{ textAlign: "center" }}>
-                        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", color: "var(--green)" }}>{v1History.filter(e => e.won).length}</div>
-                        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>Wins</div>
+                      <div className="v1-history-stat">
+                        <span className="v1-history-stat-val green">{v1History.filter(e => e.won).length}</span>
+                        <div className="v1-history-stat-lbl">Wins</div>
                       </div>
-                      <div style={{ textAlign: "center" }}>
-                        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", color: "var(--red)" }}>{v1History.filter(e => !e.won).length}</div>
-                        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>Losses</div>
+                      <div className="v1-history-stat">
+                        <span className="v1-history-stat-val red">{v1History.filter(e => !e.won).length}</span>
+                        <div className="v1-history-stat-lbl">Losses</div>
                       </div>
                       {v1History.length >= 2 && (
-                        <div style={{ textAlign: "center" }}>
-                          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", color: "var(--gold)" }}>
+                        <div className="v1-history-stat">
+                          <span className="v1-history-stat-val gold">
                             {Math.round((v1History.filter(e => e.won).length / v1History.length) * 100)}%
-                          </div>
-                          <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>Win Rate</div>
+                          </span>
+                          <div className="v1-history-stat-lbl">Win Rate</div>
                         </div>
                       )}
                     </div>
@@ -4886,11 +4983,11 @@ export default function App() {
       {/* REPLAY */}
       {screen === "replay" && verdict && (
         <div className="screen">
-          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "36px", letterSpacing: "3px", textAlign: "center", marginBottom: "20px" }}>REPLAY</h2>
+          <h2 className="bebas-title" style={{ fontSize: "36px" }}>REPLAY</h2>
 
           <div className="replay-intro">
             <div>
-              <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "11px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "6px" }}>
+              <div className="eyebrow" style={{ marginBottom: "6px" }}>
                 {ai?.name} · {selectedRounds} Round{selectedRounds !== 1 ? "s" : ""} · {selectedTopic?.text}
               </div>
               <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
@@ -4961,12 +5058,10 @@ export default function App() {
       {/* GAUNTLET INTRO */}
       {screen === "gauntlet-intro" && (
         <div className="screen">
-          <div style={{ textAlign: "center", marginBottom: "28px" }}>
-            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "5px", textTransform: "uppercase", color: "var(--gold)", marginBottom: "8px" }}>Challenge Mode</div>
-            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "clamp(48px,12vw,72px)", letterSpacing: "4px", lineHeight: 1, margin: 0 }}>⚔ THE GAUNTLET</h2>
-            <p style={{ color: "var(--text-dim)", marginTop: "10px", fontSize: "15px" }}>
-              Face all 6 opponents back-to-back. 3 rounds each. No respawn.
-            </p>
+          <div className="gauntlet-intro-header">
+            <div className="gauntlet-intro-eyebrow">Challenge Mode</div>
+            <h2 className="gauntlet-intro-title">⚔ THE GAUNTLET</h2>
+            <p className="gauntlet-intro-sub">Face all 6 opponents back-to-back. 3 rounds each. No respawn.</p>
           </div>
 
           <p className="section-label">Your opponents — in order</p>
@@ -4985,8 +5080,9 @@ export default function App() {
           </div>
 
           <p className="section-label">Pick your side for the first match</p>
-          <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "12px 16px", marginBottom: "16px", fontSize: "13px", color: "var(--text-dim)" }}>
-            Topic 1: <span style={{ color: "var(--text)", fontStyle: "italic" }}>"{tournamentTopics[0]?.text || "Topics are picked when you begin"}"</span>
+          <div className="topic-preview-card" style={{ marginBottom: "16px" }}>
+            <div className="tpc-label">Topic 1</div>
+            <div className="tpc-text">"{tournamentTopics[0]?.text || "Topics are picked when you begin"}"</div>
           </div>
           <div className="side-pick" style={{ marginBottom: "24px" }}>
             <button className={`side-btn for ${gauntletNextSide === "for" ? "selected" : ""}`} onClick={() => setGauntletNextSide("for")}>
@@ -5018,7 +5114,7 @@ export default function App() {
       {screen === "gauntlet-between" && verdict && (
         <div className="screen">
           <div style={{ textAlign: "center", marginBottom: "24px" }}>
-            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "4px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "6px" }}>
+            <div className="eyebrow" style={{ marginBottom: "6px" }}>
               Match {tournamentBotIndex + 1} of 6 Complete
             </div>
             <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "clamp(40px,10vw,60px)", color: verdict.won ? "var(--green)" : "var(--red)", letterSpacing: "3px", lineHeight: 1 }}>
@@ -5056,21 +5152,17 @@ export default function App() {
             })}
           </div>
 
-          <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "16px 20px", marginBottom: "20px" }}>
-            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "10px" }}>
-              Next — Opponent {tournamentBotIndex + 2} of 6
-            </div>
+          <div className="topic-preview-card" style={{ marginBottom: "20px" }}>
+            <div className="tpc-label">Next — Opponent {tournamentBotIndex + 2} of 6</div>
             {(() => {
               const nextBot = AI_OPPONENTS.find((a) => a.id === TOURNAMENT_BOT_ORDER[tournamentBotIndex + 1])!;
               return (
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <span style={{ fontSize: "36px" }}>{nextBot.icon}</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "17px", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase" }}>{nextBot.name}</div>
-                    <div style={{ fontSize: "13px", color: "var(--text-dim)", marginBottom: "4px" }}>{nextBot.desc}</div>
-                    <div style={{ fontSize: "12px", color: "var(--text-dim)", fontStyle: "italic" }}>
-                      Topic: "{tournamentTopics[tournamentBotIndex + 1]?.text}"
-                    </div>
+                <div className="next-opp-card">
+                  <span className="next-opp-icon">{nextBot.icon}</span>
+                  <div className="next-opp-info">
+                    <div className="next-opp-name">{nextBot.name}</div>
+                    <div className="next-opp-desc">{nextBot.desc}</div>
+                    <div className="next-opp-topic">Topic: "{tournamentTopics[tournamentBotIndex + 1]?.text}"</div>
                   </div>
                   <span className={`ai-diff diff-${nextBot.diff}`}>{nextBot.diffLabel}</span>
                 </div>
@@ -5110,10 +5202,10 @@ export default function App() {
         const overallRank = totalAvg >= 85 ? "S" : totalAvg >= 75 ? "A" : totalAvg >= 62 ? "B" : totalAvg >= 48 ? "C" : totalAvg >= 35 ? "D" : "F";
         return (
           <div className="screen">
-            <div style={{ textAlign: "center", marginBottom: "32px" }}>
-              <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "5px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "8px" }}>Gauntlet Complete</div>
-              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "clamp(48px,12vw,80px)", letterSpacing: "4px", lineHeight: 1 }}>⚔ GAUNTLET</div>
-              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "clamp(48px,12vw,80px)", color: "var(--gold)", letterSpacing: "4px", lineHeight: 1, marginBottom: "16px" }}>COMPLETE</div>
+            <div className="gauntlet-intro-header" style={{ marginBottom: "32px" }}>
+              <div className="gauntlet-intro-eyebrow" style={{ color: "var(--text-dim)" }}>Gauntlet Complete</div>
+              <div className="gauntlet-intro-title">⚔ GAUNTLET</div>
+              <div className="gauntlet-intro-title" style={{ color: "var(--gold)", marginBottom: "16px" }}>COMPLETE</div>
               <div className={`rank-badge rank-${overallRank}`} style={{ margin: "0 auto 12px", fontSize: "28px", width: "64px", height: "64px", lineHeight: "64px" }}>{overallRank}</div>
               <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", letterSpacing: "2px", color: "var(--text-mid)" }}>
                 {wins}/6 Wins · Avg Score {totalAvg}
@@ -5151,7 +5243,7 @@ export default function App() {
       {/* LEADERBOARD */}
       {screen === "leaderboard" && (
         <div className="screen">
-          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "36px", letterSpacing: "3px", textAlign: "center", marginBottom: "24px" }}>LEADERBOARD</h2>
+          <h2 className="screen-title">LEADERBOARD</h2>
 
           <div className="stats-row">
             <div className="stat-card"><span className="val red">{stats.debates}</span><span className="lbl">Your Debates</span></div>
@@ -5206,9 +5298,9 @@ export default function App() {
               </div>
             );
           })}
+          <button className="btn btn-ghost" style={{ marginTop: "20px", width: "100%" }} onClick={reset}>← Home</button>
         </div>
       )}
-      <button className="btn btn-ghost" style={{ marginTop: "20px", width: "100%" }} onClick={reset}>← Home</button>
     </div>
     {shareToast && <div className="share-toast">{shareToast}</div>}
 
@@ -5442,7 +5534,7 @@ export default function App() {
     {/* CARD REVEAL OVERLAY */}
     {showCardReveal && newCard && (
       <div className="card-reveal-overlay" onClick={() => setShowCardReveal(false)}>
-        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "5px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "16px" }}>
+        <div className="eyebrow" style={{ letterSpacing: "5px", marginBottom: "16px" }}>
           Card Unlocked
         </div>
         <div className={`card-reveal-scene card-rarity-${newCard.rarity.toLowerCase()}`} onClick={(e) => e.stopPropagation()}>
@@ -5519,7 +5611,7 @@ export default function App() {
     {/* DASHBOARD SCREEN */}
     {screen === "dashboard" && (
       <div className="screen">
-        <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", textAlign: "center", marginBottom: "20px" }}>DASHBOARD</h2>
+        <h2 className="bebas-title" style={{ fontSize: "32px" }}>DASHBOARD</h2>
 
         <div className="dash-grid">
           <div className="dash-stat-card">
