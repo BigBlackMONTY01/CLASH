@@ -1292,6 +1292,9 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .forge-toggle-knob{position:absolute;top:4px;left:4px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.2s;display:block;pointer-events:none;}
 .forge-toggle-btn.on .forge-toggle-knob{transform:translateX(18px);}
 /* FORGE RESULT */
+.forge-bound{width:100%;max-width:100%;overflow:hidden;box-sizing:border-box;}
+.room-moderation-warning{display:flex;align-items:flex-start;gap:8px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.3);border-radius:var(--radius);padding:10px 14px;margin:8px 0;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:0.5px;color:#ff6b78;line-height:1.4;}
+.room-mod-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
 .forge-result-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;}
 .forge-result-avatar{font-size:48px;line-height:1;margin-bottom:10px;}
 .forge-result-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--text);margin-bottom:6px;}
@@ -2114,6 +2117,7 @@ export default function App() {
   const [roomArgInput, setRoomArgInput] = useState("");
   const [roomSubmitting, setRoomSubmitting] = useState(false);
   const [roomError, setRoomError] = useState("");
+  const [roomModerationWarning, setRoomModerationWarning] = useState("");
   const [roomLoading, setRoomLoading] = useState(false);
   const [roomJoinCode, setRoomJoinCode] = useState("");
   const [v1SubScreen, setV1SubScreen] = useState<"" | "join">("");
@@ -2157,6 +2161,7 @@ export default function App() {
   const pendingVerdictRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const submitArgumentRef = useRef<((forcedText?: string) => Promise<void>) | null>(null);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -2634,6 +2639,9 @@ export default function App() {
           if (t === null || t <= 1) {
             clearInterval(timerRef.current!);
             timerRef.current = null;
+            setTimeout(() => {
+              submitArgumentRef.current?.();
+            }, 80);
             return 0;
           }
           return t - 1;
@@ -2826,14 +2834,8 @@ export default function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputText, thinking, ai, selectedTopic, selectedSide, roundScores, messages, stopTimer, adaptiveLevel, consecutiveHigh, consecutiveLow, isOvertime]);
 
-  // Auto-submit when timer expires
-  useEffect(() => {
-    if (timeLeft === 0 && screen === "debate" && !thinking && roundScores.length < selectedRounds) {
-      const fallback = inputText.trim() || "I concede this round.";
-      submitArgument(fallback);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeLeft]);
+  // Keep submitArgumentRef in sync so the timer can call the latest version
+  useEffect(() => { submitArgumentRef.current = submitArgument; }, [submitArgument]);
 
   useEffect(() => {
     const iv = setInterval(() => {
@@ -3186,8 +3188,40 @@ export default function App() {
     catch (e) { setRoomError((e as Error).message); }
   };
 
+  const checkRoomMessage = (text: string): string | null => {
+    const t = text.toLowerCase();
+    const blocked: RegExp[] = [
+      /\bkys\b/,
+      /kill\s+your\s*self/,
+      /\b(i('ll| will| am going to|'m going to))\s+(kill|murder|hurt|destroy)\s+(you|u)\b/,
+      /\bdie\s+(you|bitch|cunt|asshole|motherfucker)\b/,
+      /\b(rape|molest)\b/,
+      /\bfuck\s+you\b/,
+      /\bfuck\s+off\b/,
+      /\bgo\s+fuck\s+your/,
+      /\b(shit|ass)\s*hole\b.*\byou\b/,
+      /you'?re?\s+(a\s+)?(fucking\s+)?(worthless|subhuman|piece\s+of\s+shit|trash|waste\s+of)/,
+      /\b(n+i+g+[ae]+r|n+i+g+g+[ae]+r)\b/,
+      /\bf[a4]+g+(ot)?\b/,
+      /\bretard\b/,
+      /\bcunt\b/,
+    ];
+    for (const pat of blocked) {
+      if (pat.test(t)) {
+        return "Keep it fierce, not abusive. Strong arguments win debates — personal attacks don't.";
+      }
+    }
+    return null;
+  };
+
   const submitRoomArg = async () => {
     if (!currentRoom || !roomArgInput.trim() || roomSubmitting) return;
+    const modWarning = checkRoomMessage(roomArgInput);
+    if (modWarning) {
+      setRoomModerationWarning(modWarning);
+      return;
+    }
+    setRoomModerationWarning("");
     setRoomSubmitting(true);
     try {
       await apiAuthPost(`/1v1/${currentRoom.code}/argue`, { argumentText: roomArgInput.trim() });
@@ -4782,10 +4816,16 @@ export default function App() {
                     className="debate-input"
                     rows={5}
                     value={roomArgInput}
-                    onChange={(e) => setRoomArgInput(e.target.value)}
+                    onChange={(e) => { setRoomArgInput(e.target.value); if (roomModerationWarning) setRoomModerationWarning(""); }}
                     placeholder={`Make your argument ${mySide?.toUpperCase() || ""}…`}
                     onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitRoomArg(); }}
                   />
+                  {roomModerationWarning && (
+                    <div className="room-moderation-warning">
+                      <span className="room-mod-icon">⚠</span>
+                      <span>{roomModerationWarning}</span>
+                    </div>
+                  )}
                   <div className="input-footer">
                     <span className={`char-count${roomArgInput.length > 600 ? " danger" : roomArgInput.length > 500 ? " warn" : ""}`}>
                       {roomArgInput.length}/600
@@ -4798,7 +4838,7 @@ export default function App() {
                       )}
                       <button
                         className="btn btn-primary"
-                        disabled={!roomArgInput.trim() || roomArgInput.length > 600 || roomSubmitting}
+                        disabled={!roomArgInput.trim() || roomArgInput.length > 600 || roomSubmitting || !!roomModerationWarning}
                         onClick={submitRoomArg}
                       >
                         {roomSubmitting ? "Judging..." : "Submit →"}
@@ -5627,6 +5667,7 @@ export default function App() {
           <p className="forge-page-title">FORGE YOUR RIVAL</p>
           <p className="forge-page-sub">Design your opponent. Share it with the world.</p>
         </div>
+        <div className="forge-bound">
         <div className="forge-section">
           <span className="forge-section-lbl">Name</span>
           <input
@@ -5744,6 +5785,7 @@ export default function App() {
           )}
           <button className="btn btn-ghost" style={{ width: "100%", marginTop: "10px" }} onClick={() => setScreen("home")}>← Back</button>
         </div>
+        </div>{/* end forge-bound */}
       </div>
     )}
 
