@@ -1026,7 +1026,84 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 @keyframes shieldPulse{0%,100%{filter:drop-shadow(0 0 4px rgba(34,197,94,0.4));}50%{filter:drop-shadow(0 0 10px rgba(34,197,94,0.8));}}
 .shield-pip{animation:shieldPulse 2s ease-in-out infinite;}
 .shield-pip.empty{animation:none;filter:none;opacity:0.2;}
+
+/* DEVIL'S ADVOCATE TOGGLE */
+.da-toggle{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(230,57,70,0.06);border:1px solid rgba(230,57,70,0.2);border-radius:var(--radius);cursor:pointer;transition:all 0.2s;margin-bottom:12px;user-select:none;}
+.da-toggle.active{background:rgba(230,57,70,0.14);border-color:rgba(230,57,70,0.5);}
+.da-toggle-knob{width:36px;height:20px;border-radius:10px;background:var(--border);border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0;pointer-events:none;}
+.da-toggle-knob::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform 0.2s;}
+.da-toggle.active .da-toggle-knob{background:var(--red);}
+.da-toggle.active .da-toggle-knob::after{transform:translateX(16px);}
+.da-toggle-label{flex:1;}
+.da-toggle-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);transition:color 0.2s;}
+.da-toggle.active .da-toggle-title{color:var(--red);}
+.da-toggle-sub{font-size:11px;color:var(--text-dim);margin-top:2px;line-height:1.4;}
+
+/* WHISPER MODE */
+.whisper-btn{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid var(--border);color:var(--text-dim);background:transparent;cursor:pointer;transition:all 0.2s;}
+.whisper-btn:hover{border-color:rgba(168,85,247,0.5);color:#a855f7;}
+.whisper-btn.active{border-color:rgba(168,85,247,0.6);background:rgba(168,85,247,0.1);color:#a855f7;}
+.whisper-feedback{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.25);border-radius:var(--radius);padding:10px 14px;margin-top:8px;animation:fadeIn 0.3s ease;}
+.whisper-feedback-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#a855f7;margin-bottom:4px;}
+.whisper-feedback-text{font-size:13px;color:var(--text-mid);line-height:1.5;}
+
+/* ARGUMENT GRAVEYARD */
+.graveyard-section{margin-top:10px;background:rgba(230,57,70,0.04);border:1px solid rgba(230,57,70,0.15);border-radius:var(--radius);overflow:hidden;}
+.graveyard-header{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid rgba(230,57,70,0.12);background:rgba(230,57,70,0.06);}
+.graveyard-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);}
+.graveyard-entry{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:flex-start;gap:8px;}
+.graveyard-entry:last-child{border-bottom:none;}
+.graveyard-skull{font-size:13px;flex-shrink:0;margin-top:1px;opacity:0.6;}
+.graveyard-text{font-size:12px;color:var(--text-dim);line-height:1.5;font-style:italic;flex:1;min-width:0;}
+.graveyard-score{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--red);flex-shrink:0;}
+
+/* STREAK CONTINUE BANNER */
+.streak-banner{background:linear-gradient(135deg,rgba(244,197,66,0.08),rgba(230,57,70,0.06));border:1px solid rgba(244,197,66,0.3);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;animation:fadeIn 0.5s ease;}
+.streak-banner-fire{font-size:26px;flex-shrink:0;}
+.streak-banner-text{flex:1;}
+.streak-banner-count{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);letter-spacing:2px;line-height:1.1;}
+.streak-banner-sub{font-size:11px;color:var(--text-dim);margin-top:2px;}
+
+/* TRASH TALK BUBBLE */
+.trash-bubble{position:fixed;bottom:120px;right:16px;background:rgba(10,10,14,0.96);border:1px solid rgba(0,119,255,0.35);border-radius:12px 12px 4px 12px;padding:10px 14px;max-width:190px;font-size:13px;color:var(--text-mid);line-height:1.4;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:trashIn 0.35s cubic-bezier(0.34,1.4,0.64,1);}
+@keyframes trashIn{from{opacity:0;transform:scale(0.8) translateX(20px);}to{opacity:1;transform:scale(1) translateX(0);}}
+.trash-bubble-who{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#60a5fa;margin-bottom:4px;}
+
+/* V1 LASER ARENA BORDER */
+@keyframes laserBorderPulse{0%,100%{box-shadow:0 0 0 1px rgba(30,120,255,0.3),0 0 18px rgba(30,120,255,0.1);}50%{box-shadow:0 0 0 1px rgba(80,160,255,0.65),0 0 28px rgba(80,160,255,0.25);}}
+.v1-laser-arena{animation:laserBorderPulse 2.5s ease-in-out infinite;}
+
+/* MIRROR MATCH LOCK */
+.mirror-locked-overlay{position:relative;}
+.mirror-locked-overlay::after{content:'🔒 5 DEBATES REQUIRED';position:absolute;inset:0;background:rgba(0,0,0,0.6);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);pointer-events:none;}
+
+/* AI CARD ENTRANCE + POP */
+@keyframes aiCardIn{from{opacity:0;transform:translateY(10px) scale(0.96);}to{opacity:1;transform:translateY(0) scale(1);}}
+.ai-card{animation:aiCardIn 0.28s ease both;}
+.ai-card:nth-child(1){animation-delay:0.02s;}.ai-card:nth-child(2){animation-delay:0.06s;}.ai-card:nth-child(3){animation-delay:0.10s;}.ai-card:nth-child(4){animation-delay:0.14s;}.ai-card:nth-child(5){animation-delay:0.18s;}.ai-card:nth-child(6){animation-delay:0.22s;}.ai-card:nth-child(7){animation-delay:0.26s;}
+.ai-card.selected{border-color:var(--red) !important;background:rgba(230,57,70,0.09) !important;transform:translateY(-3px) scale(1.02) !important;box-shadow:0 8px 24px rgba(230,57,70,0.18);}
+
+/* RIVAL CHIP */
+.rival-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px 4px 8px;border-radius:100px;background:rgba(244,197,66,0.08);border:1px solid rgba(244,197,66,0.28);font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.rival-chip:hover{background:rgba(244,197,66,0.14);border-color:rgba(244,197,66,0.5);}
+
+/* WAR ROOM MODAL */
+.war-room-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.85);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease;}
+.war-room-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px 22px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;}
+.war-room-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;margin-bottom:4px;}
+.war-room-sub{font-size:13px;color:var(--text-dim);margin-bottom:18px;line-height:1.5;}
+.war-room-tip{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);}
+.war-room-tip:last-of-type{border-bottom:none;padding-bottom:0;}
+.war-room-tip-icon{font-size:17px;flex-shrink:0;margin-top:1px;}
+.war-room-tip-text{font-size:13px;color:var(--text-mid);line-height:1.5;}
+.war-room-tip-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+
+/* CUSTOM SHARE OPPONENT */
+.custom-share-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.custom-share-btn{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.25);border-radius:100px;color:#a855f7;cursor:pointer;transition:all 0.2s;}
+.custom-share-btn:hover{background:rgba(168,85,247,0.16);border-color:rgba(168,85,247,0.5);}
 `;
+
 
 
 
@@ -1796,6 +1873,12 @@ export default function App() {
   const [customTopicInput, setCustomTopicInput] = useState("");
   const [v1Tab, setV1Tab] = useState<"play" | "history">("play");
   const [v1History, setV1History] = useState<V1HistoryEntry[]>(() => { try { return JSON.parse(localStorage.getItem("clash-1v1-history") || "[]"); } catch { return []; } });
+  const [devilsAdvocateMode, setDevilsAdvocateMode] = useState(false);
+  const [whisperMode, setWhisperMode] = useState(false);
+  const [whisperFeedback, setWhisperFeedback] = useState<{score: number; text: string} | null>(null);
+  const [showWarRoom, setShowWarRoom] = useState(false);
+  const [trashTalkBubble, setTrashTalkBubble] = useState<string | null>(null);
+  const [graveyardArgs, setGraveyardArgs] = useState<{text: string; round: number; score: number}[]>([]);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pendingVerdictRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1882,6 +1965,19 @@ export default function App() {
       setRoomJoinCode(roomParam.toUpperCase());
       setV1SubScreen("join");
       setScreen("multiplayer-lobby");
+    }
+    const customAIParam = params.get("customAI");
+    if (customAIParam) {
+      try {
+        const d = JSON.parse(atob(customAIParam));
+        if (d.n && d.p) {
+          setCustomOpponent({ name: d.n, personality: d.p, diff: d.d || "medium", icon: d.i || "🎭" });
+          setSelectedAI("custom");
+          setDisplayTopics(pickTopics());
+          setSetupStep(0);
+          setScreen("setup");
+        }
+      } catch { /* ignore malformed */ }
     }
   }, []);
 
@@ -1978,6 +2074,33 @@ export default function App() {
       }
     })();
   }, []);
+
+  // Trash talk bubbles in 1v1 multiplayer debate
+  useEffect(() => {
+    if (screen !== "multiplayer-debate") { setTrashTalkBubble(null); return; }
+    const TRASH = [
+      "Is that the best you've got?",
+      "My grandma argues better than you.",
+      "You call that a point?",
+      "I'm barely breaking a sweat.",
+      "Come on, I expected more from you.",
+      "That argument's been debunked since Tuesday.",
+      "I've seen better logic from a coin flip.",
+      "Nice try. Not really though.",
+      "You're helping me practice my yawning.",
+    ];
+    const show = () => {
+      setTrashTalkBubble(TRASH[Math.floor(Math.random() * TRASH.length)]);
+      setTimeout(() => setTrashTalkBubble(null), 4000);
+    };
+    const delay = 8000 + Math.random() * 6000;
+    const t = setTimeout(() => {
+      show();
+      const iv = setInterval(() => { show(); }, 14000 + Math.random() * 8000);
+      return () => clearInterval(iv);
+    }, delay);
+    return () => clearTimeout(t);
+  }, [screen]);
 
   // Rotate status taunts every 4s on home screen
   useEffect(() => {
@@ -2216,6 +2339,9 @@ export default function App() {
     setInputText("");
     setVerdict(null);
     setMirrorMatchMode(false);
+    setGraveyardArgs([]);
+    setWhisperFeedback(null);
+    setWhisperMode(false);
     setScreen("matchmaking");
 
     const sideLabel = side === "for" ? "FOR" : "AGAINST";
@@ -2236,10 +2362,12 @@ export default function App() {
               totalRounds: rounds,
             })
           : apiPost<{ text: string }>("/debate/start", {
-              personality: currentAI.personality,
+              personality: devilsAdvocateMode
+                ? `${currentAI.personality}\n\nIMPORTANT: For this debate you are arguing the SAME side as the user (${sideLabel}). Act as their ally — but expose weaknesses, steelman alternative views, and push them to make stronger, more nuanced arguments. Challenge them to improve, not to defeat them.`
+                : currentAI.personality,
               topic: topic.text,
               userSide: sideLabel,
-              oppSide,
+              oppSide: devilsAdvocateMode ? sideLabel : oppSide,
               totalRounds: rounds,
               difficulty: currentAI.diff,
             }),
@@ -2256,7 +2384,8 @@ export default function App() {
         ? "The AI is rate-limited right now. Wait a moment, then tap Retry."
         : `Couldn't reach the AI: ${raw}`);
     }
-  }, [selectedAI, selectedTopic, selectedSide, selectedRounds]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAI, selectedTopic, selectedSide, selectedRounds, devilsAdvocateMode]);
 
   const submitArgument = useCallback(async (forcedText?: string) => {
     const userMsg = (forcedText ?? inputText).trim();
@@ -2316,8 +2445,19 @@ export default function App() {
 
       const newRoundScores: RoundScore[] = [...roundScores, { round: roundNumber, ...roundScore, propaganda: roundScore.propaganda || [] }];
       setRoundScores(newRoundScores);
+      if (roundScore.score < 40) {
+        setGraveyardArgs(prev => [...prev, { text: userMsg, round: roundNumber, score: roundScore.score }]);
+      }
       if (roundScore.propaganda && roundScore.propaganda.length > 0) {
         setPropagandaTags(prev => [...prev, roundScore.propaganda!]);
+      }
+      if (whisperMode) {
+        apiPost<{ feedback: string; score: number }>("/debate/whisper-score", {
+          argument: userMsg,
+          topic: selectedTopic?.text ?? "",
+          userSide: sideLabel,
+          round: roundNumber,
+        }).then(w => setWhisperFeedback({ score: w.score, text: w.feedback })).catch(() => {});
       }
       playSound(roundScore.score >= 60 ? "round-win" : "round-loss");
       if (roundScore.score >= 95) unlockAch("perfect-round");
@@ -2956,8 +3096,11 @@ export default function App() {
             <div style={{ marginTop: "10px", textAlign: "center" }}>
               <button
                 className="mirror-btn"
-                title={stats.debates === 0 ? "Play at least one match first" : "Fight an AI trained on your own argument style"}
+                title={stats.debates < 5 ? "Complete 5 debates to unlock Mirror Match" : "Fight an AI trained on your own argument style"}
+                disabled={stats.debates < 5}
+                style={stats.debates < 5 ? { opacity: 0.45, cursor: "not-allowed" } : {}}
                 onClick={() => {
+                  if (stats.debates < 5) return;
                   setMirrorMatchMode(true);
                   setDisplayTopics(pickTopics());
                   setSetupStep(1);
@@ -2966,7 +3109,9 @@ export default function App() {
               >
                 🪞 Mirror Match
               </button>
-              <p className="gauntlet-sub" style={{ marginTop: "4px", fontSize: "11px" }}>Face an AI trained on YOUR arguments</p>
+              <p className="gauntlet-sub" style={{ marginTop: "4px", fontSize: "11px" }}>
+                {stats.debates < 5 ? `🔒 Unlocks after ${5 - stats.debates} more debate${5 - stats.debates !== 1 ? "s" : ""}` : "Face an AI trained on YOUR arguments"}
+              </p>
             </div>
           </div>
 
@@ -2994,8 +3139,39 @@ export default function App() {
                 <span className="pcs-val" style={{ color: "var(--gold)", fontSize: "14px" }}>{stats.bestScore > 0 ? stats.bestScore : "—"}</span>
                 <span className="pcs-lbl">Best Score</span>
               </div>
+              {mmrResult && (
+                <>
+                  <div className="pcs-divider" />
+                  <div className="pcs-block">
+                    <span className={`mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`} style={{ fontSize: "10px", padding: "2px 8px" }}>
+                      {mmrResult.newTier.toUpperCase()}
+                    </span>
+                    <span className="pcs-lbl">Rank</span>
+                  </div>
+                </>
+              )}
             </div>
           )}
+          {/* RIVAL CHIP */}
+          {authUser && (() => {
+            const rivalEntry = Object.entries(stats.opponentHistory ?? {})
+              .filter(([, h]) => (h as {wins:number;losses:number}).losses > 0)
+              .sort((a, b) => (b[1] as {wins:number;losses:number}).losses - (a[1] as {wins:number;losses:number}).losses)[0];
+            const rival = rivalEntry ? AI_OPPONENTS.find(a => a.id === rivalEntry[0]) : null;
+            if (!rival) return null;
+            const rh = rivalEntry[1] as {wins:number;losses:number};
+            return (
+              <div style={{ display: "flex", justifyContent: "center", marginTop: "8px" }}>
+                <button
+                  className="rival-chip"
+                  onClick={() => { setSelectedAI(rival.id); setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
+                  title={`${rh.losses} loss${rh.losses !== 1 ? "es" : ""} — get revenge`}
+                >
+                  ⚔ Rival: {rival.icon} {rival.name} · {rh.losses}L
+                </button>
+              </div>
+            );
+          })()}
 
           {/* TODAY'S CLASH — swipeable featured topic card */}
           <div>
@@ -3185,13 +3361,34 @@ export default function App() {
                   </div>
                 </div>
               )}
-              <button
-                className="btn btn-primary"
-                disabled={!selectedAI || (selectedAI === "custom" && (!customOpponent.name.trim() || !customOpponent.personality.trim()))}
-                onClick={() => setSetupStep(selectedTopic ? 2 : 1)}
-              >
-                {selectedTopic ? "Next: Pick Side →" : "Next: Pick Topic →"}
-              </button>
+              {selectedAI === "custom" && customOpponent.name.trim() && customOpponent.personality.trim() && (
+                <div className="custom-share-row">
+                  <button
+                    className="custom-share-btn"
+                    onClick={() => {
+                      const encoded = btoa(JSON.stringify({ n: customOpponent.name, p: customOpponent.personality, d: customOpponent.diff, i: customOpponent.icon }));
+                      const url = `${window.location.origin}${window.location.pathname}?customAI=${encoded}`;
+                      navigator.clipboard.writeText(url).catch(() => {});
+                      setShareToast("Custom opponent link copied!");
+                      setTimeout(() => setShareToast(""), 3000);
+                    }}
+                  >
+                    🔗 Share This Opponent
+                  </button>
+                  <span style={{ fontSize: "11px", color: "var(--text-dim)" }}>Anyone with the link can face your creation</span>
+                </div>
+              )}
+              <div style={{ display: "flex", gap: "10px", marginTop: "4px" }}>
+                <button className="btn btn-ghost" onClick={() => setScreen("home")}>← Home</button>
+                <button
+                  className="btn btn-primary"
+                  style={{ flex: 1 }}
+                  disabled={!selectedAI || (selectedAI === "custom" && (!customOpponent.name.trim() || !customOpponent.personality.trim()))}
+                  onClick={() => setSetupStep(selectedTopic ? 2 : 1)}
+                >
+                  {selectedTopic ? "Next: Pick Side →" : "Next: Pick Topic →"}
+                </button>
+              </div>
             </>
           )}
 
@@ -3295,12 +3492,25 @@ export default function App() {
                   <div className="side-sub">I disagree with this</div>
                 </button>
               </div>
+              <div
+                className={`da-toggle${devilsAdvocateMode ? " active" : ""}`}
+                onClick={() => setDevilsAdvocateMode(p => !p)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => { if (e.key === "Enter" || e.key === " ") setDevilsAdvocateMode(p => !p); }}
+              >
+                <div className="da-toggle-knob" />
+                <div className="da-toggle-label">
+                  <div className="da-toggle-title">Devil's Advocate</div>
+                  <div className="da-toggle-sub">AI argues YOUR side — stress-test your own position</div>
+                </div>
+              </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
                 <button
                   className="btn btn-primary"
                   style={{ width: "100%", background: selectedSide ? "#C0392B" : undefined, fontSize: "17px", letterSpacing: "4px", padding: "18px 32px", fontWeight: 700 }}
                   disabled={!selectedSide}
-                  onClick={() => launchMatchmaking()}
+                  onClick={() => setShowWarRoom(true)}
                 >
                   ⚡ START CLASH
                 </button>
@@ -3308,6 +3518,69 @@ export default function App() {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* WAR ROOM MODAL */}
+      {showWarRoom && selectedTopic && selectedSide && ai && (
+        <div className="war-room-overlay" onClick={() => setShowWarRoom(false)}>
+          <div className="war-room-box" onClick={e => e.stopPropagation()}>
+            <div className="war-room-title">War Room</div>
+            <div className="war-room-sub">
+              Topic: "{selectedTopic.text}" · You are arguing <strong style={{ color: selectedSide === "for" ? "var(--green)" : "var(--red)" }}>{selectedSide === "for" ? "FOR" : "AGAINST"}</strong> · vs {ai.icon} {ai.name}
+            </div>
+            <div className="war-room-tip">
+              <div className="war-room-tip-icon">⚡</div>
+              <div className="war-room-tip-text">
+                <div className="war-room-tip-lbl">Open Strong</div>
+                Lead with your clearest, most undeniable claim — don't bury it in the middle.
+              </div>
+            </div>
+            <div className="war-room-tip">
+              <div className="war-room-tip-icon">🧠</div>
+              <div className="war-room-tip-text">
+                <div className="war-room-tip-lbl">Anticipate</div>
+                The AI will attack your weakest point — address it before it can.
+              </div>
+            </div>
+            <div className="war-room-tip">
+              <div className="war-room-tip-icon">📌</div>
+              <div className="war-room-tip-text">
+                <div className="war-room-tip-lbl">Evidence Wins</div>
+                Concrete examples and data score 15+ points higher than abstract claims alone.
+              </div>
+            </div>
+            <div className="war-room-tip">
+              <div className="war-room-tip-icon">🎯</div>
+              <div className="war-room-tip-text">
+                <div className="war-room-tip-lbl">Counter-Attack</div>
+                Directly refuting the AI's last point earns a delivery bonus — don't ignore it.
+              </div>
+            </div>
+            {devilsAdvocateMode && (
+              <div className="war-room-tip" style={{ background: "rgba(230,57,70,0.06)", borderRadius: "var(--radius)", marginTop: "8px", padding: "10px 12px" }}>
+                <div className="war-room-tip-icon">😈</div>
+                <div className="war-room-tip-text">
+                  <div className="war-room-tip-lbl" style={{ color: "var(--red)" }}>Devil's Advocate Active</div>
+                  The AI will argue your same side — every weakness in your logic will be exposed.
+                </div>
+              </div>
+            )}
+            <button
+              className="btn btn-primary"
+              style={{ width: "100%", marginTop: "20px", fontSize: "15px", letterSpacing: "3px", padding: "16px" }}
+              onClick={() => { setShowWarRoom(false); launchMatchmaking(); }}
+            >
+              Enter the Arena →
+            </button>
+            <button
+              className="btn btn-ghost"
+              style={{ width: "100%", marginTop: "8px", fontSize: "12px" }}
+              onClick={() => setShowWarRoom(false)}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
 
@@ -3478,15 +3751,23 @@ export default function App() {
               {(() => {
                 const s = scoreTypingStrength(inputText);
                 return (
-                  <div className="strength-wrap">
-                    <div className="strength-label-row">
-                      <span className="strength-lbl" style={{ color: s.score > 0 ? s.color : "var(--text-dim)" }}>{s.label}</span>
-                      {s.score > 0 && <span className="strength-pct" style={{ color: s.color }}>{s.score}</span>}
+                  <>
+                    <div className="strength-wrap">
+                      <div className="strength-label-row">
+                        <span className="strength-lbl" style={{ color: s.score > 0 ? s.color : "var(--text-dim)" }}>{s.label}</span>
+                        {s.score > 0 && <span className="strength-pct" style={{ color: s.color }}>{s.score}</span>}
+                      </div>
+                      <div className="strength-bar-track">
+                        <div className="strength-bar-fill" style={{ width: `${s.score}%`, backgroundColor: s.color }} />
+                      </div>
                     </div>
-                    <div className="strength-bar-track">
-                      <div className="strength-bar-fill" style={{ width: `${s.score}%`, backgroundColor: s.color }} />
-                    </div>
-                  </div>
+                    {whisperFeedback && (
+                      <div className="whisper-feedback">
+                        <div className="whisper-feedback-lbl">🔇 Whisper — Round {roundScores.length} coaching (score: {whisperFeedback.score})</div>
+                        <div className="whisper-feedback-text">{whisperFeedback.text}</div>
+                      </div>
+                    )}
+                  </>
                 );
               })()}
               <textarea
@@ -3551,6 +3832,13 @@ export default function App() {
                   )}
                 </div>
                 <div className="submit-row">
+                  <button
+                    className={`whisper-btn${whisperMode ? " active" : ""}`}
+                    onClick={() => { setWhisperMode(p => !p); setWhisperFeedback(null); }}
+                    title="Whisper Mode: get private coaching on your argument before AI responds"
+                  >
+                    {whisperMode ? "🔇 Whisper ON" : "🔇 Whisper"}
+                  </button>
                   {forfeitCountdown === null ? (
                     <button className="btn btn-ghost" onClick={startForfeit}>Forfeit</button>
                   ) : forfeitCountdown > 0 ? (
@@ -3576,6 +3864,26 @@ export default function App() {
       {screen === "verdict" && verdict && (
         <div className="screen">
           <div className="verdict-card">
+            {verdict.won && stats.currentStreak >= 2 && (
+              <div className="streak-banner">
+                <div className="streak-banner-fire">🔥</div>
+                <div className="streak-banner-text">
+                  <div className="streak-banner-count">{stats.currentStreak}-Win Streak</div>
+                  <div className="streak-banner-sub">
+                    {stats.currentStreak >= 5 ? "Unstoppable — keep it going!" : stats.currentStreak >= 3 ? "You're on fire — don't stop now." : "Momentum is building — defend it."}
+                  </div>
+                </div>
+              </div>
+            )}
+            {progressionResult && progressionResult.dynastyStreak > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 14px", background: "rgba(244,197,66,0.07)", border: "1px solid rgba(244,197,66,0.2)", borderRadius: "var(--radius)", marginBottom: "12px" }}>
+                <span style={{ fontSize: "20px" }}>👑</span>
+                <div>
+                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "9px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--gold)", marginBottom: "2px" }}>Debate Dynasty</div>
+                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "18px", letterSpacing: "2px", color: "var(--gold)" }}>{progressionResult.dynastyStreak} Consecutive Wins</div>
+                </div>
+              </div>
+            )}
             <div className="verdict-header">
               <div className={`rank-badge rank-${verdict.rank}`}>{verdict.rank}</div>
               <div className={`verdict-title ${verdict.won ? "win" : "lose"}`}>
@@ -3711,6 +4019,23 @@ export default function App() {
                     🔍 Ghost Reveal — See Hidden Argument Tags
                   </button>
                 )}
+              </div>
+            )}
+
+            {/* ARGUMENT GRAVEYARD */}
+            {graveyardArgs.length > 0 && (
+              <div className="graveyard-section">
+                <div className="graveyard-header">
+                  <span style={{ fontSize: "14px" }}>💀</span>
+                  <span className="graveyard-title">Argument Graveyard — {graveyardArgs.length} Dead Argument{graveyardArgs.length !== 1 ? "s" : ""}</span>
+                </div>
+                {graveyardArgs.map((g, i) => (
+                  <div key={i} className="graveyard-entry">
+                    <span className="graveyard-skull">💀</span>
+                    <span className="graveyard-text">Rd {g.round}: "{g.text.length > 80 ? g.text.slice(0, 80) + "…" : g.text}"</span>
+                    <span className="graveyard-score">{g.score}</span>
+                  </div>
+                ))}
               </div>
             )}
 
@@ -4149,7 +4474,13 @@ export default function App() {
           if (myArgs.find(a => a.roundNum === r) && oppArgs.find(a => a.roundNum === r)) completedRounds.push(r);
         }
         return (
-          <div className="screen">
+          <div className="screen v1-laser-arena">
+            {trashTalkBubble && (
+              <div className="trash-bubble">
+                <div className="trash-bubble-who">Opponent</div>
+                {trashTalkBubble}
+              </div>
+            )}
             <div className="v1-arena-header">
               <div>
                 <div className="v1-round-badge">Round {currentRoom.currentRound}/{currentRoom.totalRounds}</div>
