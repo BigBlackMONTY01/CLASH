@@ -1,0 +1,139 @@
+Yeah that’s a mess. I can see exactly what’s wrong:
+Dark mode (image 1): ARGUE. text is invisible (same colour as background), CLASH logo is broken, LEADERBOARD button is black, topic card is black on black, Sign In button reappeared.
+Light mode (image 2): Dark mode colours bleeding in — GAUNTLET button is black, hero section is black, mixed dark/light components everywhere. It’s half-baked.
+The root cause is the CSS variables weren’t applied consistently — some components have hardcoded colours instead of using the variables.
+Send this to Replit:
+
+CLASH — Emergency CSS Fix. Revert and redo properly.
+The CSS changes broke both modes. Do this in order:
+Step 1 — Git revert the CSS
+Run: git diff HEAD~2 artifacts/clash/src/index.css to see what changed. Then run git checkout HEAD~2 -- artifacts/clash/src/index.css to restore the CSS to the version from 2 commits ago before any theme changes were made.
+Step 2 — Restore dark mode variables properly
+Open artifacts/clash/src/index.css. The .dark block has all variables set to red as placeholders. Replace the entire .dark block with:
+
+.dark {
+  --button-outline: rgba(255,255,255, .10);
+  --badge-outline: rgba(255,255,255, .05);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .09);
+  --background: 0 0% 5%;
+  --foreground: 0 0% 95%;
+  --border: 0 0% 15%;
+  --card: 0 0% 9%;
+  --card-foreground: 0 0% 95%;
+  --card-border: 0 0% 16%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 95%;
+  --popover-border: 0 0% 16%;
+  --primary: 0 63% 42%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 13%;
+  --secondary-foreground: 0 0% 85%;
+  --muted: 0 0% 13%;
+  --muted-foreground: 0 0% 50%;
+  --accent: 0 0% 16%;
+  --accent-foreground: 0 0% 95%;
+  --destructive: 0 63% 42%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 0 0% 20%;
+  --ring: 0 63% 42%;
+  --sidebar: 0 0% 6%;
+  --sidebar-foreground: 0 0% 90%;
+  --sidebar-border: 0 0% 15%;
+  --sidebar-primary: 0 63% 42%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 0 0% 13%;
+  --sidebar-accent-foreground: 0 0% 90%;
+  --sidebar-ring: 0 63% 42%;
+  --chart-1: 0 63% 42%;
+  --chart-2: 210 65% 55%;
+  --chart-3: 142 55% 45%;
+  --chart-4: 45 90% 55%;
+  --chart-5: 280 55% 55%;
+}
+
+
+Step 3 — Set light mode variables properly
+Replace the entire :root block with:
+
+:root {
+  --button-outline: rgba(0,0,0, .10);
+  --badge-outline: rgba(0,0,0, .05);
+  --opaque-button-border-intensity: -8;
+  --elevate-1: rgba(0,0,0, .03);
+  --elevate-2: rgba(0,0,0, .08);
+  --background: 0 0% 98%;
+  --foreground: 0 0% 8%;
+  --border: 0 0% 88%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 8%;
+  --card-border: 0 0% 90%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 8%;
+  --popover-border: 0 0% 88%;
+  --primary: 0 63% 42%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 93%;
+  --secondary-foreground: 0 0% 15%;
+  --muted: 0 0% 93%;
+  --muted-foreground: 0 0% 42%;
+  --accent: 0 0% 91%;
+  --accent-foreground: 0 0% 10%;
+  --destructive: 0 63% 42%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 0 0% 84%;
+  --ring: 0 63% 42%;
+  --sidebar: 0 0% 97%;
+  --sidebar-foreground: 0 0% 10%;
+  --sidebar-border: 0 0% 90%;
+  --sidebar-primary: 0 63% 42%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 0 0% 91%;
+  --sidebar-accent-foreground: 0 0% 10%;
+  --sidebar-ring: 0 63% 42%;
+  --chart-1: 0 63% 42%;
+  --chart-2: 210 65% 50%;
+  --chart-3: 142 55% 40%;
+  --chart-4: 45 90% 50%;
+  --chart-5: 280 55% 50%;
+  --radius: .5rem;
+  --app-font-sans: 'Inter', sans-serif;
+  --app-font-serif: Georgia, serif;
+  --app-font-mono: Menlo, monospace;
+}
+
+
+Step 4 — Force dark mode on load
+Find the main entry point (artifacts/clash/src/main.tsx or App.tsx). Make sure this runs on app load:
+
+// Apply saved theme or default to dark
+const saved = localStorage.getItem('clash_theme');
+if (saved === 'light') {
+  document.documentElement.classList.remove('dark');
+} else {
+  document.documentElement.classList.add('dark');
+  localStorage.setItem('clash_theme', 'dark');
+}
+
+
+Step 5 — Fix the theme toggle button
+Find the sun/moon toggle button. Make sure it does exactly this on click:
+
+const isDark = document.documentElement.classList.contains('dark');
+if (isDark) {
+  document.documentElement.classList.remove('dark');
+  localStorage.setItem('clash_theme', 'light');
+} else {
+  document.documentElement.classList.add('dark');
+  localStorage.setItem('clash_theme', 'dark');
+}
+
+
+Step 6 — Fix hardcoded colours breaking light mode
+Search the entire artifacts/clash/src/ directory for any hardcoded colour values like bg-black, bg-[#0a0a0a], bg-zinc-900, bg-gray-900, style={{ background: '#000' or similar. Every one of these bypasses the CSS variables and breaks light mode. Replace them with semantic Tailwind classes: bg-background, bg-card, bg-secondary, text-foreground, text-muted-foreground, border-border.
+Step 7 — ARGUE text invisible in dark mode
+The ARGUE. text is the same colour as the background. Find the hero component and make sure the ARGUE text is explicitly text-foreground or white (#fff) in dark mode. WIN. should be text-primary (red).
+Run pnpm build at the end. Do not touch any game logic, routes, or API calls.
+
+That’s the full fix. Send it.​​​​​​​​​​​​​​​​
