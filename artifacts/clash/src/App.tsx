@@ -1051,6 +1051,11 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .trash-bubble{position:fixed;bottom:120px;right:16px;background:rgba(10,10,14,0.96);border:1px solid rgba(0,119,255,0.35);border-radius:12px 12px 4px 12px;padding:10px 14px;max-width:190px;font-size:13px;color:var(--text-mid);line-height:1.4;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:trashIn 0.35s cubic-bezier(0.34,1.4,0.64,1);}
 @keyframes trashIn{from{opacity:0;transform:scale(0.8) translateX(20px);}to{opacity:1;transform:scale(1) translateX(0);}}
 .trash-bubble-who{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#60a5fa;margin-bottom:4px;}
+.v1-send-bubble{position:fixed;bottom:120px;left:16px;background:rgba(12,8,24,0.97);border:1px solid rgba(168,85,247,0.45);border-radius:4px 12px 12px 12px;padding:10px 14px;max-width:220px;z-index:500;box-shadow:0 8px 28px rgba(168,85,247,0.15),0 4px 16px rgba(0,0,0,0.6);animation:trashIn 0.35s cubic-bezier(0.34,1.4,0.64,1);}
+.v1-send-bubble-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#a855f7;margin-bottom:5px;display:block;}
+.v1-send-bubble-text{font-size:13px;color:var(--text);line-height:1.4;display:block;margin-bottom:6px;}
+.v1-send-copy-btn{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#a855f7;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.3);border-radius:4px;padding:3px 10px;cursor:pointer;transition:all 0.15s;}
+.v1-send-copy-btn:hover{background:rgba(168,85,247,0.2);}
 
 /* V1 LASER ARENA BORDER */
 @keyframes laserBorderPulse{0%,100%{box-shadow:0 0 0 1px rgba(30,120,255,0.3),0 0 18px rgba(30,120,255,0.1);}50%{box-shadow:0 0 0 1px rgba(80,160,255,0.65),0 0 28px rgba(80,160,255,0.25);}}
@@ -2017,6 +2022,8 @@ export default function App() {
   const [whisperFeedback, setWhisperFeedback] = useState<{score: number; text: string} | null>(null);
   const [showWarRoom, setShowWarRoom] = useState(false);
   const [trashTalkBubble, setTrashTalkBubble] = useState<string | null>(null);
+  const [v1SendLine, setV1SendLine] = useState<string | null>(null);
+  const lastTrashRoundRef = useRef(0);
   const [graveyardArgs, setGraveyardArgs] = useState<{text: string; round: number; score: number}[]>([]);
   const [newCard, setNewCard] = useState<DebateCard | null>(null);
   const [showCardReveal, setShowCardReveal] = useState(false);
@@ -2250,10 +2257,9 @@ export default function App() {
     })();
   }, []);
 
-  // Trash talk bubbles in debates (vs AI and 1v1 multiplayer)
+  // Trash talk bubbles — 1v1 multiplayer only
   useEffect(() => {
-    if (screen !== "multiplayer-debate" && screen !== "debate") { setTrashTalkBubble(null); return; }
-    const ai = AI_OPPONENTS.find(a => a.id === selectedAI);
+    if (screen !== "multiplayer-debate") { setTrashTalkBubble(null); return; }
     const TRASH_MULTIPLAYER = [
       "Is that the best you've got?",
       "My grandma argues better than you.",
@@ -2265,19 +2271,8 @@ export default function App() {
       "Nice try. Not really though.",
       "You're helping me practice my yawning.",
     ];
-    const TRASH_AI: Record<string, string[]> = {
-      professor: ["Cite your sources.", "That's correlation, not causation.", "Fascinating. Wrong, but fascinating.", "Your premise has a logical gap.", "I've refuted this argument twice already."],
-      politician: ["Let me reframe that for you.", "The real question is...", "What the people want to hear is...", "I appreciate your passion, but...", "That's not the narrative we're building here."],
-      prosecutor: ["OBJECTION. That's hearsay.", "Where is your evidence?", "You're avoiding the question.", "I'll ask again — where's your proof?", "The jury sees right through that."],
-      philosopher: ["But what IS truth, really?", "You assume free will exists.", "Socrates would be disappointed.", "Define your terms first.", "Are you certain certainty is possible?"],
-      troll: ["LOL COPE", "That's not even a real argument.", "Wrong. Next.", "My three-year-old said the same thing.", "Chaos reigns! Logic is a construct!"],
-      debunker: ["Source?", "Peer-reviewed study or it didn't happen.", "That statistic is from 2009.", "Correlation ≠ causation.", "I've already fact-checked that. False."],
-    };
-    const TRASH = screen === "debate" && ai && TRASH_AI[ai.id]
-      ? TRASH_AI[ai.id]
-      : TRASH_MULTIPLAYER;
     const show = () => {
-      setTrashTalkBubble(TRASH[Math.floor(Math.random() * TRASH.length)]);
+      setTrashTalkBubble(TRASH_MULTIPLAYER[Math.floor(Math.random() * TRASH_MULTIPLAYER.length)]);
       setTimeout(() => setTrashTalkBubble(null), 4000);
     };
     const delay = 8000 + Math.random() * 6000;
@@ -2288,6 +2283,42 @@ export default function App() {
     }, delay);
     return () => clearTimeout(t);
   }, [screen]);
+
+  // 1v1 round trash talk — show "send this" bubble after each round completes
+  useEffect(() => {
+    if (screen !== "multiplayer-debate" || !currentRoom) return;
+    const round = currentRoom.currentRound;
+    if (round > 1 && round > lastTrashRoundRef.current) {
+      lastTrashRoundRef.current = round;
+      const V1_ROUND_TRASH = [
+        "You just proved my point for me 💀",
+        "That argument belonged in the trash.",
+        "My cat makes better points in its sleep.",
+        "I'm not even warming up yet.",
+        "You sure you want to keep going?",
+        "That was painful to read. For you.",
+        "Still waiting for an actual argument.",
+        "I'm winning and I'm bored.",
+        "Next round, try using logic this time.",
+        "This is embarrassing. But keep going.",
+        "You call that a rebuttal?",
+        "Round over. You lost. Try again.",
+        "Even your autocorrect knows you're wrong.",
+        "My argument is in another league.",
+        "I'd say 'nice try' but it wasn't.",
+        "Facts don't care about your feelings.",
+        "Send help. For your argument.",
+        "Was that your best? Really?",
+        "Round belongs to me. Accept it.",
+        "The AI judged you. I agree with the AI.",
+      ];
+      const line = V1_ROUND_TRASH[Math.floor(Math.random() * V1_ROUND_TRASH.length)];
+      setV1SendLine(line);
+      const t = setTimeout(() => setV1SendLine(null), 3000);
+      return () => clearTimeout(t);
+    }
+    return;
+  }, [currentRoom?.currentRound, screen]);
 
   // Rotate status taunts every 4s on home screen
   useEffect(() => {
@@ -4095,26 +4126,6 @@ export default function App() {
               <span style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.improve}</span>
             </div>
 
-            {/* RADAR CHART */}
-            <div className="radar-wrap">
-              <TriangleRadar logic={verdict.avgLogic} persuasion={verdict.avgPersuasion} delivery={verdict.avgDelivery} />
-              <div className="radar-stats">
-                {[
-                  { label: "Logic", val: verdict.avgLogic, color: "#5ab4ff" },
-                  { label: "Persuasion", val: verdict.avgPersuasion, color: "#e9c46a" },
-                  { label: "Delivery", val: verdict.avgDelivery, color: "#2a9d8f" },
-                ].map(({ label, val, color }) => (
-                  <div className="radar-stat-row" key={label}>
-                    <span className="radar-stat-lbl">{label}</span>
-                    <span className="radar-stat-val" style={{ color }}>{val}</span>
-                  </div>
-                ))}
-                <div style={{ marginTop: "8px" }}>
-                  {(() => { const tier = getRankedTier(verdict.avgScore); return <span className={`tier-badge ${tier.cls}`}>{tier.icon} {tier.tier}</span>; })()}
-                </div>
-              </div>
-            </div>
-
             {/* MATCH DETAILS COLLAPSIBLE */}
             <button className="match-details-btn" onClick={() => setShowMatchDetails(m => !m)}>
               <span>Match Details</span>
@@ -4122,6 +4133,17 @@ export default function App() {
             </button>
             {showMatchDetails && (
               <div className="match-details-panel">
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+                  {(() => { const tier = getRankedTier(verdict.avgScore); return <span className={`tier-badge ${tier.cls}`}>{tier.icon} {tier.tier}</span>; })()}
+                  <div style={{ display: "flex", gap: "14px" }}>
+                    {[{ label: "Logic", val: verdict.avgLogic, color: "#5ab4ff" }, { label: "Persuasion", val: verdict.avgPersuasion, color: "#e9c46a" }, { label: "Delivery", val: verdict.avgDelivery, color: "#2a9d8f" }].map(({ label, val, color }) => (
+                      <div key={label} style={{ textAlign: "center" }}>
+                        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "20px", color, lineHeight: 1 }}>{val}</div>
+                        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)" }}>{label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <div className="dna-card">
                   <div className="dna-header">Argument DNA</div>
                   {[
@@ -4309,10 +4331,7 @@ export default function App() {
           badges.push({ label: "70%+ Win Rate", icon: "⚡", tier: "gold" });
         return (
           <div className="screen">
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
-              <button className="btn btn-ghost" onClick={reset}>← Home</button>
-              <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", margin: 0 }}>1v1 CHALLENGE</h2>
-            </div>
+            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", textAlign: "center", marginBottom: "20px" }}>1v1 CHALLENGE</h2>
 
             <div className="v1-tab-row">
               <button className={`v1-tab${v1Tab === "play" ? " active" : ""}`} onClick={() => setV1Tab("play")}>Play</button>
@@ -4632,6 +4651,13 @@ export default function App() {
                 {trashTalkBubble}
               </div>
             )}
+            {v1SendLine && (
+              <div className="v1-send-bubble">
+                <span className="v1-send-bubble-lbl">Send this</span>
+                <span className="v1-send-bubble-text">{v1SendLine}</span>
+                <button className="v1-send-copy-btn" onClick={() => navigator.clipboard.writeText(v1SendLine).catch(() => {})}>Copy</button>
+              </div>
+            )}
             <div className="v1-arena-header">
               <div>
                 <div className="v1-round-badge">Round {currentRoom.currentRound}/{currentRoom.totalRounds}</div>
@@ -4860,10 +4886,7 @@ export default function App() {
       {/* REPLAY */}
       {screen === "replay" && verdict && (
         <div className="screen">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
-            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "36px", letterSpacing: "3px" }}>REPLAY</h2>
-            <button className="btn btn-ghost" onClick={() => setScreen("verdict")}>← Back</button>
-          </div>
+          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "36px", letterSpacing: "3px", textAlign: "center", marginBottom: "20px" }}>REPLAY</h2>
 
           <div className="replay-intro">
             <div>
@@ -4931,6 +4954,7 @@ export default function App() {
               </div>
             );
           })}
+          <button className="btn btn-ghost" style={{ width: "100%", marginTop: "16px" }} onClick={() => setScreen("verdict")}>← Back</button>
         </div>
       )}
 
@@ -5127,10 +5151,7 @@ export default function App() {
       {/* LEADERBOARD */}
       {screen === "leaderboard" && (
         <div className="screen">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
-            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "36px", letterSpacing: "3px" }}>LEADERBOARD</h2>
-            <button className="btn btn-ghost" onClick={reset}>← Home</button>
-          </div>
+          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "36px", letterSpacing: "3px", textAlign: "center", marginBottom: "24px" }}>LEADERBOARD</h2>
 
           <div className="stats-row">
             <div className="stat-card"><span className="val red">{stats.debates}</span><span className="lbl">Your Debates</span></div>
@@ -5187,6 +5208,7 @@ export default function App() {
           })}
         </div>
       )}
+      <button className="btn btn-ghost" style={{ marginTop: "20px", width: "100%" }} onClick={reset}>← Home</button>
     </div>
     {shareToast && <div className="share-toast">{shareToast}</div>}
 
@@ -5461,13 +5483,6 @@ export default function App() {
       </div>
     )}
 
-    {/* GLOBAL TRASH TALK BUBBLE (vs AI debates) */}
-    {screen === "debate" && trashTalkBubble && (
-      <div className="trash-bubble">
-        <div className="trash-bubble-who">{AI_OPPONENTS.find(a => a.id === selectedAI)?.name || "Opponent"}</div>
-        {trashTalkBubble}
-      </div>
-    )}
 
     {/* GHOST REVEAL MODAL */}
     {showGhostReveal && (
@@ -5504,10 +5519,7 @@ export default function App() {
     {/* DASHBOARD SCREEN */}
     {screen === "dashboard" && (
       <div className="screen">
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
-          <button className="btn btn-ghost" onClick={reset}>← Home</button>
-          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", margin: 0 }}>DASHBOARD</h2>
-        </div>
+        <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "32px", letterSpacing: "3px", textAlign: "center", marginBottom: "20px" }}>DASHBOARD</h2>
 
         <div className="dash-grid">
           <div className="dash-stat-card">
@@ -5606,17 +5618,15 @@ export default function App() {
             </div>
           </>
         )}
+        <button className="btn btn-ghost" style={{ marginTop: "20px", width: "100%" }} onClick={reset}>← Home</button>
       </div>
     )}
 
     {screen === "forge-rival" && (
       <div className="screen forge-page">
-        <div className="forge-header">
-          <button className="btn btn-ghost" style={{ padding: "6px 14px", fontSize: "11px", letterSpacing: "2px" }} onClick={() => setScreen("home")}>← Back</button>
-          <div>
-            <p className="forge-page-title">FORGE YOUR RIVAL</p>
-            <p className="forge-page-sub">Design your opponent. Share it with the world.</p>
-          </div>
+        <div style={{ textAlign: "center", paddingBottom: "20px" }}>
+          <p className="forge-page-title">FORGE YOUR RIVAL</p>
+          <p className="forge-page-sub">Design your opponent. Share it with the world.</p>
         </div>
         <div className="forge-section">
           <span className="forge-section-lbl">Name</span>
@@ -5708,6 +5718,18 @@ export default function App() {
           </div>
         </div>
         <div className="forge-section">
+          <span className="forge-section-lbl">Backstory (optional)</span>
+          <textarea
+            className="custom-input"
+            rows={3}
+            placeholder="Give your rival a backstory, quirks, or extra personality details..."
+            maxLength={300}
+            value={forgeForm.backstory}
+            onChange={(e) => setForgeForm((f) => ({ ...f, backstory: e.target.value }))}
+            style={{ resize: "none", width: "100%", boxSizing: "border-box" }}
+          />
+        </div>
+        <div className="forge-section">
           <button
             className="btn btn-primary"
             style={{ width: "100%", fontSize: "13px", letterSpacing: "3px", padding: "14px" }}
@@ -5721,18 +5743,16 @@ export default function App() {
               {forgeError}
             </p>
           )}
+          <button className="btn btn-ghost" style={{ width: "100%", marginTop: "10px" }} onClick={() => setScreen("home")}>← Back</button>
         </div>
       </div>
     )}
 
     {screen === "forge-rival-result" && createdRival && (
       <div className="screen forge-page">
-        <div className="forge-header">
-          <button className="btn btn-ghost" style={{ padding: "6px 14px", fontSize: "11px", letterSpacing: "2px" }} onClick={() => setScreen("home")}>← Home</button>
-          <div>
-            <p className="forge-page-title">RIVAL FORGED</p>
-            <p className="forge-page-sub">Your opponent is ready for battle.</p>
-          </div>
+        <div style={{ textAlign: "center", paddingBottom: "20px" }}>
+          <p className="forge-page-title">RIVAL FORGED</p>
+          <p className="forge-page-sub">Your opponent is ready for battle.</p>
         </div>
         <div className="forge-section">
           <div className="forge-result-card">
@@ -5791,12 +5811,13 @@ export default function App() {
             style={{ width: "100%", fontSize: "11px", letterSpacing: "2px" }}
             onClick={() => {
               setCreatedRival(null);
-              setForgeForm({ name: "", avatar: "🤖", tone: "aggressive", aggression: 7, logicLevel: 6, humorLevel: 3, difficulty: "medium", memoryEnabled: false });
+              setForgeForm({ name: "", avatar: "🤖", tone: "aggressive", aggression: 7, logicLevel: 6, humorLevel: 3, difficulty: "medium", memoryEnabled: false, backstory: "" });
               setScreen("forge-rival");
             }}
           >
             FORGE ANOTHER
           </button>
+          <button className="btn btn-ghost" style={{ width: "100%", fontSize: "11px", letterSpacing: "2px" }} onClick={() => setScreen("home")}>← Home</button>
         </div>
         <div className="forge-section" style={{ textAlign: "center" }}>
           <p style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "1px", color: "var(--text-dim)" }}>
