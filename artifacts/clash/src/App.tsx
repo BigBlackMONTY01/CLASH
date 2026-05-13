@@ -570,16 +570,26 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .gauntlet-btn:hover{background:rgba(244,197,66,0.07);color:var(--gold);transform:translateY(-1px);}
 .gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;margin-top:6px;}
 
-/* 1V1 VERSUS SLASH BUTTON */
-.v1-slash-btn{display:block;position:relative;overflow:hidden;width:100%;max-width:400px;height:68px;border:none;border-radius:var(--radius);cursor:pointer;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 0.12s ease,box-shadow 0.15s ease;box-shadow:0 0 0 1.5px rgba(230,57,70,0.5),0 2px 14px rgba(0,0,0,0.45);}
-.v1-slash-btn:hover{transform:translateY(-1px);box-shadow:0 0 0 1.5px #e63946,0 6px 28px rgba(230,57,70,0.38);}
-.v1-slash-btn:active{transform:scale(0.98);}
-.v1-slash-l{position:absolute;inset:0;background:#e63946;clip-path:polygon(0 0,60% 0,40% 100%,0 100%);}
-.v1-slash-r{position:absolute;inset:0;background:#111111;clip-path:polygon(60% 0,100% 0,100% 100%,40% 100%);}
-.v1-slash-edge{position:absolute;left:50%;top:-25%;width:2px;height:150%;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.85) 20%,rgba(255,255,255,1) 50%,rgba(255,255,255,0.85) 80%,rgba(255,255,255,0) 100%);transform:translateX(-50%) rotate(-22deg);box-shadow:0 0 7px 3px rgba(255,255,255,0.6),0 0 20px 6px rgba(255,255,255,0.2);pointer-events:none;z-index:3;}
-.v1-slash-icon-l{position:absolute;left:13%;top:50%;transform:translateY(-50%);font-size:26px;line-height:1;z-index:2;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.5)) brightness(1.15);}
-.v1-slash-icon-r{position:absolute;right:13%;top:50%;transform:translateY(-50%);font-size:26px;line-height:1;z-index:2;opacity:0.22;filter:brightness(0.4) grayscale(1);}
-.v1-slash-title{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:23px;letter-spacing:5px;color:#ffffff;text-shadow:0 0 12px rgba(0,0,0,1),0 1px 5px rgba(0,0,0,1),0 0 30px rgba(0,0,0,0.8);pointer-events:none;z-index:4;}
+/* 1V1 VS PULSE BUTTON */
+@keyframes vsPulse{
+  0%,65%,100%{transform:translate(-50%,-50%) scale(0);opacity:0;text-shadow:none;}
+  8%{transform:translate(-50%,-50%) scale(2.6);opacity:1;text-shadow:0 0 12px #e63946,0 0 30px rgba(230,57,70,0.7),0 0 60px rgba(230,57,70,0.35);}
+  22%{transform:translate(-50%,-50%) scale(1.5);opacity:1;text-shadow:0 0 8px #e63946,0 0 20px rgba(230,57,70,0.5);}
+  42%{transform:translate(-50%,-50%) scale(1.1);opacity:0.75;text-shadow:0 0 4px rgba(230,57,70,0.4);}
+  60%{transform:translate(-50%,-50%) scale(0.8);opacity:0;}
+}
+.v1-vs-btn{display:block;width:100%;max-width:400px;border:1.5px solid rgba(230,57,70,0.3);border-radius:var(--radius);cursor:pointer;padding:0;overflow:hidden;background:transparent;transition:border-color 0.15s ease,transform 0.12s ease,box-shadow 0.15s ease;touch-action:manipulation;-webkit-tap-highlight-color:transparent;text-align:left;}
+.v1-vs-btn:hover{border-color:rgba(230,57,70,0.7);transform:translateY(-1px);box-shadow:0 4px 20px rgba(230,57,70,0.18);}
+.v1-vs-btn:active{transform:scale(0.98);}
+.v1-vs-arena{display:flex;height:62px;width:100%;position:relative;}
+.v1-vs-half-l{flex:1;background:#1a0a0a;display:flex;align-items:center;justify-content:center;}
+.v1-vs-divider{width:1.5px;background:linear-gradient(180deg,rgba(230,57,70,0) 0%,#e63946 30%,#e63946 70%,rgba(230,57,70,0) 100%);flex-shrink:0;position:relative;}
+.v1-vs-half-r{flex:1;background:#0d0d0d;display:flex;align-items:center;justify-content:center;}
+.v1-vs-player{font-size:24px;line-height:1;pointer-events:none;}
+.v1-vs-player-l{opacity:0.7;filter:drop-shadow(0 0 3px rgba(230,57,70,0.3));}
+.v1-vs-player-r{opacity:0.2;filter:grayscale(1);}
+.v1-vs-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);font-family:'Bebas Neue',sans-serif;font-size:30px;color:#e63946;white-space:nowrap;pointer-events:none;z-index:4;animation:vsPulse 2s ease-out infinite;}
+.v1-vs-label{background:#0d0d0d;border-top:1px solid rgba(230,57,70,0.12);padding:5px 0 7px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(230,57,70,0.55);text-align:center;display:block;}
 
 /* Featured topic card */
 @keyframes featuredSlideLeft{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
@@ -2611,15 +2621,20 @@ export default function App() {
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
               <button
-                className="v1-slash-btn"
+                className="v1-vs-btn"
                 onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}
               >
-                <div className="v1-slash-l" />
-                <div className="v1-slash-r" />
-                <div className="v1-slash-edge" />
-                <span className="v1-slash-icon-l">👤</span>
-                <span className="v1-slash-icon-r">👤</span>
-                <span className="v1-slash-title">1V1 Challenge</span>
+                <div className="v1-vs-arena">
+                  <div className="v1-vs-half-l">
+                    <span className="v1-vs-player v1-vs-player-l">👤</span>
+                  </div>
+                  <div className="v1-vs-divider" />
+                  <div className="v1-vs-half-r">
+                    <span className="v1-vs-player v1-vs-player-r">👤</span>
+                  </div>
+                  <span className="v1-vs-badge">VS</span>
+                </div>
+                <span className="v1-vs-label">1V1 Challenge</span>
               </button>
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
