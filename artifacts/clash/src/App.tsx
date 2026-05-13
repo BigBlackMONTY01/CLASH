@@ -2453,7 +2453,7 @@ export default function App() {
         humorLevel: forgeForm.humorLevel,
         difficulty: forgeForm.difficulty,
         memoryEnabled: forgeForm.memoryEnabled,
-        creatorDeviceId: deviceId,
+        creatorDeviceId: getOrCreateDeviceId(),
       });
       setCreatedRival(data);
       setScreen("forge-rival-result");
@@ -2462,7 +2462,7 @@ export default function App() {
     } finally {
       setForgeCreating(false);
     }
-  }, [forgeForm, deviceId]);
+  }, [forgeForm]);
 
 
   const ai = selectedAI === "custom"
