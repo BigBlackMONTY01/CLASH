@@ -1102,6 +1102,81 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .custom-share-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
 .custom-share-btn{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.25);border-radius:100px;color:#a855f7;cursor:pointer;transition:all 0.2s;}
 .custom-share-btn:hover{background:rgba(168,85,247,0.16);border-color:rgba(168,85,247,0.5);}
+
+/* CARD REVEAL OVERLAY */
+.card-reveal-overlay{position:fixed;inset:0;z-index:9900;background:rgba(0,0,0,0.94);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.4s ease;}
+.card-reveal-scene{perspective:900px;width:220px;height:310px;margin-bottom:20px;}
+.card-reveal-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:cardFlip 0.75s 0.5s cubic-bezier(0.34,1.1,0.64,1) both;}
+@keyframes cardFlip{from{transform:rotateY(180deg) scale(0.75);}to{transform:rotateY(0) scale(1);}}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;overflow:hidden;}
+.card-back{background:linear-gradient(135deg,#0d0d1a,#111);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:rgba(230,57,70,0.3);transform:rotateY(180deg);}
+.card-front{display:flex;flex-direction:column;background:linear-gradient(160deg,#0e0e1c,#111120);border:2px solid var(--card-border,var(--border));box-shadow:0 0 30px var(--card-glow,rgba(80,80,80,0.2));}
+.card-rarity-common{--card-border:rgba(100,100,100,0.5);--card-glow:rgba(100,100,100,0.15);--card-color:#888;}
+.card-rarity-uncommon{--card-border:rgba(34,197,94,0.55);--card-glow:rgba(34,197,94,0.2);--card-color:var(--green);}
+.card-rarity-rare{--card-border:rgba(0,119,255,0.65);--card-glow:rgba(0,119,255,0.25);--card-color:#60a5fa;}
+.card-rarity-epic{--card-border:rgba(168,85,247,0.75);--card-glow:rgba(168,85,247,0.3);--card-color:#c084fc;}
+.card-rarity-legendary{--card-border:rgba(244,197,66,0.85);--card-glow:rgba(244,197,66,0.4);--card-color:var(--gold);}
+.card-header-band{padding:9px 12px 8px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.card-rarity-badge{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:3px;text-transform:uppercase;padding:2px 6px;border-radius:100px;border:1px solid var(--card-border,var(--border));color:var(--card-color,#888);}
+.card-power-num{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--card-color,#888);}
+.card-art{flex:1;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative;}
+.card-art::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,var(--card-glow,rgba(80,80,80,0.1)) 0%,transparent 70%);}
+.card-body{padding:10px 12px;}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;line-height:1.15;margin-bottom:5px;color:var(--text);}
+.card-desc{font-size:10px;color:var(--text-dim);line-height:1.5;}
+.card-footer{padding:7px 12px 9px;border-top:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;}
+.card-type-badge{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+.card-clash-logo{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:3px;color:rgba(230,57,70,0.3);}
+.card-reveal-info{text-align:center;}
+.card-reveal-new-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:5px;}
+.card-reveal-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;margin-bottom:3px;}
+.card-reveal-rarity-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;}
+.card-reveal-rarity-common{color:#888;}.card-reveal-rarity-uncommon{color:var(--green);}.card-reveal-rarity-rare{color:#60a5fa;}.card-reveal-rarity-epic{color:#c084fc;}.card-reveal-rarity-legendary{color:var(--gold);}
+@keyframes legendaryGlow{0%,100%{box-shadow:0 0 20px var(--card-glow);}50%{box-shadow:0 0 50px var(--card-glow);}}
+.card-rarity-legendary .card-front,.card-rarity-epic .card-front{animation:legendaryGlow 2s ease-in-out infinite 1.2s;}
+
+/* PROFILE PANEL TABS */
+.pp-tab-row{display:flex;border-bottom:1px solid var(--border);}
+.pp-tab{flex:1;padding:9px 4px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--text-dim);transition:all 0.18s;}
+.pp-tab.active{color:var(--red);border-bottom-color:var(--red);}
+.pp-tab-content{padding:12px 14px;max-height:260px;overflow-y:auto;}
+.pp-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.pp-card-mini{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:9px 6px;text-align:center;transition:transform 0.2s;}
+.pp-card-mini:hover{transform:translateY(-2px);}
+.pp-card-mini.rarity-uncommon{border-color:rgba(34,197,94,0.5);}
+.pp-card-mini.rarity-rare{border-color:rgba(0,119,255,0.5);}
+.pp-card-mini.rarity-epic{border-color:rgba(168,85,247,0.6);}
+.pp-card-mini.rarity-legendary{border-color:rgba(244,197,66,0.7);background:rgba(244,197,66,0.04);}
+.pp-card-mini-icon{font-size:18px;margin-bottom:3px;}
+.pp-card-mini-title{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);line-height:1.3;word-break:break-word;}
+.pp-card-mini-power{font-family:'Bebas Neue',sans-serif;font-size:13px;margin-top:2px;}
+
+/* FLOATING AI RIVAL BUTTON */
+.float-rival-btn{position:fixed;bottom:24px;right:16px;z-index:600;display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(12,8,24,0.96);border:1px solid rgba(168,85,247,0.4);border-radius:100px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c084fc;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(168,85,247,0.12),0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:floatRivalPulse 3s ease-in-out infinite;}
+@keyframes floatRivalPulse{0%,100%{box-shadow:0 4px 18px rgba(168,85,247,0.12),0 8px 32px rgba(0,0,0,0.5);}50%{box-shadow:0 4px 28px rgba(168,85,247,0.26),0 8px 40px rgba(0,0,0,0.6);}}
+.float-rival-btn:hover{border-color:rgba(168,85,247,0.7);color:#d8b4fe;transform:scale(1.04);}
+
+/* STREAK CONTINUE BANNER ON HOME */
+.streak-continue-btn{display:block;width:100%;background:linear-gradient(135deg,rgba(244,197,66,0.08),rgba(230,57,70,0.06));border:1.5px solid rgba(244,197,66,0.35);border-radius:var(--radius);padding:12px 20px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all 0.2s;text-align:center;margin-top:10px;animation:goldPulse 2.2s ease-in-out infinite;}
+@keyframes goldPulse{0%,100%{box-shadow:0 0 0 0 rgba(244,197,66,0);}50%{box-shadow:0 0 14px 2px rgba(244,197,66,0.15);}}
+.streak-continue-btn:hover{background:linear-gradient(135deg,rgba(244,197,66,0.14),rgba(230,57,70,0.1));border-color:var(--gold);}
+
+/* NAV MMR RANK CHIP */
+.nav-mmr-chip{display:inline-flex;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:100px;border:1px solid var(--border);color:var(--text-dim);cursor:default;user-select:none;}
+.nav-mmr-chip.bronze{border-color:rgba(176,122,87,0.45);color:#c49a6c;}
+.nav-mmr-chip.silver{border-color:rgba(160,170,180,0.45);color:#a0aab4;}
+.nav-mmr-chip.gold{border-color:rgba(212,175,55,0.5);color:#d4af37;}
+.nav-mmr-chip.diamond{border-color:rgba(90,180,255,0.5);color:#5ab4ff;}
+.nav-mmr-chip.clash-master{border-color:rgba(230,57,70,0.55);color:var(--red);}
+
+/* INLINE ARG TAG CHIPS */
+.inline-tag-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;}
+.inline-tag-chip{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:1px 6px;border-radius:100px;border:1px solid;}
+.itc-killer_point{background:rgba(0,119,255,0.1);border-color:rgba(0,119,255,0.35);color:#60a5fa;}
+.itc-solid{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.28);color:var(--green);}
+.itc-fallacy{background:rgba(230,57,70,0.1);border-color:rgba(230,57,70,0.35);color:var(--red);}
+.itc-weak_evidence{background:rgba(244,197,66,0.1);border-color:rgba(244,197,66,0.28);color:var(--gold);}
+.itc-emotional_bait{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.28);color:#c084fc;}
 `;
 
 
@@ -1730,6 +1805,7 @@ interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fal
 interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
 interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; }
 interface V1HistoryEntry { code: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
+interface DebateCard { id: number; playerId: number; debateId: number | null; opponentId: string; opponentName: string; topic: string; score: number; rank: string; rarity: string; bestQuote: string; createdAt: string; }
 
 function scoreTypingStrength(text: string): { score: number; label: string; color: string } {
   if (!text.trim()) return { score: 0, label: "Start writing…", color: "var(--text-dim)" };
@@ -1879,6 +1955,11 @@ export default function App() {
   const [showWarRoom, setShowWarRoom] = useState(false);
   const [trashTalkBubble, setTrashTalkBubble] = useState<string | null>(null);
   const [graveyardArgs, setGraveyardArgs] = useState<{text: string; round: number; score: number}[]>([]);
+  const [newCard, setNewCard] = useState<DebateCard | null>(null);
+  const [showCardReveal, setShowCardReveal] = useState(false);
+  const [profileTab, setProfileTab] = useState<"overview" | "cards" | "graveyard">("overview");
+  const [profileCards, setProfileCards] = useState<DebateCard[]>([]);
+  const [profileCardsLoading, setProfileCardsLoading] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pendingVerdictRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -2075,10 +2156,11 @@ export default function App() {
     })();
   }, []);
 
-  // Trash talk bubbles in 1v1 multiplayer debate
+  // Trash talk bubbles in debates (vs AI and 1v1 multiplayer)
   useEffect(() => {
-    if (screen !== "multiplayer-debate") { setTrashTalkBubble(null); return; }
-    const TRASH = [
+    if (screen !== "multiplayer-debate" && screen !== "debate") { setTrashTalkBubble(null); return; }
+    const ai = AI_OPPONENTS.find(a => a.id === selectedAI);
+    const TRASH_MULTIPLAYER = [
       "Is that the best you've got?",
       "My grandma argues better than you.",
       "You call that a point?",
@@ -2089,6 +2171,17 @@ export default function App() {
       "Nice try. Not really though.",
       "You're helping me practice my yawning.",
     ];
+    const TRASH_AI: Record<string, string[]> = {
+      professor: ["Cite your sources.", "That's correlation, not causation.", "Fascinating. Wrong, but fascinating.", "Your premise has a logical gap.", "I've refuted this argument twice already."],
+      politician: ["Let me reframe that for you.", "The real question is...", "What the people want to hear is...", "I appreciate your passion, but...", "That's not the narrative we're building here."],
+      prosecutor: ["OBJECTION. That's hearsay.", "Where is your evidence?", "You're avoiding the question.", "I'll ask again — where's your proof?", "The jury sees right through that."],
+      philosopher: ["But what IS truth, really?", "You assume free will exists.", "Socrates would be disappointed.", "Define your terms first.", "Are you certain certainty is possible?"],
+      troll: ["LOL COPE", "That's not even a real argument.", "Wrong. Next.", "My three-year-old said the same thing.", "Chaos reigns! Logic is a construct!"],
+      debunker: ["Source?", "Peer-reviewed study or it didn't happen.", "That statistic is from 2009.", "Correlation ≠ causation.", "I've already fact-checked that. False."],
+    };
+    const TRASH = screen === "debate" && ai && TRASH_AI[ai.id]
+      ? TRASH_AI[ai.id]
+      : TRASH_MULTIPLAYER;
     const show = () => {
       setTrashTalkBubble(TRASH[Math.floor(Math.random() * TRASH.length)]);
       setTimeout(() => setTrashTalkBubble(null), 4000);
@@ -2643,6 +2736,24 @@ export default function App() {
         setShowMatchDetails(false);
         setShowCoachReveal(false);
         setScreen("verdict");
+        if (authUser) {
+          try {
+            const ai = AI_OPPONENTS.find(a => a.id === selectedAI);
+            const bestQuote = _msgs.filter(m => m.role === "user").slice(-1)[0]?.text || "";
+            const generated = await apiAuthPost<DebateCard>("/cards/generate", {
+              opponentId: selectedAI,
+              opponentName: ai?.name || selectedAI,
+              topic: selectedTopic?.text || "",
+              score: avgScore,
+              rank: judgeVerdict.rank || (won ? "B" : "D"),
+              bestQuote: bestQuote.slice(0, 200),
+              won,
+              streak: stats.currentStreak,
+            });
+            setNewCard(generated);
+            setTimeout(() => setShowCardReveal(true), 1200);
+          } catch {}
+        }
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
@@ -3031,13 +3142,20 @@ export default function App() {
             )}
           </button>
           {authUser ? (
-            <button
-              className="user-chip"
-              onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setShowProfilePanel(p => !p); }}
-            >
-              <span className="user-chip-av">{(player?.username || authUser.email)[0].toUpperCase()}</span>
-              <span className="user-chip-name">{player?.username || authUser.email.split("@")[0]}</span>
-            </button>
+            <>
+              {mmrResult && (
+                <span className={`nav-mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`}>
+                  {mmrResult.newTier.toUpperCase()}
+                </span>
+              )}
+              <button
+                className="user-chip"
+                onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setProfileTab("overview"); setShowProfilePanel(p => !p); }}
+              >
+                <span className="user-chip-av">{(player?.username || authUser.email)[0].toUpperCase()}</span>
+                <span className="user-chip-name">{player?.username || authUser.email.split("@")[0]}</span>
+              </button>
+            </>
           ) : (
             <button className="auth-pill" onClick={() => { setAuthError(""); setAuthMode("login"); setShowAuthModal(true); }}>
               Sign In
@@ -3114,6 +3232,16 @@ export default function App() {
               </p>
             </div>
           </div>
+          {(stats.currentStreak ?? 0) >= 2 && (
+            <div style={{ marginTop: "12px" }}>
+              <button
+                className="streak-continue-btn"
+                onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
+              >
+                🔥 Keep the {stats.currentStreak}-win streak alive
+              </button>
+            </div>
+          )}
 
           {/* LOGGED-IN PLAYER COMMAND STRIP */}
           {authUser && player && (
@@ -5163,24 +5291,159 @@ export default function App() {
               </button>
             </div>
           )}
-          <div className="pp-section">
-            <div className="pp-section-lbl">Display Name</div>
-            <div className="pp-username-row">
-              <input
-                className="pp-username-field"
-                placeholder="YOURNAME"
-                maxLength={20}
-                value={usernameInput}
-                onChange={(e) => { setUsernameInput(e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, "")); setUsernameError(""); }}
-                onKeyDown={(e) => { if (e.key === "Enter") handleSetUsername(); }}
-              />
-              <button className="pp-save-btn" onClick={handleSetUsername}>Save</button>
-            </div>
-            {usernameError && <div style={{ fontSize: "11px", color: "var(--red)", marginTop: "4px" }}>{usernameError}</div>}
+          <div className="pp-tab-row">
+            <button className={`pp-tab${profileTab === "overview" ? " active" : ""}`} onClick={() => setProfileTab("overview")}>Overview</button>
+            <button className={`pp-tab${profileTab === "cards" ? " active" : ""}`} onClick={() => {
+              setProfileTab("cards");
+              if (profileCards.length === 0 && !profileCardsLoading) {
+                setProfileCardsLoading(true);
+                apiAuthGet<DebateCard[]>("/cards/collection").then(c => { setProfileCards(c); setProfileCardsLoading(false); }).catch(() => setProfileCardsLoading(false));
+              }
+            }}>Cards</button>
+            <button className={`pp-tab${profileTab === "graveyard" ? " active" : ""}`} onClick={() => setProfileTab("graveyard")}>Graveyard</button>
           </div>
+          {profileTab === "overview" && (
+            <div className="pp-tab-content">
+              <div className="pp-section-lbl">Display Name</div>
+              <div className="pp-username-row" style={{ marginBottom: "0" }}>
+                <input
+                  className="pp-username-field"
+                  placeholder="YOURNAME"
+                  maxLength={20}
+                  value={usernameInput}
+                  onChange={(e) => { setUsernameInput(e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, "")); setUsernameError(""); }}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleSetUsername(); }}
+                />
+                <button className="pp-save-btn" onClick={handleSetUsername}>Save</button>
+              </div>
+              {usernameError && <div style={{ fontSize: "11px", color: "var(--red)", marginTop: "4px" }}>{usernameError}</div>}
+              {sigStyle && (
+                <div style={{ marginTop: "10px" }}>
+                  <div className="pp-section-lbl">Signature Style</div>
+                  <div className="sig-card" style={{ padding: "8px 12px", marginTop: "4px" }}>
+                    <span className="sig-icon" style={{ fontSize: "18px" }}>{sigStyle.icon}</span>
+                    <div>
+                      <div className="sig-name" style={{ fontSize: "13px" }}>{sigStyle.name}</div>
+                      <div className="sig-desc" style={{ fontSize: "10px" }}>{sigStyle.desc}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {mmrResult && (
+                <div style={{ marginTop: "10px" }}>
+                  <div className="pp-section-lbl">Rank</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
+                    <span className={`mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`} style={{ fontSize: "12px" }}>
+                      {mmrResult.newTier.toUpperCase()}
+                    </span>
+                    <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "18px", color: "var(--text)" }}>{mmrResult.newMmr}</span>
+                    <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", color: mmrResult.delta >= 0 ? "var(--green)" : "var(--red)" }}>
+                      {mmrResult.delta >= 0 ? "+" : ""}{mmrResult.delta}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          {profileTab === "cards" && (
+            <div className="pp-tab-content">
+              {profileCardsLoading ? (
+                <div style={{ textAlign: "center", color: "var(--text-dim)", padding: "20px 0", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "2px" }}>LOADING...</div>
+              ) : profileCards.length === 0 ? (
+                <div style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "12px", padding: "20px 0", lineHeight: 1.5 }}>
+                  Win debates to earn collectible cards.
+                </div>
+              ) : (
+                <div className="pp-cards-grid">
+                  {profileCards.map(c => {
+                    const aiOpp = AI_OPPONENTS.find(a => a.id === c.opponentId);
+                    const rarColor = c.rarity === "Legendary" ? "var(--gold)" : c.rarity === "Epic" ? "#c084fc" : c.rarity === "Rare" ? "#60a5fa" : c.rarity === "Uncommon" ? "var(--green)" : "#666";
+                    return (
+                      <div key={c.id} className={`pp-card-mini rarity-${c.rarity.toLowerCase()}`} title={`vs ${c.opponentName} · ${c.topic} · Score: ${c.score}`}>
+                        <div className="pp-card-mini-icon">{aiOpp?.icon || "⚔️"}</div>
+                        <div className="pp-card-mini-title">{c.opponentName}</div>
+                        <div className="pp-card-mini-power" style={{ color: rarColor }}>{c.score}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+          {profileTab === "graveyard" && (
+            <div className="pp-tab-content">
+              {graveyardArgs.length === 0 ? (
+                <div style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "12px", padding: "20px 0", lineHeight: 1.5 }}>
+                  Arguments that scored below 40 will be buried here.
+                </div>
+              ) : (
+                graveyardArgs.map((g, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "8px 0", borderBottom: i < graveyardArgs.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
+                    <span style={{ fontSize: "13px", opacity: 0.5, flexShrink: 0 }}>💀</span>
+                    <div style={{ flex: 1, fontSize: "11px", color: "var(--text-dim)", lineHeight: 1.5, fontStyle: "italic" }}>
+                      "{g.text.length > 90 ? g.text.slice(0, 90) + "…" : g.text}"
+                    </div>
+                    <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "14px", color: "var(--red)", flexShrink: 0 }}>{g.score}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
           <button className="pp-logout" onClick={logoutFn}>Log Out</button>
         </div>
       </>
+    )}
+
+    {/* CARD REVEAL OVERLAY */}
+    {showCardReveal && newCard && (
+      <div className="card-reveal-overlay" onClick={() => setShowCardReveal(false)}>
+        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "5px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "16px" }}>
+          Card Unlocked
+        </div>
+        <div className={`card-reveal-scene card-rarity-${newCard.rarity.toLowerCase()}`} onClick={(e) => e.stopPropagation()}>
+          <div className="card-reveal-inner">
+            <div className="card-face card-back">CLASH</div>
+            <div className="card-face card-front">
+              <div className="card-header-band">
+                <span className="card-rarity-badge">{newCard.rarity}</span>
+                <span className="card-power-num">{newCard.score}</span>
+              </div>
+              <div className="card-art">
+                {AI_OPPONENTS.find(a => a.id === newCard.opponentId)?.icon || "⚔️"}
+              </div>
+              <div className="card-body">
+                <div className="card-title">vs {newCard.opponentName}</div>
+                <div className="card-desc">
+                  {newCard.bestQuote
+                    ? `"${newCard.bestQuote.slice(0, 60)}${newCard.bestQuote.length > 60 ? "…" : ""}"`
+                    : newCard.topic.slice(0, 60)}
+                </div>
+              </div>
+              <div className="card-footer">
+                <span className="card-type-badge">Rank {newCard.rank}</span>
+                <span className="card-clash-logo">CLASH</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="card-reveal-info">
+          <div className="card-reveal-name">vs {newCard.opponentName}</div>
+          <div className={`card-reveal-rarity-lbl card-reveal-rarity-${newCard.rarity.toLowerCase()}`}>
+            {newCard.rarity} Card
+          </div>
+          <div style={{ marginTop: "20px", color: "var(--text-dim)", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px" }}>
+            Tap anywhere to continue
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* GLOBAL TRASH TALK BUBBLE (vs AI debates) */}
+    {screen === "debate" && trashTalkBubble && (
+      <div className="trash-bubble">
+        <div className="trash-bubble-who">{AI_OPPONENTS.find(a => a.id === selectedAI)?.name || "Opponent"}</div>
+        {trashTalkBubble}
+      </div>
     )}
 
     {/* GHOST REVEAL MODAL */}
@@ -5321,6 +5584,16 @@ export default function App() {
           </>
         )}
       </div>
+    )}
+
+    {screen === "home" && (
+      <button
+        className="float-rival-btn"
+        onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
+        title="Quick debate vs AI"
+      >
+        ⚡ Quick Debate
+      </button>
     )}
 
     {showUsernameModal && (
