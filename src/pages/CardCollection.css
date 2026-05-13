@@ -1,0 +1,60 @@
+.card-collection {
+  padding: 2rem;
+}
+
+.card-collection .filters {
+  margin-bottom: 1rem;
+}
+
+.card-collection .grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.card-collection .card {
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.card-collection .card.common {
+  background: #333;
+  border: 2px solid #fff;
+}
+
+.card-collection .card.rare {
+  background: #001a78;
+  border: 2px solid #008cff;
+  animation: rare-glow 3s infinite;
+}
+
+.card-collection .card.epic {
+  background: linear-gradient(135deg, #780000, #ff0000);
+  border: 2px solid #ff4d4d;
+  animation: epic-pulse 2s infinite;
+}
+
+.card-collection .card.legendary {
+  background: #ffd700;
+  border: 2px solid #ffcc00;
+  animation: legendary-shimmer 5s infinite;
+}
+
+@keyframes rare-glow {
+  0% { box-shadow: 0 0 10px #008cff; }
+  50% { box-shadow: 0 0 20px #008cff; }
+  100% { box-shadow: 0 0 10px #008cff; }
+}
+
+@keyframes epic-pulse {
+  0% { border-width: 2px; }
+  50% { border-width: 4px; }
+  100% { border-width: 2px; }
+}
+
+@keyframes legendary-shimmer {
+  0% { background-position: 0 0; }
+  100% { background-position: 200% 200%; }
+}
