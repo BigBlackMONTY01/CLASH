@@ -1366,6 +1366,14 @@ async function apiAuthGet<T>(path: string): Promise<T> {
   return data as T;
 }
 
+async function apiAuthPatch<T>(path: string, body: unknown): Promise<T> {
+  const url = `${API}/api${path}`;
+  const res = await fetch(url, { method: "PATCH", headers: getAuthHeaders(), body: JSON.stringify(body) });
+  const data = await parseResponse(res) as Record<string, unknown>;
+  if (!res.ok) throw new Error((data.error as string) || `HTTP ${res.status}`);
+  return data as T;
+}
+
 function renderWithHighlights(text: string, highlights: RoomHighlight[]) {
   if (!highlights || highlights.length === 0) return <>{text}</>;
   const positioned = highlights
@@ -1595,7 +1603,7 @@ export default function App() {
     return () => clearInterval(iv);
   }, [thinking]);
 
-  // Restore auth session on mount
+  // Restore auth session on mount — load the account's own player profile
   useEffect(() => {
     try {
       const token = localStorage.getItem("clash-auth-token");
@@ -1604,6 +1612,18 @@ export default function App() {
         try {
           const me = await apiAuthGet<{userId: number; playerId: number; email: string}>("/auth/me");
           setAuthUser({ email: me.email, playerId: me.playerId });
+          const profile = await apiAuthGet<PlayerProfile>("/auth/player");
+          setPlayer(profile);
+          if (profile.stats.debates > 0) {
+            setStats({
+              wins: profile.stats.wins,
+              debates: profile.stats.debates,
+              bestScore: profile.stats.bestScore,
+              currentStreak: profile.stats.currentStreak ?? 0,
+              bestStreak: profile.stats.bestStreak ?? 0,
+              opponentHistory: profile.stats.opponentHistory,
+            });
+          }
         } catch {
           localStorage.removeItem("clash-auth-token");
         }
@@ -1689,8 +1709,10 @@ export default function App() {
     try { localStorage.setItem("clash-stats", JSON.stringify(stats)); } catch {}
   }, [stats]);
 
-  // Load player profile from DB on mount; fall back to localStorage
+  // Load player profile from DB on mount — skip device-based load if already logged in (auth effect handles it)
   useEffect(() => {
+    const token = localStorage.getItem("clash-auth-token");
+    if (token) return;
     const deviceId = getOrCreateDeviceId();
     (async () => {
       try {
@@ -2151,9 +2173,9 @@ export default function App() {
 
       // Save debate to DB in background (non-blocking)
       {
-        const deviceId = getOrCreateDeviceId();
-        apiPost("/debates/save", {
-          deviceId,
+        const isLoggedIn = !!localStorage.getItem("clash-auth-token");
+        const savePayload = {
+          deviceId: getOrCreateDeviceId(),
           opponentId: selectedAI || "unknown",
           opponentName: ai?.name || "AI",
           topic: selectedTopic?.text || "",
@@ -2164,11 +2186,15 @@ export default function App() {
           rank: finalRank,
           won,
           isGauntlet: tournamentMode,
-        }).then(() => {
-          apiGet<PlayerProfile>(`/players/${deviceId}`)
-            .then((p) => setPlayer(p))
-            .catch(() => {});
-        }).catch(() => {});
+        };
+        (isLoggedIn ? apiAuthPost("/debates/save", savePayload) : apiPost("/debates/save", savePayload))
+          .then(() => {
+            if (isLoggedIn) {
+              apiAuthGet<PlayerProfile>("/auth/player").then((p) => setPlayer(p)).catch(() => {});
+            } else {
+              apiGet<PlayerProfile>(`/players/${getOrCreateDeviceId()}`).then((p) => setPlayer(p)).catch(() => {});
+            }
+          }).catch(() => {});
       }
 
       if (tournamentMode) {
@@ -2251,9 +2277,16 @@ export default function App() {
   const loginFn = async () => {
     setAuthLoading(true); setAuthError("");
     try {
-      const data = await apiAuthPost<{token: string; email: string; playerId: number}>("/auth/login", { email: authEmail, password: authPassword, deviceId: getOrCreateDeviceId() });
+      const data = await apiAuthPost<{token: string; email: string; playerId: number}>("/auth/login", { email: authEmail, password: authPassword });
       localStorage.setItem("clash-auth-token", data.token);
       setAuthUser({ email: data.email, playerId: data.playerId });
+      try {
+        const profile = await apiAuthGet<PlayerProfile>("/auth/player");
+        setPlayer(profile);
+        if (profile.stats.debates > 0) {
+          setStats({ wins: profile.stats.wins, debates: profile.stats.debates, bestScore: profile.stats.bestScore, currentStreak: profile.stats.currentStreak ?? 0, bestStreak: profile.stats.bestStreak ?? 0, opponentHistory: profile.stats.opponentHistory });
+        }
+      } catch {}
       setShowAuthModal(false);
       setAuthEmail(""); setAuthPassword("");
     } catch (e) { setAuthError((e as Error).message); }
@@ -2268,12 +2301,12 @@ export default function App() {
       setAuthUser({ email: data.email, playerId: data.playerId });
       const clean = regUsername.trim().toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 20);
       if (clean.length >= 2) {
-        try {
-          await apiPatch("/players/username", { deviceId: getOrCreateDeviceId(), username: clean });
-          const profile = await apiGet<PlayerProfile>(`/players/${getOrCreateDeviceId()}`);
-          setPlayer(profile);
-        } catch {}
+        try { await apiAuthPatch("/players/username", { username: clean }); } catch {}
       }
+      try {
+        const profile = await apiAuthGet<PlayerProfile>("/auth/player");
+        setPlayer(profile);
+      } catch {}
       setShowAuthModal(false);
       setAuthEmail(""); setAuthPassword(""); setRegUsername("");
     } catch (e) { setAuthError((e as Error).message); }
@@ -2285,6 +2318,17 @@ export default function App() {
     setAuthUser(null);
     setShowAuthModal(false);
     setShowProfilePanel(false);
+    const deviceId = getOrCreateDeviceId();
+    (async () => {
+      try {
+        await apiPost("/players/register", { deviceId });
+        const profile = await apiGet<PlayerProfile>(`/players/${deviceId}`);
+        setPlayer(profile);
+        if (profile.stats.debates > 0) {
+          setStats({ wins: profile.stats.wins, debates: profile.stats.debates, bestScore: profile.stats.bestScore, currentStreak: profile.stats.currentStreak ?? 0, bestStreak: profile.stats.bestStreak ?? 0, opponentHistory: profile.stats.opponentHistory });
+        }
+      } catch {}
+    })();
   };
 
   const shuffleWaitingTopics = () => {
@@ -2419,7 +2463,6 @@ export default function App() {
   };
 
   const handleSetUsername = async () => {
-  const deviceId = getOrCreateDeviceId();
   const trimmed = usernameInput.trim();
   if (trimmed.length < 2) { 
     setUsernameError("Must be at least 2 characters."); 
@@ -2429,8 +2472,14 @@ export default function App() {
   setUsernameError("");
   
   try {
-    await apiPost("/players/register", { deviceId });
-    await apiPatch("/players/username", { deviceId, username: trimmed });
+    const isLoggedIn = !!localStorage.getItem("clash-auth-token");
+    if (isLoggedIn) {
+      await apiAuthPatch("/players/username", { username: trimmed });
+    } else {
+      const deviceId = getOrCreateDeviceId();
+      await apiPost("/players/register", { deviceId });
+      await apiPatch("/players/username", { deviceId, username: trimmed });
+    }
     
     setPlayer((prev) => prev ? { ...prev, username: trimmed } : prev);
     setShowUsernameModal(false);

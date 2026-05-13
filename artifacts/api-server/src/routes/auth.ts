@@ -1,8 +1,8 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { db, users, players } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { db, users, players, debates } from "@workspace/db";
+import { eq, sql } from "drizzle-orm";
 
 const router = Router();
 export const JWT_SECRET = process.env.JWT_SECRET || "clash-dev-secret-change-in-production";
@@ -72,6 +72,59 @@ router.post("/auth/login", async (req, res) => {
   } catch (err) {
     req.log.error({ err }, "auth/login failed");
     res.status(500).json({ error: "Login failed. Please try again." });
+  }
+});
+
+// GET /api/auth/player — full player profile + stats for the authenticated user
+router.get("/auth/player", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    res.status(401).json({ error: "No token" });
+    return;
+  }
+  try {
+    const payload = jwt.verify(authHeader.slice(7), JWT_SECRET) as { userId: number; playerId: number; email: string };
+    const player = await db.select().from(players).where(eq(players.id, payload.playerId)).limit(1);
+    if (player.length === 0) {
+      res.status(404).json({ error: "Player not found" });
+      return;
+    }
+    const agg = await db
+      .select({
+        totalDebates: sql<number>`count(*)::int`,
+        totalWins: sql<number>`sum(case when ${debates.won} then 1 else 0 end)::int`,
+        bestScore: sql<number>`coalesce(max(${debates.avgScore}), 0)::int`,
+        avgScore: sql<number>`coalesce(round(avg(${debates.avgScore}))::int, 0)`,
+      })
+      .from(debates)
+      .where(eq(debates.playerId, player[0].id));
+    const opponentHistory = await db
+      .select({
+        opponentId: debates.opponentId,
+        wins: sql<number>`sum(case when ${debates.won} then 1 else 0 end)::int`,
+        losses: sql<number>`sum(case when not ${debates.won} then 1 else 0 end)::int`,
+      })
+      .from(debates)
+      .where(eq(debates.playerId, player[0].id))
+      .groupBy(debates.opponentId);
+    const oppMap: Record<string, { wins: number; losses: number }> = {};
+    for (const row of opponentHistory) {
+      oppMap[row.opponentId] = { wins: row.wins ?? 0, losses: row.losses ?? 0 };
+    }
+    res.json({
+      ...player[0],
+      stats: {
+        debates: agg[0]?.totalDebates ?? 0,
+        wins: agg[0]?.totalWins ?? 0,
+        bestScore: agg[0]?.bestScore ?? 0,
+        avgScore: agg[0]?.avgScore ?? 0,
+        currentStreak: player[0].currentStreak ?? 0,
+        bestStreak: player[0].bestStreak ?? 0,
+        opponentHistory: oppMap,
+      },
+    });
+  } catch {
+    res.status(401).json({ error: "Invalid or expired token" });
   }
 });
 

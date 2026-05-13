@@ -1,6 +1,18 @@
 import { Router } from "express";
 import { db, players, debates } from "@workspace/db";
 import { eq, desc, sql, and, gte } from "drizzle-orm";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "./auth.js";
+
+function getJwtPlayerId(authHeader: string | undefined): number | null {
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  try {
+    const payload = jwt.verify(authHeader.slice(7), JWT_SECRET) as { playerId: number };
+    return payload.playerId ?? null;
+  } catch {
+    return null;
+  }
+}
 
 const router = Router();
 
@@ -29,11 +41,11 @@ router.post("/players/register", async (req, res) => {
   }
 });
 
-// PATCH /api/players/username — set or update username
+// PATCH /api/players/username — set or update username (supports JWT auth or deviceId)
 router.patch("/players/username", async (req, res) => {
   const { deviceId, username } = req.body as Record<string, unknown>;
-  if (!deviceId || typeof deviceId !== "string" || !username || typeof username !== "string") {
-    res.status(400).json({ error: "deviceId and username required" });
+  if (!username || typeof username !== "string") {
+    res.status(400).json({ error: "username required" });
     return;
   }
   const trimmed = (username as string).trim().toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 20);
@@ -42,28 +54,39 @@ router.patch("/players/username", async (req, res) => {
     return;
   }
   try {
-    const updated = await db
-      .update(players)
-      .set({ username: trimmed, updatedAt: new Date() })
-      .where(eq(players.deviceId, deviceId))
-      .returning();
+    const jwtPlayerId = getJwtPlayerId(req.headers.authorization);
+    let updated;
+    if (jwtPlayerId) {
+      updated = await db
+        .update(players)
+        .set({ username: trimmed, updatedAt: new Date() })
+        .where(eq(players.id, jwtPlayerId))
+        .returning();
+    } else {
+      if (!deviceId || typeof deviceId !== "string") {
+        res.status(400).json({ error: "deviceId required when not authenticated" });
+        return;
+      }
+      updated = await db
+        .update(players)
+        .set({ username: trimmed, updatedAt: new Date() })
+        .where(eq(players.deviceId, deviceId))
+        .returning();
+    }
     if (updated.length === 0) {
       res.status(404).json({ error: "Player not found" });
       return;
     }
     res.json(updated[0]);
   } catch (err: any) {
-    // Check for duplicate key error (username already taken)
     const errorMessage = err?.message || "";
-    const isDuplicate = errorMessage.includes("duplicate key") || 
+    const isDuplicate = errorMessage.includes("duplicate key") ||
                         errorMessage.includes("unique constraint") ||
                         err?.code === "23505";
-    
     if (isDuplicate) {
       res.status(409).json({ error: "That username is already taken" });
       return;
     }
-    
     req.log.error({ err }, "players/username failed");
     res.status(500).json({ error: err?.message || "Database error" });
   }
@@ -121,16 +144,23 @@ router.get("/players/:deviceId", async (req, res) => {
   }
 });
 
-// POST /api/debates/save — persist a completed debate
+// POST /api/debates/save — persist a completed debate (supports JWT auth or deviceId)
 router.post("/debates/save", async (req, res) => {
   const { deviceId, opponentId, opponentName, topic, topicCat, side, rounds, avgScore, avgLogic, avgPersuasion, avgDelivery, rank, won, isGauntlet } =
     req.body as Record<string, unknown>;
-  if (!deviceId || typeof deviceId !== "string") {
-    res.status(400).json({ error: "deviceId required" });
-    return;
-  }
   try {
-    const player = await db.select().from(players).where(eq(players.deviceId, deviceId as string)).limit(1);
+    const jwtPlayerId = getJwtPlayerId(req.headers.authorization);
+    let player;
+    if (jwtPlayerId) {
+      const rows = await db.select().from(players).where(eq(players.id, jwtPlayerId)).limit(1);
+      player = rows;
+    } else {
+      if (!deviceId || typeof deviceId !== "string") {
+        res.status(400).json({ error: "deviceId required when not authenticated" });
+        return;
+      }
+      player = await db.select().from(players).where(eq(players.deviceId, deviceId as string)).limit(1);
+    }
     if (player.length === 0) {
       res.status(404).json({ error: "Player not found" });
       return;
