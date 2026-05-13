@@ -1,0 +1,508 @@
+Yes bro — what you have now is concept-level. If you want Replit AI to build properly, it needs explicit production instructions, page-by-page, system-by-system, feature-by-feature.
+
+And noted: remove the live stats bar because you already have it.
+
+What you need next is a true build spec prompt.
+
+Use this exact prompt:
+
+I want you to fully rebuild, expand, optimize, and productionize my existing debate web app while preserving the exact same vibe, branding, personality, and energy it already has. Do not redesign it into a different product. Keep the soul the same and upgrade everything else.
+
+I want this to feel like the same platform users already know, but dramatically better, deeper, cleaner, smoother, smarter, and more addictive.
+
+I do not want generic SaaS style. I do not want corporate boring UI. Keep the original intensity and uniqueness.
+
+I want you to explicitly build all systems below with clear architecture, responsive UI, clean code, and production logic.
+
+I want two completely different front-facing experiences:
+	1.	Public Landing Page
+	2.	Logged-in Web App Dashboard
+
+They must share brand identity but have different layouts and purposes.
+
+PUBLIC LANDING PAGE
+
+I want the landing page built to convert visitors into users.
+
+Keep it clean, fast, exciting, dynamic, and not bulky.
+
+I do not want a live stats bar because I already have one.
+
+Landing page sections:
+
+Hero Section:
+	•	Strong bold headline
+	•	Short subheadline
+	•	Start Debate CTA
+	•	Watch Live Match CTA
+	•	Animated but lightweight background
+	•	Keep current vibe
+
+Features Section:
+Use category tabs instead of long scroll spam.
+
+Tabs:
+	•	Modes
+	•	AI
+	•	Ranked
+	•	Rewards
+	•	Social
+	•	Events
+
+When tab clicked, animate cards in.
+
+Modes tab:
+	•	1v1 PvP
+	•	Whisper Mode
+	•	War Room
+	•	Devil’s Advocate
+	•	Mirror Match
+
+AI tab:
+	•	Persona Battles
+	•	AI Memory
+	•	Coach Mode
+	•	Custom AI Rival
+	•	Adaptive Counters
+
+Rewards tab:
+	•	Trading Cards
+	•	Signature Titles
+	•	Dynasty Records
+	•	Badges
+	•	XP System
+
+Live Community Section:
+	•	Ongoing matches
+	•	Spectate buttons
+	•	Best arguments today
+	•	Top players preview
+
+How It Works:
+3 steps only
+
+Pick Mode
+Debate
+Climb
+
+Social Proof Feed:
+Rotating wins, streaks, achievements.
+
+Menu:
+	•	Home
+	•	Features
+	•	Live
+	•	Rankings
+	•	Sign In
+
+Landing page rules:
+	•	lightweight
+	•	fast
+	•	mobile perfect
+	•	smooth
+	•	CTA visible often
+	•	no clutter
+
+WEB APP DASHBOARD
+
+I want logged-in homepage to be a player command center.
+
+Top Area:
+	•	Welcome back name
+	•	Continue Streak button
+	•	Quick Play
+	•	Current Rank
+	•	XP Bar
+	•	Daily Challenge
+	•	Notifications icon
+
+Main Grid:
+	•	Resume Last Match
+	•	Ranked Queue
+	•	AI Battles
+	•	Live Matches
+	•	Cards Collection
+	•	Match History
+	•	Profile
+	•	Rivals
+
+Secondary Modules:
+	•	Weekly leaderboard
+	•	Season countdown
+	•	Nemesis AI tracker
+	•	Signature move card
+	•	Rewards ready to claim
+
+Dynamic Text:
+Examples:
+Your Roaster rival wants revenge
+1 win from Gold
+Whisper Mode trending
+Hot Mic active
+
+GHOST REVEAL SYSTEM
+
+Use hidden interactive reveals for special systems.
+
+Build explicitly:
+	1.	Create AI Rival
+Tiny flickering silhouette in corner.
+Tap opens modal:
+Forge Your Rival
+	2.	Mirror Match
+Shadow appears behind profile card.
+Tap enters mirror match.
+	3.	Dynasty Records
+Tap rank icon.
+Smoke reveal shows W/L records vs AIs.
+	4.	Streak Shield
+Frozen crack animation on streak icon.
+Tap shows active protection.
+	5.	Hot Mic Event
+Random glitch popup.
+Next match has double points.
+	6.	Hidden Card Vault
+Swipe side panel opens vault.
+	7.	Coach Reveal
+After 2 losses, avatar glows.
+Tap opens coaching tips.
+
+Rules:
+	•	subtle
+	•	rare
+	•	smooth
+	•	mobile friendly
+	•	disable in settings
+
+MATCH EXPERIENCE
+
+Typing Area:
+	•	auto grow textarea
+	•	word count
+	•	timer
+	•	submit button
+	•	quality meter under text (red to green)
+
+Live systems:
+Do NOT add live stats bar.
+
+Battle effects:
+	•	cinematic round transitions
+	•	subtle fog
+	•	glowing border in PvP
+	•	opponent idle animations
+
+AI idle examples:
+Roaster finger tap
+Professor glasses adjust
+Politician smirk
+
+SCORING SYSTEM
+
+Build explicit score engine based on:
+
+Logic = 40%
+Relevance = 20%
+Originality = 15%
+Counter strength = 15%
+Clarity = 10%
+
+Display round score after each turn.
+
+Tie breaker order:
+1 relevance
+2 counter strength
+3 clarity
+
+XP SYSTEM
+
+Win = +100 XP
+Loss = +30 XP
+Streak bonus = +20 each win after 3 streak
+Comeback win = +40
+Fast win = +25
+Perfect round = +30
+
+LEVEL SYSTEM
+
+Every level requires progressive XP.
+
+Show:
+	•	current level
+	•	XP to next level
+	•	unlock rewards
+
+RANKED SYSTEM
+
+Use MMR system.
+
+Ranks:
+Bronze
+Silver
+Gold
+Diamond
+Clash Master
+
+Win stronger opponent = more MMR
+Lose weaker opponent = more loss
+
+Add:
+	•	rank badge
+	•	progress meter
+	•	season reset every 90 days
+	•	seasonal rewards
+
+MATCHMAKING
+
+Queue by:
+	•	rank
+	•	region
+	•	connection quality
+	•	recent opponent avoidance
+
+ANTI ABUSE
+
+Prevent:
+	•	spam text
+	•	copy paste repeated messages
+	•	rage quit farming
+	•	alt account boosting
+	•	AFK queueing
+
+Use cooldowns and penalties.
+
+MULTIPLAYER
+
+Build:
+
+1v1 Real Time PvP
+
+Features:
+	•	live turns
+	•	rematch request
+	•	same topic option
+	•	side swap
+	•	report player
+	•	reconnect support
+
+Spectator Mode:
+	•	share link
+	•	live feed
+	•	viewer count
+	•	optional chat
+
+Whisper Mode:
+Both submit blindly then reveal together.
+
+War Room:
+2 humans vs 1 extreme AI.
+
+AI SYSTEMS
+
+Custom AI Builder:
+
+Fields:
+	•	Name
+	•	Avatar
+	•	Tone
+	•	Aggression
+	•	Logic level
+	•	Humor level
+	•	Difficulty
+	•	Memory on/off
+
+Save and share AI rivals.
+
+AI Memory:
+Remember user patterns after repeated matches.
+
+Mirror Match:
+Train from best previous user arguments.
+
+Coach Mode:
+After match show:
+	•	what worked
+	•	what failed
+	•	what to improve
+
+Dead Argument Detector:
+Warn when repeating same angle.
+
+Propaganda Detector:
+Tag sentences:
+Solid
+Fallacy
+Weak evidence
+Emotional bait
+Killer point
+
+PROGRESSION
+
+Debate Dynasty:
+Track user record vs each AI.
+
+Example:
+7W 2L vs Professor
+
+At 10 wins unlock Nemesis badge.
+
+Streak Freeze:
+At 5 streak grant one shield token.
+
+If next loss happens:
+consume token and keep streak.
+
+Signature Move Titles:
+Analyze style and assign:
+
+The Pivot
+Evidence Machine
+Chaos Agent
+Avalanche
+Sniper
+
+TRADING CARDS
+
+Generate collectible card after matches.
+
+Fields:
+	•	opponent
+	•	topic
+	•	score
+	•	rarity
+	•	date
+	•	quote
+
+Rarity:
+Common
+Rare
+Epic
+Legendary
+
+Higher rarity from streaks/upsets/comebacks.
+
+Argument DNA CARD
+
+Visual stat wheel:
+
+Logic
+Aggression
+Consistency
+Efficiency
+Comeback
+
+POST MATCH
+
+Build result page:
+	•	winner
+	•	score
+	•	XP earned
+	•	MMR change
+	•	best quote
+	•	rematch button
+	•	share button
+	•	replay button
+
+Replay Timeline:
+Turn by turn chart of score swings.
+
+TOURNAMENT MODE
+
+8 player bracket.
+
+Auto queue system.
+
+Quarterfinal
+Semifinal
+Final
+
+Reward badges.
+
+DATABASE MODELS
+
+Create robust schema for:
+
+users
+profiles
+matches
+match_rounds
+rankings
+seasons
+xp_logs
+cards
+card_inventory
+ai_personas
+ai_memory
+friendships
+reports
+notifications
+spectators
+replays
+rewards
+quests
+shield_tokens
+
+BACKEND
+
+Use scalable architecture:
+	•	REST or clean API routes
+	•	websocket for live battles
+	•	secure auth
+	•	JWT/session
+	•	rate limiting
+	•	caching
+	•	validation
+	•	logging
+
+PERFORMANCE
+
+Need:
+	•	mobile first
+	•	fast load
+	•	lazy loading
+	•	optimized bundles
+	•	skeleton loaders
+	•	no lag animations
+	•	smooth scroll
+	•	image compression
+
+DESIGN
+
+Keep exact vibe.
+
+Improve:
+	•	spacing
+	•	typography
+	•	responsiveness
+	•	shadows
+	•	hover states
+	•	transitions
+	•	depth
+
+Do not lose original personality.
+
+BUILD ORDER
+
+Phase 1:
+Core backend + auth + database
+
+Phase 2:
+Dashboard + landing page
+
+Phase 3:
+PvP + ranked + matchmaking
+
+Phase 4:
+AI systems + custom rivals
+
+Phase 5:
+Progression + cards + rewards
+
+Phase 6:
+Polish + ghost reveals + optimize
+
+FINAL RULE
+
+When old users return, they must feel:
+
+This is still my app… just elite now.
