@@ -986,9 +986,80 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .user-chip:hover{border-color:var(--text-dim);}
 .user-chip-av{width:22px;height:22px;border-radius:50%;background:var(--red-dim);border:1px solid rgba(230,57,70,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--red);font-family:'Barlow Condensed',sans-serif;flex-shrink:0;}
 .user-chip-name{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* PLAYER COMMAND STRIP */
+.player-cmd-strip{display:flex;align-items:center;justify-content:center;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 0;margin-top:16px;margin-bottom:4px;}
+.pcs-block{display:flex;flex-direction:column;align-items:center;flex:1;}
+.pcs-val{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;color:var(--text);}
+.pcs-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:2px;}
+.pcs-divider{width:1px;height:36px;background:var(--border);flex-shrink:0;}
+
+/* FEED SHOW MORE */
+.feed-show-more{width:100%;background:none;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;transition:all 0.2s;}
+.feed-show-more:hover{color:var(--text);background:var(--surface2);}
+
+/* RADAR CHART */
+.radar-wrap{display:flex;align-items:center;gap:20px;background:var(--surface2);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.radar-stats{flex:1;}
+.radar-stat-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.radar-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+.radar-stat-val{font-family:'Bebas Neue',sans-serif;font-size:16px;}
+
+/* MATCH DETAILS TOGGLE */
+.match-details-btn{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+.match-details-btn:hover{color:var(--text);border-color:var(--text-dim);}
+.match-details-panel{margin-top:8px;animation:fadeIn 0.25s ease;}
+
+/* COACH REVEAL BUTTON */
+.coach-reveal-btn{width:100%;background:rgba(0,119,255,0.07);border:1px solid rgba(0,119,255,0.25);border-radius:var(--radius);padding:12px 16px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);cursor:pointer;transition:all 0.2s;margin-top:12px;}
+.coach-reveal-btn:hover{background:rgba(0,119,255,0.12);border-color:rgba(0,119,255,0.4);}
+
+/* MIRROR MATCH BUTTON */
+.mirror-btn{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.3);border-radius:var(--radius);padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#a855f7;cursor:pointer;transition:all 0.2s;margin-top:8px;}
+.mirror-btn:hover{background:rgba(168,85,247,0.15);border-color:#a855f7;}
+.mirror-btn:disabled{opacity:0.35;cursor:not-allowed;}
+
+/* AUTO-GROW TEXTAREA */
+.debate-input{min-height:90px;resize:none;overflow:hidden;}
+
+/* SHIELD ANIMATED */
+@keyframes shieldPulse{0%,100%{filter:drop-shadow(0 0 4px rgba(34,197,94,0.4));}50%{filter:drop-shadow(0 0 10px rgba(34,197,94,0.8));}}
+.shield-pip{animation:shieldPulse 2s ease-in-out infinite;}
+.shield-pip.empty{animation:none;filter:none;opacity:0.2;}
 `;
 
 
+
+function TriangleRadar({ logic, persuasion, delivery }: { logic: number; persuasion: number; delivery: number }) {
+  const size = 110;
+  const cx = size / 2;
+  const cy = size / 2 + 4;
+  const r = 42;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const angles = [-90, 30, 150];
+  const vals = [logic / 100, persuasion / 100, delivery / 100];
+  const colors = ["#5ab4ff", "#e9c46a", "#2a9d8f"];
+  const outerPts = angles.map(a => ({ x: cx + r * Math.cos(toRad(a)), y: cy + r * Math.sin(toRad(a)) }));
+  const innerPts = angles.map((a, i) => ({ x: cx + r * vals[i] * Math.cos(toRad(a)), y: cy + r * vals[i] * Math.sin(toRad(a)) }));
+  const outerPath = outerPts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z";
+  const innerPath = innerPts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z";
+  const gridPts = (f: number) => angles.map(a => `${cx + r * f * Math.cos(toRad(a))},${cy + r * f * Math.sin(toRad(a))}`).join(" ");
+  return (
+    <svg width={size} height={size} style={{ display: "block", flexShrink: 0 }}>
+      {[1, 0.66, 0.33].map(f => (
+        <polygon key={f} points={gridPts(f)} fill="none" stroke={f === 1 ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.05)"} strokeWidth="1" />
+      ))}
+      {outerPts.map((p, i) => (
+        <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
+      ))}
+      <path d={outerPath} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+      <path d={innerPath} fill="rgba(230,57,70,0.13)" stroke="var(--red)" strokeWidth="1.5" strokeLinejoin="round" />
+      {innerPts.map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r="3.5" fill={colors[i]} />
+      ))}
+    </svg>
+  );
+}
 
 function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
   const t = text.toLowerCase();
@@ -1129,7 +1200,7 @@ const ACHIEVEMENTS = [
 function pickTopics() {
   const pool = [...TOPIC_POOL];
   const picked: typeof TOPIC_POOL = [];
-  while (picked.length < 3 && pool.length > 0) {
+  while (picked.length < 4 && pool.length > 0) {
     const idx = Math.floor(Math.random() * pool.length);
     picked.push(pool.splice(idx, 1)[0]);
   }
@@ -1178,7 +1249,7 @@ function buildFeedItems(): FeedItem[] {
     { icon: "🏆", text: `<strong>${ghostPlayers[7]}</strong> won against ${opponents[3]} · 96 pts`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "WIN", badgeClass: "feed-win" },
     { icon: "⚡", text: `<strong>${ghostPlayers[9]}</strong> is on a 3-win streak`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "STREAK", badgeClass: "feed-streak" },
   ];
-  return pool.sort(() => Math.random() - 0.5).slice(0, 2);
+  return pool.sort(() => Math.random() - 0.5);
 }
 
 function getScoreColor(s: number) {
@@ -1675,6 +1746,11 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const [feedItems, setFeedItems] = useState<FeedItem[]>(() => buildFeedItems());
   const [feedKey, setFeedKey] = useState(0);
+  const [feedExpanded, setFeedExpanded] = useState(false);
+  const [showMatchDetails, setShowMatchDetails] = useState(false);
+  const [showCoachReveal, setShowCoachReveal] = useState(false);
+  const [mirrorMatchMode, setMirrorMatchMode] = useState(false);
+  const lastUserArgsRef = useRef<string[]>([]);
   const [player, setPlayer] = useState<PlayerProfile | null>(null);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
@@ -2120,10 +2196,14 @@ export default function App() {
     if (topicOverride !== undefined) setSelectedTopic(topicOverride);
     if (roundsOverride !== undefined) setSelectedRounds(roundsOverride);
 
-    const currentAI = aiId === "custom"
-      ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
-      : AI_OPPONENTS.find((a) => a.id === aiId);
-    if (!currentAI || !currentAI.personality || !topic || !side) return;
+    const isMirror = mirrorMatchMode;
+
+    const currentAI = isMirror
+      ? { id: "mirror", icon: "🪞", name: "The Mirror", diff: "hard" as const, diffLabel: "Hard", timer: 135, desc: "An AI trained on your own arguments.", personality: "" }
+      : aiId === "custom"
+        ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
+        : AI_OPPONENTS.find((a) => a.id === aiId);
+    if (!currentAI || (!isMirror && !currentAI.personality) || !topic || !side) return;
 
     setMessages([]);
     setRoundScores([]);
@@ -2135,21 +2215,34 @@ export default function App() {
     setError("");
     setInputText("");
     setVerdict(null);
+    setMirrorMatchMode(false);
     setScreen("matchmaking");
 
     const sideLabel = side === "for" ? "FOR" : "AGAINST";
     const oppSide = side === "for" ? "AGAINST" : "FOR";
 
     try {
+      const storedArgs: string[] = (() => {
+        try { return JSON.parse(localStorage.getItem("clash-last-args") || "[]"); } catch { return []; }
+      })();
+      const userArguments = lastUserArgsRef.current.length > 0 ? lastUserArgsRef.current : storedArgs;
+
       const [result] = await Promise.all([
-        apiPost<{ text: string }>("/debate/start", {
-          personality: currentAI.personality,
-          topic: topic.text,
-          userSide: sideLabel,
-          oppSide,
-          totalRounds: rounds,
-          difficulty: currentAI.diff,
-        }),
+        isMirror
+          ? apiPost<{ text: string }>("/debate/mirror-match-start", {
+              userArguments,
+              topic: topic.text,
+              userSide: sideLabel,
+              totalRounds: rounds,
+            })
+          : apiPost<{ text: string }>("/debate/start", {
+              personality: currentAI.personality,
+              topic: topic.text,
+              userSide: sideLabel,
+              oppSide,
+              totalRounds: rounds,
+              difficulty: currentAI.diff,
+            }),
         new Promise<void>((resolve) => setTimeout(resolve, 3500)),
       ] as [Promise<{ text: string }>, Promise<void>]);
 
@@ -2229,6 +2322,7 @@ export default function App() {
       playSound(roundScore.score >= 60 ? "round-win" : "round-loss");
       if (roundScore.score >= 95) unlockAch("perfect-round");
       setMessages([...newMessages, { role: "ai", text: aiText }]);
+      lastUserArgsRef.current = [...newMessages.filter(m => m.role === "user").map(m => m.text)];
 
       if (isLastRound) {
         if (pendingVerdictRef.current) clearTimeout(pendingVerdictRef.current);
@@ -2383,6 +2477,11 @@ export default function App() {
             }
           }).catch(() => {});
       }
+      // Save user arguments for Mirror Match
+      try {
+        const userArgs = _msgs.filter(m => m.role === "user").map(m => m.text);
+        localStorage.setItem("clash-last-args", JSON.stringify(userArgs.slice(0, 10)));
+      } catch {}
 
       if (tournamentMode) {
         const matchResult = {
@@ -2401,6 +2500,8 @@ export default function App() {
           setScreen("gauntlet-between");
         }
       } else {
+        setShowMatchDetails(false);
+        setShowCoachReveal(false);
         setScreen("verdict");
       }
     } catch (e) {
@@ -2852,36 +2953,49 @@ export default function App() {
               </button>
               <p className="gauntlet-sub">6 Opponents. 1 Run. No Excuses.</p>
             </div>
-            <div style={{ marginTop: "12px", textAlign: "center" }}>
+            <div style={{ marginTop: "10px", textAlign: "center" }}>
               <button
-                className="btn btn-ghost"
-                style={{ fontSize: "11px", letterSpacing: "2px" }}
-                onClick={() => setScreen("dashboard")}
+                className="mirror-btn"
+                title={stats.debates === 0 ? "Play at least one match first" : "Fight an AI trained on your own argument style"}
+                onClick={() => {
+                  setMirrorMatchMode(true);
+                  setDisplayTopics(pickTopics());
+                  setSetupStep(1);
+                  setScreen("setup");
+                }}
               >
-                📊 Dashboard
+                🪞 Mirror Match
               </button>
+              <p className="gauntlet-sub" style={{ marginTop: "4px", fontSize: "11px" }}>Face an AI trained on YOUR arguments</p>
             </div>
           </div>
 
-          {/* LIVE STATS BAR */}
-          <div className="live-stats-bar">
-            <div className="live-stat-item">
-              <div className="live-stat-val"><span className="live-pulse" />{ liveOnline.toLocaleString()}</div>
-              <div className="live-stat-lbl">Online Now</div>
+          {/* LOGGED-IN PLAYER COMMAND STRIP */}
+          {authUser && player && (
+            <div className="player-cmd-strip">
+              <div className="pcs-block">
+                <span className="pcs-val" style={{ color: stats.currentStreak >= 3 ? "var(--gold)" : "var(--text)" }}>
+                  {stats.currentStreak >= 1 ? `🔥 ${stats.currentStreak}` : stats.currentStreak}
+                </span>
+                <span className="pcs-lbl">Streak</span>
+              </div>
+              <div className="pcs-divider" />
+              <div className="pcs-block">
+                <span className="pcs-val">{stats.wins}</span>
+                <span className="pcs-lbl">Wins</span>
+              </div>
+              <div className="pcs-divider" />
+              <div className="pcs-block">
+                <span className="pcs-val">{stats.debates > 0 ? Math.round((stats.wins / stats.debates) * 100) : 0}%</span>
+                <span className="pcs-lbl">Win Rate</span>
+              </div>
+              <div className="pcs-divider" />
+              <div className="pcs-block">
+                <span className="pcs-val" style={{ color: "var(--gold)", fontSize: "14px" }}>{stats.bestScore > 0 ? stats.bestScore : "—"}</span>
+                <span className="pcs-lbl">Best Score</span>
+              </div>
             </div>
-            <div className="live-stat-item">
-              <div className="live-stat-val">{liveToday.toLocaleString()}</div>
-              <div className="live-stat-lbl">Matches Today</div>
-            </div>
-            <div className="live-stat-item">
-              <div className="live-stat-val">22</div>
-              <div className="live-stat-lbl">Top Streak</div>
-            </div>
-            <div className="live-stat-item">
-              <div className="live-stat-val" style={{ fontSize: "14px", paddingTop: "4px" }}>APEX</div>
-              <div className="live-stat-lbl">#1 Player</div>
-            </div>
-          </div>
+          )}
 
           {/* TODAY'S CLASH — swipeable featured topic card */}
           <div>
@@ -2961,7 +3075,7 @@ export default function App() {
                 </p>
               </div>
               <div key={feedKey} className="live-feed">
-                {feedItems.map((item, i) => (
+                {(feedExpanded ? feedItems : feedItems.slice(0, 3)).map((item, i) => (
                   <div key={i} className="feed-item" style={{ animationDelay: `${i * 60}ms` }}>
                     <span className="feed-icon">{item.icon}</span>
                     <span className="feed-text" dangerouslySetInnerHTML={{ __html: item.text }} />
@@ -2970,6 +3084,14 @@ export default function App() {
                   </div>
                 ))}
               </div>
+              {feedItems.length > 3 && (
+                <button
+                  className="feed-show-more"
+                  onClick={() => setFeedExpanded(e => !e)}
+                >
+                  {feedExpanded ? "Show less ↑" : `Show ${feedItems.length - 3} more ↓`}
+                </button>
+              )}
             </div>
 
             {unlockedAchs.length > 0 && (
@@ -3377,6 +3499,11 @@ export default function App() {
                   setInputText(val);
                   if (!timerStarted && val.length > 0) startResponseTimer();
                 }}
+                onInput={(e) => {
+                  const el = e.currentTarget;
+                  el.style.height = "auto";
+                  el.style.height = `${Math.min(el.scrollHeight, 300)}px`;
+                }}
                 placeholder={
                   isExtreme
                     ? `Round ${currentRound}: Argue — 45 seconds after you start typing`
@@ -3509,87 +3636,120 @@ export default function App() {
               <span style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.improve}</span>
             </div>
 
-            {/* ARGUMENT DNA BARS */}
-            <div className="dna-card">
-              <div className="dna-header">Argument DNA</div>
-              {[
-                { label: "Logic", val: verdict.avgLogic, color: "#5ab4ff" },
-                { label: "Persuasion", val: verdict.avgPersuasion, color: "#e9c46a" },
-                { label: "Delivery", val: verdict.avgDelivery, color: "#2a9d8f" },
-              ].map(({ label, val, color }) => (
-                <div className="dna-row" key={label}>
-                  <span className="dna-label">{label}</span>
-                  <div className="dna-track">
-                    <div className="dna-fill" style={{ width: `${val}%`, backgroundColor: color }} />
+            {/* RADAR CHART */}
+            <div className="radar-wrap">
+              <TriangleRadar logic={verdict.avgLogic} persuasion={verdict.avgPersuasion} delivery={verdict.avgDelivery} />
+              <div className="radar-stats">
+                {[
+                  { label: "Logic", val: verdict.avgLogic, color: "#5ab4ff" },
+                  { label: "Persuasion", val: verdict.avgPersuasion, color: "#e9c46a" },
+                  { label: "Delivery", val: verdict.avgDelivery, color: "#2a9d8f" },
+                ].map(({ label, val, color }) => (
+                  <div className="radar-stat-row" key={label}>
+                    <span className="radar-stat-lbl">{label}</span>
+                    <span className="radar-stat-val" style={{ color }}>{val}</span>
                   </div>
-                  <span className="dna-num" style={{ color }}>{val}</span>
+                ))}
+                <div style={{ marginTop: "8px" }}>
+                  {(() => { const tier = getRankedTier(verdict.avgScore); return <span className={`tier-badge ${tier.cls}`}>{tier.icon} {tier.tier}</span>; })()}
                 </div>
-              ))}
-              <div style={{ marginTop: "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                {(() => { const tier = getRankedTier(verdict.avgScore); return <span className={`tier-badge ${tier.cls}`}>{tier.icon} {tier.tier}</span>; })()}
-                <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px", color: "var(--text-dim)" }}>
-                  Overall: {verdict.avgScore}/100
-                </span>
               </div>
             </div>
 
-            {/* SIGNATURE STYLE */}
-            {sigStyle && (
-              <div className="sig-card">
-                <div className="sig-icon">{sigStyle.icon}</div>
-                <div>
-                  <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "2px" }}>Your Style</div>
-                  <div className="sig-name">{sigStyle.name}</div>
-                  <div className="sig-desc">{sigStyle.desc}</div>
+            {/* MATCH DETAILS COLLAPSIBLE */}
+            <button className="match-details-btn" onClick={() => setShowMatchDetails(m => !m)}>
+              <span>Match Details</span>
+              <span>{showMatchDetails ? "▲" : "▼"}</span>
+            </button>
+            {showMatchDetails && (
+              <div className="match-details-panel">
+                <div className="dna-card">
+                  <div className="dna-header">Argument DNA</div>
+                  {[
+                    { label: "Logic", val: verdict.avgLogic, color: "#5ab4ff" },
+                    { label: "Persuasion", val: verdict.avgPersuasion, color: "#e9c46a" },
+                    { label: "Delivery", val: verdict.avgDelivery, color: "#2a9d8f" },
+                  ].map(({ label, val, color }) => (
+                    <div className="dna-row" key={label}>
+                      <span className="dna-label">{label}</span>
+                      <div className="dna-track">
+                        <div className="dna-fill" style={{ width: `${val}%`, backgroundColor: color }} />
+                      </div>
+                      <span className="dna-num" style={{ color }}>{val}</span>
+                    </div>
+                  ))}
                 </div>
+                {sigStyle && (
+                  <div className="sig-card" style={{ marginTop: "8px" }}>
+                    <div className="sig-icon">{sigStyle.icon}</div>
+                    <div>
+                      <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "2px" }}>Your Style</div>
+                      <div className="sig-name">{sigStyle.name}</div>
+                      <div className="sig-desc">{sigStyle.desc}</div>
+                    </div>
+                  </div>
+                )}
+                {earnedXP && (
+                  <div className="xp-card" style={{ marginTop: "8px" }}>
+                    <div className="xp-card-header">XP Earned</div>
+                    <div className="xp-row"><span className="xp-lbl">Logic Bonus</span><span className="xp-val">+{earnedXP.logic}</span></div>
+                    <div className="xp-row"><span className="xp-lbl">Persuasion Bonus</span><span className="xp-val">+{earnedXP.persuasion}</span></div>
+                    <div className="xp-row"><span className="xp-lbl">Delivery Bonus</span><span className="xp-val">+{earnedXP.delivery}</span></div>
+                    {earnedXP.streak > 0 && <div className="xp-row"><span className="xp-lbl">{verdict.won ? "Win Bonus" : "Streak Bonus"}</span><span className="xp-val">+{earnedXP.streak}</span></div>}
+                    <div className="xp-total">
+                      <span className="xp-total-lbl">Total XP</span>
+                      <span className="xp-total-val">+{earnedXP.total}</span>
+                    </div>
+                  </div>
+                )}
+                {roundScores.length > 0 && propagandaTags.some(t => t.length > 0) && (
+                  <button
+                    className="btn btn-ghost"
+                    style={{ marginTop: "10px", width: "100%", fontSize: "12px", letterSpacing: "2px" }}
+                    onClick={() => setShowGhostReveal(true)}
+                  >
+                    🔍 Ghost Reveal — See Hidden Argument Tags
+                  </button>
+                )}
               </div>
             )}
 
-            {/* XP BREAKDOWN */}
-            {earnedXP && (
-              <div className="xp-card">
-                <div className="xp-card-header">XP Earned</div>
-                <div className="xp-row"><span className="xp-lbl">Logic Bonus</span><span className="xp-val">+{earnedXP.logic}</span></div>
-                <div className="xp-row"><span className="xp-lbl">Persuasion Bonus</span><span className="xp-val">+{earnedXP.persuasion}</span></div>
-                <div className="xp-row"><span className="xp-lbl">Delivery Bonus</span><span className="xp-val">+{earnedXP.delivery}</span></div>
-                {earnedXP.streak > 0 && <div className="xp-row"><span className="xp-lbl">{verdict.won ? "Win Bonus" : "Streak Bonus"}</span><span className="xp-val">+{earnedXP.streak}</span></div>}
-                <div className="xp-total">
-                  <span className="xp-total-lbl">Total XP</span>
-                  <span className="xp-total-val">+{earnedXP.total}</span>
+            {/* COACH REVEAL — gated button */}
+            {!showCoachReveal ? (
+              <button className="coach-reveal-btn" onClick={() => setShowCoachReveal(true)}>
+                🎯 Reveal Coach Analysis
+              </button>
+            ) : (
+              <div className="coach-panel" style={{ marginTop: "12px" }}>
+                <div className="coach-panel-title">
+                  <span>🎯</span> COACH ANALYSIS
                 </div>
+                {verdict.coachWorked && (
+                  <div className="coach-row">
+                    <div className="coach-row-label worked">✓ What Worked</div>
+                    <div className="coach-row-text">{verdict.coachWorked}</div>
+                  </div>
+                )}
+                {verdict.coachFailed && (
+                  <div className="coach-row">
+                    <div className="coach-row-label failed">✗ What Failed</div>
+                    <div className="coach-row-text">{verdict.coachFailed}</div>
+                  </div>
+                )}
+                {(verdict.coachDrill || verdict.improve) && (
+                  <div className="coach-row">
+                    <div className="coach-row-label drill">⚡ Drill for Next Match</div>
+                    <div className="coach-row-text">{verdict.coachDrill || verdict.improve}</div>
+                  </div>
+                )}
+                {!verdict.coachWorked && !verdict.coachFailed && (
+                  <div className="coach-row">
+                    <div className="coach-row-label drill">⚡ Focus Area</div>
+                    <div className="coach-row-text">{verdict.improve || "Ground your claims with concrete evidence in each round."}</div>
+                  </div>
+                )}
               </div>
             )}
-
-            {/* COACH FULL PANEL — appears after every match */}
-            <div className="coach-panel">
-              <div className="coach-panel-title">
-                <span>🎯</span> COACH ANALYSIS
-              </div>
-              {verdict.coachWorked && (
-                <div className="coach-row">
-                  <div className="coach-row-label worked">✓ What Worked</div>
-                  <div className="coach-row-text">{verdict.coachWorked}</div>
-                </div>
-              )}
-              {verdict.coachFailed && (
-                <div className="coach-row">
-                  <div className="coach-row-label failed">✗ What Failed</div>
-                  <div className="coach-row-text">{verdict.coachFailed}</div>
-                </div>
-              )}
-              {(verdict.coachDrill || verdict.improve) && (
-                <div className="coach-row">
-                  <div className="coach-row-label drill">⚡ Drill for Next Match</div>
-                  <div className="coach-row-text">{verdict.coachDrill || verdict.improve}</div>
-                </div>
-              )}
-              {!verdict.coachWorked && !verdict.coachFailed && (
-                <div className="coach-row">
-                  <div className="coach-row-label drill">⚡ Focus Area</div>
-                  <div className="coach-row-text">{verdict.improve || "Ground your claims with concrete evidence in each round."}</div>
-                </div>
-              )}
-            </div>
 
             {/* MMR UPDATE CARD — only for logged-in users */}
             {mmrResult && (
@@ -3632,16 +3792,6 @@ export default function App() {
               </div>
             )}
 
-            {/* GHOST REVEAL BUTTON */}
-            {roundScores.length > 0 && propagandaTags.some(t => t.length > 0) && (
-              <button
-                className="btn btn-ghost"
-                style={{ marginTop: "10px", width: "100%", fontSize: "12px", letterSpacing: "2px" }}
-                onClick={() => setShowGhostReveal(true)}
-              >
-                🔍 Ghost Reveal — See Hidden Argument Tags
-              </button>
-            )}
           </div>
 
           {suddenDeathAvailable && (
@@ -4558,14 +4708,7 @@ export default function App() {
     </div>
     {shareToast && <div className="share-toast">{shareToast}</div>}
 
-      {showRoundFlash !== null && (
-        <div className="round-flash">
-          <div>
-            <div className="round-flash-text">ROUND {showRoundFlash}</div>
-            <div className="round-flash-sub">ARGUE YOUR CORNER</div>
-          </div>
-        </div>
-      )}
+      {/* round-flash intentionally removed */}
     {achToast && (
       <div className="achievement-toast">
         <span className="achievement-toast-icon">{achToast.icon}</span>
