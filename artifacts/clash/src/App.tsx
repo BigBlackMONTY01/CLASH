@@ -578,12 +578,13 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   42%{transform:translate(-50%,-50%) scale(1.1);opacity:0.75;text-shadow:0 0 4px rgba(230,57,70,0.4);}
   60%{transform:translate(-50%,-50%) scale(0.8);opacity:0;}
 }
-.v1-laser-btn{position:relative;display:block;width:100%;max-width:400px;margin:0 auto;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:5px;color:#fff;background:rgba(0,50,180,0.12);border:none;border-radius:var(--radius);padding:16px 32px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;overflow:hidden;isolation:isolate;transition:background 0.18s,transform 0.12s;}
-.v1-laser-btn::before{content:'';position:absolute;inset:-2px;border-radius:calc(var(--radius) + 2px);background:conic-gradient(from 0deg,transparent 270deg,#1a3aff 310deg,#4466ff 340deg,rgba(100,140,255,0.5) 355deg,transparent 360deg);animation:laser-rotate 2s linear infinite;z-index:-1;}
-.v1-laser-btn::after{content:'';position:absolute;inset:2px;border-radius:calc(var(--radius) - 2px);background:rgba(0,10,60,0.5);z-index:-1;}
+@keyframes laser-trail{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+.v1-laser-btn{position:relative;display:block;width:100%;max-width:400px;margin:0 auto;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:5px;color:#fff;background:rgba(0,50,180,0.12);border:none;border-radius:var(--radius);padding:16px 32px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;overflow:hidden;transition:background 0.18s,transform 0.12s;}
+.v1-laser-btn::before{content:'';position:absolute;inset:-2px;border-radius:inherit;background:conic-gradient(from 0deg,transparent 0deg,transparent 270deg,rgba(30,80,255,0.15) 285deg,rgba(30,80,255,0.4) 300deg,rgba(60,120,255,0.7) 330deg,rgba(100,160,255,1) 350deg,rgba(180,210,255,1) 358deg,transparent 360deg);animation:laser-trail 2s linear infinite;z-index:0;}
+.v1-laser-btn::after{content:'';position:absolute;inset:2px;border-radius:inherit;background:inherit;z-index:1;}
+.v1-laser-btn>*{position:relative;z-index:2;}
 .v1-laser-btn:hover{background:rgba(0,60,200,0.2);}
 .v1-laser-btn:active{transform:scale(0.98);}
-@keyframes laser-rotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 .v1-vs-arena{display:flex;height:62px;width:100%;position:relative;}
 .v1-vs-half-l{flex:1;background:#1a0a0a;display:flex;align-items:center;justify-content:center;}
 .v1-vs-divider{width:1.5px;background:linear-gradient(180deg,rgba(230,57,70,0) 0%,#e63946 30%,#e63946 70%,rgba(230,57,70,0) 100%);flex-shrink:0;position:relative;}
@@ -2588,7 +2589,7 @@ export default function App() {
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
               <button
-                className="v1-laser-btn"
+                className="v1-laser-btn laser-button"
                 onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}
               >
                 ⚔️ 1V1
