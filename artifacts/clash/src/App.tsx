@@ -578,9 +578,12 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   42%{transform:translate(-50%,-50%) scale(1.1);opacity:0.75;text-shadow:0 0 4px rgba(230,57,70,0.4);}
   60%{transform:translate(-50%,-50%) scale(0.8);opacity:0;}
 }
-.v1-vs-btn{display:block;width:100%;max-width:400px;border:1.5px solid rgba(230,57,70,0.3);border-radius:var(--radius);cursor:pointer;padding:0;overflow:hidden;background:transparent;transition:border-color 0.15s ease,transform 0.12s ease,box-shadow 0.15s ease;touch-action:manipulation;-webkit-tap-highlight-color:transparent;text-align:left;}
-.v1-vs-btn:hover{border-color:rgba(230,57,70,0.7);transform:translateY(-1px);box-shadow:0 4px 20px rgba(230,57,70,0.18);}
-.v1-vs-btn:active{transform:scale(0.98);}
+.v1-laser-btn{position:relative;display:block;width:100%;max-width:400px;margin:0 auto;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:5px;color:#fff;background:rgba(0,50,180,0.12);border:none;border-radius:var(--radius);padding:16px 32px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;overflow:hidden;isolation:isolate;transition:background 0.18s,transform 0.12s;}
+.v1-laser-btn::before{content:'';position:absolute;inset:-2px;border-radius:calc(var(--radius) + 2px);background:conic-gradient(from 0deg,transparent 270deg,#1a3aff 310deg,#4466ff 340deg,rgba(100,140,255,0.5) 355deg,transparent 360deg);animation:laser-rotate 2s linear infinite;z-index:-1;}
+.v1-laser-btn::after{content:'';position:absolute;inset:2px;border-radius:calc(var(--radius) - 2px);background:rgba(0,10,60,0.5);z-index:-1;}
+.v1-laser-btn:hover{background:rgba(0,60,200,0.2);}
+.v1-laser-btn:active{transform:scale(0.98);}
+@keyframes laser-rotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 .v1-vs-arena{display:flex;height:62px;width:100%;position:relative;}
 .v1-vs-half-l{flex:1;background:#1a0a0a;display:flex;align-items:center;justify-content:center;}
 .v1-vs-divider{width:1.5px;background:linear-gradient(180deg,rgba(230,57,70,0) 0%,#e63946 30%,#e63946 70%,rgba(230,57,70,0) 100%);flex-shrink:0;position:relative;}
@@ -657,7 +660,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .achievement-toast-name{font-size:15px;font-weight:600;}.achievement-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .ach-badge{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:4px 12px 4px 8px;display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;}.ach-badge.gold-ach{border-color:var(--gold);background:rgba(244,197,66,0.08);}
 /* SOUND TOGGLE */
-.sound-btn{background:none;border:1px solid var(--border);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.18s,color 0.18s,background 0.18s;color:var(--text-dim);-webkit-tap-highlight-color:transparent;flex-shrink:0;}.sound-btn:hover{border-color:var(--text-mid);color:var(--text);background:rgba(255,255,255,0.04);}.sound-btn.muted{color:var(--text-dim);opacity:0.5;}
+.sound-btn{background:none;border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color 0.18s,opacity 0.18s;color:var(--text-dim);-webkit-tap-highlight-color:transparent;flex-shrink:0;}.sound-btn:hover{color:var(--text);}.sound-btn.muted{color:var(--text-dim);opacity:0.4;}
 /* Personal record */
 .nemesis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-top:10px;}
 .nemesis-icon{font-size:26px;flex-shrink:0;}
@@ -746,58 +749,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .v1-topic-banner{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;font-size:13px;color:var(--text-dim);margin-bottom:14px;}
 .v1-topic-banner strong{color:var(--text);font-style:italic;}
 
-/* THEME TOGGLE BUTTON */
-.theme-btn{background:none;border:1px solid var(--border);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.18s,color 0.18s,background 0.18s;color:var(--text-dim);-webkit-tap-highlight-color:transparent;flex-shrink:0;}
-.theme-btn:hover{border-color:var(--text-mid);color:var(--text);background:rgba(255,255,255,0.05);}
 
-/* LIGHT MODE — Clean White Arena */
-[data-theme="light"]{
-  --bg:#ffffff;
-  --surface:#f9fafb;
-  --surface2:#f1f3f5;
-  --border:rgba(0,0,0,0.08);
-  --red:#e63946;
-  --red-dim:rgba(230,57,70,0.1);
-  --blue:#2563eb;
-  --blue-dim:rgba(37,99,235,0.08);
-  --gold:#d97706;
-  --text:#0f0f0f;
-  --text-dim:#6b7280;
-  --text-mid:#374151;
-  --green:#16a34a;
-}
-[data-theme="light"] body{background:#ffffff;min-height:100dvh;}
-[data-theme="light"] body::after{background:none;}
-[data-theme="light"] .nav{position:relative;overflow:hidden;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 1px 0 rgba(255,255,255,1),0 2px 16px rgba(0,0,0,0.05);}
-[data-theme="light"] .nav::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,var(--red) 40%,#ff6b6b 60%,var(--red) 95%,transparent);pointer-events:none;opacity:0.7;}
-[data-theme="light"] .featured-card,[data-theme="light"] .stat-card,[data-theme="light"] .ai-card,[data-theme="light"] .topic-card,[data-theme="light"] .lb-row,[data-theme="light"] .round-score,[data-theme="light"] .live-scoreboard,[data-theme="light"] .arena-header,[data-theme="light"] .feed-item,[data-theme="light"] .lobby-card,[data-theme="light"] .v1-result-card,[data-theme="light"] .v1-arg-entry,[data-theme="light"] .v1-arena-header,[data-theme="light"] .nemesis-card,[data-theme="light"] .challenge-banner,[data-theme="light"] .verdict-card,[data-theme="light"] .replay-intro,[data-theme="light"] .replay-round,[data-theme="light"] .trending-item,[data-theme="light"] .v1-history-entry,[data-theme="light"] .gauntlet-bot-card,[data-theme="light"] .gp-bot,[data-theme="light"] .gf-match,[data-theme="light"] .ach-badge,[data-theme="light"] .msg-text,[data-theme="light"] .score-pill,[data-theme="light"] .custom-form,[data-theme="light"] .auth-box,[data-theme="light"] .username-dialog,[data-theme="light"] .v1-iq-card,[data-theme="light"] .v1-score-bar,[data-theme="light"] .share-link-box,[data-theme="light"] .waiting-room,[data-theme="light"] .mf-vs-card{background:#ffffff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid rgba(0,0,0,0.07)!important;box-shadow:0 2px 12px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04)!important;}
-[data-theme="light"] .v1-mode-card{background:#f9fafb!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid rgba(0,0,0,0.07)!important;box-shadow:0 2px 12px rgba(0,0,0,0.05)!important;}
-[data-theme="light"] .btn-primary{background:var(--red);box-shadow:0 4px 14px rgba(230,57,70,0.3);}
-[data-theme="light"] .btn-secondary{background:#f9fafb;border:1px solid rgba(0,0,0,0.1);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.06);}
-[data-theme="light"] .btn-ghost{background:transparent;border-color:rgba(0,0,0,0.1);color:var(--text-dim);}
-[data-theme="light"] .btn-ghost:hover{background:#f9fafb;color:var(--text);}
-[data-theme="light"] .debate-input,[data-theme="light"] .join-code-input,[data-theme="light"] .auth-field,[data-theme="light"] .username-field,[data-theme="light"] .custom-input{background:#ffffff;border-color:rgba(0,0,0,0.12);color:var(--text);}
-[data-theme="light"] .tabs,[data-theme="light"] .v1-tab-row{background:#f1f3f5!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-color:rgba(0,0,0,0.07)!important;}
-[data-theme="light"] .sound-btn,[data-theme="light"] .theme-btn{background:#f9fafb;border-color:rgba(0,0,0,0.1);color:var(--text-mid);}
-[data-theme="light"] .sound-btn:hover,[data-theme="light"] .theme-btn:hover{background:#f1f3f5;}
-[data-theme="light"] .auth-pill{background:rgba(230,57,70,0.08);border-color:rgba(230,57,70,0.3);color:var(--red);}
-[data-theme="light"] .profile-pill,[data-theme="light"] .user-chip{background:#f9fafb;border-color:rgba(0,0,0,0.1);color:var(--text);}
-[data-theme="light"] .user-chip:hover{background:#f1f3f5;}
-[data-theme="light"] .share-toast{background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:var(--green);box-shadow:0 4px 20px rgba(0,0,0,0.1);}
-[data-theme="light"] .achievement-toast{background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 4px 20px rgba(0,0,0,0.1);}
-[data-theme="light"] .mf-stance.for{background:rgba(22,163,74,0.08);}
-[data-theme="light"] .mf-stance.against{background:rgba(230,57,70,0.07);}
-[data-theme="light"] .error-banner{background:rgba(230,57,70,0.06);}
-[data-theme="light"] .v1-player-chip.me{background:rgba(230,57,70,0.08);border-color:rgba(230,57,70,0.25);}
-[data-theme="light"] .v1-player-chip.opp{background:rgba(37,99,235,0.07);border-color:rgba(37,99,235,0.2);}
-[data-theme="light"] .arena-stats{border-color:rgba(0,0,0,0.07);}
-[data-theme="light"] .arena-stat+.arena-stat{border-color:rgba(0,0,0,0.07);}
-[data-theme="light"] .logo::after{background:var(--red);}
-[data-theme="light"] .sudden-btn{background:rgba(230,57,70,0.06);}
-[data-theme="light"] .best-arg{background:rgba(22,163,74,0.07);border-color:rgba(22,163,74,0.18);}
-[data-theme="light"] .worst-arg{background:rgba(230,57,70,0.06);border-color:rgba(230,57,70,0.16);}
-[data-theme="light"] .profile-panel{position:relative;overflow:hidden;background:rgba(255,255,255,0.78)!important;backdrop-filter:blur(48px) saturate(200%)!important;-webkit-backdrop-filter:blur(48px) saturate(200%)!important;border:1px solid rgba(0,0,0,0.1)!important;box-shadow:0 24px 64px rgba(0,0,0,0.15),0 1px 0 rgba(255,255,255,0.9) inset!important;}
-[data-theme="light"] .pp-username-field{background:#ffffff;border-color:rgba(0,0,0,0.1);}
 
 /* 1V1 LOBBY TABS */
 .v1-tab-row{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:20px;}
@@ -1555,16 +1507,11 @@ export default function App() {
   const [customTopicInput, setCustomTopicInput] = useState("");
   const [v1Tab, setV1Tab] = useState<"play" | "history">("play");
   const [v1History, setV1History] = useState<V1HistoryEntry[]>(() => { try { return JSON.parse(localStorage.getItem("clash-1v1-history") || "[]"); } catch { return []; } });
-  const [themeMode, setThemeMode] = useState<"dark" | "light">(() => { try { return (localStorage.getItem("clash-theme") as "dark" | "light") || "dark"; } catch { return "dark"; } });
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pendingVerdictRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", themeMode);
-  }, [themeMode]);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -1895,14 +1842,6 @@ export default function App() {
     });
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setThemeMode(prev => {
-      const next = prev === "dark" ? "light" : "dark";
-      try { localStorage.setItem("clash-theme", next); } catch {}
-      document.documentElement.setAttribute("data-theme", next);
-      return next;
-    });
-  }, []);
 
   const ai = selectedAI === "custom"
     ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
@@ -2314,21 +2253,14 @@ export default function App() {
   };
 
   const logoutFn = () => {
-    localStorage.removeItem("clash-auth-token");
+    Object.keys(localStorage)
+      .filter(k => k.startsWith("clash-") || k.startsWith("clash_"))
+      .forEach(k => localStorage.removeItem(k));
     setAuthUser(null);
+    setPlayer(null);
     setShowAuthModal(false);
     setShowProfilePanel(false);
-    const deviceId = getOrCreateDeviceId();
-    (async () => {
-      try {
-        await apiPost("/players/register", { deviceId });
-        const profile = await apiGet<PlayerProfile>(`/players/${deviceId}`);
-        setPlayer(profile);
-        if (profile.stats.debates > 0) {
-          setStats({ wins: profile.stats.wins, debates: profile.stats.debates, bestScore: profile.stats.bestScore, currentStreak: profile.stats.currentStreak ?? 0, bestStreak: profile.stats.bestStreak ?? 0, opponentHistory: profile.stats.opponentHistory });
-        }
-      } catch {}
-    })();
+    setStats({ wins: 0, debates: 0, bestScore: 0, currentStreak: 0, bestStreak: 0, opponentHistory: {} });
   };
 
   const shuffleWaitingTopics = () => {
@@ -2605,21 +2537,6 @@ export default function App() {
               </svg>
             )}
           </button>
-          <button className="theme-btn" onClick={toggleTheme} title={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
-            {themeMode === "dark" ? (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="5"/>
-                <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-              </svg>
-            ) : (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-              </svg>
-            )}
-          </button>
           {authUser ? (
             <button
               className="user-chip"
@@ -2671,20 +2588,10 @@ export default function App() {
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
               <button
-                className="v1-vs-btn"
+                className="v1-laser-btn"
                 onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}
               >
-                <div className="v1-vs-arena">
-                  <div className="v1-vs-half-l">
-                    <span className="v1-vs-player v1-vs-player-l">👤</span>
-                  </div>
-                  <div className="v1-vs-divider" />
-                  <div className="v1-vs-half-r">
-                    <span className="v1-vs-player v1-vs-player-r">👤</span>
-                  </div>
-                  <span className="v1-vs-badge">VS</span>
-                </div>
-                <span className="v1-vs-label">1V1 Challenge</span>
+                ⚔️ 1V1
               </button>
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
