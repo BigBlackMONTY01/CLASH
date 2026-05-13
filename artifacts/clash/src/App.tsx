@@ -537,7 +537,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
   .forge-page{padding-bottom:24px;}
   .forge-page-title{font-size:24px;letter-spacing:3px;}
   .forge-section{margin-bottom:14px;}
-  .forge-tone-grid{grid-template-columns:1fr;gap:7px;}
+  .forge-tone-grid{grid-template-columns:1fr 1fr;gap:7px;}
   .forge-tone-opt{padding:10px 14px;}
   .forge-tone-name{font-size:14px;}
   .forge-tone-desc{font-size:12px;}
@@ -1261,7 +1261,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .forge-page-sub{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text-mid);margin:2px 0 0;}
 .forge-section{margin-bottom:16px;}
 .forge-section-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-mid);margin-bottom:8px;display:block;}
-.forge-avatar-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.forge-avatar-grid{display:flex;flex-wrap:wrap;gap:6px;overflow-x:auto;}
 .forge-avatar-opt{font-size:22px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,0.03);border:1.5px solid transparent;cursor:pointer;transition:all 0.15s;line-height:1;}
 .forge-avatar-opt.selected{border-color:#a855f7;background:rgba(168,85,247,0.12);}
 .forge-avatar-opt:hover{border-color:rgba(255,255,255,0.2);}
@@ -1271,12 +1271,12 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .forge-tone-opt:hover{border-color:rgba(255,255,255,0.2);}
 .forge-tone-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--text);font-weight:700;display:block;word-break:break-word;}
 .forge-tone-desc{font-family:'Barlow',sans-serif;font-size:12px;color:var(--text-mid);margin-top:3px;display:block;line-height:1.4;word-break:break-word;}
-.forge-slider-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.forge-slider-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-right:24px;}
 .forge-slider-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);width:76px;flex-shrink:0;}
 .forge-slider{flex:1;min-width:0;-webkit-appearance:none;appearance:none;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;outline:none;cursor:pointer;}
 .forge-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#a855f7;cursor:pointer;border:none;box-shadow:0 0 6px rgba(168,85,247,0.4);}
 .forge-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#a855f7;cursor:pointer;border:none;}
-.forge-slider-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);width:22px;text-align:right;flex-shrink:0;}
+.forge-slider-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);width:28px;text-align:right;flex-shrink:0;}
 .forge-diff-row{display:flex;gap:6px;}
 .forge-diff-opt{flex:1;padding:10px 4px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-mid);cursor:pointer;text-align:center;transition:all 0.15s;}
 .forge-diff-opt.sel-easy{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,0.08);}
@@ -1292,7 +1292,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .forge-toggle-knob{position:absolute;top:4px;left:4px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.2s;display:block;pointer-events:none;}
 .forge-toggle-btn.on .forge-toggle-knob{transform:translateX(18px);}
 /* FORGE RESULT */
-.forge-bound{width:100%;max-width:100%;overflow:hidden;box-sizing:border-box;}
+.forge-bound{width:100%;max-width:100%;overflow:hidden;box-sizing:border-box;padding:0 16px;}
 .room-moderation-warning{display:flex;align-items:flex-start;gap:8px;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.3);border-radius:var(--radius);padding:10px 14px;margin:8px 0;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:0.5px;color:#ff6b78;line-height:1.4;}
 .room-mod-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
 .forge-result-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;}
