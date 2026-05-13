@@ -1,0 +1,16 @@
+add a Opponent idle animations, each AI has unique idle: Professor adjusts glasses emoji, Politician smirks, Devil taps fingers and so on.. no more emois but animations..
+
+in 1v1, add Trash talk bubbles — between rounds AI sends one taunting one-liner as a floating speech bubble that fades after 3 seconds
+
+add a Auto-grow textarea
+
+add a Mirror Match in vs ai mode, AI is trained on user’s own best arguments from past debates. User fights their own ghost. Show “vs YOUR GHOST” in matchmaking screen.
+
+don't forget to give ai memory per user, after 3+ matches vs same custom AI, it remembers user’s argument patterns and starts specifically countering them. Reference previous arguments.
+
+add a Custom AI Builder full editor, i don't know where you would put it but be creatuve with it Fields: Name, Avatar emoji, Tone, Aggression (1-10), Logic level (1-10), Humor level (1-10), Difficulty (Easy/Medium/Hard/Extreme), Memory on/off Save to DB. Share via link. Use in debates same as existing opponents.
+add a DEBATE DYNASTY Track W/L record vs each AI opponent. Show on profile: “7W 2L vs The Professor” At 10 wins vs one opponent: unlock permanent Nemesis badge for that opponent on profile. At 5 losses in a row vs one opponent: show Rivalry tag — that AI becomes marked rival on home screen with rematch CTA.
+add a After 5+ completed debates, analyze style across all matches and assign one title: • The Pivot — frequently changes angle • Evidence Machine — consistently uses examples • Chaos Agent — unpredictable, high variance • Avalanche — starts slow, finishes strong • Sniper — one devastating argument per round Show on profile and leaderboard. Update every 5 debates. Badge with short description.
+replace in results witht this, After every completed debate generate a radar/pentagon chart showing 5 dimensions: Logic, Aggression, Consistency, Efficiency, Comeback Calculate from round scores and argument patterns. Show on verdict screen. Include in Share Card image export.
+also, After each round, analyze the user’s argument and tag key sentences: • ✓ Solid — well-reasoned • ⚠ Fallacy — logical error • ~ Weak Evidence — assertion without support • ⚡ Emotional Bait — emotion over logic • 💀 Killer Point — strongest argument Run as part of existing scoring API call, not a separate request. Show tags inline on the round score card after AI responds. One tag per sentence max.
+implement After every completed debate generate a collectible card and save to user’s collection.
