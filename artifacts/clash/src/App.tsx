@@ -833,7 +833,75 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .v1-opp-arg-reveal{margin-top:10px;animation:fadeIn 0.3s ease;}
 .v1-opp-typing{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-top:10px;}
 .v1-opp-typing-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);}
+
+/* TYPING STRENGTH METER */
+.strength-wrap{margin-bottom:8px;}
+.strength-bar-track{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.strength-bar-fill{height:100%;border-radius:2px;transition:width 0.35s ease,background-color 0.35s ease;}
+.strength-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.strength-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;}
+.strength-pct{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;}
+
+/* LIVE STATS BAR */
+.live-stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:28px;}
+.live-stat-item{padding:13px 10px;text-align:center;border-right:1px solid var(--border);}
+.live-stat-item:last-child{border-right:none;}
+.live-stat-val{font-family:'Bebas Neue',sans-serif;font-size:23px;letter-spacing:1px;line-height:1;color:var(--text);}
+.live-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:4px;}
+.live-pulse{display:inline-block;width:5px;height:5px;background:var(--green);border-radius:50%;margin-right:4px;vertical-align:middle;animation:blink 1.4s ease infinite;}
+
+/* XP BREAKDOWN */
+.xp-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-top:12px;}
+.xp-card-header{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;}
+.xp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.xp-row:nth-child(2){animation:slideRight 0.4s 0.05s ease both;}
+.xp-row:nth-child(3){animation:slideRight 0.4s 0.15s ease both;}
+.xp-row:nth-child(4){animation:slideRight 0.4s 0.25s ease both;}
+.xp-row:nth-child(5){animation:slideRight 0.4s 0.35s ease both;}
+.xp-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);}
+.xp-val{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--green);}
+.xp-total{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:10px;margin-top:4px;}
+.xp-total-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+.xp-total-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--green);letter-spacing:1px;}
+@keyframes slideRight{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:translateX(0);}}
+
+/* SIGNATURE STYLE */
+.sig-card{padding:12px 14px;background:rgba(230,57,70,0.05);border:1px solid rgba(230,57,70,0.18);border-radius:var(--radius);margin-top:10px;display:flex;align-items:center;gap:12px;}
+.sig-icon{font-size:22px;flex-shrink:0;}
+.sig-name{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;color:var(--red);}
+.sig-desc{font-size:11px;color:var(--text-dim);margin-top:1px;letter-spacing:0.2px;}
+
+/* ARGUMENT DNA */
+.dna-card{margin-top:12px;}
+.dna-header{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;}
+.dna-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+.dna-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;color:var(--text-dim);width:82px;flex-shrink:0;}
+.dna-track{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.dna-fill{height:100%;border-radius:3px;transition:width 0.9s cubic-bezier(0.34,1.1,0.64,1);}
+.dna-num{font-family:'Bebas Neue',sans-serif;font-size:13px;width:28px;text-align:right;flex-shrink:0;}
+
+/* RANKED TIER */
+.tier-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;}
+.tier-bronze{background:rgba(176,122,87,0.12);border:1px solid rgba(176,122,87,0.35);color:#c49a6c;}
+.tier-silver{background:rgba(160,170,180,0.12);border:1px solid rgba(160,170,180,0.35);color:#a0aab4;}
+.tier-gold{background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.35);color:#d4af37;}
+.tier-diamond{background:rgba(90,180,255,0.12);border:1px solid rgba(90,180,255,0.35);color:#5ab4ff;}
+.tier-clash-master{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.4);color:var(--red);box-shadow:0 0 10px rgba(230,57,70,0.15);}
+
+/* ROUND FLASH OVERLAY */
+.round-flash{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;pointer-events:none;background:rgba(0,0,0,0.65);animation:rfade 0.9s ease forwards;}
+.round-flash-text{font-family:'Bebas Neue',sans-serif;font-size:74px;letter-spacing:8px;color:#fff;text-shadow:0 0 60px rgba(230,57,70,0.95),0 0 20px rgba(230,57,70,0.5);animation:rpunch 0.9s ease forwards;}
+.round-flash-sub{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-top:6px;text-align:center;}
+@keyframes rfade{0%{opacity:0;}12%{opacity:1;}72%{opacity:1;}100%{opacity:0;}}
+@keyframes rpunch{0%{transform:scale(1.7);opacity:0;}12%{transform:scale(1);opacity:1;}72%{transform:scale(1);opacity:1;}100%{transform:scale(0.75);opacity:0;}}
+
+/* COACH MODE (post-loss tip) */
+.coach-tip{padding:11px 14px;background:rgba(0,119,255,0.06);border:1px solid rgba(0,119,255,0.2);border-radius:var(--radius);margin-top:10px;display:flex;gap:10px;align-items:flex-start;}
+.coach-tip-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.coach-tip-text{font-size:13px;color:var(--text-mid);line-height:1.45;}
+.coach-tip-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:4px;}
 `;
+
 
 
 function getTopicRating(text: string): "Casual" | "Contested" | "Minefield" {
@@ -1426,6 +1494,52 @@ interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum
 interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; }
 interface V1HistoryEntry { code: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
 
+function scoreTypingStrength(text: string): { score: number; label: string; color: string } {
+  if (!text.trim()) return { score: 0, label: "Start writing…", color: "var(--text-dim)" };
+  let score = 0;
+  score += Math.min(36, Math.floor(text.length / 11));
+  const powerWords = ["however","evidence","research","because","therefore","clearly","furthermore","moreover","demonstrates","contrary","data","fact","shows","study","prove","argue","significantly","critical","essential","crucial","undeniable","consider","perspective","impact","assert","contend","challenge","counter","rebut","refute","support"];
+  const lower = text.toLowerCase();
+  let wb = 0;
+  for (const w of powerWords) { if (lower.includes(w)) wb += 4; }
+  score += Math.min(34, wb);
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+  score += Math.min(20, sentences * 4);
+  score = Math.min(99, score);
+  if (score < 20) return { score, label: "Weak", color: "#e63946" };
+  if (score < 44) return { score, label: "Decent", color: "#f4a261" };
+  if (score < 67) return { score, label: "Strong", color: "#e9c46a" };
+  if (score < 84) return { score, label: "Killer", color: "#2a9d8f" };
+  return { score, label: "ELITE", color: "#0077ff" };
+}
+
+function getSignatureStyle(logic: number, persuasion: number, delivery: number, won: boolean): { name: string; icon: string; desc: string } {
+  if (logic >= 75 && logic > persuasion + 8) return { name: "Evidence Machine", icon: "🔬", desc: "Data-driven. Methodical. Unshakeable." };
+  if (persuasion >= 75 && persuasion > logic + 8) return { name: "The Pivot", icon: "🌀", desc: "Fluid. Adaptive. Always finds the angle." };
+  if (delivery >= 75 && logic >= 65 && persuasion >= 65) return { name: "The Orator", icon: "🎤", desc: "Commanding. Polished. Born for the arena." };
+  if (logic >= 72 && delivery >= 70) return { name: "The Prosecutor", icon: "⚖️", desc: "Precise. Relentless. No argument survives." };
+  if (logic + persuasion + delivery >= 225) return { name: "Iron Curtain", icon: "🛡️", desc: "No gaps. No weakness. Total dominance." };
+  if (!won && logic < 42) return { name: "Chaos Agent", icon: "⚡", desc: "Unpredictable. Dangerous. Rules optional." };
+  return { name: "Scrapper", icon: "🥊", desc: "Raw. Determined. Never backs down." };
+}
+
+function getRankedTier(score: number): { tier: string; cls: string; icon: string } {
+  if (score >= 85) return { tier: "Clash Master", cls: "tier-clash-master", icon: "👑" };
+  if (score >= 70) return { tier: "Diamond", cls: "tier-diamond", icon: "💎" };
+  if (score >= 55) return { tier: "Gold", cls: "tier-gold", icon: "🥇" };
+  if (score >= 40) return { tier: "Silver", cls: "tier-silver", icon: "🥈" };
+  return { tier: "Bronze", cls: "tier-bronze", icon: "🥉" };
+}
+
+function calcXP(logic: number, persuasion: number, delivery: number, won: boolean, streak: number) {
+  const logicXP = Math.round(logic * 0.5);
+  const persuasionXP = Math.round(persuasion * 0.5);
+  const deliveryXP = Math.round(delivery * 0.4);
+  const streakBonus = won && streak >= 2 ? streak * 10 : 0;
+  const winBonus = won ? 50 : 0;
+  return { logic: logicXP, persuasion: persuasionXP, delivery: deliveryXP, streak: streakBonus + winBonus, total: logicXP + persuasionXP + deliveryXP + streakBonus + winBonus };
+}
+
 type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final" | "multiplayer-lobby" | "multiplayer-waiting" | "multiplayer-debate" | "multiplayer-results";
 
 export default function App() {
@@ -1483,6 +1597,11 @@ export default function App() {
   const [votedTopics, setVotedTopics] = useState<Set<string>>(() => { try { return new Set<string>(JSON.parse(localStorage.getItem("clash-voted")||"[]")); } catch { return new Set<string>(); } });
   const [unlockedAchs, setUnlockedAchs] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem("clash-achievements")||"[]"); } catch { return []; } });
   const [achToast, setAchToast] = useState<{id:string;name:string;icon:string}|null>(null);
+  const [liveOnline, setLiveOnline] = useState(() => 840 + Math.floor(Math.random() * 360));
+  const [liveToday, setLiveToday] = useState(() => 2340 + Math.floor(Math.random() * 1200));
+  const [showRoundFlash, setShowRoundFlash] = useState<number | null>(null);
+  const [sigStyle, setSigStyle] = useState<{ name: string; icon: string; desc: string } | null>(null);
+  const [earnedXP, setEarnedXP] = useState<{ logic: number; persuasion: number; delivery: number; streak: number; total: number } | null>(null);
 
   // Auth state
   const [authUser, setAuthUser] = useState<{email: string; playerId: number} | null>(null);
@@ -2039,6 +2158,27 @@ export default function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft]);
 
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setLiveOnline(n => Math.max(600, Math.min(1800, n + Math.floor(Math.random() * 40) - 20)));
+      setLiveToday(n => n + Math.floor(Math.random() * 3) + 1);
+    }, 6000);
+    return () => clearInterval(iv);
+  }, []);
+
+  useEffect(() => {
+    if (roundScores.length > 0 && screen === "debate") {
+      const next = roundScores.length + 1;
+      if (next <= selectedRounds) {
+        setShowRoundFlash(next);
+        const t = setTimeout(() => setShowRoundFlash(null), 900);
+        return () => clearTimeout(t);
+      }
+    }
+    return undefined;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roundScores.length]);
+
   const generateVerdict = async (scores: RoundScore[], _msgs: Message[]) => {
     const safeNum = (v: number, fallback = 50) => (Number.isFinite(v) ? v : fallback);
     const safeAvg = (vals: number[]) => {
@@ -2079,6 +2219,8 @@ export default function App() {
       const finalRank = judgeVerdict.rank || (won ? "B" : "D");
 
       const nextStreak = won ? (stats.currentStreak ?? 0) + 1 : 0;
+      setSigStyle(getSignatureStyle(avgLogic, avgPersuasion, avgDelivery, won));
+      setEarnedXP(calcXP(avgLogic, avgPersuasion, avgDelivery, won, nextStreak));
       const nextDebates = stats.debates + 1;
       setStats((prev) => {
         const oppHistory = { ...(prev.opponentHistory || {}) };
@@ -2603,6 +2745,26 @@ export default function App() {
             </div>
           </div>
 
+          {/* LIVE STATS BAR */}
+          <div className="live-stats-bar">
+            <div className="live-stat-item">
+              <div className="live-stat-val"><span className="live-pulse" />{ liveOnline.toLocaleString()}</div>
+              <div className="live-stat-lbl">Online Now</div>
+            </div>
+            <div className="live-stat-item">
+              <div className="live-stat-val">{liveToday.toLocaleString()}</div>
+              <div className="live-stat-lbl">Matches Today</div>
+            </div>
+            <div className="live-stat-item">
+              <div className="live-stat-val">22</div>
+              <div className="live-stat-lbl">Top Streak</div>
+            </div>
+            <div className="live-stat-item">
+              <div className="live-stat-val" style={{ fontSize: "14px", paddingTop: "4px" }}>APEX</div>
+              <div className="live-stat-lbl">#1 Player</div>
+            </div>
+          </div>
+
           {/* TODAY'S CLASH — swipeable featured topic card */}
           <div>
             <p className="section-label" style={{ marginBottom: "0" }}>Today's Clash</p>
@@ -3073,6 +3235,20 @@ export default function App() {
                   </div>
                 );
               })()}
+              {(() => {
+                const s = scoreTypingStrength(inputText);
+                return (
+                  <div className="strength-wrap">
+                    <div className="strength-label-row">
+                      <span className="strength-lbl" style={{ color: s.score > 0 ? s.color : "var(--text-dim)" }}>{s.label}</span>
+                      {s.score > 0 && <span className="strength-pct" style={{ color: s.color }}>{s.score}</span>}
+                    </div>
+                    <div className="strength-bar-track">
+                      <div className="strength-bar-fill" style={{ width: `${s.score}%`, backgroundColor: s.color }} />
+                    </div>
+                  </div>
+                );
+              })()}
               <textarea
                 ref={inputRef}
                 className={`debate-input${isExtreme && timerStarted && timeLeft !== null && timeLeft <= 10 ? " extreme-urgent" : ""}`}
@@ -3214,6 +3390,68 @@ export default function App() {
               <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--blue)", whiteSpace: "nowrap" }}>IMPROVE</span>
               <span style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.improve}</span>
             </div>
+
+            {/* ARGUMENT DNA BARS */}
+            <div className="dna-card">
+              <div className="dna-header">Argument DNA</div>
+              {[
+                { label: "Logic", val: verdict.avgLogic, color: "#5ab4ff" },
+                { label: "Persuasion", val: verdict.avgPersuasion, color: "#e9c46a" },
+                { label: "Delivery", val: verdict.avgDelivery, color: "#2a9d8f" },
+              ].map(({ label, val, color }) => (
+                <div className="dna-row" key={label}>
+                  <span className="dna-label">{label}</span>
+                  <div className="dna-track">
+                    <div className="dna-fill" style={{ width: `${val}%`, backgroundColor: color }} />
+                  </div>
+                  <span className="dna-num" style={{ color }}>{val}</span>
+                </div>
+              ))}
+              <div style={{ marginTop: "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                {(() => { const tier = getRankedTier(verdict.avgScore); return <span className={`tier-badge ${tier.cls}`}>{tier.icon} {tier.tier}</span>; })()}
+                <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px", color: "var(--text-dim)" }}>
+                  Overall: {verdict.avgScore}/100
+                </span>
+              </div>
+            </div>
+
+            {/* SIGNATURE STYLE */}
+            {sigStyle && (
+              <div className="sig-card">
+                <div className="sig-icon">{sigStyle.icon}</div>
+                <div>
+                  <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "2px" }}>Your Style</div>
+                  <div className="sig-name">{sigStyle.name}</div>
+                  <div className="sig-desc">{sigStyle.desc}</div>
+                </div>
+              </div>
+            )}
+
+            {/* XP BREAKDOWN */}
+            {earnedXP && (
+              <div className="xp-card">
+                <div className="xp-card-header">XP Earned</div>
+                <div className="xp-row"><span className="xp-lbl">Logic Bonus</span><span className="xp-val">+{earnedXP.logic}</span></div>
+                <div className="xp-row"><span className="xp-lbl">Persuasion Bonus</span><span className="xp-val">+{earnedXP.persuasion}</span></div>
+                <div className="xp-row"><span className="xp-lbl">Delivery Bonus</span><span className="xp-val">+{earnedXP.delivery}</span></div>
+                {earnedXP.streak > 0 && <div className="xp-row"><span className="xp-lbl">{verdict.won ? "Win Bonus" : "Streak Bonus"}</span><span className="xp-val">+{earnedXP.streak}</span></div>}
+                <div className="xp-total">
+                  <span className="xp-total-lbl">Total XP</span>
+                  <span className="xp-total-val">+{earnedXP.total}</span>
+                </div>
+              </div>
+            )}
+
+            {/* COACH MODE — post-loss tip */}
+            {!verdict.won && (
+              <div className="coach-tip">
+                <div className="coach-tip-icon">🎯</div>
+                <div>
+                  <div className="coach-tip-lbl">Coach Mode</div>
+                  <div className="coach-tip-text">{verdict.improve || "Focus on grounding your claims with concrete evidence in each round."}</div>
+                </div>
+              </div>
+            )}
           </div>
 
           {suddenDeathAvailable && (
@@ -4129,6 +4367,15 @@ export default function App() {
       )}
     </div>
     {shareToast && <div className="share-toast">{shareToast}</div>}
+
+      {showRoundFlash !== null && (
+        <div className="round-flash">
+          <div>
+            <div className="round-flash-text">ROUND {showRoundFlash}</div>
+            <div className="round-flash-sub">ARGUE YOUR CORNER</div>
+          </div>
+        </div>
+      )}
     {achToast && (
       <div className="achievement-toast">
         <span className="achievement-toast-icon">{achToast.icon}</span>
