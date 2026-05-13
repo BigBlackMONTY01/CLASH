@@ -570,36 +570,25 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .gauntlet-btn:hover{background:rgba(244,197,66,0.07);color:var(--gold);transform:translateY(-1px);}
 .gauntlet-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.55;margin-top:6px;}
 
-/* 1V1 VS PULSE BUTTON */
-@keyframes vsPulse{
-  0%,65%,100%{transform:translate(-50%,-50%) scale(0);opacity:0;text-shadow:none;}
-  8%{transform:translate(-50%,-50%) scale(2.6);opacity:1;text-shadow:0 0 12px #e63946,0 0 30px rgba(230,57,70,0.7),0 0 60px rgba(230,57,70,0.35);}
-  22%{transform:translate(-50%,-50%) scale(1.5);opacity:1;text-shadow:0 0 8px #e63946,0 0 20px rgba(230,57,70,0.5);}
-  42%{transform:translate(-50%,-50%) scale(1.1);opacity:0.75;text-shadow:0 0 4px rgba(230,57,70,0.4);}
-  60%{transform:translate(-50%,-50%) scale(0.8);opacity:0;}
+/* 1V1 GLOW BUTTON */
+@keyframes v1GlowPulse{
+  0%,100%{box-shadow:0 0 10px rgba(230,57,70,0.35),0 0 28px rgba(230,57,70,0.12);border-color:rgba(230,57,70,0.4);}
+  50%{box-shadow:0 0 26px rgba(230,57,70,0.68),0 0 64px rgba(230,57,70,0.28),0 0 96px rgba(230,57,70,0.08);border-color:rgba(230,57,70,0.78);}
 }
-@keyframes laser-trail{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-.v1-laser-btn{position:relative;display:block;width:100%;max-width:400px;margin:0 auto;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:5px;color:#fff;background:rgba(0,50,180,0.12);border:none;border-radius:var(--radius);padding:16px 32px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;overflow:hidden;transition:background 0.18s,transform 0.12s;}
-.v1-laser-btn::before{content:'';position:absolute;inset:-2px;border-radius:inherit;background:conic-gradient(from 0deg,transparent 0deg,transparent 270deg,rgba(30,80,255,0.15) 285deg,rgba(30,80,255,0.4) 300deg,rgba(60,120,255,0.7) 330deg,rgba(100,160,255,1) 350deg,rgba(180,210,255,1) 358deg,transparent 360deg);animation:laser-trail 2s linear infinite;z-index:0;}
-.v1-laser-btn::after{content:'';position:absolute;inset:2px;border-radius:inherit;background:inherit;z-index:1;}
-.v1-laser-btn>*{position:relative;z-index:2;}
-.v1-laser-btn:hover{background:rgba(0,60,200,0.2);}
-.v1-laser-btn:active{transform:scale(0.98);}
-.v1-vs-arena{display:flex;height:62px;width:100%;position:relative;}
-.v1-vs-half-l{flex:1;background:#1a0a0a;display:flex;align-items:center;justify-content:center;}
-.v1-vs-divider{width:1.5px;background:linear-gradient(180deg,rgba(230,57,70,0) 0%,#e63946 30%,#e63946 70%,rgba(230,57,70,0) 100%);flex-shrink:0;position:relative;}
-.v1-vs-half-r{flex:1;background:#0d0d0d;display:flex;align-items:center;justify-content:center;}
-.v1-vs-player{font-size:24px;line-height:1;pointer-events:none;}
-.v1-vs-player-l{opacity:0.7;filter:drop-shadow(0 0 3px rgba(230,57,70,0.3));}
-.v1-vs-player-r{opacity:0.2;filter:grayscale(1);}
-.v1-vs-badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0);font-family:'Bebas Neue',sans-serif;font-size:30px;color:#e63946;white-space:nowrap;pointer-events:none;z-index:4;animation:vsPulse 2s ease-out infinite;}
-.v1-vs-label{background:#0d0d0d;border-top:1px solid rgba(230,57,70,0.12);padding:5px 0 7px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(230,57,70,0.55);text-align:center;display:block;}
+@keyframes v1TextFlicker{
+  0%,88%,100%{opacity:1;text-shadow:0 0 14px rgba(230,57,70,0.55),0 0 38px rgba(230,57,70,0.25);}
+  50%{opacity:0.93;text-shadow:0 0 24px rgba(230,57,70,0.95),0 0 58px rgba(230,57,70,0.48),0 0 95px rgba(230,57,70,0.18);}
+}
+.v1-glow-btn{position:relative;display:block;width:100%;max-width:400px;margin:0 auto;cursor:pointer;background:rgba(230,57,70,0.06);border:1.5px solid rgba(230,57,70,0.4);border-radius:var(--radius);padding:14px 32px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background 0.18s,transform 0.12s;animation:v1GlowPulse 2.4s ease-in-out infinite;}
+.v1-glow-btn:hover{background:rgba(230,57,70,0.14);transform:translateY(-1px);}
+.v1-glow-btn:active{transform:scale(0.98);}
+.v1-text{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:12px;color:#fff;display:inline-block;animation:v1TextFlicker 2.4s ease-in-out infinite;}
 
 /* Featured topic card */
 @keyframes featuredSlideLeft{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
 @keyframes featuredSlideRight{from{opacity:0;transform:translateX(-40px);}to{opacity:1;transform:translateX(0);}}
-.featured-wrap{position:relative;margin-top:20px;overflow:hidden;border-radius:var(--radius);}
-.featured-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;cursor:pointer;transition:border-color 0.2s,background 0.2s;display:flex;align-items:center;gap:16px;touch-action:pan-y;user-select:none;}
+.featured-wrap{position:relative;margin-top:10px;overflow:hidden;border-radius:var(--radius);}
+.featured-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;cursor:pointer;transition:border-color 0.2s,background 0.2s;display:flex;align-items:center;gap:12px;touch-action:pan-y;user-select:none;}
 .featured-card:hover{border-color:rgba(230,57,70,0.5);background:rgba(230,57,70,0.04);}
 .featured-card.anim-left{animation:featuredSlideLeft 0.38s cubic-bezier(0.25,0.46,0.45,0.94);}
 .featured-card.anim-right{animation:featuredSlideRight 0.38s cubic-bezier(0.25,0.46,0.45,0.94);}
@@ -1151,10 +1140,23 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .pp-card-mini-title{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);line-height:1.3;word-break:break-word;}
 .pp-card-mini-power{font-family:'Bebas Neue',sans-serif;font-size:13px;margin-top:2px;}
 
-/* FLOATING AI RIVAL BUTTON */
-.float-rival-btn{position:fixed;bottom:24px;right:16px;z-index:600;display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(12,8,24,0.96);border:1px solid rgba(168,85,247,0.4);border-radius:100px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c084fc;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(168,85,247,0.12),0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:floatRivalPulse 3s ease-in-out infinite;}
-@keyframes floatRivalPulse{0%,100%{box-shadow:0 4px 18px rgba(168,85,247,0.12),0 8px 32px rgba(0,0,0,0.5);}50%{box-shadow:0 4px 28px rgba(168,85,247,0.26),0 8px 40px rgba(0,0,0,0.6);}}
+/* FLOATING FORGE RIVAL BUTTON */
+.float-rival-btn{position:fixed;bottom:24px;right:16px;z-index:600;display:flex;align-items:center;gap:7px;padding:10px 16px;background:rgba(12,8,24,0.96);border:1px solid rgba(168,85,247,0.4);border-radius:100px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c084fc;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(168,85,247,0.12),0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);animation:floatRivalPulse 3s ease-in-out infinite;}
+@keyframes floatRivalPulse{0%,100%{box-shadow:0 4px 18px rgba(168,85,247,0.12),0 8px 32px rgba(0,0,0,0.5);}50%{box-shadow:0 4px 28px rgba(168,85,247,0.3),0 8px 40px rgba(0,0,0,0.6);}}
 .float-rival-btn:hover{border-color:rgba(168,85,247,0.7);color:#d8b4fe;transform:scale(1.04);}
+
+/* FORGE RIVAL MODAL */
+.forge-rival-modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 24px;width:min(520px,94vw);max-height:82vh;overflow-y:auto;}
+.forge-rival-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:var(--red);margin:0 0 4px;}
+.forge-rival-sub{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text-dim);margin:0 0 20px;line-height:1.5;}
+.forge-opp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;}
+.forge-opp-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:14px 12px;cursor:pointer;text-align:left;transition:all 0.18s;display:flex;flex-direction:column;gap:4px;}
+.forge-opp-card:hover{border-color:rgba(230,57,70,0.45);background:rgba(230,57,70,0.05);transform:translateY(-1px);}
+.forge-opp-icon{font-size:22px;line-height:1;margin-bottom:2px;}
+.forge-opp-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);font-weight:600;}
+.forge-opp-record{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:var(--text-dim);}
+.forge-close-btn{background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:9px 20px;border-radius:6px;cursor:pointer;transition:all 0.15s;width:100%;}
+.forge-close-btn:hover{border-color:rgba(255,255,255,0.2);color:var(--text);}
 
 /* STREAK CONTINUE BANNER ON HOME */
 .streak-continue-btn{display:block;width:100%;background:linear-gradient(135deg,rgba(244,197,66,0.08),rgba(230,57,70,0.06));border:1.5px solid rgba(244,197,66,0.35);border-radius:var(--radius);padding:12px 20px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all 0.2s;text-align:center;margin-top:10px;animation:goldPulse 2.2s ease-in-out infinite;}
@@ -1957,6 +1959,7 @@ export default function App() {
   const [graveyardArgs, setGraveyardArgs] = useState<{text: string; round: number; score: number}[]>([]);
   const [newCard, setNewCard] = useState<DebateCard | null>(null);
   const [showCardReveal, setShowCardReveal] = useState(false);
+  const [showForgeRival, setShowForgeRival] = useState(false);
   const [profileTab, setProfileTab] = useState<"overview" | "cards" | "graveyard">("overview");
   const [profileCards, setProfileCards] = useState<DebateCard[]>([]);
   const [profileCardsLoading, setProfileCardsLoading] = useState(false);
@@ -3199,10 +3202,10 @@ export default function App() {
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
               <button
-                className="v1-laser-btn laser-button"
+                className="v1-glow-btn"
                 onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}
               >
-                ⚔️ 1V1
+                <span className="v1-text">1V1</span>
               </button>
             </div>
             <div style={{ marginTop: "12px", textAlign: "center" }}>
@@ -3243,43 +3246,6 @@ export default function App() {
             </div>
           )}
 
-          {/* LOGGED-IN PLAYER COMMAND STRIP */}
-          {authUser && player && (
-            <div className="player-cmd-strip">
-              <div className="pcs-block">
-                <span className="pcs-val" style={{ color: stats.currentStreak >= 3 ? "var(--gold)" : "var(--text)" }}>
-                  {stats.currentStreak >= 1 ? `🔥 ${stats.currentStreak}` : stats.currentStreak}
-                </span>
-                <span className="pcs-lbl">Streak</span>
-              </div>
-              <div className="pcs-divider" />
-              <div className="pcs-block">
-                <span className="pcs-val">{stats.wins}</span>
-                <span className="pcs-lbl">Wins</span>
-              </div>
-              <div className="pcs-divider" />
-              <div className="pcs-block">
-                <span className="pcs-val">{stats.debates > 0 ? Math.round((stats.wins / stats.debates) * 100) : 0}%</span>
-                <span className="pcs-lbl">Win Rate</span>
-              </div>
-              <div className="pcs-divider" />
-              <div className="pcs-block">
-                <span className="pcs-val" style={{ color: "var(--gold)", fontSize: "14px" }}>{stats.bestScore > 0 ? stats.bestScore : "—"}</span>
-                <span className="pcs-lbl">Best Score</span>
-              </div>
-              {mmrResult && (
-                <>
-                  <div className="pcs-divider" />
-                  <div className="pcs-block">
-                    <span className={`mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`} style={{ fontSize: "10px", padding: "2px 8px" }}>
-                      {mmrResult.newTier.toUpperCase()}
-                    </span>
-                    <span className="pcs-lbl">Rank</span>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
           {/* RIVAL CHIP */}
           {authUser && (() => {
             const rivalEntry = Object.entries(stats.opponentHistory ?? {})
@@ -3295,7 +3261,7 @@ export default function App() {
                   onClick={() => { setSelectedAI(rival.id); setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
                   title={`${rh.losses} loss${rh.losses !== 1 ? "es" : ""} — get revenge`}
                 >
-                  ⚔ Rival: {rival.icon} {rival.name} · {rh.losses}L
+                  Rival: {rival.icon} {rival.name} · {rh.losses}L
                 </button>
               </div>
             );
@@ -5589,11 +5555,55 @@ export default function App() {
     {screen === "home" && (
       <button
         className="float-rival-btn"
-        onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
-        title="Quick debate vs AI"
+        onClick={() => setShowForgeRival(true)}
+        title="Forge Your Rival"
       >
-        ⚡ Quick Debate
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="8" width="18" height="12" rx="2"/>
+          <rect x="8" y="3" width="8" height="5" rx="1.5"/>
+          <line x1="12" y1="3" x2="12" y2="8"/>
+          <circle cx="9" cy="13" r="1.5" fill="currentColor" stroke="none"/>
+          <circle cx="15" cy="13" r="1.5" fill="currentColor" stroke="none"/>
+          <path d="M9 17h6"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+        </svg>
+        Forge Your Rival
       </button>
+    )}
+
+    {showForgeRival && (
+      <div className="modal-backdrop" onClick={() => setShowForgeRival(false)}>
+        <div className="forge-rival-modal" onClick={(e) => e.stopPropagation()}>
+          <p className="forge-rival-title">FORGE YOUR RIVAL</p>
+          <p className="forge-rival-sub">Designate your nemesis. Track the record. Settle the score.</p>
+          <div className="forge-opp-grid">
+            {AI_OPPONENTS.map(ai => {
+              const h = ((stats.opponentHistory ?? {}) as Record<string, {wins:number;losses:number}>)[ai.id];
+              return (
+                <button
+                  key={ai.id}
+                  className="forge-opp-card"
+                  onClick={() => {
+                    setSelectedAI(ai.id);
+                    setDisplayTopics(pickTopics());
+                    setSetupStep(0);
+                    setScreen("setup");
+                    setShowForgeRival(false);
+                  }}
+                >
+                  <span className="forge-opp-icon">{ai.icon}</span>
+                  <span className="forge-opp-name">{ai.name}</span>
+                  {h && (h.wins > 0 || h.losses > 0) && (
+                    <span className="forge-opp-record">{h.wins}W · {h.losses}L</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <button className="forge-close-btn" onClick={() => setShowForgeRival(false)}>CANCEL</button>
+        </div>
+      </div>
     )}
 
     {showUsernameModal && (
