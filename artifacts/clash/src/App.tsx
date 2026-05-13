@@ -574,9 +574,9 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .v1-slash-btn{display:block;position:relative;overflow:hidden;width:100%;max-width:400px;height:68px;border:none;border-radius:var(--radius);cursor:pointer;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 0.12s ease,box-shadow 0.15s ease;box-shadow:0 0 0 1.5px rgba(230,57,70,0.5),0 2px 14px rgba(0,0,0,0.45);}
 .v1-slash-btn:hover{transform:translateY(-1px);box-shadow:0 0 0 1.5px #e63946,0 6px 28px rgba(230,57,70,0.38);}
 .v1-slash-btn:active{transform:scale(0.98);}
-.v1-slash-l{position:absolute;inset:0;background:#e63946;}
-.v1-slash-r{position:absolute;inset:0;background:#111111;clip-path:polygon(54% 0,100% 0,100% 100%,46% 100%);}
-.v1-slash-edge{position:absolute;left:50%;top:-25%;width:2px;height:150%;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.85) 20%,rgba(255,255,255,1) 50%,rgba(255,255,255,0.85) 80%,rgba(255,255,255,0) 100%);transform:translateX(-50%) rotate(-26deg);box-shadow:0 0 7px 3px rgba(255,255,255,0.55),0 0 20px 6px rgba(255,255,255,0.18);pointer-events:none;z-index:3;}
+.v1-slash-l{position:absolute;inset:0;background:#e63946;clip-path:polygon(0 0,60% 0,40% 100%,0 100%);}
+.v1-slash-r{position:absolute;inset:0;background:#111111;clip-path:polygon(60% 0,100% 0,100% 100%,40% 100%);}
+.v1-slash-edge{position:absolute;left:50%;top:-25%;width:2px;height:150%;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.85) 20%,rgba(255,255,255,1) 50%,rgba(255,255,255,0.85) 80%,rgba(255,255,255,0) 100%);transform:translateX(-50%) rotate(-22deg);box-shadow:0 0 7px 3px rgba(255,255,255,0.6),0 0 20px 6px rgba(255,255,255,0.2);pointer-events:none;z-index:3;}
 .v1-slash-icon-l{position:absolute;left:13%;top:50%;transform:translateY(-50%);font-size:26px;line-height:1;z-index:2;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.5)) brightness(1.15);}
 .v1-slash-icon-r{position:absolute;right:13%;top:50%;transform:translateY(-50%);font-size:26px;line-height:1;z-index:2;opacity:0.22;filter:brightness(0.4) grayscale(1);}
 .v1-slash-title{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:23px;letter-spacing:5px;color:#ffffff;text-shadow:0 0 12px rgba(0,0,0,1),0 1px 5px rgba(0,0,0,1),0 0 30px rgba(0,0,0,0.8);pointer-events:none;z-index:4;}
