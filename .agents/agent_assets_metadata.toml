@@ -6,3 +6,9 @@ id = "nKjmi0Q3RfYXpxikuEJdg"
 uri = "file://artifacts/clash/public/og-image.png"
 type = "image"
 title = "CLASH OG Image (1200×630)"
+
+[[outputs]]
+id = "kBT8_dHxsBJHLUUjd4G_l"
+uri = "file://artifacts/clash/public/favicon.svg"
+type = "image"
+title = "CLASH PWA Logo (favicon.svg)"
