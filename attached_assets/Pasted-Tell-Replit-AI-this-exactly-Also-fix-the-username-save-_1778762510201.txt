@@ -1,0 +1,131 @@
+Tell Replit AI this exactly:
+
+Also fix the username save error in the current system. Do not rebuild profiles — diagnose and patch the existing update flow.
+
+Current error:
+
+Failed query:
+update "players"
+set "username" = $1, "updated_at" = $2
+where "players"."id" = $3
+returning
+"id", "device_id", "username", "current_streak",
+"best_streak", "avatar_id", "accent_color", "card_bg",
+"sound_pack", "created_at", "updated_at"
+
+params:
+TRYHARDER, 2026-05-14T12:26:15.427Z, 3
+
+WHAT THIS MEANS
+
+The SQL update is failing when saving a username for player id 3.
+
+The visible query itself looks structurally valid, so the failure is likely caused by a database rule / constraint / policy / schema mismatch, not the SQL syntax.
+
+FIX IT PROPERLY
+
+Inspect the current players table first:
+	•	column types
+	•	unique constraints
+	•	null constraints
+	•	row-level security policies
+	•	triggers
+	•	ownership checks
+	•	indexes
+	•	default values
+
+MOST LIKELY CAUSES
+
+1. Username already exists (most common)
+
+If username has UNIQUE constraint and TRYHARDER already belongs to another row, update fails.
+
+Fix:
+
+Before update, check availability.
+
+select id from players
+where lower(username) = lower($1)
+and id <> $2;
+
+If found:
+
+Return friendly message:
+	•	Username already taken
+
+2. RLS / Permission policy blocking update
+
+If using Supabase/Postgres RLS, the logged-in user may not be allowed to update row id = 3.
+
+Fix policy so users can update only their own player row.
+
+Example logic:
+	•	auth user matches user_id
+	•	OR device session matches guest owner
+
+3. Missing column mismatch in returning clause
+
+One of these columns may no longer exist or has wrong schema:
+	•	avatar_id
+	•	accent_color
+	•	card_bg
+	•	sound_pack
+
+Verify they exist in current players table.
+
+4. Invalid username validation
+
+TRYHARDER may violate a hidden rule in backend code.
+
+Ensure allowed format:
+	•	3–16 chars
+	•	letters / numbers / underscore
+	•	trimmed spaces
+
+5. Wrong row id / stale profile state
+
+Player id = 3 may not belong to current user session.
+
+Verify row exists:
+
+select * from players where id = 3;
+
+SAFE PATCH FLOW
+
+Use current schema, but replace save-name logic with:
+	1.	Trim username
+	2.	Normalize case check
+	3.	Validate characters
+	4.	Check duplicates
+	5.	Verify ownership of row
+	6.	Run update
+	7.	Return refreshed profile
+
+SAFE UPDATE QUERY
+
+update players
+set username = $1,
+updated_at = now()
+where id = $2
+returning *;
+
+FRONTEND ERROR HANDLING
+
+Instead of generic “Failed query”, show real messages:
+	•	Username taken
+	•	Invalid username
+	•	You do not own this profile
+	•	Network issue
+	•	Profile not found
+
+IMPORTANT
+
+Do not create a new players table.
+Do not wipe users.
+Do not reset usernames.
+
+Just inspect the current schema and patch the failing save-name path.
+
+FINAL GOAL
+
+When a user saves a name like TRYHARDER, it should instantly work if available, reject cleanly if taken, and sync profile + leaderboard without breaking the current database.
