@@ -743,6 +743,8 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .pp-share-copy{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:4px;color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:4px 10px;flex-shrink:0;transition:background 0.15s;white-space:nowrap;}.pp-share-copy:hover{background:rgba(230,57,70,0.2);}
 /* TWO-TRUTHS MODE */
 .home-mode-btn.teal .home-mode-title{color:#2dd4bf;}
+/* MIRROR PILL */
+.mirror-pill{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.28);border-radius:100px;padding:5px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(168,85,247,0.85);cursor:pointer;transition:all 0.15s;white-space:nowrap;-webkit-tap-highlight-color:transparent;}.mirror-pill:hover:not(:disabled){background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.45);}.mirror-pill:disabled{opacity:0.4;cursor:default;}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 /* UPDATE BANNER */
@@ -4592,30 +4594,31 @@ export default function App() {
                 <div className="home-mode-title red">1V1</div>
                 <div className="home-mode-sub">vs Human</div>
               </button>
-              <button
-                className="home-mode-btn gold"
-                onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}
-              >
-                <span className="home-mode-icon">🏆</span>
-                <div className="home-mode-title gold">Gauntlet</div>
-                <div className="home-mode-sub">6 opponents</div>
-              </button>
-              <button
-                className="home-mode-btn purple"
-                title={stats.debates < 5 ? `Unlocks after ${5 - stats.debates} more debate${5 - stats.debates !== 1 ? "s" : ""}` : "Fight an AI trained on your own argument style"}
-                disabled={stats.debates < 5}
-                onClick={() => {
-                  if (stats.debates < 5) return;
-                  setMirrorMatchMode(true);
-                  setDisplayTopics(pickTopics());
-                  setSetupStep(1);
-                  setScreen("setup");
-                }}
-              >
-                <span className="home-mode-icon">🪞</span>
-                <div className="home-mode-title purple">Mirror</div>
-                <div className="home-mode-sub">{stats.debates < 5 ? `${5 - stats.debates} left` : "Your style"}</div>
-              </button>
+              <div style={{display:"flex",flexDirection:"column",gap:"7px"}}>
+                <button
+                  className="home-mode-btn gold"
+                  style={{flex:1}}
+                  onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}
+                >
+                  <span className="home-mode-icon">🏆</span>
+                  <div className="home-mode-title gold">Gauntlet</div>
+                  <div className="home-mode-sub">6 opponents</div>
+                </button>
+                <button
+                  className="mirror-pill"
+                  title={stats.debates < 5 ? `Unlocks after ${5 - stats.debates} more debate${5 - stats.debates !== 1 ? "s" : ""}` : "Fight an AI trained on your own style"}
+                  disabled={stats.debates < 5}
+                  onClick={() => {
+                    if (stats.debates < 5) return;
+                    setMirrorMatchMode(true);
+                    setDisplayTopics(pickTopics());
+                    setSetupStep(1);
+                    setScreen("setup");
+                  }}
+                >
+                  🪞 Mirror{stats.debates < 5 ? ` · ${5 - stats.debates} left` : ""}
+                </button>
+              </div>
               <button
                 className="home-mode-btn teal"
                 onClick={() => {
