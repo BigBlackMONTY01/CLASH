@@ -2,7 +2,8 @@ import { Router } from "express";
 import Groq from "groq-sdk";
 
 const router = Router();
-const MODEL = "llama-3.3-70b-versatile";
+const MODEL_PRIMARY  = "llama-3.3-70b-versatile";
+const MODEL_FALLBACK = "llama-3.1-8b-instant";
 
 let _groq: Groq | null = null;
 function getGroq(): Groq {
@@ -10,39 +11,40 @@ function getGroq(): Groq {
   return _groq;
 }
 
-async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 2): Promise<T> {
-  let lastErr: unknown;
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    try {
-      return await fn();
-    } catch (e: any) {
-      lastErr = e;
-      const is429 = e?.status === 429 || String(e?.message ?? "").includes("429");
-      if (is429 && attempt < maxAttempts - 1) {
-        const delay = (attempt + 1) * 1000;
-        await new Promise((r) => setTimeout(r, delay));
-        continue;
-      }
-      throw e;
-    }
-  }
-  throw lastErr;
+function is429(e: unknown): boolean {
+  return (e as any)?.status === 429 || String((e as any)?.message ?? "").includes("429");
 }
 
-async function claudeText(system: string, userMsg: string, maxTokens = 600): Promise<string> {
-  const msg = await withRetry(() =>
-    getGroq().chat.completions.create({
-      model: MODEL,
-      max_tokens: maxTokens,
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: userMsg },
-      ],
-    })
-  );
+async function groqCall(
+  model: string,
+  messages: { role: "system" | "user" | "assistant"; content: string }[],
+  maxTokens: number
+): Promise<string> {
+  const msg = await getGroq().chat.completions.create({ model, max_tokens: maxTokens, messages });
   const text = msg.choices[0]?.message?.content;
   if (!text) throw new Error("No text in response");
   return text;
+}
+
+async function groqWithFallback(
+  messages: { role: "system" | "user" | "assistant"; content: string }[],
+  maxTokens: number
+): Promise<string> {
+  try {
+    return await groqCall(MODEL_PRIMARY, messages, maxTokens);
+  } catch (e) {
+    if (is429(e)) {
+      return await groqCall(MODEL_FALLBACK, messages, maxTokens);
+    }
+    throw e;
+  }
+}
+
+async function claudeText(system: string, userMsg: string, maxTokens = 600): Promise<string> {
+  return groqWithFallback(
+    [{ role: "system", content: system }, { role: "user", content: userMsg }],
+    maxTokens
+  );
 }
 
 async function claudeConversation(
@@ -50,19 +52,10 @@ async function claudeConversation(
   messages: { role: "user" | "assistant"; content: string }[],
   maxTokens = 600
 ): Promise<string> {
-  const msg = await withRetry(() =>
-    getGroq().chat.completions.create({
-      model: MODEL,
-      max_tokens: maxTokens,
-      messages: [
-        { role: "system", content: system },
-        ...messages,
-      ],
-    })
+  return groqWithFallback(
+    [{ role: "system", content: system }, ...messages],
+    maxTokens
   );
-  const text = msg.choices[0]?.message?.content;
-  if (!text) throw new Error("No text in response");
-  return text;
 }
 
 function responseTokens(diff: string): number {
