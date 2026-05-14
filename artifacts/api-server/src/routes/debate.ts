@@ -107,10 +107,10 @@ async function claudeConversation(
 function responseTokens(diff: string): number {
   switch (diff) {
     case "easy":    return 200;
-    case "medium":  return 150;
-    case "hard":    return 200;
-    case "extreme": return 150;
-    default:        return 175;
+    case "medium":  return 220;
+    case "hard":    return 280;
+    case "extreme": return 250;
+    default:        return 200;
   }
 }
 
@@ -159,22 +159,32 @@ Style: Casual, conversational bar-argument energy. Lead with a confident take th
 - Let some of the user's weaker points slide. Be beatable with a solid rebuttal.`;
     case "medium":
       return `
-DIFFICULTY — MEDIUM: Write exactly 2 sentences. One clear point, one supporting reason.
-Style: Structured and direct. No rambling.
-- Make a coherent argument with clear logic. Notice obvious weaknesses in the user's argument.
-- A well-reasoned counter from the user should land.`;
+DIFFICULTY — MEDIUM: Write 3 sharp sentences. Every sentence must land a distinct point. No filler.
+Style: Focused, systematic, and relentless. You are not here to have a conversation — you are here to win.
+- Actively name the weakest claim in the user's last argument. Do not let vague assertions pass unchallenged.
+- If the user made an unsupported assertion, demand they back it up — call out the absence of evidence explicitly.
+- Build your own argument with a clear logical chain. Each claim follows from the last.
+- The user needs a well-structured, evidenced, multi-point rebuttal to score above average against you.`;
     case "hard":
       return `
-DIFFICULTY — HARD: Write 2 to 3 sentences. Each must attack a different angle.
-Style: Sharp and precise. No warmup, no padding.
-- Target the weakest part of the user's last argument specifically.
-- If the user contradicted an earlier point, name it. Ask one tight rhetorical question.`;
+DIFFICULTY — HARD: Write 3 to 4 sentences. Attack every angle in the user's argument simultaneously.
+Style: Relentless and precise. No warmup, no generosity, no mercy.
+- Open by naming the single most fatal flaw in the user's argument. Be specific — quote or paraphrase their exact weak point.
+- If the user contradicted an earlier round, call it out by name. Expose the inconsistency without letting them wriggle out.
+- Challenge them with a rhetorical question so tight they cannot dodge it without conceding something.
+- Demand specifics — vague claims are concessions. If they asserted something without evidence, say so bluntly.
+- Your own argument must be airtight. Every claim you make is locked down with reasoning. Leave zero exploitable gaps.
+- The user must produce a near-perfect, rigorously reasoned, multi-layered rebuttal to score anything above 50.`;
     case "extreme":
       return `
-DIFFICULTY — EXTREME: Write exactly 2 sentences. Every word counts.
-Style: Cold and surgical. Name the flaw, shut it down, move on.
-- Identify the logical gap or unsupported claim and call it out directly.
-- Demand specifics. Assertions without evidence are concessions.`;
+DIFFICULTY — EXTREME: Write 3 to 5 sentences. Absolute precision. Maximum intellectual devastation.
+Style: Glacially cold, methodically lethal. You have heard every version of their argument and know exactly why it fails.
+- Open by identifying the single most fatal logical flaw. Name it precisely — strawman, false equivalence, post hoc, no true Scotsman, appeal to emotion — whatever applies. Call it by name.
+- Demand specific evidence: dates, sources, mechanisms, data. If they provided none, that is not a point — that is a concession. Say so explicitly.
+- If they have an internal contradiction anywhere in this debate, surface it. Show exactly where they contradict themselves.
+- Close with a point so airtight they cannot rebut it without conceding fundamental ground. Make it the nail in the coffin.
+- Your own argument is constructed like a legal brief: claim, evidence, reasoning, implication. Flawless and unfalsifiable.
+- Nothing short of expert-level, sourced, logically airtight argumentation will score more than 40 against you. Assert this standard.`;
     default:
       return "";
   }
@@ -298,7 +308,8 @@ MANDATORY DISTRIBUTION RULES:
 - A typical assertion-only argument (no evidence, no specifics) scores 45-60. Not 65-75.
 - Only cite 70+ for arguments that include a real example, a specific counter-point, or a clear logical chain.
 - Only cite 85+ for arguments that would genuinely impress in a real debate round. Rare.
-- For "hard" and "extreme" difficulty: shift your scoring one tier stricter (a 65 becomes a 50).
+- For "hard" difficulty: shift your scoring two tiers stricter (a 70 becomes a 50, a 65 becomes a 45).
+- For "extreme" difficulty: shift your scoring three tiers stricter (a 70 becomes a 40, a 60 becomes a 35). Only genuine expert-level arguments with specific evidence score above 50.
 - NEVER give the same score to consecutive rounds unless the argument quality is identical.
 - Spread scores. If round 1 was 58, round 2 should reflect whether the user improved or declined.
 
