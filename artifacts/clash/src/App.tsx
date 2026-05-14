@@ -2910,7 +2910,13 @@ if (typeof document !== "undefined" && !document.getElementById("clash-app-css")
 }
 
 export default function App() {
-  useLayoutEffect(() => { document.body.style.visibility = "visible"; }, []);
+  useLayoutEffect(() => {
+    const splash = document.getElementById("splash");
+    if (splash) {
+      splash.classList.add("hidden");
+      setTimeout(() => splash.remove(), 200);
+    }
+  }, []);
   const RESTORABLE: Screen[] = ["home", "leaderboard", "multiplayer-lobby", "dashboard", "forge-rival"];
   const [screen, setScreen] = useState<Screen>(() => {
     try {

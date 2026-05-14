@@ -235,7 +235,13 @@ if (typeof document !== "undefined") {
 }
 
 export default function Landing() {
-  useLayoutEffect(() => { document.body.style.visibility = "visible"; }, []);
+  useLayoutEffect(() => {
+    const splash = document.getElementById("splash");
+    if (splash) {
+      splash.classList.add("hidden");
+      setTimeout(() => splash.remove(), 200);
+    }
+  }, []);
   const laserRef = useRef<HTMLDivElement>(null);
   const catchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [stats, setStats] = useState<GlobalStats | null>(null);
