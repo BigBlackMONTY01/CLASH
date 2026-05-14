@@ -2669,6 +2669,9 @@ export default function App() {
   const [roomSubmitting, setRoomSubmitting] = useState(false);
   const [roomError, setRoomError] = useState("");
   const [roomModerationWarning, setRoomModerationWarning] = useState("");
+  const [v1RoundTimeLeft, setV1RoundTimeLeft] = useState<number | null>(null);
+  const v1RoundTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const v1TimerStartedRound = useRef<number | null>(null);
   const [roomLoading, setRoomLoading] = useState(false);
   const [roomJoinCode, setRoomJoinCode] = useState("");
   const [v1SubScreen, setV1SubScreen] = useState<"" | "join">("");
@@ -2929,6 +2932,18 @@ export default function App() {
       }
     })();
   }, []);
+
+  // 1v1 round timer — auto-submit when it hits zero
+  useEffect(() => {
+    if (v1RoundTimeLeft !== 0) return;
+    if (roomArgInput.trim() && !roomSubmitting) submitRoomArg();
+    else stopV1RoundTimer();
+  }, [v1RoundTimeLeft]);
+
+  // Clean up timer when leaving the debate screen
+  useEffect(() => {
+    if (screen !== "multiplayer-debate") stopV1RoundTimer();
+  }, [screen]);
 
   // Trash talk bubbles — 1v1 multiplayer only
   useEffect(() => {
@@ -3754,6 +3769,26 @@ export default function App() {
     return null;
   };
 
+  const stopV1RoundTimer = () => {
+    if (v1RoundTimerRef.current) { clearInterval(v1RoundTimerRef.current); v1RoundTimerRef.current = null; }
+    setV1RoundTimeLeft(null);
+    v1TimerStartedRound.current = null;
+  };
+
+  const startV1RoundTimerIfNeeded = (round: number) => {
+    if (v1TimerStartedRound.current === round) return;
+    if (v1RoundTimerRef.current) clearInterval(v1RoundTimerRef.current);
+    v1TimerStartedRound.current = round;
+    setV1RoundTimeLeft(300);
+    v1RoundTimerRef.current = setInterval(() => {
+      setV1RoundTimeLeft(prev => {
+        if (prev === null) return null;
+        if (prev <= 1) return 0;
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
   const submitRoomArg = async () => {
     if (!currentRoom || !roomArgInput.trim() || roomSubmitting) return;
     const modWarning = checkRoomMessage(roomArgInput);
@@ -3762,6 +3797,7 @@ export default function App() {
       return;
     }
     setRoomModerationWarning("");
+    stopV1RoundTimer();
     setRoomSubmitting(true);
     try {
       await apiAuthPost(`/1v1/${currentRoom.code}/argue`, { argumentText: roomArgInput.trim() });
@@ -5421,6 +5457,7 @@ export default function App() {
                       typingDebounceRef.current = setTimeout(() => {
                         apiAuthPost(`/1v1/${currentRoom.code}/typing`, {}).catch(() => {});
                       }, 300);
+                      startV1RoundTimerIfNeeded(currentRoom.currentRound);
                     }}
                     placeholder={`Make your argument ${mySide?.toUpperCase() || ""}…`}
                     onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitRoomArg(); }}
@@ -5432,9 +5469,13 @@ export default function App() {
                     </div>
                   )}
                   <div className="input-footer">
-                    <span className={`char-count${roomArgInput.length > 600 ? " danger" : roomArgInput.length > 500 ? " warn" : ""}`}>
-                      {roomArgInput.length}/600
-                    </span>
+                    {v1RoundTimeLeft !== null ? (
+                      <span className={`char-count${v1RoundTimeLeft <= 30 ? " danger" : v1RoundTimeLeft <= 60 ? " warn" : ""}`}>
+                        {Math.floor(v1RoundTimeLeft / 60)}:{String(v1RoundTimeLeft % 60).padStart(2, "0")} left
+                      </span>
+                    ) : (
+                      <span className="char-count">{roomArgInput.length} chars</span>
+                    )}
                     <div className="submit-row">
                       {currentRoom.currentRound >= 3 && (
                         <button className="btn btn-ghost" onClick={() => { if (window.confirm("Give up? Your opponent wins this match.")) forfeitRoom(); }}>
@@ -5443,7 +5484,7 @@ export default function App() {
                       )}
                       <button
                         className="btn btn-primary"
-                        disabled={!roomArgInput.trim() || roomArgInput.length > 600 || roomSubmitting || !!roomModerationWarning}
+                        disabled={!roomArgInput.trim() || roomSubmitting || !!roomModerationWarning}
                         onClick={submitRoomArg}
                       >
                         {roomSubmitting ? "Judging..." : "Submit →"}
