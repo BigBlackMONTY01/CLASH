@@ -1144,7 +1144,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .streak-banner-sub{font-size:11px;color:var(--text-dim);margin-top:2px;}
 
 /* TRASH TALK BUBBLE */
-.trash-bubble{position:fixed;bottom:120px;right:16px;background:rgba(10,10,14,0.96);border:1px solid rgba(0,119,255,0.35);border-radius:12px 12px 4px 12px;padding:10px 14px;max-width:190px;font-size:13px;color:var(--text-mid);line-height:1.4;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:trashIn 0.35s cubic-bezier(0.34,1.4,0.64,1);}
+.trash-bubble{position:fixed;top:64px;right:16px;background:rgba(10,10,14,0.96);border:1px solid rgba(0,119,255,0.35);border-radius:4px 12px 12px 12px;padding:10px 14px;max-width:190px;font-size:13px;color:var(--text-mid);line-height:1.4;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:trashIn 0.35s cubic-bezier(0.34,1.4,0.64,1);}
 @keyframes trashIn{from{opacity:0;transform:scale(0.8) translateX(20px);}to{opacity:1;transform:scale(1) translateX(0);}}
 .trash-bubble-who{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#60a5fa;margin-bottom:4px;}
 .v1-send-bubble{position:fixed;bottom:120px;left:16px;background:rgba(12,8,24,0.97);border:1px solid rgba(168,85,247,0.45);border-radius:4px 12px 12px 12px;padding:10px 14px;max-width:220px;z-index:500;box-shadow:0 8px 28px rgba(168,85,247,0.15),0 4px 16px rgba(0,0,0,0.6);animation:trashIn 0.35s cubic-bezier(0.34,1.4,0.64,1);}
@@ -5222,16 +5222,18 @@ export default function App() {
               </div>
             )}
             {myTrashBubble && (
-              <div className="trash-bubble" style={{ right: "auto", left: "16px", borderRadius: "12px 12px 12px 4px", borderColor: "rgba(168,85,247,0.35)" }}>
+              <div className="trash-bubble" style={{ right: "auto", left: "16px", borderRadius: "12px 4px 12px 12px", borderColor: "rgba(168,85,247,0.35)" }}>
                 <div className="trash-bubble-who" style={{ color: "#a855f7" }}>You</div>
                 {myTrashBubble}
               </div>
             )}
-            {v1SendLine && (
+            {v1SendLine && myRoundArg && (
               <div className="v1-send-bubble">
-                <span className="v1-send-bubble-lbl">Send this</span>
-                <span className="v1-send-bubble-text">{v1SendLine}</span>
-                <button className="v1-send-copy-btn" onClick={async () => {
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "6px" }}>
+                  <span className="v1-send-bubble-text" style={{ flex: 1, marginBottom: 0 }}>{v1SendLine}</span>
+                  <button onClick={() => setV1SendLine(null)} style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", fontSize: "14px", lineHeight: 1, padding: "0 0 0 2px", flexShrink: 0 }}>✕</button>
+                </div>
+                <button className="v1-send-copy-btn" style={{ marginTop: "8px" }} onClick={async () => {
                   if (!currentRoom) return;
                   const text = v1SendLine!;
                   setV1SendLine(null);
