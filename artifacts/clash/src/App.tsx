@@ -2917,16 +2917,8 @@ if (typeof document !== "undefined" && !document.getElementById("clash-app-css")
 
 export default function App() {
   useLayoutEffect(() => {
-    const splash = document.getElementById("splash");
-    if (splash) {
-      splash.classList.add("out");
-      setTimeout(() => {
-        splash.remove();
-        document.body.style.overflow = "";
-      }, 450);
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.visibility = "visible";
+    document.body.style.overflow = "";
   }, []);
   const RESTORABLE: Screen[] = ["home", "leaderboard", "multiplayer-lobby", "dashboard", "forge-rival"];
   const [screen, setScreen] = useState<Screen>(() => {

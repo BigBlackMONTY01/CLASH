@@ -5,14 +5,10 @@ import App from "./App";
 import "./index.css";
 
 document.documentElement.classList.add("dark");
+document.body.style.visibility = "visible";
+document.body.style.overflow = "";
 
 const _isPWA = window.matchMedia("(display-mode: standalone)").matches;
-
-if (!_isPWA) {
-  const splash = document.getElementById("splash");
-  if (splash) splash.remove();
-  document.body.style.overflow = "";
-}
 
 if (_isPWA && window.location.pathname === "/") {
   window.location.replace("/play");
