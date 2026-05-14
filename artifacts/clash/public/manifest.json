@@ -1,0 +1,13 @@
+{
+  "name": "CLASH — Argue. Win. Prove It.",
+  "short_name": "CLASH",
+  "description": "AI-powered debate arena. Argue against 6 AI opponents, get scored on logic, persuasion and delivery, and climb the ranks.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#e63946",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

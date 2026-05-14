@@ -551,4 +551,35 @@ Open with: "I know your moves." Then launch your argument using their own style 
   }
 });
 
+// POST /api/debate/fact-check — flag factually incorrect/misleading claims mid-debate
+router.post("/debate/fact-check", async (req, res) => {
+  const { argument, topic } = req.body as Record<string, unknown>;
+  if (!str(argument) || !str(topic)) { res.status(400).json({ error: "Invalid body" }); return; }
+  try {
+    const prompt = `You are a fact-checker analyzing an argument made in a debate.
+
+Topic: "${topic as string}"
+Argument: "${argument as string}"
+
+Identify up to 3 distinct factual claims (not opinions) and assess each:
+- "true" — accurate and well-supported
+- "false" — demonstrably incorrect
+- "misleading" — technically true but cherry-picked or missing key context
+
+Only flag claims that are clearly factual. Ignore pure opinions or subjective statements.
+
+Respond ONLY with valid JSON:
+{"claims":[{"claim":"close paraphrase of the claim","verdict":"true|false|misleading","explanation":"one short sentence"}]}`;
+
+    const result = await claudeText("You are an expert fact-checker. Respond only with valid JSON.", prompt, 400);
+    const jMatch = result.match(/\{[\s\S]*\}/);
+    let parsed: { claims: Array<{ claim: string; verdict: string; explanation: string }> } = { claims: [] };
+    if (jMatch) { try { parsed = JSON.parse(jMatch[0]); } catch {} }
+    res.json(parsed);
+  } catch (err) {
+    req.log.error({ err }, "fact-check failed");
+    res.json({ claims: [] });
+  }
+});
+
 export default router;

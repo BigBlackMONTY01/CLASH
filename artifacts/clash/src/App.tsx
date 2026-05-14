@@ -1358,7 +1358,53 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .v1-speed-btn.active{border-color:var(--red);background:rgba(230,57,70,0.1);color:var(--red);}
 .v1-watch-link{background:rgba(168,85,247,0.07);border:1px dashed rgba(168,85,247,0.3);border-radius:var(--radius);padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:#a855f7;cursor:pointer;transition:background 0.15s;margin-top:10px;text-align:center;display:block;width:100%;box-sizing:border-box;}
 .v1-watch-link:hover{background:rgba(168,85,247,0.14);}
+
+/* PWA INSTALL MODAL */
+.pwa-overlay{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;padding:20px;}
+.pwa-modal{background:#141414;border:1px solid rgba(255,255,255,0.1);border-radius:16px;width:100%;max-width:340px;padding:24px;position:relative;}
+.pwa-modal-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;margin-bottom:4px;color:var(--text);}
+.pwa-modal-sub{font-size:13px;color:var(--text-dim);margin-bottom:20px;line-height:1.5;}
+.pwa-os-tabs{display:flex;gap:6px;margin-bottom:18px;}
+.pwa-os-tab{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:5px 12px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);cursor:pointer;color:var(--text-dim);transition:all 0.15s;}
+.pwa-os-tab.active{background:var(--red-dim);border-color:var(--red);color:var(--text);}
+.pwa-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.pwa-step-num{width:22px;height:22px;border-radius:50%;background:var(--red-dim);border:1px solid var(--red);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--red);flex-shrink:0;margin-top:1px;}
+.pwa-step-text{font-size:13px;color:var(--text-dim);line-height:1.5;}
+.pwa-step-text strong{color:var(--text);}
+.pwa-close-btn{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;line-height:1;padding:4px 6px;}
+.pwa-nav-btn{background:none;border:none;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:color 0.18s;-webkit-tap-highlight-color:transparent;flex-shrink:0;}.pwa-nav-btn:hover{color:var(--text);}
+
+/* FACT-CHECK PANEL */
+.fc-panel{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
+.fc-panel-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:3px;}
+.fc-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:7px;font-size:12px;line-height:1.5;}
+.fc-item.fc-true{background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.2);}
+.fc-item.fc-false{background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.28);}
+.fc-item.fc-misleading{background:rgba(234,179,8,0.07);border:1px solid rgba(234,179,8,0.22);}
+.fc-verdict{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;flex-shrink:0;margin-top:2px;min-width:64px;}
+.fc-verdict.fc-true{color:var(--green);}
+.fc-verdict.fc-false{color:var(--red);}
+.fc-verdict.fc-misleading{color:#eab308;}
+.fc-text{color:var(--text-dim);}.fc-expl{color:var(--text-dim);opacity:0.7;font-size:11px;}
+
+/* PROFILE CUSTOMISATION */
+.cust-section{padding:11px 16px;border-bottom:1px solid var(--border);}
+.cust-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px;}
+.avatar-grid{display:flex;flex-wrap:wrap;gap:5px;}
+.avatar-opt{font-size:20px;padding:4px 7px;border-radius:8px;background:rgba(255,255,255,0.03);border:1.5px solid transparent;cursor:pointer;transition:all 0.15s;line-height:1;}
+.avatar-opt.selected{border-color:var(--red);background:var(--red-dim);}
+.avatar-opt:hover{border-color:rgba(255,255,255,0.2);}
+.accent-row{display:flex;gap:7px;flex-wrap:wrap;}
+.accent-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:transform 0.15s,border-color 0.15s;flex-shrink:0;}
+.accent-dot.selected{border-color:#fff;transform:scale(1.18);}
+.cardbg-row{display:flex;gap:6px;flex-wrap:wrap;}
+.cardbg-opt{width:44px;height:26px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;}
+.cardbg-opt.selected{border-color:#fff;}
+.soundpack-row{display:flex;flex-wrap:wrap;gap:6px;}
+.soundpack-opt{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);cursor:pointer;transition:all 0.15s;color:var(--text-dim);}
+.soundpack-opt.selected{background:rgba(230,57,70,0.1);border-color:var(--red);color:var(--text);}
 `;
+
 
 
 
@@ -2788,6 +2834,14 @@ export default function App() {
   const [lbData, setLbData] = useState<LbEntry[]>([]);
   const [lbLoading, setLbLoading] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(() => { try { return localStorage.getItem("clash-sound") !== "off"; } catch { return true; } });
+  const [soundPack, setSoundPack] = useState<"classic"|"retro"|"dark"|"minimal">(() => { try { return (localStorage.getItem("clash-sound-pack") as "classic"|"retro"|"dark"|"minimal") || "classic"; } catch { return "classic"; } });
+  const [factCheckMode, setFactCheckMode] = useState(false);
+  const [factCheckResults, setFactCheckResults] = useState<Array<{claim:string;verdict:string;explanation:string}>|null>(null);
+  const [showPwaModal, setShowPwaModal] = useState(false);
+  const [pwaOs, setPwaOs] = useState<"ios"|"android"|"desktop">("ios");
+  const [profileAvatar, setProfileAvatar] = useState<string>(() => { try { return localStorage.getItem("clash-profile-avatar") || ""; } catch { return ""; } });
+  const [accentColor, setAccentColor] = useState<string>(() => { try { return localStorage.getItem("clash-accent-color") || "#e63946"; } catch { return "#e63946"; } });
+  const [profileCardBg, setProfileCardBg] = useState<string>(() => { try { return localStorage.getItem("clash-card-bg") || "bg0"; } catch { return "bg0"; } });
   const [topicVotes, setTopicVotes] = useState<Record<string,number>>(() => { try { return JSON.parse(localStorage.getItem("clash-votes")||"{}"); } catch { return {}; } });
   const [votedTopics, setVotedTopics] = useState<Set<string>>(() => { try { return new Set<string>(JSON.parse(localStorage.getItem("clash-voted")||"[]")); } catch { return new Set<string>(); } });
   const [unlockedAchs, setUnlockedAchs] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem("clash-achievements")||"[]"); } catch { return []; } });
@@ -2881,6 +2935,9 @@ export default function App() {
     const style = document.createElement("style");
     style.textContent = css;
     document.head.appendChild(style);
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
     document.body.style.visibility = "visible";
     return () => {
       if (style.parentNode) style.parentNode.removeChild(style);
@@ -3257,15 +3314,38 @@ export default function App() {
         osc.start(ctx.currentTime + delay);
         osc.stop(ctx.currentTime + delay + dur + 0.05);
       };
-      if (type === "round-win")  { play(523,0.12); play(659,0.12,0.13); play(784,0.2,0.26); }
-      else if (type === "round-loss") { play(240,0.18,0,"triangle",0.2); play(190,0.25,0.2,"triangle",0.15); }
-      else if (type === "victory") { play(523,0.1); play(659,0.1,0.1); play(784,0.1,0.2); play(1047,0.35,0.32,"sine",0.22); }
-      else if (type === "defeat") { play(380,0.15); play(290,0.18,0.16); play(200,0.3,0.35,"triangle",0.2); }
-      else if (type === "tick")   { play(1400,0.04,0,"square",0.06); }
-      else if (type === "submit") { play(440,0.08,0,"sine",0.12); }
+      if (soundPack === "retro") {
+        if (type === "round-win")   { play(523,0.06,0,"square",0.14); play(659,0.06,0.07,"square",0.14); play(784,0.1,0.14,"square",0.14); }
+        else if (type === "round-loss") { play(180,0.1,0,"square",0.12); play(140,0.14,0.12,"square",0.1); }
+        else if (type === "victory") { play(523,0.06,0,"square",0.13); play(659,0.06,0.07,"square",0.13); play(784,0.06,0.14,"square",0.13); play(1047,0.18,0.22,"square",0.13); }
+        else if (type === "defeat") { play(300,0.08,0,"square",0.12); play(220,0.1,0.1,"square",0.1); play(160,0.15,0.22,"square",0.08); }
+        else if (type === "tick")   { play(1200,0.03,0,"square",0.08); }
+        else if (type === "submit") { play(440,0.05,0,"square",0.1); }
+      } else if (soundPack === "dark") {
+        if (type === "round-win")   { play(130,0.2,0,"sawtooth",0.14); play(195,0.25,0.15,"sawtooth",0.11); }
+        else if (type === "round-loss") { play(80,0.3,0,"sawtooth",0.17); play(60,0.4,0.25,"sawtooth",0.14); }
+        else if (type === "victory") { play(110,0.2,0,"sawtooth",0.16); play(165,0.2,0.2,"sawtooth",0.13); play(220,0.35,0.4,"sawtooth",0.11); }
+        else if (type === "defeat") { play(70,0.4,0,"sawtooth",0.18); play(50,0.5,0.3,"sawtooth",0.16); }
+        else if (type === "tick")   { play(600,0.03,0,"sawtooth",0.05); }
+        else if (type === "submit") { play(220,0.08,0,"sawtooth",0.09); }
+      } else if (soundPack === "minimal") {
+        if (type === "round-win")   { play(880,0.06,0,"sine",0.09); }
+        else if (type === "round-loss") { play(330,0.08,0,"sine",0.07); }
+        else if (type === "victory") { play(880,0.06,0,"sine",0.09); play(1100,0.1,0.08,"sine",0.07); }
+        else if (type === "defeat") { play(280,0.1,0,"sine",0.07); }
+        else if (type === "tick")   { play(1400,0.02,0,"sine",0.04); }
+        else if (type === "submit") { play(660,0.04,0,"sine",0.06); }
+      } else {
+        if (type === "round-win")  { play(523,0.12); play(659,0.12,0.13); play(784,0.2,0.26); }
+        else if (type === "round-loss") { play(240,0.18,0,"triangle",0.2); play(190,0.25,0.2,"triangle",0.15); }
+        else if (type === "victory") { play(523,0.1); play(659,0.1,0.1); play(784,0.1,0.2); play(1047,0.35,0.32,"sine",0.22); }
+        else if (type === "defeat") { play(380,0.15); play(290,0.18,0.16); play(200,0.3,0.35,"triangle",0.2); }
+        else if (type === "tick")   { play(1400,0.04,0,"square",0.06); }
+        else if (type === "submit") { play(440,0.08,0,"sine",0.12); }
+      }
       setTimeout(() => { try { ctx.close(); } catch {} }, 2000);
     } catch {}
-  }, [soundEnabled]);
+  }, [soundEnabled, soundPack]);
 
   const unlockAch = useCallback((id: string) => {
     const def = ACHIEVEMENTS.find(a => a.id === id);
@@ -3537,6 +3617,13 @@ export default function App() {
       if (roundScore.score >= 95) unlockAch("perfect-round");
       setMessages([...newMessages, { role: "ai", text: aiText }]);
       lastUserArgsRef.current = [...newMessages.filter(m => m.role === "user").map(m => m.text)];
+      if (factCheckMode) {
+        setFactCheckResults(null);
+        apiPost<{claims: Array<{claim:string;verdict:string;explanation:string}>}>("/debate/fact-check", {
+          argument: userMsg,
+          topic: selectedTopic?.text ?? "",
+        }).then(r => setFactCheckResults(r.claims || [])).catch(() => {});
+      }
 
       if (isLastRound) {
         if (pendingVerdictRef.current) clearTimeout(pendingVerdictRef.current);
@@ -4212,10 +4299,15 @@ export default function App() {
 
   return (
     <>
-    <div className="app">
+    <div className="app" style={accentColor !== "#e63946" ? { "--red": accentColor, "--red-dim": accentColor + "18" } as React.CSSProperties : undefined}>
       <nav className="nav">
         <div className="logo" onClick={() => setScreen("home")} style={{ cursor: "pointer" }}>CL<span>A</span>SH</div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <button className="pwa-nav-btn" onClick={() => setShowPwaModal(true)} title="Install App">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+          </button>
           <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute" : "Unmute"}>
             {soundEnabled ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -4251,7 +4343,7 @@ export default function App() {
                 className="user-chip"
                 onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setProfileTab("overview"); setShowProfilePanel(p => !p); }}
               >
-                <span className="user-chip-av">{(player?.username || authUser.email)[0].toUpperCase()}</span>
+                <span className="user-chip-av">{profileAvatar || (player?.username || authUser.email)[0].toUpperCase()}</span>
                 <span className="user-chip-name">{player?.username || authUser.email.split("@")[0]}</span>
               </button>
             </>
@@ -4766,6 +4858,20 @@ export default function App() {
             )}
             <div ref={messagesEndRef} />
           </div>
+          {factCheckMode && factCheckResults && factCheckResults.length > 0 && (
+            <div className="fc-panel">
+              <div className="fc-panel-label">Fact Check</div>
+              {factCheckResults.map((fc, i) => (
+                <div key={i} className={`fc-item fc-${fc.verdict}`}>
+                  <div className={`fc-verdict fc-${fc.verdict}`}>{fc.verdict}</div>
+                  <div>
+                    <div className="fc-text">{fc.claim}</div>
+                    <div className="fc-expl">{fc.explanation}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {error && <div className="error-banner">{error}</div>}
 
@@ -4877,6 +4983,13 @@ export default function App() {
                   )}
                 </div>
                 <div className="submit-row">
+                  <button
+                    className={`whisper-btn${factCheckMode ? " active" : ""}`}
+                    onClick={() => { setFactCheckMode(p => !p); setFactCheckResults(null); }}
+                    title="Fact-check mode: AI flags incorrect claims in your arguments"
+                  >
+                    {factCheckMode ? "🔍 Facts ON" : "🔍 Facts"}
+                  </button>
                   <button
                     className={`whisper-btn${whisperMode ? " active" : ""}`}
                     onClick={() => { setWhisperMode(p => !p); setWhisperFeedback(null); }}
@@ -6247,8 +6360,8 @@ export default function App() {
       <>
         <div className="profile-overlay" onClick={() => setShowProfilePanel(false)} />
         <div className="profile-panel">
-          <div className="pp-header">
-            <div className="pp-avatar">{(player?.username || authUser.email)[0].toUpperCase()}</div>
+          <div className="pp-header" style={profileCardBg !== "bg0" ? { background: ["linear-gradient(135deg,rgba(168,85,247,0.2),rgba(230,57,70,0.15))","linear-gradient(135deg,rgba(59,130,246,0.2),rgba(168,85,247,0.15))","linear-gradient(135deg,rgba(244,197,66,0.18),rgba(230,57,70,0.15))","linear-gradient(135deg,rgba(20,184,166,0.18),rgba(59,130,246,0.15))","linear-gradient(135deg,rgba(34,197,94,0.15),rgba(20,184,166,0.15))"][["bg1","bg2","bg3","bg4","bg5"].indexOf(profileCardBg)] || undefined } : undefined}>
+            <div className="pp-avatar">{profileAvatar || (player?.username || authUser.email)[0].toUpperCase()}</div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="pp-name">{player?.username || authUser.email.split("@")[0]}</div>
               <div className="pp-email">{authUser.email}</div>
@@ -6328,6 +6441,40 @@ export default function App() {
                 <button className="pp-save-btn" onClick={handleSetUsername}>Save</button>
               </div>
               {usernameError && <div style={{ fontSize: "11px", color: "var(--red)", marginTop: "4px" }}>{usernameError}</div>}
+              <div className="cust-section" style={{ margin: "12px -16px 0", padding: "12px 16px 0" }}>
+                <div className="cust-label">Avatar</div>
+                <div className="avatar-grid">
+                  {["","⚡","🔥","🧠","💀","🦁","🐺","🦊","🤖","👊","🎯","⚔️","🛡️","🎭","🌪️","💎"].map(av => (
+                    <button key={av} className={`avatar-opt${profileAvatar === av ? " selected" : ""}`} onClick={() => { setProfileAvatar(av); try { localStorage.setItem("clash-profile-avatar", av); } catch {} }}>
+                      {av || (player?.username || authUser!.email)[0].toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="cust-section" style={{ margin: "0 -16px", padding: "12px 16px" }}>
+                <div className="cust-label">Accent Colour</div>
+                <div className="accent-row">
+                  {[["#e63946","Red"],["#3b82f6","Blue"],["#a855f7","Purple"],["#22c55e","Green"],["#f59e0b","Amber"],["#ec4899","Pink"]].map(([col, name]) => (
+                    <button key={col} className={`accent-dot${accentColor === col ? " selected" : ""}`} style={{ background: col }} title={name} onClick={() => { setAccentColor(col); try { localStorage.setItem("clash-accent-color", col); } catch {} }} />
+                  ))}
+                </div>
+              </div>
+              <div className="cust-section" style={{ margin: "0 -16px", padding: "12px 16px" }}>
+                <div className="cust-label">Card Background</div>
+                <div className="cardbg-row">
+                  {[["bg0","#141414"],["bg1","linear-gradient(135deg,#581c87,#7f1d1d)"],["bg2","linear-gradient(135deg,#1e3a8a,#4c1d95)"],["bg3","linear-gradient(135deg,#78350f,#7f1d1d)"],["bg4","linear-gradient(135deg,#134e4a,#1e3a8a)"],["bg5","linear-gradient(135deg,#14532d,#134e4a)"]].map(([id, bg]) => (
+                    <button key={id} className={`cardbg-opt${profileCardBg === id ? " selected" : ""}`} style={{ background: bg }} onClick={() => { setProfileCardBg(id); try { localStorage.setItem("clash-card-bg", id); } catch {} }} />
+                  ))}
+                </div>
+              </div>
+              <div className="cust-section" style={{ margin: "0 -16px", padding: "12px 16px" }}>
+                <div className="cust-label">Sound Pack</div>
+                <div className="soundpack-row">
+                  {([["classic","Classic"],["retro","Retro"],["dark","Dark"],["minimal","Minimal"]] as const).map(([id, label]) => (
+                    <button key={id} className={`soundpack-opt${soundPack === id ? " selected" : ""}`} onClick={() => { setSoundPack(id); try { localStorage.setItem("clash-sound-pack", id); } catch {}; playSound("submit"); }}>{label}</button>
+                  ))}
+                </div>
+              </div>
               {sigStyle && (
                 <div style={{ marginTop: "10px" }}>
                   <div className="pp-section-lbl">Signature Style</div>
@@ -6403,6 +6550,47 @@ export default function App() {
           <button className="pp-logout" onClick={logoutFn}>Log Out</button>
         </div>
       </>
+    )}
+
+    {/* PWA INSTALL MODAL */}
+    {showPwaModal && (
+      <div className="pwa-overlay" onClick={() => setShowPwaModal(false)}>
+        <div className="pwa-modal" onClick={e => e.stopPropagation()}>
+          <button className="pwa-close-btn" onClick={() => setShowPwaModal(false)}>×</button>
+          <div className="pwa-modal-title">Install CLASH</div>
+          <div className="pwa-modal-sub">Add CLASH to your home screen for the full app experience — plays offline, no browser bar.</div>
+          <div className="pwa-os-tabs">
+            {(["ios","android","desktop"] as const).map(os => (
+              <button key={os} className={`pwa-os-tab${pwaOs === os ? " active" : ""}`} onClick={() => setPwaOs(os)}>
+                {os === "ios" ? "iPhone" : os === "android" ? "Android" : "Desktop"}
+              </button>
+            ))}
+          </div>
+          {pwaOs === "ios" && (
+            <>
+              <div className="pwa-step"><div className="pwa-step-num">1</div><div className="pwa-step-text">Open CLASH in <strong>Safari</strong> (not Chrome or Firefox)</div></div>
+              <div className="pwa-step"><div className="pwa-step-num">2</div><div className="pwa-step-text">Tap the <strong>Share</strong> button at the bottom of the screen</div></div>
+              <div className="pwa-step"><div className="pwa-step-num">3</div><div className="pwa-step-text">Scroll down and tap <strong>Add to Home Screen</strong></div></div>
+              <div className="pwa-step"><div className="pwa-step-num">4</div><div className="pwa-step-text">Tap <strong>Add</strong> in the top right — done!</div></div>
+            </>
+          )}
+          {pwaOs === "android" && (
+            <>
+              <div className="pwa-step"><div className="pwa-step-num">1</div><div className="pwa-step-text">Open CLASH in <strong>Chrome</strong></div></div>
+              <div className="pwa-step"><div className="pwa-step-num">2</div><div className="pwa-step-text">Tap the <strong>three dots</strong> menu in the top right</div></div>
+              <div className="pwa-step"><div className="pwa-step-num">3</div><div className="pwa-step-text">Tap <strong>Add to Home screen</strong></div></div>
+              <div className="pwa-step"><div className="pwa-step-num">4</div><div className="pwa-step-text">Tap <strong>Add</strong> to confirm — it appears on your home screen instantly</div></div>
+            </>
+          )}
+          {pwaOs === "desktop" && (
+            <>
+              <div className="pwa-step"><div className="pwa-step-num">1</div><div className="pwa-step-text">Open CLASH in <strong>Chrome</strong> or <strong>Edge</strong></div></div>
+              <div className="pwa-step"><div className="pwa-step-num">2</div><div className="pwa-step-text">Look for the <strong>install icon</strong> in the address bar (a circle with a +)</div></div>
+              <div className="pwa-step"><div className="pwa-step-num">3</div><div className="pwa-step-text">Click it and select <strong>Install</strong> — CLASH opens as a standalone app</div></div>
+            </>
+          )}
+        </div>
+      </div>
     )}
 
     {/* CARD REVEAL OVERLAY */}
