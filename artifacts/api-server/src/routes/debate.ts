@@ -16,6 +16,9 @@ function is429(e: unknown): boolean {
 }
 
 const CALL_TIMEOUT_MS = 25000;
+const MAX_CONCURRENT  = Number(process.env.GROQ_MAX_CONCURRENCY ?? 8);
+const MAX_QUEUE_DEPTH = 40;
+const QUEUE_WAIT_MS   = 30000;
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
@@ -25,6 +28,34 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
     ),
   ]);
 }
+
+class Semaphore {
+  private running = 0;
+  private queue: Array<() => void> = [];
+
+  async acquire(): Promise<void> {
+    if (this.running < MAX_CONCURRENT) {
+      this.running++;
+      return;
+    }
+    if (this.queue.length >= MAX_QUEUE_DEPTH) {
+      throw new Error("Server is busy — too many AI requests queued. Try again in a moment.");
+    }
+    await withTimeout(
+      new Promise<void>(resolve => this.queue.push(resolve)),
+      QUEUE_WAIT_MS
+    );
+    this.running++;
+  }
+
+  release(): void {
+    this.running--;
+    const next = this.queue.shift();
+    if (next) next();
+  }
+}
+
+const semaphore = new Semaphore();
 
 async function groqCall(
   model: string,
@@ -44,13 +75,18 @@ async function groqWithFallback(
   messages: { role: "system" | "user" | "assistant"; content: string }[],
   maxTokens: number
 ): Promise<string> {
+  await semaphore.acquire();
   try {
-    return await groqCall(MODEL_PRIMARY, messages, maxTokens);
-  } catch (e) {
-    if (is429(e) || (e as Error).message === "AI request timed out") {
-      return await groqCall(MODEL_FALLBACK, messages, maxTokens);
+    try {
+      return await groqCall(MODEL_PRIMARY, messages, maxTokens);
+    } catch (e) {
+      if (is429(e) || (e as Error).message === "AI request timed out") {
+        return await groqCall(MODEL_FALLBACK, messages, maxTokens);
+      }
+      throw e;
     }
-    throw e;
+  } finally {
+    semaphore.release();
   }
 }
 
