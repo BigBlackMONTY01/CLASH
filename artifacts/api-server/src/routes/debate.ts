@@ -15,12 +15,26 @@ function is429(e: unknown): boolean {
   return (e as any)?.status === 429 || String((e as any)?.message ?? "").includes("429");
 }
 
+const CALL_TIMEOUT_MS = 25000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error("AI request timed out")), ms)
+    ),
+  ]);
+}
+
 async function groqCall(
   model: string,
   messages: { role: "system" | "user" | "assistant"; content: string }[],
   maxTokens: number
 ): Promise<string> {
-  const msg = await getGroq().chat.completions.create({ model, max_tokens: maxTokens, messages });
+  const msg = await withTimeout(
+    getGroq().chat.completions.create({ model, max_tokens: maxTokens, messages }),
+    CALL_TIMEOUT_MS
+  );
   const text = msg.choices[0]?.message?.content;
   if (!text) throw new Error("No text in response");
   return text;
@@ -33,7 +47,7 @@ async function groqWithFallback(
   try {
     return await groqCall(MODEL_PRIMARY, messages, maxTokens);
   } catch (e) {
-    if (is429(e)) {
+    if (is429(e) || (e as Error).message === "AI request timed out") {
       return await groqCall(MODEL_FALLBACK, messages, maxTokens);
     }
     throw e;
