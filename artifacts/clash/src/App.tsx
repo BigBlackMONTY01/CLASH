@@ -2899,6 +2899,14 @@ function calcXP(logic: number, persuasion: number, delivery: number, won: boolea
 
 type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final" | "multiplayer-lobby" | "multiplayer-waiting" | "multiplayer-debate" | "multiplayer-results" | "dashboard" | "forge-rival" | "forge-rival-result";
 
+// Inject CSS immediately at module load — before React renders — so there is never an unstyled frame
+if (typeof document !== "undefined" && !document.getElementById("clash-app-css")) {
+  const _appStyle = document.createElement("style");
+  _appStyle.id = "clash-app-css";
+  _appStyle.textContent = css;
+  document.head.appendChild(_appStyle);
+}
+
 export default function App() {
   const RESTORABLE: Screen[] = ["home", "leaderboard", "multiplayer-lobby", "dashboard", "forge-rival"];
   const [screen, setScreen] = useState<Screen>(() => {
@@ -3060,15 +3068,12 @@ export default function App() {
   const submitRoomArgRef = useRef<(() => Promise<void>) | null>(null);
 
   useEffect(() => {
-    const style = document.createElement("style");
-    style.textContent = css;
-    document.head.appendChild(style);
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
-    document.body.style.visibility = "visible";
     return () => {
-      if (style.parentNode) style.parentNode.removeChild(style);
+      const el = document.getElementById("clash-app-css");
+      if (el) el.remove();
     };
   }, []);
 
@@ -4139,19 +4144,19 @@ export default function App() {
   };
 
   const logoutFn = () => {
+    // Preserve preference keys so they survive logout/login on the same device
+    const PREF_KEYS = new Set(["clash-accent-color", "clash-card-bg", "clash-sound-pack", "clash-profile-avatar"]);
     Object.keys(localStorage)
-      .filter(k => k.startsWith("clash-") || k.startsWith("clash_"))
+      .filter(k => (k.startsWith("clash-") || k.startsWith("clash_")) && !PREF_KEYS.has(k))
       .forEach(k => localStorage.removeItem(k));
     setAuthUser(null);
     setPlayer(null);
     setShowAuthModal(false);
     setShowProfilePanel(false);
     setStats({ wins: 0, debates: 0, bestScore: 0, currentStreak: 0, bestStreak: 0, opponentHistory: {} });
-    // Reset all per-account preferences to defaults
-    setProfileAvatar("");
-    setAccentColor("#e63946");
-    setProfileCardBg("bg0");
-    setSoundPack("classic");
+    // Preferences (accentColor, cardBg, soundPack, avatar) are intentionally NOT reset —
+    // they stay visible after logout so the account owner sees their own theme immediately
+    // on next login, the server profile re-applies the correct server-side values.
   };
 
   const shuffleWaitingTopics = () => {
