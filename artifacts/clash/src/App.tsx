@@ -1,3 +1,9 @@
+useEffect(() => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    loadSettings(token);
+  }
+}, []);
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import { API } from "./lib/api";
 
