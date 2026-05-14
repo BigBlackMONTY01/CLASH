@@ -703,6 +703,14 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .achievement-toast-icon{font-size:28px;flex-shrink:0;}.achievement-toast-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
 .achievement-toast-name{font-size:15px;font-weight:600;}.achievement-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .ach-badge{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:4px 12px 4px 8px;display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;}.ach-badge.gold-ach{border-color:var(--gold);background:rgba(244,197,66,0.08);}
+/* UPDATE BANNER */
+.update-banner{position:fixed;top:0;left:0;right:0;z-index:20000;background:#1a1a1a;border-bottom:1px solid rgba(230,57,70,0.5);display:flex;align-items:center;gap:10px;padding:10px 16px;animation:bannerSlideDown 0.3s ease;}
+@keyframes bannerSlideDown{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.update-banner-msg{flex:1;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.update-banner-btn{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;background:var(--red);color:#fff;border:none;border-radius:4px;padding:5px 14px;cursor:pointer;flex-shrink:0;transition:opacity 0.15s;-webkit-tap-highlight-color:transparent;}
+.update-banner-btn:hover{opacity:0.85;}
+.update-banner-close{background:none;border:none;color:var(--text-dim);font-size:13px;cursor:pointer;padding:4px 6px;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:color 0.15s;line-height:1;}
+.update-banner-close:hover{color:var(--text);}
 /* SOUND TOGGLE */
 .sound-btn{background:none;border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color 0.18s,opacity 0.18s;color:var(--text-dim);-webkit-tap-highlight-color:transparent;flex-shrink:0;}.sound-btn:hover{color:var(--text);}.sound-btn.muted{color:var(--text-dim);opacity:0.4;}
 /* Personal record */
@@ -2870,6 +2878,7 @@ export default function App() {
   const [factCheckResults, setFactCheckResults] = useState<Array<{claim:string;verdict:string;explanation:string}>|null>(null);
   const [showPwaModal, setShowPwaModal] = useState(false);
   const [pwaOs, setPwaOs] = useState<"ios"|"android"|"desktop">("ios");
+  const [showUpdateBanner, setShowUpdateBanner] = useState(() => !!(window as any).__swUpdated);
 
   const [topicVotes, setTopicVotes] = useState<Record<string,number>>(() => { try { return JSON.parse(localStorage.getItem("clash-votes")||"{}"); } catch { return {}; } });
   const [votedTopics, setVotedTopics] = useState<Set<string>>(() => { try { return new Set<string>(JSON.parse(localStorage.getItem("clash-voted")||"[]")); } catch { return new Set<string>(); } });
@@ -2968,6 +2977,12 @@ export default function App() {
       const el = document.getElementById("clash-app-css");
       if (el) el.remove();
     };
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setShowUpdateBanner(true);
+    window.addEventListener("sw-updated", handler);
+    return () => window.removeEventListener("sw-updated", handler);
   }, []);
 
   useEffect(() => {
@@ -6354,6 +6369,14 @@ export default function App() {
     {shareToast && <div className="share-toast">{shareToast}</div>}
 
       {/* round-flash intentionally removed */}
+    {showUpdateBanner && (
+      <div className="update-banner">
+        <span className="update-banner-msg">New version available</span>
+        <button className="update-banner-btn" onClick={() => window.location.reload()}>Tap to update</button>
+        <button className="update-banner-close" onClick={() => setShowUpdateBanner(false)} aria-label="Dismiss">✕</button>
+      </div>
+    )}
+
     {achToast && (
       <div className="achievement-toast">
         <span className="achievement-toast-icon">{achToast.icon}</span>

@@ -15,10 +15,14 @@ if (_isPWA && window.location.pathname === "/") {
 }
 
 
-// When a new service worker activates and takes over, reload once to serve fresh assets.
+// When a new service worker activates, signal the app to show an update banner.
+// Also set a global flag so the App component can catch messages that arrived before it mounted.
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.addEventListener("message", e => {
-    if (e.data?.type === "SW_UPDATED") window.location.reload();
+    if (e.data?.type === "SW_UPDATED") {
+      (window as any).__swUpdated = true;
+      window.dispatchEvent(new CustomEvent("sw-updated"));
+    }
   });
 }
 
