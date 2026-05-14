@@ -102,6 +102,16 @@
       <div id="splash-bar-track"><div id="splash-bar"></div></div>
     </div>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script><script>
+  // Hide splash when React app fully loads
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      if (splash) {
+        splash.classList.add('out');
+      }
+    }, 1200); // Let animations complete
+  });
+</script>
   </body>
 </html>
