@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { API } from "./lib/api";
 
 interface GlobalStats {
@@ -235,6 +235,7 @@ if (typeof document !== "undefined") {
 }
 
 export default function Landing() {
+  useLayoutEffect(() => { document.body.style.visibility = "visible"; }, []);
   const laserRef = useRef<HTMLDivElement>(null);
   const catchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [stats, setStats] = useState<GlobalStats | null>(null);

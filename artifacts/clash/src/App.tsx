@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import { API } from "./lib/api";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap');`;
@@ -2910,6 +2910,7 @@ if (typeof document !== "undefined" && !document.getElementById("clash-app-css")
 }
 
 export default function App() {
+  useLayoutEffect(() => { document.body.style.visibility = "visible"; }, []);
   const RESTORABLE: Screen[] = ["home", "leaderboard", "multiplayer-lobby", "dashboard", "forge-rival"];
   const [screen, setScreen] = useState<Screen>(() => {
     try {
