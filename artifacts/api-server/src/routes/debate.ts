@@ -10,7 +10,7 @@ function getGroq(): Groq {
   return _groq;
 }
 
-async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 4): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 2): Promise<T> {
   let lastErr: unknown;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
@@ -19,7 +19,7 @@ async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 4): Promise<T> {
       lastErr = e;
       const is429 = e?.status === 429 || String(e?.message ?? "").includes("429");
       if (is429 && attempt < maxAttempts - 1) {
-        const delay = (attempt + 1) * 4000;
+        const delay = (attempt + 1) * 1000;
         await new Promise((r) => setTimeout(r, delay));
         continue;
       }
@@ -274,20 +274,6 @@ For each sentence, assign ONE tag:
 Respond ONLY with valid JSON, no markdown:
 {"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"the single strongest moment in one sharp phrase","weak":"the single most exploitable weakness in one sharp phrase","propaganda":[{"sentence":"exact sentence text","tag":"solid|fallacy|weak_evidence|emotional_bait|killer_point"}]}`;
 
-    const scoreText = await claudeText(
-      "You are a ranked competitive debate judge. Use the full scoring range. Respond only with valid JSON.",
-      scorePrompt,
-      1000
-    );
-
-    const jMatch = scoreText.match(/\{[\s\S]*\}/);
-    let roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; propaganda?: Array<{sentence: string; tag: string}> } = {
-      score: 55, logic: 55, persuasion: 55, delivery: 55, best: "", weak: "", propaganda: [],
-    };
-    if (jMatch) {
-      try { roundScore = JSON.parse(jMatch[0]); } catch { /* use default */ }
-    }
-
     let history = (messages as { role: string; text: string }[]).map((m) => ({
       role: (m.role === "ai" ? "assistant" : "user") as "user" | "assistant",
       content: m.text,
@@ -312,10 +298,25 @@ ${diffInstr}${adaptiveNote}${overtimeNote}
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
 Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`;
 
-    const aiText = await claudeConversation(systemResp, [
-      ...history,
-      { role: "user", content: userArgument as string },
-    ], tokens);
+    const [scoreText, aiText] = await Promise.all([
+      claudeText(
+        "You are a ranked competitive debate judge. Use the full scoring range. Respond only with valid JSON.",
+        scorePrompt,
+        1000
+      ),
+      claudeConversation(systemResp, [
+        ...history,
+        { role: "user", content: userArgument as string },
+      ], tokens),
+    ]);
+
+    const jMatch = scoreText.match(/\{[\s\S]*\}/);
+    let roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; propaganda?: Array<{sentence: string; tag: string}> } = {
+      score: 55, logic: 55, persuasion: 55, delivery: 55, best: "", weak: "", propaganda: [],
+    };
+    if (jMatch) {
+      try { roundScore = JSON.parse(jMatch[0]); } catch { /* use default */ }
+    }
 
     const iq = Math.round(60 + roundScore.score * 0.9);
     const iqLabel =
