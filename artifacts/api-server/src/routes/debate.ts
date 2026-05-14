@@ -272,6 +272,11 @@ Respond ONLY with valid JSON, no markdown:
       content: m.text,
     }));
 
+    // Cap history to last 6 messages to avoid context-length errors on later rounds
+    if (history.length > 6) {
+      history = history.slice(history.length - 6);
+    }
+
     if (history.length > 0 && history[0].role === "assistant") {
       history = [{ role: "user", content: "Begin the debate." }, ...history];
     }
@@ -291,24 +296,26 @@ ${diffInstr}${adaptiveNote}${overtimeNote}
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
 Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`;
 
-    const [scoreText, aiText] = await Promise.all([
+    const [scoreResult, aiText] = await Promise.all([
       claudeText(
         "You are a ranked competitive debate judge. Use the full scoring range. Respond only with valid JSON.",
         scorePrompt,
         1000
-      ),
+      ).catch(() => null),
       claudeConversation(systemResp, [
         ...history,
         { role: "user", content: userArgument as string },
       ], tokens),
     ]);
 
-    const jMatch = scoreText.match(/\{[\s\S]*\}/);
     let roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; propaganda?: Array<{sentence: string; tag: string}> } = {
       score: 55, logic: 55, persuasion: 55, delivery: 55, best: "", weak: "", propaganda: [],
     };
-    if (jMatch) {
-      try { roundScore = JSON.parse(jMatch[0]); } catch { /* use default */ }
+    if (scoreResult) {
+      const jMatch = scoreResult.match(/\{[\s\S]*\}/);
+      if (jMatch) {
+        try { roundScore = JSON.parse(jMatch[0]); } catch { /* use default */ }
+      }
     }
 
     const iq = Math.round(60 + roundScore.score * 0.9);
