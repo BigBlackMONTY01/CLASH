@@ -31,31 +31,94 @@
   <style>
     *{box-sizing:border-box;}
     body{margin:0;background:#0a0a0a;visibility:visible;}
+
     #pwa-splash{
       position:fixed;inset:0;z-index:99999;background:#0a0a0a;
       display:flex;align-items:center;justify-content:center;flex-direction:column;
-      transition:opacity 0.5s ease;
+      transition:opacity 0.5s ease;overflow:hidden;
     }
     #pwa-splash.out{opacity:0;pointer-events:none;}
-    #pwa-splash-logo{
-      font-family:'Bebas Neue',system-ui,sans-serif;font-size:72px;letter-spacing:8px;
-      color:#fff;opacity:0;transform:scale(0.88) translateY(12px);
-      animation:splashLogoIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+
+    #splash-flash{
+      position:absolute;inset:0;background:rgba(230,57,70,0.18);
+      opacity:0;pointer-events:none;
+      animation:flashPulse 0.3s ease-out 0.77s forwards;
     }
-    #pwa-splash-logo span{color:#e63946;}
-    #pwa-splash-bar{
-      width:0;height:2px;background:rgba(230,57,70,0.6);margin-top:18px;
-      animation:splashBarGrow 0.5s ease 0.55s forwards;
+
+    #splash-row{
+      display:flex;align-items:flex-end;
+      font-family:'Bebas Neue',system-ui,sans-serif;
+      font-size:80px;line-height:1;
+      position:relative;z-index:1;
     }
-    #pwa-splash-sub{
-      font-family:'Barlow Condensed',system-ui,sans-serif;font-size:11px;
-      letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,0.25);
-      margin-top:14px;opacity:0;transform:translateY(6px);
-      animation:splashSubIn 0.4s ease 0.75s forwards;
+
+    #splash-cl{
+      color:#fff;letter-spacing:6px;
+      display:inline-block;
+      opacity:0;transform:translateX(-60px);
+      animation:clIn 0.32s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
     }
-    @keyframes splashLogoIn{to{opacity:1;transform:scale(1) translateY(0);}}
-    @keyframes splashBarGrow{to{width:48px;}}
-    @keyframes splashSubIn{to{opacity:1;transform:translateY(0);}}
+    #splash-sh{
+      color:#fff;letter-spacing:6px;
+      display:inline-block;
+      opacity:0;transform:translateX(60px);
+      animation:shIn 0.32s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+    }
+
+    #splash-a-wrap{
+      position:relative;display:inline-block;line-height:1;
+    }
+    #splash-a{
+      color:#e63946;letter-spacing:6px;
+      display:inline-block;
+      opacity:0;transform:translateY(-260px);
+      animation:aDrop 0.2s cubic-bezier(0.4,0,1,1) 0.57s forwards,
+                aSquish 0.3s ease-out 0.77s forwards;
+    }
+
+    .splash-wave{
+      position:absolute;top:50%;left:50%;
+      width:8px;height:8px;border-radius:50%;
+      border:2px solid rgba(230,57,70,0.85);
+      transform:translate(-50%,-50%) scale(0);
+      opacity:0;
+      animation:waveOut 0.55s ease-out 0.77s forwards;
+    }
+    .splash-wave-2{
+      border-color:rgba(230,57,70,0.45);
+      animation:waveOut 0.6s ease-out 0.87s forwards;
+    }
+
+    #splash-sub{
+      font-family:'Barlow Condensed',system-ui,sans-serif;
+      font-size:11px;letter-spacing:5px;text-transform:uppercase;
+      color:rgba(255,255,255,0.25);
+      margin-top:20px;
+      opacity:0;
+      animation:subIn 0.4s ease 0.98s forwards;
+      position:relative;z-index:1;
+    }
+
+    @keyframes clIn{to{opacity:1;transform:translateX(0);}}
+    @keyframes shIn{to{opacity:1;transform:translateX(0);}}
+    @keyframes aDrop{
+      0%{opacity:1;transform:translateY(-260px);}
+      100%{opacity:1;transform:translateY(0);}
+    }
+    @keyframes aSquish{
+      0%{transform:translateY(0) scaleY(1) scaleX(1);text-shadow:none;}
+      20%{transform:translateY(0) scaleY(0.72) scaleX(1.18);text-shadow:0 0 40px rgba(230,57,70,1),0 0 80px rgba(230,57,70,0.5);}
+      100%{transform:translateY(0) scaleY(1) scaleX(1);text-shadow:none;}
+    }
+    @keyframes waveOut{
+      0%{transform:translate(-50%,-50%) scale(0);opacity:1;}
+      100%{transform:translate(-50%,-50%) scale(14);opacity:0;}
+    }
+    @keyframes flashPulse{
+      0%{opacity:1;}
+      100%{opacity:0;}
+    }
+    @keyframes subIn{to{opacity:1;}}
   </style>
   <script>
     (function(){
@@ -71,9 +134,17 @@
   </head>
   <body>
     <div id="pwa-splash">
-      <div id="pwa-splash-logo">CL<span>A</span>SH</div>
-      <div id="pwa-splash-bar"></div>
-      <div id="pwa-splash-sub">Debate Arena</div>
+      <div id="splash-flash"></div>
+      <div id="splash-row">
+        <span id="splash-cl">CL</span>
+        <span id="splash-a-wrap">
+          <span id="splash-a">A</span>
+          <div class="splash-wave"></div>
+          <div class="splash-wave splash-wave-2"></div>
+        </span>
+        <span id="splash-sh">SH</span>
+      </div>
+      <div id="splash-sub">Debate Arena</div>
     </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
