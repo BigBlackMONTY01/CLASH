@@ -1,0 +1,159 @@
+Tell Replit AI this exactly:
+
+I do NOT want a brand new database structure created if one already exists.
+
+The app already has tables like:
+	•	leaderboard
+	•	live activity
+	•	players
+	•	matches
+	•	stats
+
+So instead of replacing or rebuilding everything, I want the existing database safely upgraded / adjusted so no current data is lost.
+
+VERY IMPORTANT RULE
+
+Do not delete existing tables.
+Do not wipe data.
+Do not recreate schema unless absolutely necessary.
+
+Use safe migrations only:
+	•	add missing columns
+	•	fix relationships
+	•	improve queries
+	•	backfill missing values
+	•	optimize realtime syncing
+	•	preserve all current rows
+
+GOAL
+
+Make the current system support both:
+	•	Guest users
+	•	Registered users
+
+while using the existing tables already in production.
+
+PLAYERS TABLE (MODIFICATION ONLY)
+
+If missing, add columns such as:
+	•	device_id
+	•	user_id
+	•	is_guest
+	•	debates_fought
+	•	global_win_rate
+	•	last_seen
+
+Only add if they do not already exist.
+
+Do not reset usernames, wins, streaks, rank, or old profiles.
+
+GUEST ACCOUNT SUPPORT
+
+When a new guest joins:
+	1.	Check if device_id already exists
+	2.	If yes, load existing guest profile
+	3.	If no, create guest row inside current players table
+
+Guest stats must save normally into the same system already used by registered users.
+
+REGISTERED ACCOUNT SUPPORT
+
+When user signs up:
+
+Use existing auth flow.
+
+Then connect to existing players row.
+
+GUEST TO REGISTERED CONVERSION
+
+If guest signs up later:
+
+Do not create duplicate player.
+
+Instead:
+	1.	Find current guest row by device_id
+	2.	Attach auth user_id
+	3.	Set is_guest = false
+
+Keep:
+	•	wins
+	•	losses
+	•	streak
+	•	rank
+	•	debates fought
+	•	username
+	•	history
+
+LIVE LEADERBOARD
+
+Use the existing leaderboard system.
+
+Only adjust queries so both guests + registered users are included properly.
+
+Leaderboard should auto-refresh from current database after matches.
+
+LIVE ACTIVITY FEED
+
+Use the existing live activity table/system.
+
+Do not create another one.
+
+Just ensure guest + registered actions both write correctly.
+
+Examples:
+	•	Guest812 defeated Nova
+	•	TRYHARDER reached 6 streak
+	•	Guest981 registered as Titan
+
+TOPICS SYSTEM
+
+If topic tracking already exists, extend it.
+
+If not, add only the minimum needed column/table safely.
+
+Need ability to:
+	•	count topic usage
+	•	store new topics when first used
+	•	track trending topics
+
+But do this without harming old data.
+
+USERNAME SAVE ERROR FIX
+
+Current update query fails.
+
+Check existing players schema and constraints first before changing code.
+
+Likely issue:
+	•	username unique conflict
+	•	wrong row id
+	•	RLS policy
+	•	null restriction
+	•	invalid query mapping
+
+Fix the current update logic instead of rewriting the whole profile system.
+
+DATABASE SAFETY RULES
+
+Before any schema change:
+	1.	Inspect current tables
+	2.	Inspect constraints
+	3.	Inspect foreign keys
+	4.	Inspect existing production data
+	5.	Create non-destructive migration only
+
+DO NOT DO THIS
+	•	drop tables
+	•	recreate database
+	•	remove old users
+	•	reset ranks
+	•	wipe live feed
+	•	break existing auth
+
+FINAL GOAL
+
+I want the current app upgraded intelligently.
+
+Not rebuilt.
+
+Use what already exists, preserve data, patch weaknesses, support guests + registered users fully, and keep everything live + stable.
