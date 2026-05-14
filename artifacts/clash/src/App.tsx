@@ -703,18 +703,6 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .achievement-toast-icon{font-size:28px;flex-shrink:0;}.achievement-toast-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
 .achievement-toast-name{font-size:15px;font-weight:600;}.achievement-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .ach-badge{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:4px 12px 4px 8px;display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;}.ach-badge.gold-ach{border-color:var(--gold);background:rgba(244,197,66,0.08);}
-/* PWA SPLASH */
-.pwa-splash{position:fixed;inset:0;z-index:99999;background:#0a0a0a;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;pointer-events:none;}
-.pwa-splash.pwa-splash-out{animation:splashFadeOut 0.5s ease forwards;}
-.pwa-splash-logo{font-family:'Bebas Neue',sans-serif;font-size:72px;letter-spacing:8px;color:#fff;animation:splashLogoIn 0.6s cubic-bezier(0.22,1,0.36,1) both;}
-.pwa-splash-logo span{color:#e63946;}
-.pwa-splash-bar{width:48px;height:2px;background:rgba(230,57,70,0.5);margin-top:18px;animation:splashBarGrow 0.5s 0.5s ease both;}
-.pwa-splash-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-top:14px;animation:splashSubIn 0.4s 0.7s ease both;}
-@keyframes splashLogoIn{from{opacity:0;transform:scale(0.88) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
-@keyframes splashBarGrow{from{width:0;opacity:0;}to{width:48px;opacity:1;}}
-@keyframes splashSubIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-@keyframes splashFadeOut{from{opacity:1;}to{opacity:0;}}
-@keyframes splashGlitch{0%,100%{clip-path:inset(0 0 100% 0);}10%{clip-path:inset(30% 0 50% 0);}20%{clip-path:inset(10% 0 80% 0);}30%{clip-path:inset(60% 0 20% 0);}}
 /* UPDATE BANNER */
 .update-banner{position:fixed;top:0;left:0;right:0;z-index:20000;background:#1a1a1a;border-bottom:1px solid rgba(230,57,70,0.5);display:flex;align-items:center;gap:10px;padding:10px 16px;animation:bannerSlideDown 0.3s ease;}
 @keyframes bannerSlideDown{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
@@ -2892,8 +2880,6 @@ export default function App() {
   const [showPwaModal, setShowPwaModal] = useState(false);
   const [pwaOs, setPwaOs] = useState<"ios"|"android"|"desktop">("ios");
   const [showUpdateBanner, setShowUpdateBanner] = useState(() => !!(window as any).__swUpdated);
-  const [splashVisible, setSplashVisible] = useState(isPWA);
-  const [splashOut, setSplashOut] = useState(false);
 
   const [topicVotes, setTopicVotes] = useState<Record<string,number>>(() => { try { return JSON.parse(localStorage.getItem("clash-votes")||"{}"); } catch { return {}; } });
   const [votedTopics, setVotedTopics] = useState<Set<string>>(() => { try { return new Set<string>(JSON.parse(localStorage.getItem("clash-voted")||"[]")); } catch { return new Set<string>(); } });
@@ -2993,8 +2979,11 @@ export default function App() {
     }
     if (isPWA) {
       const exitTimer = setTimeout(() => {
-        setSplashOut(true);
-        setTimeout(() => setSplashVisible(false), 500);
+        const splash = document.getElementById("pwa-splash");
+        if (splash) {
+          splash.classList.add("out");
+          setTimeout(() => splash.remove(), 500);
+        }
       }, 1800);
       return () => {
         clearTimeout(exitTimer);
@@ -4405,13 +4394,6 @@ export default function App() {
 
   return (
     <>
-    {splashVisible && (
-      <div className={`pwa-splash${splashOut ? " pwa-splash-out" : ""}`}>
-        <div className="pwa-splash-logo">CL<span>A</span>SH</div>
-        <div className="pwa-splash-bar" />
-        <div className="pwa-splash-sub">Debate Arena</div>
-      </div>
-    )}
     <div className="app">
       <nav className="nav">
         <div className="logo" onClick={() => setScreen("home")} style={{ cursor: "pointer" }}>CL<span style={{color:"#e63946"}}>A</span>SH</div>

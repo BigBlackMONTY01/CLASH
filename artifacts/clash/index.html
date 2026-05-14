@@ -31,9 +31,50 @@
   <style>
     *{box-sizing:border-box;}
     body{margin:0;background:#0a0a0a;visibility:visible;}
+    #pwa-splash{
+      position:fixed;inset:0;z-index:99999;background:#0a0a0a;
+      display:flex;align-items:center;justify-content:center;flex-direction:column;
+      transition:opacity 0.5s ease;
+    }
+    #pwa-splash.out{opacity:0;pointer-events:none;}
+    #pwa-splash-logo{
+      font-family:'Bebas Neue',system-ui,sans-serif;font-size:72px;letter-spacing:8px;
+      color:#fff;opacity:0;transform:scale(0.88) translateY(12px);
+      animation:splashLogoIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+    }
+    #pwa-splash-logo span{color:#e63946;}
+    #pwa-splash-bar{
+      width:0;height:2px;background:rgba(230,57,70,0.6);margin-top:18px;
+      animation:splashBarGrow 0.5s ease 0.55s forwards;
+    }
+    #pwa-splash-sub{
+      font-family:'Barlow Condensed',system-ui,sans-serif;font-size:11px;
+      letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,0.25);
+      margin-top:14px;opacity:0;transform:translateY(6px);
+      animation:splashSubIn 0.4s ease 0.75s forwards;
+    }
+    @keyframes splashLogoIn{to{opacity:1;transform:scale(1) translateY(0);}}
+    @keyframes splashBarGrow{to{width:48px;}}
+    @keyframes splashSubIn{to{opacity:1;transform:translateY(0);}}
   </style>
+  <script>
+    (function(){
+      var isPWA = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+      if(!isPWA){
+        document.addEventListener('DOMContentLoaded', function(){
+          var el = document.getElementById('pwa-splash');
+          if(el) el.style.display = 'none';
+        });
+      }
+    })();
+  </script>
   </head>
   <body>
+    <div id="pwa-splash">
+      <div id="pwa-splash-logo">CL<span>A</span>SH</div>
+      <div id="pwa-splash-bar"></div>
+      <div id="pwa-splash-sub">Debate Arena</div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
