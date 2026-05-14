@@ -2876,6 +2876,7 @@ export default function App() {
 
   const [factCheckMode, setFactCheckMode] = useState(false);
   const [factCheckResults, setFactCheckResults] = useState<Array<{claim:string;verdict:string;explanation:string}>|null>(null);
+  const isPWA = window.matchMedia("(display-mode: standalone)").matches || !!(navigator as any).standalone;
   const [showPwaModal, setShowPwaModal] = useState(false);
   const [pwaOs, setPwaOs] = useState<"ios"|"android"|"desktop">("ios");
   const [showUpdateBanner, setShowUpdateBanner] = useState(() => !!(window as any).__swUpdated);
@@ -2972,6 +2973,9 @@ export default function App() {
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+    if (isPWA && "Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().catch(() => {});
     }
     return () => {
       const el = document.getElementById("clash-app-css");
@@ -4380,11 +4384,11 @@ export default function App() {
       <nav className="nav">
         <div className="logo" onClick={() => setScreen("home")} style={{ cursor: "pointer" }}>CL<span style={{color:"#e63946"}}>A</span>SH</div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <button className="pwa-nav-btn" onClick={() => setShowPwaModal(true)} title="Install App">
+          {!isPWA && <button className="pwa-nav-btn" onClick={() => setShowPwaModal(true)} title="Install App">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
             </svg>
-          </button>
+          </button>}
           <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute" : "Unmute"}>
             {soundEnabled ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -6369,7 +6373,7 @@ export default function App() {
     {shareToast && <div className="share-toast">{shareToast}</div>}
 
       {/* round-flash intentionally removed */}
-    {showUpdateBanner && (
+    {isPWA && showUpdateBanner && (
       <div className="update-banner">
         <span className="update-banner-msg">New version available</span>
         <button className="update-banner-btn" onClick={() => window.location.reload()}>Tap to update</button>
