@@ -8,6 +8,8 @@ import { JWT_SECRET } from "./auth";
 const router = Router();
 const MODEL = "llama-3.3-70b-versatile";
 
+const typingMap = new Map<string, { p1: number; p2: number }>();
+
 let _groq: Groq | null = null;
 function getGroq(): Groq {
   if (!_groq) _groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -273,6 +275,22 @@ router.post("/rooms/join", async (req, res) => {
   res.json({ code: r.code, playerNum: 2 });
 });
 
+// POST /api/rooms/:code/typing — broadcast that a player is actively typing
+router.post("/rooms/:code/typing", async (req, res) => {
+  const playerId = await getPlayerId(req);
+  const { code } = req.params;
+  const room = await db.select().from(rooms).where(eq(rooms.code, code.toUpperCase())).limit(1);
+  if (!room.length) { res.status(404).json({ error: "Room not found" }); return; }
+  const r = room[0];
+  const playerNum = playerId === r.player1Id ? 1 : playerId === r.player2Id ? 2 : null;
+  if (!playerNum) { res.status(403).json({ error: "Not in room" }); return; }
+  const entry = typingMap.get(code.toUpperCase()) ?? { p1: 0, p2: 0 };
+  if (playerNum === 1) entry.p1 = Date.now();
+  else entry.p2 = Date.now();
+  typingMap.set(code.toUpperCase(), entry);
+  res.json({ ok: true });
+});
+
 // GET /api/rooms/:code — poll state
 router.get("/rooms/:code", async (req, res) => {
   const playerId = await getPlayerId(req);
@@ -292,7 +310,13 @@ router.get("/rooms/:code", async (req, res) => {
   const iq1 = r.player1Rank ? scoreToIQ(r.player1Rank, r.player1Score) : null;
   const iq2 = r.player2Rank ? scoreToIQ(r.player2Rank, r.player2Score) : null;
 
-  res.json({ ...r, player1Name: p1Name, player2Name: p2Name, arguments: args, playerNum, iq1, iq2 });
+  const typing = typingMap.get(r.code) ?? { p1: 0, p2: 0 };
+  const now = Date.now();
+  const TYPING_TTL = 4000;
+  const player1TypingAt = now - typing.p1 < TYPING_TTL ? typing.p1 : null;
+  const player2TypingAt = now - typing.p2 < TYPING_TTL ? typing.p2 : null;
+
+  res.json({ ...r, player1Name: p1Name, player2Name: p2Name, arguments: args, playerNum, iq1, iq2, player1TypingAt, player2TypingAt });
 });
 
 // POST /api/rooms/:code/sides

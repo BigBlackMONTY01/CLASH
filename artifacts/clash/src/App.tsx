@@ -907,6 +907,13 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .next-opp-topic{font-size:12px;color:var(--text-dim);font-style:italic;}
 .v1-opp-typing{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-top:10px;}
 .v1-opp-typing-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);}
+.v1-opp-typing.is-typing{border-color:rgba(244,197,66,0.35);}
+.v1-opp-typing-label.is-typing{color:var(--gold);}
+@keyframes typingBounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-4px);}}
+.typing-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;animation:typingBounce 1.2s ease-in-out infinite;}
+.typing-dot:nth-child(2){animation-delay:0.15s;}
+.typing-dot:nth-child(3){animation-delay:0.3s;}
+.v1-typing-banner{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:var(--gold);display:flex;align-items:center;gap:6px;margin-bottom:6px;opacity:0.85;}
 
 /* TYPING STRENGTH METER */
 .strength-wrap{margin-bottom:8px;}
@@ -1094,7 +1101,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .mirror-btn:disabled{opacity:0.35;cursor:not-allowed;}
 
 /* AUTO-GROW TEXTAREA */
-.debate-input{min-height:90px;resize:none;overflow:hidden;}
+.debate-input{min-height:90px;resize:none;overflow-y:auto;}
 
 /* SHIELD ANIMATED */
 @keyframes shieldPulse{0%,100%{filter:drop-shadow(0 0 4px rgba(34,197,94,0.4));}50%{filter:drop-shadow(0 0 10px rgba(34,197,94,0.8));}}
@@ -2522,7 +2529,7 @@ interface Stats { wins: number; debates: number; bestScore: number; currentStrea
 interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fallacy"; note: string; }
 interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
 interface RoomTaunt { id: number; text: string; fromName: string; fromPlayerNum: 1 | 2; }
-interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; }
+interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; player1TypingAt: number | null; player2TypingAt: number | null; }
 interface V1HistoryEntry { code: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
 interface DebateCard { id: number; playerId: number; debateId: number | null; opponentId: string; opponentName: string; topic: string; score: number; rank: string; rarity: string; bestQuote: string; createdAt: string; }
 
@@ -2676,6 +2683,7 @@ export default function App() {
   const [trashTalkBubble, setTrashTalkBubble] = useState<string | null>(null);
   const [v1SendLine, setV1SendLine] = useState<string | null>(null);
   const lastTrashRoundRef = useRef(0);
+  const typingDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const trashQueueRef = useRef<string[]>([]);
   const trashIdxRef = useRef(0);
   const viewingArgsAfterMatch = useRef(false);
@@ -5368,23 +5376,52 @@ export default function App() {
                         {oppRoundArg.critique && <div className="v1-arg-critique">{oppRoundArg.critique}</div>}
                       </div>
                     </div>
-                  ) : (
-                    <div className="v1-opp-typing">
-                      <div className="waiting-dots">
-                        <div className="waiting-dot" /><div className="waiting-dot" /><div className="waiting-dot" />
+                  ) : (() => {
+                    const oppTypingAt = roomPlayerNum === 1 ? currentRoom.player2TypingAt : currentRoom.player1TypingAt;
+                    const oppIsTyping = !!oppTypingAt && Date.now() - oppTypingAt < 4000;
+                    return (
+                      <div className={`v1-opp-typing${oppIsTyping ? " is-typing" : ""}`}>
+                        {oppIsTyping ? (
+                          <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
+                            <div className="typing-dot" /><div className="typing-dot" /><div className="typing-dot" />
+                          </div>
+                        ) : (
+                          <div className="waiting-dots">
+                            <div className="waiting-dot" /><div className="waiting-dot" /><div className="waiting-dot" />
+                          </div>
+                        )}
+                        <span className={`v1-opp-typing-label${oppIsTyping ? " is-typing" : ""}`}>
+                          {oppIsTyping ? `${oppName} is typing...` : `Waiting for ${oppName}...`}
+                        </span>
                       </div>
-                      <span className="v1-opp-typing-label">Waiting for {oppName}...</span>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </div>
               ) : (
                 <div>
+                  {(() => {
+                    const oppTypingAt = roomPlayerNum === 1 ? currentRoom.player2TypingAt : currentRoom.player1TypingAt;
+                    const oppIsTyping = !!oppTypingAt && Date.now() - oppTypingAt < 4000;
+                    return oppIsTyping ? (
+                      <div className="v1-typing-banner">
+                        <div className="typing-dot" /><div className="typing-dot" /><div className="typing-dot" />
+                        <span>{oppName} is also typing</span>
+                      </div>
+                    ) : null;
+                  })()}
                   <p className="section-label">Round {currentRoom.currentRound} — Argue {mySide?.toUpperCase()}</p>
                   <textarea
                     className="debate-input"
                     rows={5}
                     value={roomArgInput}
-                    onChange={(e) => { setRoomArgInput(e.target.value); if (roomModerationWarning) setRoomModerationWarning(""); }}
+                    onChange={(e) => {
+                      setRoomArgInput(e.target.value);
+                      if (roomModerationWarning) setRoomModerationWarning("");
+                      if (typingDebounceRef.current) clearTimeout(typingDebounceRef.current);
+                      typingDebounceRef.current = setTimeout(() => {
+                        apiAuthPost(`/1v1/${currentRoom.code}/typing`, {}).catch(() => {});
+                      }, 300);
+                    }}
                     placeholder={`Make your argument ${mySide?.toUpperCase() || ""}…`}
                     onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitRoomArg(); }}
                   />
