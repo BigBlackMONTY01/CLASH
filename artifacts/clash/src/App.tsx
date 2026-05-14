@@ -1161,8 +1161,10 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .v1-send-copy-btn:hover{background:rgba(168,85,247,0.2);}
 
 /* V1 LASER ARENA BORDER */
-@keyframes laserBorderPulse{0%,100%{box-shadow:0 0 0 1px rgba(30,120,255,0.3),0 0 18px rgba(30,120,255,0.1);}50%{box-shadow:0 0 0 1px rgba(80,160,255,0.65),0 0 28px rgba(80,160,255,0.25);}}
-.v1-laser-arena{animation:laserBorderPulse 2.5s ease-in-out infinite;}
+.v1-laser-arena{}
+.v1-round-timer{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--red);line-height:1;transition:color 0.3s;}
+.v1-round-timer.critical{animation:timerGlow 0.6s ease-in-out infinite alternate;}
+@keyframes timerGlow{from{color:#ff3333;text-shadow:0 0 8px rgba(230,57,70,0.5);}to{color:#ff0000;text-shadow:0 0 20px rgba(230,57,70,1),0 0 36px rgba(230,57,70,0.6);}}
 
 /* MIRROR MATCH LOCK */
 .mirror-locked-overlay{position:relative;}
@@ -2724,11 +2726,13 @@ export default function App() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const submitArgumentRef = useRef<((forcedText?: string) => Promise<void>) | null>(null);
+  const submitRoomArgRef = useRef<(() => Promise<void>) | null>(null);
 
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = css;
     document.head.appendChild(style);
+    document.body.style.visibility = "visible";
     return () => {
       if (style.parentNode) style.parentNode.removeChild(style);
     };
@@ -2933,12 +2937,16 @@ export default function App() {
     })();
   }, []);
 
-  // 1v1 round timer — auto-submit when it hits zero
+  // Browser back button — stay in-app instead of navigating away
   useEffect(() => {
-    if (v1RoundTimeLeft !== 0) return;
-    if (roomArgInput.trim() && !roomSubmitting) submitRoomArg();
-    else stopV1RoundTimer();
-  }, [v1RoundTimeLeft]);
+    window.history.pushState(null, document.title, window.location.pathname);
+    const onPop = () => {
+      reset();
+      window.history.pushState(null, document.title, window.location.pathname);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   // Clean up timer when leaving the debate screen
   useEffect(() => {
@@ -3744,7 +3752,7 @@ export default function App() {
   };
 
   const checkRoomMessage = (text: string): string | null => {
-    const t = text.toLowerCase();
+    const t = text.toLowerCase().replace(/[*@#!$%^&_\-+=|\\<>]+/g, "");
     const blocked: RegExp[] = [
       /\bkys\b/,
       /kill\s+your\s*self/,
@@ -3756,10 +3764,20 @@ export default function App() {
       /\bgo\s+fuck\s+your/,
       /\b(shit|ass)\s*hole\b.*\byou\b/,
       /you'?re?\s+(a\s+)?(fucking\s+)?(worthless|subhuman|piece\s+of\s+shit|trash|waste\s+of)/,
-      /\b(n+i+g+[ae]+r|n+i+g+g+[ae]+r)\b/,
+      /\bn[i1!]+g{1,}[ae]+r?\b/,
+      /\bn[i1!]+g{2,}\b/,
       /\bf[a4]+g+(ot)?\b/,
       /\bretard\b/,
       /\bcunt\b/,
+      /\b(black|brown|dark)\s+(monkey|ape|gorilla|chimp|chimpanzee|baboon)\b/,
+      /\b(monkey|ape|gorilla|chimp|baboon)\s+(go\s+back|people|person|belong)\b/,
+      /go\s+back\s+to\s+(africa|your\s+(country|jungle|cage))/,
+      /\b(cotton\s*pick|porch\s*monk|jungle\s*bunn|tree\s*swing)\b/,
+      /\b(sp[i1]+c|w[e3]+tb[a4]+ck|ch[i1]+nk|g[o0]{2,}k|k[i1]+k[e3]+|cr[a4]+ck[e3]+r\s+ass|sand\s*n[i1]+g)\b/,
+      /\b(towel\s*head|raghead|camel\s*jock|sand\s*monkey)\b/,
+      /\b(zipperhead|slope\s+eye|slant\s+eye)\b/,
+      /\bsubhuman\b/,
+      /you\s+(are\s+)?(not\s+even\s+)?(a\s+)?(real\s+)?(human|person)\b.*\b(black|brown|asian|jewish|muslim)\b/,
     ];
     for (const pat of blocked) {
       if (pat.test(t)) {
@@ -3783,7 +3801,12 @@ export default function App() {
     v1RoundTimerRef.current = setInterval(() => {
       setV1RoundTimeLeft(prev => {
         if (prev === null) return null;
-        if (prev <= 1) return 0;
+        if (prev <= 1) {
+          setTimeout(() => {
+            if (submitRoomArgRef.current) submitRoomArgRef.current();
+          }, 80);
+          return 0;
+        }
         return prev - 1;
       });
     }, 1000);
@@ -3805,6 +3828,9 @@ export default function App() {
     } catch (e) { setRoomError((e as Error).message); }
     finally { setRoomSubmitting(false); }
   };
+
+  // Keep submitRoomArgRef in sync so the timer can call the latest version
+  useEffect(() => { submitRoomArgRef.current = submitRoomArg; }, [submitRoomArg]);
 
   const forfeitRoom = async () => {
     if (!currentRoom) return;
@@ -5309,15 +5335,20 @@ export default function App() {
                   {currentRoom.topicCat}
                 </div>
               </div>
-              {viewingArgsMode ? (
-                <button className="btn btn-ghost" style={{ fontSize: "11px", padding: "6px 14px" }} onClick={() => { viewingArgsAfterMatch.current = false; setViewingArgsMode(false); setScreen("multiplayer-results"); }}>
-                  ← Results
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                {viewingArgsMode ? (
+                  <button className="btn btn-ghost" style={{ fontSize: "11px", padding: "6px 14px" }} onClick={() => { viewingArgsAfterMatch.current = false; setViewingArgsMode(false); setScreen("multiplayer-results"); }}>
+                    ← Results
+                  </button>
+                ) : (
+                  <button className="btn btn-ghost" style={{ fontSize: "11px", padding: "6px 14px" }} onClick={() => setScreen("multiplayer-waiting")}>
+                    Room Info
+                  </button>
+                )}
+                <button className="btn btn-ghost" style={{ fontSize: "11px", padding: "6px 14px" }} onClick={reset}>
+                  Home
                 </button>
-              ) : (
-                <button className="btn btn-ghost" style={{ fontSize: "11px", padding: "6px 14px" }} onClick={() => setScreen("multiplayer-waiting")}>
-                  Room Info
-                </button>
-              )}
+              </div>
             </div>
 
             <div className="v1-topic-banner">
@@ -5470,11 +5501,11 @@ export default function App() {
                   )}
                   <div className="input-footer">
                     {v1RoundTimeLeft !== null ? (
-                      <span className={`char-count${v1RoundTimeLeft <= 30 ? " danger" : v1RoundTimeLeft <= 60 ? " warn" : ""}`}>
-                        {Math.floor(v1RoundTimeLeft / 60)}:{String(v1RoundTimeLeft % 60).padStart(2, "0")} left
+                      <span className={`v1-round-timer${v1RoundTimeLeft <= 30 ? " critical" : ""}`}>
+                        {Math.floor(v1RoundTimeLeft / 60)}:{String(v1RoundTimeLeft % 60).padStart(2, "0")}
                       </span>
                     ) : (
-                      <span className="char-count">{roomArgInput.length} chars</span>
+                      roomArgInput.length > 0 && <span className="char-count">{roomArgInput.length} chars</span>
                     )}
                     <div className="submit-row">
                       {currentRoom.currentRound >= 3 && (
