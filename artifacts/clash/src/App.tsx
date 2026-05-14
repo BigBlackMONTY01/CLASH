@@ -3411,6 +3411,22 @@ export default function App() {
     return () => clearInterval(iv);
   }, [screen]);
 
+  // Refresh global stats every 60 seconds on home screen
+  useEffect(() => {
+    if (screen !== "home") return;
+    const iv = setInterval(async () => {
+      try {
+        const gs = await apiGet<GlobalStats>("/stats/global");
+        setArenaDisplay({
+          debates: gs.totalDebates,
+          winRate: gs.globalWinRate || 0,
+          topics: gs.uniqueTopics,
+        });
+      } catch {}
+    }, 60 * 1000);
+    return () => clearInterval(iv);
+  }, [screen]);
+
   // Auto-refresh leaderboard every 30 seconds while on that screen
   useEffect(() => {
     if (screen !== "leaderboard") return;

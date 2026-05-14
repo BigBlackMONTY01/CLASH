@@ -79,6 +79,9 @@ interface InMemoryRoom {
 
 const store = new Map<string, InMemoryRoom>();
 
+interface TypingEntry { p1At: Date | null; p2At: Date | null; }
+const typingMap = new Map<string, TypingEntry>();
+
 async function saveDebateRecord(callerId: string, room: InMemoryRoom, playerNum: 1 | 2): Promise<void> {
   try {
     let player;
@@ -132,7 +135,10 @@ async function saveDebateRecord(callerId: string, room: InMemoryRoom, playerNum:
 setInterval(() => {
   const cutoff = Date.now() - 3 * 60 * 60 * 1000;
   for (const [code, room] of store.entries()) {
-    if (room.createdAt.getTime() < cutoff) store.delete(code);
+    if (room.createdAt.getTime() < cutoff) {
+      store.delete(code);
+      typingMap.delete(code);
+    }
   }
 }, 30 * 60 * 1000);
 
@@ -205,8 +211,8 @@ function roomToState(room: InMemoryRoom, callerId: string | null) {
     iq1,
     iq2,
     latestTaunt: room.latestTaunt,
-    player1TypingAt: null,
-    player2TypingAt: null,
+    player1TypingAt: typingMap.get(room.code)?.p1At?.toISOString() ?? null,
+    player2TypingAt: typingMap.get(room.code)?.p2At?.toISOString() ?? null,
   };
 }
 
@@ -598,6 +604,21 @@ Find 3-5 exact substrings from the argument text.`;
   }
 
   res.json({ ...arg, highlights: arg.highlights, roomId: 0 });
+});
+
+router.post("/1v1/:code/typing", (req, res) => {
+  const callerId = getCallerId(req);
+  if (!callerId) { res.status(401).json({ error: "Not authenticated" }); return; }
+  const { code } = req.params;
+  const room = store.get(code.toUpperCase());
+  if (!room) { res.status(404).json({ error: "Room not found" }); return; }
+  const playerNum = room.creator === callerId ? 1 : room.joiner === callerId ? 2 : null;
+  if (!playerNum) { res.status(403).json({ error: "Not in this room" }); return; }
+  const entry = typingMap.get(code.toUpperCase()) ?? { p1At: null, p2At: null };
+  if (playerNum === 1) entry.p1At = new Date();
+  else entry.p2At = new Date();
+  typingMap.set(code.toUpperCase(), entry);
+  res.json({ ok: true });
 });
 
 router.post("/1v1/:code/taunt", (req, res) => {

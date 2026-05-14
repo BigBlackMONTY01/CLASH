@@ -10,8 +10,8 @@ function getDb() {
     );
   }
   const isNeon = connectionString.includes("neon.tech") || connectionString.includes("neon.cloud");
-  const sslConfig = isNeon ? { rejectUnauthorized: false } : false;
-  const pool = new Pool({ connectionString, ssl: sslConfig });
+  const sslConfig = isNeon ? { rejectUnauthorized: false } : undefined;
+  const pool = new Pool({ connectionString, ...(sslConfig !== undefined ? { ssl: sslConfig } : {}) });
   return drizzle(pool, { schema });
 }
 
