@@ -746,7 +746,11 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .lobby-card-sub{font-size:12px;color:var(--text-dim);}
 .join-code-input{width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:10px;padding:14px 18px;text-align:center;text-transform:uppercase;outline:none;transition:border-color 0.2s;margin-bottom:12px;}
 .join-code-input:focus{border-color:var(--blue);}
-.waiting-room{text-align:center;padding:32px 0;}
+.waiting-room{text-align:center;padding:8px 0;}
+.v1-lobby-footer{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border);}
+.v1-lobby-footer .btn{flex:1;font-size:12px;padding:11px 8px;}
+.v1-lobby-footer .btn-home{background:none;border:1px solid var(--border);color:var(--text-dim);}
+.v1-lobby-footer .btn-home:hover{border-color:var(--text-mid);color:var(--text);}
 .room-code-display{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,14vw,88px);letter-spacing:10px;color:var(--text);margin:12px 0 6px;cursor:pointer;transition:color 0.2s;}
 .room-code-display:hover{color:var(--gold);}
 .waiting-dots{display:flex;justify-content:center;gap:8px;margin:16px 0;}
@@ -5260,6 +5264,12 @@ export default function App() {
                 )}
               </>
             )}
+
+            <div className="v1-lobby-footer">
+              <button className="btn btn-home" onClick={reset}>← Home</button>
+              <button className="btn btn-primary" onClick={() => { setV1Tab("play"); setV1SubScreen(""); createRoom(); }}>⚔ Create</button>
+              <button className="btn btn-ghost" onClick={() => { setV1Tab("play"); setV1SubScreen("join"); }}>🔗 Join Room</button>
+            </div>
           </div>
         );
       })()}
@@ -5267,7 +5277,7 @@ export default function App() {
       {/* MULTIPLAYER WAITING ROOM */}
       {screen === "multiplayer-waiting" && currentRoom && (
         <div className="screen">
-          <div style={{ display: "flex", gap: "10px", marginBottom: "24px" }}>
+          <div style={{ display: "flex", gap: "10px", marginBottom: "8px" }}>
             <button className="btn btn-ghost" onClick={reset}>← Leave</button>
           </div>
 
