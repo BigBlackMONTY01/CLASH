@@ -102,6 +102,12 @@
       <div id="splash-bar-track"><div id="splash-bar"></div></div>
     </div>
     <div id="root"></div>
+    <script>
+      setTimeout(function() {
+        var s = document.getElementById('splash');
+        if (s) { s.classList.add('out'); setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); document.body.style.overflow=''; }, 450); }
+      }, 4000);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
