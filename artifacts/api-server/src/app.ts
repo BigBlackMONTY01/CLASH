@@ -2,6 +2,7 @@ import express, { type Express } from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import { existsSync } from "fs";
 import pinoHttp from "pino-http";
 import rateLimit from "express-rate-limit";
 import router from "./routes";
@@ -59,14 +60,12 @@ if (process.env.NODE_ENV === "production") {
     ? path.resolve(process.cwd(), process.env.FRONTEND_DIST)
     : path.resolve(__dirname, "../../clash/dist/public");
 
-  import("fs").then(({ existsSync }) => {
-    if (existsSync(frontendDist)) {
-      app.use(express.static(frontendDist));
-      app.get(/^(?!\/api).*/, (_req, res) => {
-        res.sendFile(path.join(frontendDist, "index.html"));
-      });
-    }
-  });
+  if (existsSync(frontendDist)) {
+    app.use(express.static(frontendDist));
+    app.get(/^(?!\/api).*/, (_req, res) => {
+      res.sendFile(path.join(frontendDist, "index.html"));
+    });
+  }
 }
 
 startCleanupJob();
