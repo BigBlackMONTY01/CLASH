@@ -48,7 +48,10 @@ function scoreToRank(s: number) {
   return s >= 90 ? "S" : s >= 80 ? "A" : s >= 65 ? "B" : s >= 50 ? "C" : s >= 35 ? "D" : "F";
 }
 
-function scoreToIQ(rank: string) {
+function scoreToIQ(rank: string, score?: number | null): number {
+  if (score != null) {
+    return Math.round(80 + (score / 100) * 72);
+  }
   const map: Record<string, number> = { S: 147, A: 133, B: 122, C: 111, D: 101, F: 88 };
   return map[rank] ?? 100;
 }
@@ -286,8 +289,8 @@ router.get("/rooms/:code", async (req, res) => {
   const args = await db.select().from(roomArguments).where(eq(roomArguments.roomId, r.id));
   const playerNum = playerId === r.player1Id ? 1 : playerId === r.player2Id ? 2 : null;
 
-  const iq1 = r.player1Rank ? scoreToIQ(r.player1Rank) : null;
-  const iq2 = r.player2Rank ? scoreToIQ(r.player2Rank) : null;
+  const iq1 = r.player1Rank ? scoreToIQ(r.player1Rank, r.player1Score) : null;
+  const iq2 = r.player2Rank ? scoreToIQ(r.player2Rank, r.player2Score) : null;
 
   res.json({ ...r, player1Name: p1Name, player2Name: p2Name, arguments: args, playerNum, iq1, iq2 });
 });
