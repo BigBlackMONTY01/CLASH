@@ -5243,9 +5243,11 @@ export default function App() {
               </>
             )}
 
-            <div style={{ marginTop: "32px", textAlign: "center" }}>
-              <button className="btn btn-ghost" onClick={reset}>← Home</button>
-            </div>
+            {!v1SubScreen && (
+              <div style={{ marginTop: "32px", textAlign: "center" }}>
+                <button className="btn btn-ghost" onClick={reset}>← Home</button>
+              </div>
+            )}
           </div>
         );
       })()}
