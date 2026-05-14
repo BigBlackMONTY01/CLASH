@@ -239,7 +239,12 @@ export default function Landing() {
     const splash = document.getElementById("splash");
     if (splash) {
       splash.classList.add("out");
-      setTimeout(() => splash.remove(), 450);
+      setTimeout(() => {
+        splash.remove();
+        document.body.style.overflow = "";
+      }, 450);
+    } else {
+      document.body.style.overflow = "";
     }
   }, []);
   const laserRef = useRef<HTMLDivElement>(null);

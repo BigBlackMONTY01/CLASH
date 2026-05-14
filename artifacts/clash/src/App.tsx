@@ -2914,7 +2914,12 @@ export default function App() {
     const splash = document.getElementById("splash");
     if (splash) {
       splash.classList.add("out");
-      setTimeout(() => splash.remove(), 450);
+      setTimeout(() => {
+        splash.remove();
+        document.body.style.overflow = "";
+      }, 450);
+    } else {
+      document.body.style.overflow = "";
     }
   }, []);
   const RESTORABLE: Screen[] = ["home", "leaderboard", "multiplayer-lobby", "dashboard", "forge-rival"];

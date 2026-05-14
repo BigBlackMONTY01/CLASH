@@ -14,6 +14,21 @@ function getJwtPlayerId(authHeader: string | undefined): number | null {
   }
 }
 
+// Only original columns — safe against production DBs that haven't run db:push for new nullable columns
+const SAFE_PLAYER_COLS = {
+  id: players.id,
+  deviceId: players.deviceId,
+  username: players.username,
+  currentStreak: players.currentStreak,
+  bestStreak: players.bestStreak,
+  avatarId: players.avatarId,
+  accentColor: players.accentColor,
+  cardBg: players.cardBg,
+  soundPack: players.soundPack,
+  createdAt: players.createdAt,
+  updatedAt: players.updatedAt,
+};
+
 const router = Router();
 
 // POST /api/players/register — create or fetch player by device ID
@@ -24,19 +39,18 @@ router.post("/players/register", async (req, res) => {
     return;
   }
   try {
-    const existing = await db.select().from(players).where(eq(players.deviceId, deviceId)).limit(1);
+    const existing = await db.select(SAFE_PLAYER_COLS).from(players).where(eq(players.deviceId, deviceId)).limit(1);
     if (existing.length > 0) {
-      // Update lastSeen on every visit
-      await db.update(players).set({ lastSeen: new Date() }).where(eq(players.deviceId, deviceId));
-      res.json({ ...existing[0], lastSeen: new Date() });
+      await db.update(players).set({ updatedAt: new Date() }).where(eq(players.deviceId, deviceId));
+      res.json(existing[0]);
       return;
     }
     try {
-      const inserted = await db.insert(players).values({ deviceId, isGuest: true, lastSeen: new Date() }).returning();
+      const inserted = await db.insert(players).values({ deviceId }).returning(SAFE_PLAYER_COLS);
       res.json(inserted[0]);
     } catch (insertErr: any) {
       if (insertErr?.code === "23505") {
-        const found = await db.select().from(players).where(eq(players.deviceId, deviceId)).limit(1);
+        const found = await db.select(SAFE_PLAYER_COLS).from(players).where(eq(players.deviceId, deviceId)).limit(1);
         if (found.length > 0) { res.json(found[0]); return; }
       }
       throw insertErr;
@@ -61,7 +75,7 @@ router.patch("/players/preferences", async (req, res) => {
     if (typeof accentColor === "string") updates.accentColor = accentColor;
     if (typeof cardBg === "string") updates.cardBg = cardBg;
     if (typeof soundPack === "string") updates.soundPack = soundPack;
-    const updated = await db.update(players).set(updates).where(eq(players.id, jwtPlayerId)).returning();
+    const updated = await db.update(players).set(updates).where(eq(players.id, jwtPlayerId)).returning(SAFE_PLAYER_COLS);
     if (updated.length === 0) {
       res.status(404).json({ error: "Player not found" });
       return;
@@ -88,7 +102,6 @@ router.patch("/players/username", async (req, res) => {
   try {
     const jwtPlayerId = getJwtPlayerId(req.headers.authorization);
 
-    // Resolve which player row we are updating
     let ownerId: number | null = null;
     if (jwtPlayerId) {
       const rows = await db.select({ id: players.id }).from(players).where(eq(players.id, jwtPlayerId)).limit(1);
@@ -110,7 +123,6 @@ router.patch("/players/username", async (req, res) => {
       ownerId = rows[0].id;
     }
 
-    // Pre-flight duplicate check — avoids relying solely on constraint error
     const existing = await db
       .select({ id: players.id })
       .from(players)
@@ -123,9 +135,9 @@ router.patch("/players/username", async (req, res) => {
 
     const updated = await db
       .update(players)
-      .set({ username: trimmed, updatedAt: new Date(), lastSeen: new Date() })
+      .set({ username: trimmed, updatedAt: new Date() })
       .where(eq(players.id, ownerId))
-      .returning();
+      .returning(SAFE_PLAYER_COLS);
 
     if (updated.length === 0) {
       res.status(404).json({ error: "Profile not found" });
@@ -147,7 +159,7 @@ router.patch("/players/username", async (req, res) => {
 router.get("/players/:deviceId", async (req, res) => {
   const { deviceId } = req.params;
   try {
-    const player = await db.select().from(players).where(eq(players.deviceId, deviceId)).limit(1);
+    const player = await db.select(SAFE_PLAYER_COLS).from(players).where(eq(players.deviceId, deviceId)).limit(1);
     if (player.length === 0) {
       res.status(404).json({ error: "Player not found" });
       return;
@@ -203,7 +215,7 @@ router.post("/debates/save", async (req, res) => {
     const jwtPlayerId = getJwtPlayerId(req.headers.authorization);
     let player;
     if (jwtPlayerId) {
-      const rows = await db.select().from(players).where(eq(players.id, jwtPlayerId)).limit(1);
+      const rows = await db.select(SAFE_PLAYER_COLS).from(players).where(eq(players.id, jwtPlayerId)).limit(1);
       player = rows;
       if (player.length === 0) {
         res.status(404).json({ error: "Authenticated player not found" });
@@ -214,11 +226,11 @@ router.post("/debates/save", async (req, res) => {
         res.status(400).json({ error: "deviceId required when not authenticated" });
         return;
       }
-      const existing = await db.select().from(players).where(eq(players.deviceId, deviceId as string)).limit(1);
+      const existing = await db.select(SAFE_PLAYER_COLS).from(players).where(eq(players.deviceId, deviceId as string)).limit(1);
       if (existing.length > 0) {
         player = existing;
       } else {
-        const created = await db.insert(players).values({ deviceId: deviceId as string }).returning();
+        const created = await db.insert(players).values({ deviceId: deviceId as string }).returning(SAFE_PLAYER_COLS);
         player = created;
         req.log.info({ deviceId }, "auto-created guest player on debate save");
       }
@@ -314,7 +326,7 @@ router.get("/leaderboard", async (req, res) => {
   }
 });
 
-// GET /api/activity/recent — last 10 debates for the live feed
+// GET /api/activity/recent — last 15 debates for the live feed
 router.get("/activity/recent", async (_req, res) => {
   try {
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
