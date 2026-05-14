@@ -64,6 +64,7 @@ interface InMemoryRoom {
   status: "waiting" | "choosing" | "debating" | "complete";
   totalRounds: number;
   currentRound: number;
+  speedRound: boolean;
   winnerPlayerNum: number | null;
   player1Score: number | null;
   player2Score: number | null;
@@ -178,6 +179,7 @@ function roomToState(room: InMemoryRoom, callerId: string | null) {
     status: room.status,
     totalRounds: room.totalRounds,
     currentRound: room.currentRound,
+    speedRound: room.speedRound,
     winnerPlayerNum: room.winnerPlayerNum,
     player1Score: room.player1Score,
     player2Score: room.player2Score,
@@ -203,6 +205,8 @@ function roomToState(room: InMemoryRoom, callerId: string | null) {
     iq1,
     iq2,
     latestTaunt: room.latestTaunt,
+    player1TypingAt: null,
+    player2TypingAt: null,
   };
 }
 
@@ -402,8 +406,10 @@ router.post("/1v1/create", (req, res) => {
   const callerId = getCallerId(req);
   if (!callerId) { res.status(401).json({ error: "Device ID or auth required" }); return; }
   const callerName = getCallerName(req);
-  const { totalRounds } = req.body as { totalRounds?: number };
-  const topic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
+  const { totalRounds, topicText: topicParam, topicCat: topicCatParam, speedRound } = req.body as { totalRounds?: number; topicText?: string; topicCat?: string; speedRound?: boolean };
+  const topic = topicParam?.trim()
+    ? { text: topicParam.trim(), cat: topicCatParam || "Custom" }
+    : TOPICS[Math.floor(Math.random() * TOPICS.length)];
 
   let code = "";
   for (let i = 0; i < 20; i++) {
@@ -427,6 +433,7 @@ router.post("/1v1/create", (req, res) => {
     status: "waiting",
     totalRounds: totalRounds || 3,
     currentRound: 1,
+    speedRound: !!speedRound,
     winnerPlayerNum: null,
     player1Score: null,
     player2Score: null,
@@ -652,6 +659,19 @@ router.post("/1v1/:code/set-rounds", (req, res) => {
   if (room.status !== "waiting") { res.status(400).json({ error: "Cannot change rounds after opponent joins" }); return; }
   const rounds = Math.min(5, Math.max(1, Number(totalRounds) || 3));
   room.totalRounds = rounds;
+  res.json({ ok: true });
+});
+
+router.post("/1v1/:code/set-speed", (req, res) => {
+  const callerId = getCallerId(req);
+  if (!callerId) { res.status(401).json({ error: "Not authenticated" }); return; }
+  const { code } = req.params;
+  const { speedRound } = req.body as { speedRound: boolean };
+  const room = store.get(code.toUpperCase());
+  if (!room) { res.status(404).json({ error: "Room not found" }); return; }
+  if (room.creator !== callerId) { res.status(403).json({ error: "Only the host can change settings" }); return; }
+  if (room.status !== "waiting") { res.status(400).json({ error: "Cannot change settings after opponent joins" }); return; }
+  room.speedRound = !!speedRound;
   res.json({ ok: true });
 });
 

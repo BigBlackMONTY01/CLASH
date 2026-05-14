@@ -1347,6 +1347,17 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .itc-fallacy{background:rgba(230,57,70,0.1);border-color:rgba(230,57,70,0.35);color:var(--red);}
 .itc-weak_evidence{background:rgba(244,197,66,0.1);border-color:rgba(244,197,66,0.28);color:var(--gold);}
 .itc-emotional_bait{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.28);color:#c084fc;}
+.spectator-banner{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.3);border-radius:var(--radius);padding:10px 16px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#a855f7;margin-bottom:16px;animation:spectatorPulse 2s ease-in-out infinite alternate;}
+@keyframes spectatorPulse{from{opacity:0.7;}to{opacity:1;}}
+.rival-profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;}
+.rival-profile-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text);margin-bottom:8px;}
+.rival-profile-stats{display:flex;gap:16px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;flex-wrap:wrap;}
+.rival-stat{text-align:center;min-width:48px;}.rival-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);display:block;line-height:1;}
+.v1-speed-row{display:flex;gap:8px;margin-bottom:6px;}
+.v1-speed-btn{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:7px 14px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);cursor:pointer;transition:all 0.15s;}
+.v1-speed-btn.active{border-color:var(--red);background:rgba(230,57,70,0.1);color:var(--red);}
+.v1-watch-link{background:rgba(168,85,247,0.07);border:1px dashed rgba(168,85,247,0.3);border-radius:var(--radius);padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:#a855f7;cursor:pointer;transition:background 0.15s;margin-top:10px;text-align:center;display:block;width:100%;box-sizing:border-box;}
+.v1-watch-link:hover{background:rgba(168,85,247,0.14);}
 `;
 
 
@@ -2531,9 +2542,134 @@ interface Stats { wins: number; debates: number; bestScore: number; currentStrea
 interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fallacy"; note: string; }
 interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
 interface RoomTaunt { id: number; text: string; fromName: string; fromPlayerNum: 1 | 2; }
-interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; player1TypingAt: number | null; player2TypingAt: number | null; }
+interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; speedRound: boolean; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; player1TypingAt: number | null; player2TypingAt: number | null; }
 interface V1HistoryEntry { code: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
 interface DebateCard { id: number; playerId: number; debateId: number | null; opponentId: string; opponentName: string; topic: string; score: number; rank: string; rarity: string; bestQuote: string; createdAt: string; }
+
+function generateV1ShareCard(params: {
+  iWon: boolean;
+  myName: string;
+  oppName: string;
+  myRank: string;
+  oppRank: string;
+  myScore: number | null;
+  oppScore: number | null;
+  myIQ: number | null;
+  oppIQ: number | null;
+  topic: string;
+  speedRound: boolean;
+}): string {
+  const W = 1080, H = 1080;
+  const canvas = document.createElement("canvas");
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext("2d")!;
+  const PAD = 60;
+  const resultColor = params.iWon ? "#22c55e" : "#e63946";
+  const glowRgb = params.iWon ? "34,197,94" : "230,57,70";
+
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = "#0a0a0a";
+  ctx.fillRect(0, 0, W, H);
+
+  const glow = ctx.createRadialGradient(W / 2, 300, 0, W / 2, 300, 520);
+  glow.addColorStop(0, `rgba(${glowRgb},0.18)`);
+  glow.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.font = "bold 58px Impact, 'Arial Black', sans-serif";
+  ctx.fillStyle = "#f0f0f0";
+  ctx.textAlign = "left";
+  const clW = ctx.measureText("CL").width;
+  const aW = ctx.measureText("A").width;
+  ctx.fillText("CL", PAD, 90);
+  ctx.fillStyle = "#e63946";
+  ctx.fillText("A", PAD + clW, 90);
+  ctx.fillStyle = "#f0f0f0";
+  ctx.fillText("SH", PAD + clW + aW, 90);
+
+  ctx.font = "bold 18px Arial, sans-serif";
+  ctx.fillStyle = "#444";
+  ctx.textAlign = "right";
+  ctx.fillText(params.speedRound ? "SPEED ROUND · 1v1" : "1v1 ARENA", W - PAD, 90);
+
+  ctx.fillStyle = resultColor;
+  ctx.fillRect(PAD, 108, W - PAD * 2, 3);
+
+  ctx.font = "bold 130px Impact, 'Arial Black', sans-serif";
+  ctx.fillStyle = resultColor;
+  ctx.textAlign = "center";
+  ctx.fillText(params.iWon ? "VICTORY" : "DEFEATED", W / 2, 268);
+
+  const maxTopic = 72;
+  const topicText = params.topic.length > maxTopic ? params.topic.slice(0, maxTopic - 1) + "…" : params.topic;
+  ctx.font = "italic 26px Arial, sans-serif";
+  ctx.fillStyle = "#777";
+  ctx.textAlign = "center";
+  ctx.fillText(`"${topicText}"`, W / 2, 318);
+
+  ctx.fillStyle = "#1a1a1a";
+  ctx.fillRect(PAD, 346, W - PAD * 2, 530);
+  ctx.strokeStyle = "#2a2a2a";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(PAD, 346, W - PAD * 2, 530);
+
+  const midX = W / 2;
+  ctx.strokeStyle = "#2a2a2a";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(midX, 356); ctx.lineTo(midX, 866); ctx.stroke();
+
+  const sides = [
+    { name: params.myName, rank: params.myRank, score: params.myScore, iq: params.myIQ, won: params.iWon, x: PAD + (midX - PAD) / 2, label: "YOU" },
+    { name: params.oppName, rank: params.oppRank, score: params.oppScore, iq: params.oppIQ, won: !params.iWon, x: midX + (W - PAD - midX) / 2, label: "OPPONENT" },
+  ];
+
+  for (const s of sides) {
+    const rankColor = s.rank === "S" ? "#f4c542" : s.rank === "A" ? "#22c55e" : s.rank === "B" ? "#60a5fa" : s.rank === "C" ? "#9ca3af" : s.rank === "D" ? "#f97316" : "#e63946";
+    ctx.font = "bold 14px Arial, sans-serif";
+    ctx.fillStyle = "#555";
+    ctx.textAlign = "center";
+    ctx.fillText(s.label, s.x, 390);
+
+    if (s.won) {
+      ctx.font = "bold 15px Arial, sans-serif";
+      ctx.fillStyle = "#f4c542";
+      ctx.fillText("WINNER", s.x, 414);
+    }
+
+    ctx.font = `bold 130px Impact, 'Arial Black', sans-serif`;
+    ctx.fillStyle = rankColor;
+    ctx.textAlign = "center";
+    ctx.fillText(s.rank, s.x, 570);
+
+    ctx.font = "bold 13px Arial, sans-serif";
+    ctx.fillStyle = "#444";
+    ctx.fillText("RANK", s.x, 596);
+
+    ctx.font = "bold 52px Impact, 'Arial Black', sans-serif";
+    ctx.fillStyle = "#e0e0e0";
+    ctx.fillText(`${s.score ?? "—"}/100`, s.x, 670);
+
+    ctx.font = "bold 12px Arial, sans-serif";
+    ctx.fillStyle = "#444";
+    ctx.fillText("SCORE", s.x, 692);
+
+    ctx.font = "bold 52px Impact, 'Arial Black', sans-serif";
+    ctx.fillStyle = "#777";
+    ctx.fillText(`IQ ${s.iq ?? "—"}`, s.x, 762);
+
+    ctx.font = "bold 22px Arial, sans-serif";
+    ctx.fillStyle = s.won ? "#e0e0e0" : "#444";
+    ctx.fillText(s.name.toUpperCase().slice(0, 14), s.x, 830);
+  }
+
+  ctx.font = "bold 16px Arial, sans-serif";
+  ctx.fillStyle = "#333";
+  ctx.textAlign = "center";
+  ctx.fillText(window.location.hostname.replace(/^www\./, "").toUpperCase(), W / 2, 1038);
+
+  return canvas.toDataURL("image/png");
+}
 
 function scoreTypingStrength(text: string): { score: number; label: string; color: string } {
   if (!text.trim()) return { score: 0, label: "Start writing…", color: "var(--text-dim)" };
@@ -2809,6 +2945,18 @@ export default function App() {
       setRoomJoinCode(roomParam.toUpperCase());
       setV1SubScreen("join");
       setScreen("multiplayer-lobby");
+    }
+    const spectateParam = params.get("spectate");
+    if (spectateParam && spectateParam.length === 6) {
+      apiGet<RoomState>(`/1v1/room/${spectateParam.toUpperCase()}`)
+        .then(room => {
+          setCurrentRoom(room);
+          setRoomPlayerNum(null);
+          if (room.status === "complete") setScreen("multiplayer-results");
+          else if (room.status === "debating") setScreen("multiplayer-debate");
+          else setScreen("multiplayer-waiting");
+        })
+        .catch(() => {});
     }
     const customAIParam = params.get("customAI");
     if (customAIParam) {
@@ -3708,10 +3856,18 @@ export default function App() {
     } catch {}
   };
 
-  const createRoom = async () => {
+  const setSpeedRoundFn = async (speedRound: boolean) => {
+    if (!currentRoom || roomPlayerNum !== 1) return;
+    try {
+      await apiAuthPost(`/1v1/${currentRoom.code}/set-speed`, { speedRound });
+      setCurrentRoom(prev => prev ? { ...prev, speedRound } : prev);
+    } catch {}
+  };
+
+  const createRoom = async (opts?: { topicText?: string; topicCat?: string; speedRound?: boolean }) => {
     setRoomLoading(true); setRoomError("");
     try {
-      const data = await apiAuthPost<{code: string}>("/1v1/create", { totalRounds: 3 });
+      const data = await apiAuthPost<{code: string}>("/1v1/create", { totalRounds: 3, ...opts });
       const room = await apiAuthGet<RoomState>(`/1v1/room/${data.code}`);
       const pool = TOPIC_POOL.slice();
       for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
@@ -3721,6 +3877,11 @@ export default function App() {
       setScreen("multiplayer-waiting");
     } catch (e) { setRoomError((e as Error).message); }
     finally { setRoomLoading(false); }
+  };
+
+  const rematchRoom = async () => {
+    if (!currentRoom) return;
+    await createRoom({ topicText: currentRoom.topicText, topicCat: currentRoom.topicCat });
   };
 
   const joinRoom = async () => {
@@ -3797,7 +3958,7 @@ export default function App() {
     if (v1TimerStartedRound.current === round) return;
     if (v1RoundTimerRef.current) clearInterval(v1RoundTimerRef.current);
     v1TimerStartedRound.current = round;
-    setV1RoundTimeLeft(300);
+    setV1RoundTimeLeft(currentRoom?.speedRound ? 60 : 300);
     v1RoundTimerRef.current = setInterval(() => {
       setV1RoundTimeLeft(prev => {
         if (prev === null) return null;
@@ -4984,7 +5145,7 @@ export default function App() {
               <>
                 {!v1SubScreen ? (
                   <div className="lobby-options">
-                    <div className="lobby-card create" onClick={createRoom}>
+                    <div className="lobby-card create" onClick={() => createRoom()}>
                       <div className="lobby-card-icon">⚔</div>
                       <div className="lobby-card-title">Create Room</div>
                       <div className="lobby-card-sub">Get a code · Share with a friend</div>
@@ -5133,6 +5294,24 @@ export default function App() {
               🔗 {window.location.origin}?room={currentRoom.code}
             </div>
 
+            {roomPlayerNum === 1 && (
+              <button
+                className="v1-watch-link"
+                onClick={() => {
+                  const url = `${window.location.origin}${window.location.pathname}?spectate=${currentRoom.code}`;
+                  navigator.clipboard.writeText(url).catch(() => {});
+                  setShareToast("Spectator link copied!");
+                  setTimeout(() => setShareToast(""), 2500);
+                }}
+              >
+                👁 Copy spectator / watch-live link
+              </button>
+            )}
+
+            {roomPlayerNum === null && (
+              <div className="spectator-banner" style={{ marginBottom: "12px" }}>SPECTATING LIVE · {currentRoom.code}</div>
+            )}
+
             {currentRoom.player2Name ? (
               <div style={{ color: "var(--green)", fontFamily: "'Barlow Condensed'", fontSize: "15px", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px" }}>
                 ✓ {currentRoom.player2Name} joined!
@@ -5172,8 +5351,23 @@ export default function App() {
                     >{r}</button>
                   ))}
                 </div>
-                <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px", color: "var(--text-dim)", marginBottom: "16px" }}>
+                <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px", color: "var(--text-dim)", marginBottom: "12px" }}>
                   {currentRoom.totalRounds} round{currentRoom.totalRounds !== 1 ? "s" : ""} · Give Up unlocks at round 3
+                </div>
+
+                <div className="v1-setup-lbl">Timer Mode</div>
+                <div className="v1-speed-row">
+                  <button
+                    className={`v1-speed-btn${!currentRoom.speedRound ? " active" : ""}`}
+                    onClick={() => setSpeedRoundFn(false)}
+                  >Standard · 5 min</button>
+                  <button
+                    className={`v1-speed-btn${currentRoom.speedRound ? " active" : ""}`}
+                    onClick={() => setSpeedRoundFn(true)}
+                  >Speed · 60 sec</button>
+                </div>
+                <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px", color: "var(--text-dim)", marginBottom: "14px" }}>
+                  {currentRoom.speedRound ? "60 seconds per round — auto-submits when timer expires" : "5 minutes per round"}
                 </div>
 
                 <div className="v1-setup-lbl" style={{ marginTop: "4px" }}>Topic</div>
@@ -5355,6 +5549,10 @@ export default function App() {
               <strong>"{currentRoom.topicText}"</strong>
             </div>
 
+            {roomPlayerNum === null && (
+              <div className="spectator-banner">SPECTATING LIVE · {currentRoom.player1Name} vs {currentRoom.player2Name || "…"}</div>
+            )}
+
             {(myAvgScore !== null || oppAvgScore !== null) ? (
               <div className="v1-score-bar">
                 <div>
@@ -5413,7 +5611,16 @@ export default function App() {
               </div>
             )}
 
-            {currentRoom.status === "debating" && (
+            {currentRoom.status === "debating" && roomPlayerNum === null && (
+              <div className="v1-opp-typing" style={{ textAlign: "center" }}>
+                <div className="waiting-dots">
+                  <div className="waiting-dot" /><div className="waiting-dot" /><div className="waiting-dot" />
+                </div>
+                <span className="v1-opp-typing-label">Round {currentRoom.currentRound} in progress…</span>
+              </div>
+            )}
+
+            {currentRoom.status === "debating" && roomPlayerNum !== null && (
               myRoundArg ? (
                 <div>
                   <div className="v1-arg-entry">
@@ -5583,9 +5790,54 @@ export default function App() {
                 </div>
               </div>
             </div>
+            {roomPlayerNum !== null && (
+              <div className="rival-profile-card">
+                <div className="rival-profile-name">{oppName}</div>
+                <div className="rival-profile-stats">
+                  <div className="rival-stat">
+                    <span className="rival-stat-val" style={{ color: oppRank === "S" ? "var(--gold)" : oppRank === "A" ? "var(--green)" : oppRank === "B" ? "#60a5fa" : "var(--text)" }}>{oppRank}</span>
+                    Rank
+                  </div>
+                  <div className="rival-stat">
+                    <span className="rival-stat-val">{oppScore ?? 0}</span>
+                    Avg Score
+                  </div>
+                  <div className="rival-stat">
+                    <span className="rival-stat-val">{oppIQ ?? "—"}</span>
+                    Debate IQ
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              <button className="btn btn-primary" onClick={() => { setCurrentRoom(null); setRoomPlayerNum(null); setRoomArgInput(""); setRoomError(""); setV1SubScreen(""); setV1Tab("play"); setScreen("multiplayer-lobby"); }}>⚔ Rematch</button>
+              {roomPlayerNum !== null && (
+                <button className="btn btn-primary" disabled={roomLoading} onClick={rematchRoom}>
+                  {roomLoading ? "Creating…" : "⚔ Rematch (same topic)"}
+                </button>
+              )}
               <button className="btn btn-secondary" onClick={() => { viewingArgsAfterMatch.current = true; setViewingArgsMode(true); setScreen("multiplayer-debate"); }}>View Arguments</button>
+              {roomPlayerNum !== null && (
+                <button className="btn btn-secondary" onClick={() => {
+                  const uri = generateV1ShareCard({
+                    iWon,
+                    myName,
+                    oppName,
+                    myRank,
+                    oppRank,
+                    myScore,
+                    oppScore,
+                    myIQ,
+                    oppIQ,
+                    topic: currentRoom.topicText,
+                    speedRound: !!currentRoom.speedRound,
+                  });
+                  const a = document.createElement("a");
+                  a.href = uri;
+                  a.download = `clash-1v1-${currentRoom.code}.png`;
+                  a.click();
+                }}>Share Card</button>
+              )}
               <button className="btn btn-secondary" onClick={() => {
                 const iWon2 = currentRoom.winnerPlayerNum === roomPlayerNum;
                 const myN = roomPlayerNum === 1 ? currentRoom.player1Name : (currentRoom.player2Name || "You");
@@ -5597,7 +5849,7 @@ export default function App() {
                 navigator.clipboard.writeText(text).catch(() => {});
                 setShareToast("Result copied!");
                 setTimeout(() => setShareToast(""), 2500);
-              }}>↗ Share</button>
+              }}>↗ Share Text</button>
               <button className="btn btn-ghost" onClick={reset}>Home</button>
             </div>
           </div>
