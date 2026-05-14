@@ -46,7 +46,7 @@
         opacity: 0; pointer-events: none;
       }
       #splash-flash.fire {
-        animation: flashBurst 0.25s ease-out forwards;
+        animation: flashBurst 0.45s ease-out forwards;
       }
 
       .arg-line {
@@ -73,9 +73,9 @@
         transform: translateX(-50%);
       }
       #arg-top.collide {
-        transform: translateX(-50%) translateY(20px) scale(0.05);
+        transform: translateX(-50%) translateY(6px);
         opacity: 0;
-        transition: transform 0.18s ease-in, opacity 0.18s ease-in;
+        transition: transform 0.28s ease-in, opacity 0.28s ease-in;
       }
 
       #arg-bot {
@@ -88,9 +88,9 @@
         transform: translateX(-50%);
       }
       #arg-bot.collide {
-        transform: translateX(-50%) translateY(-14px) scale(0.05);
+        transform: translateX(-50%) translateY(-4px);
         opacity: 0;
-        transition: transform 0.18s ease-in, opacity 0.18s ease-in;
+        transition: transform 0.28s ease-in, opacity 0.28s ease-in;
       }
 
       .arg-cursor {
@@ -122,22 +122,6 @@
         transform: translate(-50%, -50%) scale(1);
       }
 
-      .s-wave {
-        position: absolute;
-        top: 50%; left: 50%;
-        width: 10px; height: 10px;
-        border-radius: 50%;
-        border: 2px solid rgba(230, 57, 70, 0.85);
-        transform: translate(-50%, -50%) scale(0);
-        opacity: 0;
-        pointer-events: none;
-      }
-      .s-wave.fire { animation: waveOut 0.65s ease-out forwards; }
-      #w2.fire {
-        animation: waveOut 0.7s ease-out 0.12s forwards;
-        border-color: rgba(230, 57, 70, 0.4);
-      }
-
       #splash-sub {
         position: absolute;
         top: calc(50% + clamp(44px, 14vw, 68px));
@@ -155,12 +139,8 @@
 
       @keyframes cursorBlink { 50% { opacity: 0; } }
       @keyframes flashBurst {
-        0%   { opacity: 0.92; }
+        0%   { opacity: 0.38; }
         100% { opacity: 0; }
-      }
-      @keyframes waveOut {
-        0%   { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-        100% { transform: translate(-50%, -50%) scale(18); opacity: 0; }
       }
     </style>
     <script>

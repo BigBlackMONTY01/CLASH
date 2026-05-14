@@ -2943,6 +2943,7 @@ export default function App() {
   const [friendChallengeCode, setFriendChallengeCode] = useState<string|null>(null);
   const [friendChallengeCopied, setFriendChallengeCopied] = useState(false);
   const [twoTruthsMode, setTwoTruthsMode] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const lastNotifiedRoundRef = useRef<number>(0);
 
   const [topicVotes, setTopicVotes] = useState<Record<string,number>>(() => { try { return JSON.parse(localStorage.getItem("clash-votes")||"{}"); } catch { return {}; } });
@@ -6789,20 +6790,35 @@ export default function App() {
           )}
           {player?.username && (
             <div className="pp-share-section">
-              <div className="pp-share-lbl">Share &amp; Invite</div>
-              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"10px",letterSpacing:"2px",textTransform:"uppercase",color:"var(--text-dim)",marginBottom:"4px"}}>My Profile</div>
-              <div className="pp-share-row">
-                <span className="pp-share-link">{`${window.location.origin}?profile=${player.username}`}</span>
-                <button className="pp-share-copy" onClick={() => { navigator.clipboard.writeText(`${window.location.origin}?profile=${player.username}`); setProfileLinkCopied(true); setTimeout(()=>setProfileLinkCopied(false),2000); }}>{profileLinkCopied ? "Copied!" : "Copy"}</button>
-              </div>
-              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"10px",letterSpacing:"2px",textTransform:"uppercase",color:"var(--text-dim)",marginBottom:"4px",marginTop:"8px"}}>Referral Link</div>
-              <div className="pp-share-row">
-                <span className="pp-share-link">{`${window.location.origin}?ref=${player.username}`}</span>
-                <button className="pp-share-copy" onClick={() => { navigator.clipboard.writeText(`${window.location.origin}?ref=${player.username}`); setReferralCopied(true); setTimeout(()=>setReferralCopied(false),2000); }}>{referralCopied ? "Copied!" : "Copy"}</button>
-              </div>
-              <button className="btn btn-ghost" style={{width:"100%",marginTop:"10px",fontSize:"12px",letterSpacing:"2px"}} onClick={() => { setAddFriendInput(""); setAddFriendError(""); setViewingFriend(null); setFriendChallengeCode(null); setShowFriendsModal(true); }}>
-                My Rivals ({friendsList.length})
+              <button
+                onClick={() => setShareOpen(o => !o)}
+                style={{width:"100%",background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",padding:0}}
+              >
+                <span className="pp-share-lbl" style={{marginBottom:0}}>Share &amp; Invite</span>
+                <svg
+                  width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                  style={{color:"var(--text-dim)",flexShrink:0,transition:"transform 0.2s ease",transform:shareOpen?"rotate(180deg)":"rotate(0deg)"}}
+                >
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
               </button>
+              {shareOpen && (
+                <div style={{marginTop:"12px"}}>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"10px",letterSpacing:"2px",textTransform:"uppercase",color:"var(--text-dim)",marginBottom:"4px"}}>My Profile</div>
+                  <div className="pp-share-row">
+                    <span className="pp-share-link">{`${window.location.origin}?profile=${player.username}`}</span>
+                    <button className="pp-share-copy" onClick={() => { navigator.clipboard.writeText(`${window.location.origin}?profile=${player.username}`); setProfileLinkCopied(true); setTimeout(()=>setProfileLinkCopied(false),2000); }}>{profileLinkCopied ? "Copied!" : "Copy"}</button>
+                  </div>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"10px",letterSpacing:"2px",textTransform:"uppercase",color:"var(--text-dim)",marginBottom:"4px",marginTop:"8px"}}>Referral Link</div>
+                  <div className="pp-share-row">
+                    <span className="pp-share-link">{`${window.location.origin}?ref=${player.username}`}</span>
+                    <button className="pp-share-copy" onClick={() => { navigator.clipboard.writeText(`${window.location.origin}?ref=${player.username}`); setReferralCopied(true); setTimeout(()=>setReferralCopied(false),2000); }}>{referralCopied ? "Copied!" : "Copy"}</button>
+                  </div>
+                  <button className="btn btn-ghost" style={{width:"100%",marginTop:"10px",fontSize:"12px",letterSpacing:"2px"}} onClick={() => { setAddFriendInput(""); setAddFriendError(""); setViewingFriend(null); setFriendChallengeCode(null); setShowFriendsModal(true); }}>
+                    My Rivals ({friendsList.length})
+                  </button>
+                </div>
+              )}
             </div>
           )}
           <button className="pp-logout" onClick={logoutFn}>Log Out</button>
