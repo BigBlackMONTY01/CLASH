@@ -1420,117 +1420,6 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 
 
 
-type Px = [number, number, string];
-const AVATAR_PIXELS: Record<string, Px[]> = {
-  blade: [
-    [5,1,'#c0c0c0'],[6,1,'#c0c0c0'],[7,1,'#c0c0c0'],[8,1,'#c0c0c0'],
-    [4,2,'#b8b8b8'],[5,2,'#b8b8b8'],[6,2,'#b8b8b8'],[7,2,'#b8b8b8'],[8,2,'#b8b8b8'],[9,2,'#b8b8b8'],
-    [4,3,'#b8b8b8'],[5,3,'#2a2a2a'],[6,3,'#2a2a2a'],[7,3,'#2a2a2a'],[8,3,'#2a2a2a'],[9,3,'#b8b8b8'],
-    [4,4,'#b0b0b0'],[5,4,'#b0b0b0'],[6,4,'#b0b0b0'],[7,4,'#b0b0b0'],[8,4,'#b0b0b0'],[9,4,'#b0b0b0'],
-    [6,5,'#f0c080'],[7,5,'#f0c080'],[8,5,'#f0c080'],
-    [3,6,'#888'],[4,6,'#a8a8a8'],[5,6,'#a8a8a8'],[6,6,'#a8a8a8'],[7,6,'#a8a8a8'],[8,6,'#a8a8a8'],[9,6,'#a8a8a8'],[10,6,'#a8a8a8'],[11,6,'#888'],
-    [3,7,'#888'],[4,7,'#a0a0a0'],[5,7,'#a0a0a0'],[6,7,'#a0a0a0'],[7,7,'#e63946'],[8,7,'#a0a0a0'],[9,7,'#a0a0a0'],[10,7,'#a0a0a0'],[11,7,'#888'],
-    [3,8,'#888'],[4,8,'#a0a0a0'],[5,8,'#a0a0a0'],[6,8,'#a0a0a0'],[7,8,'#a0a0a0'],[8,8,'#a0a0a0'],[9,8,'#a0a0a0'],[10,8,'#a0a0a0'],[11,8,'#888'],
-    [3,9,'#888'],[4,9,'#9a9a9a'],[5,9,'#9a9a9a'],[6,9,'#9a9a9a'],[7,9,'#9a9a9a'],[8,9,'#9a9a9a'],[9,9,'#9a9a9a'],[10,9,'#9a9a9a'],[11,9,'#888'],
-    [4,10,'#555'],[5,10,'#666'],[6,10,'#888'],[7,10,'#666'],[8,10,'#888'],[9,10,'#666'],[10,10,'#555'],
-    [4,11,'#989898'],[5,11,'#989898'],[9,11,'#989898'],[10,11,'#989898'],
-    [4,12,'#989898'],[5,12,'#989898'],[9,12,'#989898'],[10,12,'#989898'],
-    [4,13,'#888'],[5,13,'#888'],[9,13,'#888'],[10,13,'#888'],
-    [12,0,'#dcdcdc'],[12,1,'#dcdcdc'],[12,2,'#dcdcdc'],[12,3,'#dcdcdc'],[12,4,'#dcdcdc'],
-    [11,5,'#c8a830'],[12,5,'#c8a830'],[13,5,'#c8a830'],
-    [12,6,'#7a3f00'],[12,7,'#7a3f00'],[12,8,'#c8a830'],
-  ],
-  sage: [
-    [7,0,'#7e22ce'],[6,1,'#7e22ce'],[7,1,'#7e22ce'],[8,1,'#7e22ce'],
-    [5,2,'#6b21a8'],[6,2,'#6b21a8'],[7,2,'#6b21a8'],[8,2,'#6b21a8'],[9,2,'#6b21a8'],
-    [4,3,'#581c87'],[5,3,'#581c87'],[6,3,'#7e22ce'],[7,3,'#f4c542'],[8,3,'#7e22ce'],[9,3,'#581c87'],[10,3,'#581c87'],
-    [5,4,'#f0c080'],[6,4,'#1a1a2e'],[7,4,'#f0c080'],[8,4,'#f0c080'],[9,4,'#1a1a2e'],
-    [4,5,'#e8e0d0'],[5,5,'#e8e0d0'],[6,5,'#e8e0d0'],[7,5,'#e8e0d0'],[8,5,'#e8e0d0'],[9,5,'#e8e0d0'],[10,5,'#e8e0d0'],
-    [5,6,'#d8d0c0'],[6,6,'#d8d0c0'],[7,6,'#d8d0c0'],[8,6,'#d8d0c0'],[9,6,'#d8d0c0'],
-    [4,7,'#7e22ce'],[5,7,'#6b21a8'],[6,7,'#6b21a8'],[7,7,'#f4c542'],[8,7,'#6b21a8'],[9,7,'#6b21a8'],[10,7,'#7e22ce'],
-    [3,8,'#581c87'],[4,8,'#7e22ce'],[5,8,'#6b21a8'],[6,8,'#6b21a8'],[7,8,'#6b21a8'],[8,8,'#6b21a8'],[9,8,'#6b21a8'],[10,8,'#7e22ce'],[11,8,'#581c87'],
-    [3,9,'#4c1d95'],[4,9,'#5b21b6'],[5,9,'#5b21b6'],[6,9,'#5b21b6'],[7,9,'#5b21b6'],[8,9,'#5b21b6'],[9,9,'#5b21b6'],[10,9,'#5b21b6'],[11,9,'#4c1d95'],
-    [3,10,'#4c1d95'],[4,10,'#5b21b6'],[5,10,'#5b21b6'],[6,10,'#5b21b6'],[7,10,'#5b21b6'],[8,10,'#5b21b6'],[9,10,'#5b21b6'],[10,10,'#5b21b6'],[11,10,'#4c1d95'],
-    [4,11,'#4c1d95'],[5,11,'#5b21b6'],[7,11,'#5b21b6'],[8,11,'#5b21b6'],[10,11,'#4c1d95'],
-    [5,12,'#3b0764'],[7,12,'#3b0764'],
-    [13,1,'#f4c542'],[14,1,'#f4c542'],[13,2,'#c8a830'],
-    [13,3,'#7a3f00'],[13,4,'#7a3f00'],[13,5,'#7a3f00'],[13,6,'#7a3f00'],[13,7,'#7a3f00'],[13,8,'#7a3f00'],[13,9,'#7a3f00'],[13,10,'#7a3f00'],
-  ],
-  unit: [
-    [7,0,'#a0a8b0'],[8,0,'#a0a8b0'],[8,1,'#e63946'],
-    [4,2,'#6080a0'],[5,2,'#7090b0'],[6,2,'#7090b0'],[7,2,'#7090b0'],[8,2,'#7090b0'],[9,2,'#7090b0'],[10,2,'#7090b0'],[11,2,'#6080a0'],
-    [4,3,'#506888'],[5,3,'#00c8ff'],[6,3,'#00c8ff'],[7,3,'#6080a0'],[8,3,'#6080a0'],[9,3,'#00c8ff'],[10,3,'#00c8ff'],[11,3,'#506888'],
-    [4,4,'#506888'],[5,4,'#00a8e0'],[6,4,'#00a8e0'],[7,4,'#6080a0'],[8,4,'#6080a0'],[9,4,'#00a8e0'],[10,4,'#00a8e0'],[11,4,'#506888'],
-    [4,5,'#6080a0'],[5,5,'#6080a0'],[6,5,'#6080a0'],[7,5,'#6080a0'],[8,5,'#6080a0'],[9,5,'#6080a0'],[10,5,'#6080a0'],[11,5,'#6080a0'],
-    [5,6,'#405060'],[6,6,'#7090b0'],[7,6,'#405060'],[8,6,'#7090b0'],[9,6,'#405060'],[10,6,'#7090b0'],
-    [6,7,'#506878'],[7,7,'#506878'],[8,7,'#506878'],[9,7,'#506878'],
-    [3,8,'#405060'],[4,8,'#506878'],[5,8,'#506878'],[6,8,'#506878'],[7,8,'#506878'],[8,8,'#506878'],[9,8,'#506878'],[10,8,'#506878'],[11,8,'#506878'],[12,8,'#405060'],
-    [3,9,'#405060'],[4,9,'#4a5a6a'],[5,9,'#3a4858'],[6,9,'#e63946'],[7,9,'#22c55e'],[8,9,'#f4c542'],[9,9,'#3a4858'],[10,9,'#4a5a6a'],[11,9,'#4a5a6a'],[12,9,'#405060'],
-    [3,10,'#405060'],[4,10,'#4a5a6a'],[5,10,'#4a5a6a'],[6,10,'#4a5a6a'],[7,10,'#4a5a6a'],[8,10,'#4a5a6a'],[9,10,'#4a5a6a'],[10,10,'#4a5a6a'],[11,10,'#4a5a6a'],[12,10,'#405060'],
-    [2,8,'#405060'],[2,9,'#405060'],[2,10,'#405060'],[2,11,'#304050'],[1,10,'#304050'],
-    [13,8,'#405060'],[13,9,'#405060'],[13,10,'#405060'],[13,11,'#304050'],[14,10,'#304050'],
-    [4,11,'#405060'],[5,11,'#405060'],[9,11,'#405060'],[10,11,'#405060'],
-    [4,12,'#3a4858'],[5,12,'#3a4858'],[9,12,'#3a4858'],[10,12,'#3a4858'],
-    [4,13,'#304050'],[5,13,'#304050'],[9,13,'#304050'],[10,13,'#304050'],
-  ],
-  shade: [
-    [5,0,'#151515'],[6,0,'#151515'],[7,0,'#151515'],[8,0,'#151515'],[9,0,'#151515'],
-    [4,1,'#1a1a1a'],[5,1,'#1a1a1a'],[6,1,'#1a1a1a'],[7,1,'#1a1a1a'],[8,1,'#1a1a1a'],[9,1,'#1a1a1a'],[10,1,'#1a1a1a'],
-    [4,2,'#222'],[5,2,'#222'],[6,2,'#222'],[7,2,'#222'],[8,2,'#222'],[9,2,'#222'],[10,2,'#222'],
-    [4,3,'#222'],[5,3,'#e63946'],[6,3,'#e63946'],[7,3,'#e63946'],[8,3,'#e63946'],[9,3,'#e63946'],[10,3,'#222'],
-    [4,4,'#222'],[5,4,'#222'],[6,4,'#222'],[7,4,'#222'],[8,4,'#222'],[9,4,'#222'],[10,4,'#222'],
-    [3,5,'#c0392b'],[4,5,'#e63946'],[5,5,'#e63946'],[6,5,'#e63946'],[7,5,'#e63946'],[8,5,'#e63946'],[9,5,'#e63946'],[10,5,'#e63946'],[11,5,'#c0392b'],
-    [3,6,'#1a1a1a'],[4,6,'#222'],[5,6,'#222'],[6,6,'#222'],[7,6,'#222'],[8,6,'#222'],[9,6,'#222'],[10,6,'#222'],[11,6,'#1a1a1a'],
-    [3,7,'#1a1a1a'],[4,7,'#1e1e1e'],[5,7,'#1e1e1e'],[6,7,'#1e1e1e'],[7,7,'#1e1e1e'],[8,7,'#1e1e1e'],[9,7,'#1e1e1e'],[10,7,'#1e1e1e'],[11,7,'#1a1a1a'],
-    [3,8,'#1a1a1a'],[4,8,'#1e1e1e'],[5,8,'#1e1e1e'],[6,8,'#1e1e1e'],[7,8,'#1e1e1e'],[8,8,'#1e1e1e'],[9,8,'#1e1e1e'],[10,8,'#1e1e1e'],[11,8,'#1a1a1a'],
-    [4,9,'#e63946'],[5,9,'#111'],[6,9,'#e63946'],[7,9,'#111'],[8,9,'#e63946'],[9,9,'#111'],[10,9,'#e63946'],
-    [4,10,'#1e1e1e'],[5,10,'#1e1e1e'],[8,10,'#1e1e1e'],[9,10,'#1e1e1e'],
-    [4,11,'#1a1a1a'],[5,11,'#1a1a1a'],[8,11,'#1a1a1a'],[9,11,'#1a1a1a'],
-    [4,12,'#1a1a1a'],[5,12,'#1a1a1a'],[8,12,'#1a1a1a'],[9,12,'#1a1a1a'],
-    [4,13,'#141414'],[5,13,'#141414'],[8,13,'#141414'],[9,13,'#141414'],
-    [12,2,'#ccc'],[12,3,'#ccc'],[12,4,'#ccc'],[12,5,'#ccc'],[12,6,'#ccc'],
-    [11,2,'#999'],[13,2,'#999'],[12,7,'#6b3300'],
-  ],
-  flame: [
-    [7,0,'#dc2626'],[8,0,'#dc2626'],
-    [6,1,'#dc2626'],[7,1,'#ea580c'],[8,1,'#ea580c'],[9,1,'#dc2626'],
-    [5,2,'#dc2626'],[6,2,'#ea580c'],[7,2,'#f97316'],[8,2,'#f97316'],[9,2,'#ea580c'],[10,2,'#dc2626'],
-    [4,3,'#ea580c'],[5,3,'#f97316'],[6,3,'#fbbf24'],[7,3,'#fbbf24'],[8,3,'#fbbf24'],[9,3,'#f97316'],[10,3,'#ea580c'],[11,3,'#dc2626'],
-    [3,4,'#dc2626'],[4,4,'#f97316'],[5,4,'#fbbf24'],[6,4,'#fef08a'],[7,4,'#fff9c0'],[8,4,'#fef08a'],[9,4,'#fbbf24'],[10,4,'#f97316'],[11,4,'#dc2626'],
-    [3,5,'#ea580c'],[4,5,'#f97316'],[5,5,'#1a1a1a'],[6,5,'#fef08a'],[7,5,'#fef08a'],[8,5,'#fef08a'],[9,5,'#1a1a1a'],[10,5,'#f97316'],[11,5,'#ea580c'],
-    [3,6,'#f97316'],[4,6,'#fbbf24'],[5,6,'#fbbf24'],[6,6,'#fef08a'],[7,6,'#fef08a'],[8,6,'#fef08a'],[9,6,'#fbbf24'],[10,6,'#fbbf24'],[11,6,'#f97316'],
-    [4,7,'#f97316'],[5,7,'#fbbf24'],[6,7,'#fbbf24'],[7,7,'#fbbf24'],[8,7,'#fbbf24'],[9,7,'#fbbf24'],[10,7,'#f97316'],
-    [4,8,'#ea580c'],[5,8,'#f97316'],[6,8,'#fbbf24'],[7,8,'#fbbf24'],[8,8,'#fbbf24'],[9,8,'#f97316'],[10,8,'#ea580c'],
-    [5,9,'#dc2626'],[6,9,'#f97316'],[7,9,'#f97316'],[8,9,'#f97316'],[9,9,'#dc2626'],
-    [5,10,'#991b1b'],[6,10,'#dc2626'],[7,10,'#dc2626'],[8,10,'#dc2626'],[9,10,'#991b1b'],
-    [6,11,'#7f1d1d'],[7,11,'#991b1b'],[8,11,'#7f1d1d'],
-  ],
-  rex: [
-    [4,0,'#ea580c'],[4,1,'#f97316'],[11,0,'#ea580c'],[11,1,'#f97316'],[7,0,'#ea580c'],[7,1,'#c2410c'],
-    [4,2,'#166534'],[5,2,'#15803d'],[6,2,'#15803d'],[7,2,'#15803d'],[8,2,'#15803d'],[9,2,'#15803d'],[10,2,'#15803d'],[11,2,'#166534'],
-    [3,3,'#14532d'],[4,3,'#15803d'],[5,3,'#16a34a'],[6,3,'#15803d'],[7,3,'#166534'],[8,3,'#15803d'],[9,3,'#16a34a'],[10,3,'#15803d'],[11,3,'#15803d'],[12,3,'#14532d'],
-    [4,4,'#14532d'],[5,4,'#f4c542'],[6,4,'#0a1800'],[7,4,'#15803d'],[8,4,'#15803d'],[9,4,'#0a1800'],[10,4,'#f4c542'],[11,4,'#14532d'],
-    [3,5,'#14532d'],[4,5,'#15803d'],[5,5,'#16a34a'],[6,5,'#15803d'],[7,5,'#14532d'],[8,5,'#15803d'],[9,5,'#16a34a'],[10,5,'#15803d'],[11,5,'#15803d'],[12,5,'#14532d'],
-    [3,6,'#14532d'],[4,6,'#15803d'],[5,6,'#0a3018'],[6,6,'#14532d'],[7,6,'#14532d'],[8,6,'#14532d'],[9,6,'#0a3018'],[10,6,'#15803d'],[11,6,'#15803d'],[12,6,'#14532d'],
-    [3,7,'#0d4f22'],[4,7,'#15803d'],[5,7,'#15803d'],[6,7,'#15803d'],[7,7,'#15803d'],[8,7,'#15803d'],[9,7,'#15803d'],[10,7,'#15803d'],[11,7,'#15803d'],[12,7,'#0d4f22'],
-    [4,8,'#0d4f22'],[5,8,'#f8fafc'],[6,8,'#f8fafc'],[7,8,'#0a3018'],[8,8,'#f8fafc'],[9,8,'#f8fafc'],[10,8,'#f8fafc'],[11,8,'#0d4f22'],
-    [4,9,'#166534'],[5,9,'#15803d'],[6,9,'#15803d'],[7,9,'#166534'],[8,9,'#15803d'],[9,9,'#15803d'],[10,9,'#166534'],[11,9,'#15803d'],
-    [12,7,'#f97316'],[13,7,'#fbbf24'],[14,7,'#fef08a'],
-    [12,8,'#ea580c'],[13,8,'#f97316'],[14,8,'#fbbf24'],
-  ],
-};
-const PIXEL_AVATAR_IDS = ["blade","sage","unit","shade","flame","rex"] as const;
-type PixelAvatarId = typeof PIXEL_AVATAR_IDS[number];
-const PIXEL_AVATAR_LABELS: Record<string,string> = {blade:"Blade",sage:"Sage",unit:"Unit",shade:"Shade",flame:"Flame",rex:"Rex"};
-function renderPixelAvatar(id: string, size = 32, animate = false) {
-  const pixels = AVATAR_PIXELS[id as PixelAvatarId];
-  if (!pixels) return null;
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" className={animate ? "pixel-av-anim" : undefined} style={{imageRendering:"pixelated",display:"block",flexShrink:0}}>
-      {pixels.map(([x,y,color],i) => <rect key={i} x={x} y={y} width={1} height={1} fill={color}/>)}
-    </svg>
-  );
-}
 
 function TriangleRadar({ logic, persuasion, delivery }: { logic: number; persuasion: number; delivery: number }) {
   const size = 110;
@@ -2976,14 +2865,12 @@ export default function App() {
   const [lbRefreshKey, setLbRefreshKey] = useState(0);
   const [lbLoading, setLbLoading] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(() => { try { return localStorage.getItem("clash-sound") !== "off"; } catch { return true; } });
-  const [soundPack, setSoundPack] = useState<"classic"|"retro"|"dark"|"minimal"|"arena"|"ghost">(() => { try { return (localStorage.getItem("clash-sound-pack") as "classic"|"retro"|"dark"|"minimal"|"arena"|"ghost") || "classic"; } catch { return "classic"; } });
+
   const [factCheckMode, setFactCheckMode] = useState(false);
   const [factCheckResults, setFactCheckResults] = useState<Array<{claim:string;verdict:string;explanation:string}>|null>(null);
   const [showPwaModal, setShowPwaModal] = useState(false);
   const [pwaOs, setPwaOs] = useState<"ios"|"android"|"desktop">("ios");
-  const [profileAvatar, setProfileAvatar] = useState<string>(() => { try { return localStorage.getItem("clash-profile-avatar") || ""; } catch { return ""; } });
-  const [accentColor, setAccentColor] = useState<string>(() => { try { return localStorage.getItem("clash-accent-color") || "#e63946"; } catch { return "#e63946"; } });
-  const [profileCardBg, setProfileCardBg] = useState<string>(() => { try { return localStorage.getItem("clash-card-bg") || "bg0"; } catch { return "bg0"; } });
+
   const [topicVotes, setTopicVotes] = useState<Record<string,number>>(() => { try { return JSON.parse(localStorage.getItem("clash-votes")||"{}"); } catch { return {}; } });
   const [votedTopics, setVotedTopics] = useState<Set<string>>(() => { try { return new Set<string>(JSON.parse(localStorage.getItem("clash-voted")||"[]")); } catch { return new Set<string>(); } });
   const [unlockedAchs, setUnlockedAchs] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem("clash-achievements")||"[]"); } catch { return []; } });
@@ -3135,27 +3022,6 @@ export default function App() {
               bestStreak: profile.stats.bestStreak ?? 0,
               opponentHistory: profile.stats.opponentHistory,
             });
-          }
-          // Restore per-account preferences
-          if ((profile as any).avatarId !== undefined) {
-            const av = (profile as any).avatarId || "";
-            setProfileAvatar(av);
-            try { if (av) localStorage.setItem("clash-profile-avatar", av); } catch {}
-          }
-          if ((profile as any).accentColor) {
-            const ac = (profile as any).accentColor;
-            setAccentColor(ac);
-            try { localStorage.setItem("clash-accent-color", ac); } catch {}
-          }
-          if ((profile as any).cardBg) {
-            const cb = (profile as any).cardBg;
-            setProfileCardBg(cb);
-            try { localStorage.setItem("clash-card-bg", cb); } catch {}
-          }
-          if ((profile as any).soundPack) {
-            const sp = (profile as any).soundPack as "classic"|"retro"|"dark"|"minimal"|"arena"|"ghost";
-            setSoundPack(sp);
-            try { localStorage.setItem("clash-sound-pack", sp); } catch {}
           }
         } catch {
           localStorage.removeItem("clash-auth-token");
@@ -3500,52 +3366,15 @@ export default function App() {
         osc.start(ctx.currentTime + delay);
         osc.stop(ctx.currentTime + delay + dur + 0.05);
       };
-      if (soundPack === "retro") {
-        if (type === "round-win")   { play(523,0.06,0,"square",0.14); play(659,0.06,0.07,"square",0.14); play(784,0.1,0.14,"square",0.14); }
-        else if (type === "round-loss") { play(180,0.1,0,"square",0.12); play(140,0.14,0.12,"square",0.1); }
-        else if (type === "victory") { play(523,0.06,0,"square",0.13); play(659,0.06,0.07,"square",0.13); play(784,0.06,0.14,"square",0.13); play(1047,0.18,0.22,"square",0.13); }
-        else if (type === "defeat") { play(300,0.08,0,"square",0.12); play(220,0.1,0.1,"square",0.1); play(160,0.15,0.22,"square",0.08); }
-        else if (type === "tick")   { play(1200,0.03,0,"square",0.08); }
-        else if (type === "submit") { play(440,0.05,0,"square",0.1); }
-      } else if (soundPack === "dark") {
-        if (type === "round-win")   { play(130,0.2,0,"sawtooth",0.14); play(195,0.25,0.15,"sawtooth",0.11); }
-        else if (type === "round-loss") { play(80,0.3,0,"sawtooth",0.17); play(60,0.4,0.25,"sawtooth",0.14); }
-        else if (type === "victory") { play(110,0.2,0,"sawtooth",0.16); play(165,0.2,0.2,"sawtooth",0.13); play(220,0.35,0.4,"sawtooth",0.11); }
-        else if (type === "defeat") { play(70,0.4,0,"sawtooth",0.18); play(50,0.5,0.3,"sawtooth",0.16); }
-        else if (type === "tick")   { play(600,0.03,0,"sawtooth",0.05); }
-        else if (type === "submit") { play(220,0.08,0,"sawtooth",0.09); }
-      } else if (soundPack === "minimal") {
-        if (type === "round-win")   { play(880,0.06,0,"sine",0.09); }
-        else if (type === "round-loss") { play(330,0.08,0,"sine",0.07); }
-        else if (type === "victory") { play(880,0.06,0,"sine",0.09); play(1100,0.1,0.08,"sine",0.07); }
-        else if (type === "defeat") { play(280,0.1,0,"sine",0.07); }
-        else if (type === "tick")   { play(1400,0.02,0,"sine",0.04); }
-        else if (type === "submit") { play(660,0.04,0,"sine",0.06); }
-      } else if (soundPack === "arena") {
-        if (type === "round-win")   { play(392,0.06,0,"triangle",0.18); play(523,0.06,0.07,"triangle",0.18); play(659,0.14,0.14,"triangle",0.2); }
-        else if (type === "round-loss") { play(220,0.1,0,"triangle",0.18); play(165,0.18,0.12,"triangle",0.15); }
-        else if (type === "victory") { play(392,0.07,0,"triangle",0.18); play(523,0.07,0.08,"triangle",0.18); play(659,0.07,0.16,"triangle",0.18); play(784,0.07,0.24,"triangle",0.18); play(1047,0.3,0.32,"triangle",0.22); }
-        else if (type === "defeat") { play(350,0.12,0,"triangle",0.2); play(260,0.15,0.14,"triangle",0.17); play(196,0.25,0.3,"triangle",0.14); }
-        else if (type === "tick")   { play(1200,0.04,0,"triangle",0.1); }
-        else if (type === "submit") { play(523,0.06,0,"triangle",0.14); play(659,0.08,0.07,"triangle",0.1); }
-      } else if (soundPack === "ghost") {
-        if (type === "round-win")   { play(660,0.4,0,"sine",0.06); play(990,0.5,0.1,"sine",0.04); }
-        else if (type === "round-loss") { play(220,0.5,0,"sine",0.06); play(165,0.6,0.2,"sine",0.04); }
-        else if (type === "victory") { play(528,0.6,0,"sine",0.07); play(660,0.7,0.15,"sine",0.05); play(792,0.8,0.35,"sine",0.04); }
-        else if (type === "defeat") { play(180,0.7,0,"sine",0.07); play(135,0.8,0.25,"sine",0.05); }
-        else if (type === "tick")   { play(1800,0.08,0,"sine",0.03); }
-        else if (type === "submit") { play(396,0.15,0,"sine",0.06); play(528,0.2,0.1,"sine",0.04); }
-      } else {
-        if (type === "round-win")  { play(523,0.12); play(659,0.12,0.13); play(784,0.2,0.26); }
-        else if (type === "round-loss") { play(240,0.18,0,"triangle",0.2); play(190,0.25,0.2,"triangle",0.15); }
-        else if (type === "victory") { play(523,0.1); play(659,0.1,0.1); play(784,0.1,0.2); play(1047,0.35,0.32,"sine",0.22); }
-        else if (type === "defeat") { play(380,0.15); play(290,0.18,0.16); play(200,0.3,0.35,"triangle",0.2); }
-        else if (type === "tick")   { play(1400,0.04,0,"square",0.06); }
-        else if (type === "submit") { play(440,0.08,0,"sine",0.12); }
-      }
+      if (type === "round-win")  { play(523,0.12); play(659,0.12,0.13); play(784,0.2,0.26); }
+      else if (type === "round-loss") { play(240,0.18,0,"triangle",0.2); play(190,0.25,0.2,"triangle",0.15); }
+      else if (type === "victory") { play(523,0.1); play(659,0.1,0.1); play(784,0.1,0.2); play(1047,0.35,0.32,"sine",0.22); }
+      else if (type === "defeat") { play(380,0.15); play(290,0.18,0.16); play(200,0.3,0.35,"triangle",0.2); }
+      else if (type === "tick")   { play(1400,0.04,0,"square",0.06); }
+      else if (type === "submit") { play(440,0.08,0,"sine",0.12); }
       setTimeout(() => { try { ctx.close(); } catch {} }, 2000);
     } catch {}
-  }, [soundEnabled, soundPack]);
+  }, [soundEnabled]);
 
   const unlockAch = useCallback((id: string) => {
     const def = ACHIEVEMENTS.find(a => a.id === id);
@@ -4167,18 +3996,14 @@ export default function App() {
 
   const logoutFn = () => {
     // Preserve preference keys so they survive logout/login on the same device
-    const PREF_KEYS = new Set(["clash-accent-color", "clash-card-bg", "clash-sound-pack", "clash-profile-avatar"]);
     Object.keys(localStorage)
-      .filter(k => (k.startsWith("clash-") || k.startsWith("clash_")) && !PREF_KEYS.has(k))
+      .filter(k => k.startsWith("clash-") || k.startsWith("clash_"))
       .forEach(k => localStorage.removeItem(k));
     setAuthUser(null);
     setPlayer(null);
     setShowAuthModal(false);
     setShowProfilePanel(false);
     setStats({ wins: 0, debates: 0, bestScore: 0, currentStreak: 0, bestStreak: 0, opponentHistory: {} });
-    // Preferences (accentColor, cardBg, soundPack, avatar) are intentionally NOT reset —
-    // they stay visible after logout so the account owner sees their own theme immediately
-    // on next login, the server profile re-applies the correct server-side values.
   };
 
   const shuffleWaitingTopics = () => {
@@ -4536,7 +4361,7 @@ export default function App() {
 
   return (
     <>
-    <div className="app" style={accentColor !== "#e63946" ? { "--red": accentColor, "--red-dim": accentColor + "18" } as React.CSSProperties : undefined}>
+    <div className="app">
       <nav className="nav">
         <div className="logo" onClick={() => setScreen("home")} style={{ cursor: "pointer" }}>CL<span style={{color:"#e63946"}}>A</span>SH</div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -4580,7 +4405,7 @@ export default function App() {
                 className="user-chip"
                 onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setProfileTab("overview"); setShowProfilePanel(p => !p); }}
               >
-                <span className="user-chip-av">{profileAvatar && AVATAR_PIXELS[profileAvatar] ? renderPixelAvatar(profileAvatar, 18, true) : (player?.username || authUser.email)[0].toUpperCase()}</span>
+                <span className="user-chip-av">{(player?.username || authUser.email)[0].toUpperCase()}</span>
                 <span className="user-chip-name">{player?.username || authUser.email.split("@")[0]}</span>
               </button>
             </>
@@ -6597,8 +6422,8 @@ export default function App() {
       <>
         <div className="profile-overlay" onClick={() => setShowProfilePanel(false)} />
         <div className="profile-panel">
-          <div className="pp-header" style={profileCardBg !== "bg0" ? { background: ["linear-gradient(135deg,rgba(168,85,247,0.2),rgba(230,57,70,0.15))","linear-gradient(135deg,rgba(59,130,246,0.2),rgba(168,85,247,0.15))","linear-gradient(135deg,rgba(244,197,66,0.18),rgba(230,57,70,0.15))","linear-gradient(135deg,rgba(20,184,166,0.18),rgba(59,130,246,0.15))","linear-gradient(135deg,rgba(34,197,94,0.15),rgba(20,184,166,0.15))"][["bg1","bg2","bg3","bg4","bg5"].indexOf(profileCardBg)] || undefined } : undefined}>
-            <div className="pp-avatar">{profileAvatar && AVATAR_PIXELS[profileAvatar] ? renderPixelAvatar(profileAvatar, 36, true) : (player?.username || authUser.email)[0].toUpperCase()}</div>
+          <div className="pp-header">
+            <div className="pp-avatar">{(player?.username || authUser.email)[0].toUpperCase()}</div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="pp-name">{player?.username || authUser.email.split("@")[0]}</div>
               <div className="pp-email">{authUser.email}</div>
@@ -6679,66 +6504,6 @@ export default function App() {
                 <button className="pp-save-btn" onClick={handleSetUsername}>Save</button>
               </div>
               {usernameError && <div style={{ fontSize: "11px", color: "var(--red)", marginTop: "4px" }}>{usernameError}</div>}
-              </div>
-              <div className="cust-section">
-                <div className="cust-label">Avatar</div>
-                <div className="avatar-grid">
-                  {PIXEL_AVATAR_IDS.map(av => (
-                    <button key={av} className={`avatar-opt${profileAvatar === av ? " selected" : ""}`} onClick={() => {
-                      setProfileAvatar(av);
-                      try { localStorage.setItem("clash-profile-avatar", av); } catch {}
-                      if (authUser) { apiAuthPatch("/players/preferences", { avatarId: av }).catch(() => {}); }
-                    }}>
-                      {renderPixelAvatar(av, 28)}
-                      <span className="avatar-opt-lbl">{PIXEL_AVATAR_LABELS[av]}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="cust-section">
-                <div className="cust-label">Accent Colour</div>
-                <div className="accent-row">
-                  {[["#e63946","Red"],["#3b82f6","Blue"],["#a855f7","Purple"],["#22c55e","Green"],["#f59e0b","Amber"],["#ec4899","Pink"]].map(([col, name]) => (
-                    <button key={col} className={`accent-dot${accentColor === col ? " selected" : ""}`} style={{ background: col }} title={name} onClick={() => {
-                      setAccentColor(col);
-                      try { localStorage.setItem("clash-accent-color", col); } catch {}
-                      if (authUser) { apiAuthPatch("/players/preferences", { accentColor: col }).catch(() => {}); }
-                    }} />
-                  ))}
-                </div>
-              </div>
-              <div className="cust-section">
-                <div className="cust-label">Card Background</div>
-                <div className="cardbg-row">
-                  {([
-                    ["bg0","#0e0e0e","Dark"],
-                    ["bg1","linear-gradient(135deg,#2d0a3e,#3d0a1a)","Void"],
-                    ["bg2","linear-gradient(135deg,#1a0000,#3d0a0a)","Blood"],
-                    ["bg3","linear-gradient(135deg,#001228,#0a1a40)","Ocean"],
-                    ["bg4","linear-gradient(135deg,#1a0e30,#2a0a28)","Cosmic"],
-                  ] as [string,string,string][]).map(([id, bg, lbl]) => (
-                    <button key={id} className={`cardbg-opt${profileCardBg === id ? " selected" : ""}`} style={{ background: bg }} onClick={() => {
-                      setProfileCardBg(id);
-                      try { localStorage.setItem("clash-card-bg", id); } catch {}
-                      if (authUser) { apiAuthPatch("/players/preferences", { cardBg: id }).catch(() => {}); }
-                    }}>
-                      <span className="cardbg-opt-lbl">{lbl}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="cust-section">
-                <div className="cust-label">Sound Pack</div>
-                <div className="soundpack-row">
-                  {([["classic","Classic"],["retro","Retro"],["dark","Dark"],["minimal","Quiet"],["arena","Arena"],["ghost","Ghost"]] as const).map(([id, label]) => (
-                    <button key={id} className={`soundpack-opt${soundPack === id ? " selected" : ""}`} onClick={() => {
-                      setSoundPack(id);
-                      try { localStorage.setItem("clash-sound-pack", id); } catch {}
-                      if (authUser) { apiAuthPatch("/players/preferences", { soundPack: id }).catch(() => {}); }
-                      playSound("submit");
-                    }}>{label}</button>
-                  ))}
-                </div>
               </div>
               {(sigStyle || mmrResult) && (
                 <div className="pp-tab-inner" style={{ paddingTop: "10px", paddingBottom: "10px" }}>
