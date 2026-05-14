@@ -2913,8 +2913,8 @@ export default function App() {
   useLayoutEffect(() => {
     const splash = document.getElementById("splash");
     if (splash) {
-      splash.classList.add("hidden");
-      setTimeout(() => splash.remove(), 200);
+      splash.classList.add("out");
+      setTimeout(() => splash.remove(), 450);
     }
   }, []);
   const RESTORABLE: Screen[] = ["home", "leaderboard", "multiplayer-lobby", "dashboard", "forge-rival"];
