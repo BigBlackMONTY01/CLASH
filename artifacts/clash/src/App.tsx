@@ -4384,31 +4384,38 @@ export default function App() {
   };
 
   const handleSetUsername = async () => {
-  const trimmed = usernameInput.trim();
-  if (trimmed.length < 2) { 
-    setUsernameError("Must be at least 2 characters."); 
-    return; 
+  const cleaned = usernameInput.trim().toUpperCase().replace(/[^A-Z0-9_]/g, "");
+  if (cleaned.length < 2) {
+    setUsernameError("Must be at least 2 characters (letters, numbers, underscores).");
+    return;
   }
-  
   setUsernameError("");
-  
   try {
     const isLoggedIn = !!localStorage.getItem("clash-auth-token");
     if (isLoggedIn) {
-      await apiAuthPatch("/players/username", { username: trimmed });
+      await apiAuthPatch("/players/username", { username: cleaned });
     } else {
       const deviceId = getOrCreateDeviceId();
       await apiPost("/players/register", { deviceId });
-      await apiPatch("/players/username", { deviceId, username: trimmed });
+      await apiPatch("/players/username", { deviceId, username: cleaned });
     }
-    
-    setPlayer((prev) => prev ? { ...prev, username: trimmed } : prev);
+    setPlayer((prev) => prev ? { ...prev, username: cleaned } : prev);
     setShowUsernameModal(false);
     setUsernameInput("");
     setUsernameError("");
   } catch (err: unknown) {
-    const msg = (err as Error).message || "Something went wrong";
-    setUsernameError(msg);
+    const raw = (err as Error).message || "";
+    if (raw.includes("taken") || raw.includes("409")) {
+      setUsernameError("Username already taken — try a different one.");
+    } else if (raw.includes("not found") || raw.includes("404")) {
+      setUsernameError("Profile not found. Please refresh and try again.");
+    } else if (raw.includes("Network") || raw.includes("fetch")) {
+      setUsernameError("Network error — check your connection and try again.");
+    } else if (raw.includes("Invalid") || raw.includes("400")) {
+      setUsernameError("Invalid username — use 2–20 letters, numbers, or underscores.");
+    } else {
+      setUsernameError(raw || "Something went wrong. Please try again.");
+    }
   }
 };
 

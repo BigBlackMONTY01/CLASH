@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, timestamp, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -12,6 +12,9 @@ export const players = pgTable("players", {
   accentColor: text("accent_color").notNull().default("#e63946"),
   cardBg: text("card_bg").notNull().default("bg0"),
   soundPack: text("sound_pack").notNull().default("classic"),
+  isGuest: boolean("is_guest").notNull().default(true),
+  userId: text("user_id"),
+  lastSeen: timestamp("last_seen", { withTimezone: true }).defaultNow(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });

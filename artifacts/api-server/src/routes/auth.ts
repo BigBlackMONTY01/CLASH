@@ -36,6 +36,8 @@ router.post("/auth/register", async (req, res) => {
       playerId = newPlayer[0].id;
     }
     const user = await db.insert(users).values({ email: emailLower, passwordHash, playerId }).returning();
+    // Guest -> registered: mark player as registered and link user_id
+    await db.update(players).set({ isGuest: false, userId: String(user[0].id), lastSeen: new Date(), updatedAt: new Date() }).where(eq(players.id, playerId));
     const token = jwt.sign({ userId: user[0].id, playerId, email: emailLower }, JWT_SECRET, { expiresIn: "30d" });
     res.json({ token, userId: user[0].id, playerId, email: emailLower });
   } catch (err: any) {

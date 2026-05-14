@@ -26,11 +26,13 @@ router.post("/players/register", async (req, res) => {
   try {
     const existing = await db.select().from(players).where(eq(players.deviceId, deviceId)).limit(1);
     if (existing.length > 0) {
-      res.json(existing[0]);
+      // Update lastSeen on every visit
+      await db.update(players).set({ lastSeen: new Date() }).where(eq(players.deviceId, deviceId));
+      res.json({ ...existing[0], lastSeen: new Date() });
       return;
     }
     try {
-      const inserted = await db.insert(players).values({ deviceId }).returning();
+      const inserted = await db.insert(players).values({ deviceId, isGuest: true, lastSeen: new Date() }).returning();
       res.json(inserted[0]);
     } catch (insertErr: any) {
       if (insertErr?.code === "23505") {
@@ -78,47 +80,66 @@ router.patch("/players/username", async (req, res) => {
     res.status(400).json({ error: "username required" });
     return;
   }
-  const trimmed = (username as string).trim().toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 20);
+  const trimmed = username.trim().toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 20);
   if (trimmed.length < 2) {
-    res.status(400).json({ error: "Username must be at least 2 characters (letters/numbers/underscores)" });
+    res.status(400).json({ error: "Invalid username — use 2–20 letters, numbers, or underscores" });
     return;
   }
   try {
     const jwtPlayerId = getJwtPlayerId(req.headers.authorization);
-    let updated;
+
+    // Resolve which player row we are updating
+    let ownerId: number | null = null;
     if (jwtPlayerId) {
-      updated = await db
-        .update(players)
-        .set({ username: trimmed, updatedAt: new Date() })
-        .where(eq(players.id, jwtPlayerId))
-        .returning();
+      const rows = await db.select({ id: players.id }).from(players).where(eq(players.id, jwtPlayerId)).limit(1);
+      if (rows.length === 0) {
+        res.status(404).json({ error: "Profile not found" });
+        return;
+      }
+      ownerId = rows[0].id;
     } else {
       if (!deviceId || typeof deviceId !== "string") {
         res.status(400).json({ error: "deviceId required when not authenticated" });
         return;
       }
-      updated = await db
-        .update(players)
-        .set({ username: trimmed, updatedAt: new Date() })
-        .where(eq(players.deviceId, deviceId))
-        .returning();
+      const rows = await db.select({ id: players.id }).from(players).where(eq(players.deviceId, deviceId)).limit(1);
+      if (rows.length === 0) {
+        res.status(404).json({ error: "Profile not found" });
+        return;
+      }
+      ownerId = rows[0].id;
     }
+
+    // Pre-flight duplicate check — avoids relying solely on constraint error
+    const existing = await db
+      .select({ id: players.id })
+      .from(players)
+      .where(sql`lower(${players.username}) = lower(${trimmed}) and ${players.id} <> ${ownerId}`)
+      .limit(1);
+    if (existing.length > 0) {
+      res.status(409).json({ error: "Username already taken" });
+      return;
+    }
+
+    const updated = await db
+      .update(players)
+      .set({ username: trimmed, updatedAt: new Date(), lastSeen: new Date() })
+      .where(eq(players.id, ownerId))
+      .returning();
+
     if (updated.length === 0) {
-      res.status(404).json({ error: "Player not found" });
+      res.status(404).json({ error: "Profile not found" });
       return;
     }
     res.json(updated[0]);
   } catch (err: any) {
-    const errorMessage = err?.message || "";
-    const isDuplicate = errorMessage.includes("duplicate key") ||
-                        errorMessage.includes("unique constraint") ||
-                        err?.code === "23505";
-    if (isDuplicate) {
-      res.status(409).json({ error: "That username is already taken" });
+    const msg = err?.message || "";
+    if (err?.code === "23505" || msg.includes("duplicate key") || msg.includes("unique constraint")) {
+      res.status(409).json({ error: "Username already taken" });
       return;
     }
     req.log.error({ err }, "players/username failed");
-    res.status(500).json({ error: err?.message || "Database error" });
+    res.status(500).json({ error: msg || "Database error" });
   }
 });
 
