@@ -5219,6 +5219,20 @@ export default function App() {
               <div className="trash-bubble">
                 <div className="trash-bubble-who">{incomingTaunt.fromName}</div>
                 {incomingTaunt.text}
+                <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
+                  {["💀","🔥","🤡","👀","😭","💅"].map(emoji => (
+                    <button key={emoji} onClick={async () => {
+                      setIncomingTaunt(null);
+                      setMyTrashBubble(emoji);
+                      setTimeout(() => setMyTrashBubble(null), 4000);
+                      try { await apiAuthPost(`/1v1/${currentRoom.code}/taunt`, { text: emoji }); }
+                      catch { /* best-effort */ }
+                    }} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", padding: "2px 5px", fontSize: "15px", cursor: "pointer", lineHeight: 1.3, transition: "background 0.1s" }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+                    >{emoji}</button>
+                  ))}
+                </div>
               </div>
             )}
             {myTrashBubble && (
