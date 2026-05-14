@@ -229,6 +229,29 @@ function getAiTaunt(personality: string): string {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+const FALLBACK_OPENS = [
+  "Bold claim. Let's see if you can back it up — because from where I'm standing, your position collapses the moment you apply any real scrutiny.",
+  "I've heard this argument before, and it didn't hold up then either. Your premise assumes facts not in evidence. Let's dissect that.",
+  "You've picked a side that's easy to feel good about and hard to defend. I'm going to make this uncomfortable for you.",
+  "Interesting stance. Unfortunately for you, interesting doesn't mean correct. Here's why your position fails from the start.",
+];
+
+const FALLBACK_ROUNDS = [
+  "That's an assertion, not an argument. You've told me what you believe but given me nothing to work with — no evidence, no mechanism, no reason to agree. Try again with something substantive.",
+  "You're relying on intuition where the facts cut against you. Your last point ignored the strongest counter-evidence entirely, which isn't a rebuttal — it's avoidance.",
+  "Weak. You restated your premise without advancing it. A real argument explains why your position holds even under the toughest objections, and you haven't done that yet.",
+  "The problem with that argument is that it proves too much. If your logic holds, it justifies positions you'd never accept. You need to draw a line, and you haven't.",
+  "You're arguing from analogy, and the analogy breaks down immediately under any pressure. The two situations are not equivalent, and you haven't shown why they are.",
+];
+
+function getFallbackOpen(): string {
+  return FALLBACK_OPENS[Math.floor(Math.random() * FALLBACK_OPENS.length)];
+}
+
+function getFallbackRound(): string {
+  return FALLBACK_ROUNDS[Math.floor(Math.random() * FALLBACK_ROUNDS.length)];
+}
+
 // POST /api/debate/start — AI opens the debate
 router.post("/debate/start", async (req, res) => {
   const { personality, topic, userSide, oppSide, totalRounds, difficulty } = req.body as Record<string, unknown>;
@@ -248,12 +271,12 @@ You are arguing ${oppSide as string} this statement. The user is arguing ${userS
 This is a ${totalRounds as number}-round debate. Open with a brief in-character intro taunt or provocation (one sharp sentence), then immediately launch into your opening argument. Obey your HARD RESPONSE LIMIT above. Do NOT say "Round 1" or any meta-commentary. Just start.${FORMATTING}`;
 
   try {
-    const text = await claudeText(system, "Open the debate.", tokens);
+    const text = await claudeText(system, "Open the debate.", tokens).catch(() => getFallbackOpen());
     const taunt = getAiTaunt(personality as string);
     res.json({ text, taunt });
   } catch (err) {
     req.log.error({ err }, "debate/start failed");
-    res.status(500).json({ error: "AI error" });
+    res.json({ text: getFallbackOpen(), taunt: getAiTaunt(personality as string) });
   }
 });
 
@@ -379,7 +402,7 @@ Counter the user's last argument directly and sharply. Obey your HARD RESPONSE L
       claudeConversation(systemResp, [
         ...history,
         { role: "user", content: userArgument as string },
-      ], tokens),
+      ], tokens).catch(() => getFallbackRound()),
     ]);
 
     let roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; propaganda?: Array<{sentence: string; tag: string}> } = {
