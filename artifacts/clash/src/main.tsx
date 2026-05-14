@@ -6,6 +6,10 @@ import "./index.css";
 
 document.documentElement.classList.add("dark");
 
+if (window.matchMedia("(display-mode: standalone)").matches && window.location.pathname === "/") {
+  window.location.replace("/play");
+}
+
 createRoot(document.getElementById("root")!).render(
   <Switch>
     <Route path="/"     component={Landing} />

@@ -1,4 +1,4 @@
-const CACHE = "clash-v1";
+const CACHE = "clash-v2";
 
 self.addEventListener("install", () => { self.skipWaiting(); });
 

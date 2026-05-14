@@ -225,6 +225,15 @@ const LP_CSS = `
 }
 `;
 
+if (typeof document !== "undefined") {
+  const _lpStyle = document.createElement("style");
+  _lpStyle.id = "lp-css";
+  if (!document.getElementById("lp-css")) {
+    _lpStyle.textContent = LP_CSS;
+    document.head.appendChild(_lpStyle);
+  }
+}
+
 export default function Landing() {
   const laserRef = useRef<HTMLDivElement>(null);
   const catchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -235,7 +244,6 @@ export default function Landing() {
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = LP_CSS;
-    document.head.appendChild(style);
     document.body.style.visibility = "visible";
     return () => { if (style.parentNode) style.parentNode.removeChild(style); };
   }, []);

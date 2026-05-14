@@ -830,7 +830,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 /* USER CHIP & PROFILE PANEL */
 .user-chip{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 5px;border:1px solid var(--border);border-radius:100px;background:transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text);transition:all 0.18s;-webkit-tap-highlight-color:transparent;flex-shrink:0;max-width:140px;}
 .user-chip:hover{border-color:var(--red);background:rgba(255,255,255,0.05);}
-.user-chip-av{width:22px;height:22px;border-radius:50%;background:var(--red-dim);border:1.5px solid rgba(230,57,70,0.4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--red);flex-shrink:0;line-height:1;font-family:'Barlow Condensed',sans-serif;}
+.user-chip-av{width:22px;height:22px;border-radius:50%;background:var(--red-dim);border:1.5px solid rgba(230,57,70,0.4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--red);flex-shrink:0;line-height:1;font-family:'Barlow Condensed',sans-serif;overflow:hidden;}
 .user-chip-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .profile-overlay{position:fixed;inset:0;z-index:8000;}
 .profile-panel{position:fixed;top:62px;right:16px;z-index:8001;width:280px;background:rgba(14,14,14,0.84);backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.7),0 1px 0 rgba(255,255,255,0.06) inset;animation:ppIn 0.18s cubic-bezier(0.34,1.2,0.64,1);}
@@ -848,7 +848,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .pp-nemesis-btn:hover{border-color:var(--red);background:rgba(230,57,70,0.08);}
 @keyframes ppIn{from{opacity:0;transform:scale(0.95) translateY(-8px);}to{opacity:1;transform:scale(1) translateY(0);}}
 .pp-header{padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.pp-avatar{width:40px;height:40px;border-radius:50%;background:var(--red-dim);border:2px solid rgba(230,57,70,0.35);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--red);flex-shrink:0;font-family:'Barlow Condensed',sans-serif;line-height:1;}
+.pp-avatar{width:40px;height:40px;border-radius:50%;background:var(--red-dim);border:2px solid rgba(230,57,70,0.35);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--red);flex-shrink:0;font-family:'Barlow Condensed',sans-serif;line-height:1;overflow:hidden;}
 .pp-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .pp-email{font-size:10px;color:var(--text-dim);margin-top:2px;font-family:'Barlow',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px;}
 .pp-stats{display:flex;border-bottom:1px solid var(--border);}
@@ -1065,7 +1065,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 /* USER CHIP */
 .user-chip{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 10px 4px 4px;cursor:pointer;transition:all 0.2s;}
 .user-chip:hover{border-color:var(--text-dim);}
-.user-chip-av{width:22px;height:22px;border-radius:50%;background:var(--red-dim);border:1px solid rgba(230,57,70,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--red);font-family:'Barlow Condensed',sans-serif;flex-shrink:0;}
+.user-chip-av{width:22px;height:22px;border-radius:50%;background:var(--red-dim);border:1px solid rgba(230,57,70,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--red);font-family:'Barlow Condensed',sans-serif;flex-shrink:0;overflow:hidden;}
 .user-chip-name{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* PLAYER COMMAND STRIP */
@@ -1410,6 +1410,8 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .soundpack-opt{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);cursor:pointer;transition:all 0.15s;color:var(--text-dim);}
 .soundpack-opt.selected{background:rgba(230,57,70,0.1);border-color:var(--red);color:var(--text);}
 @keyframes pixelFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-1px);}}
+@keyframes pixelBob{0%,100%{transform:translateY(0);}40%{transform:translateY(-2px);}65%{transform:translateY(-1px);}}
+.pixel-av-anim{animation:pixelBob 2.4s ease-in-out infinite;transform-origin:center bottom;}
 `;
 
 
@@ -1518,11 +1520,11 @@ const AVATAR_PIXELS: Record<string, Px[]> = {
 const PIXEL_AVATAR_IDS = ["blade","sage","unit","shade","flame","rex"] as const;
 type PixelAvatarId = typeof PIXEL_AVATAR_IDS[number];
 const PIXEL_AVATAR_LABELS: Record<string,string> = {blade:"Blade",sage:"Sage",unit:"Unit",shade:"Shade",flame:"Flame",rex:"Rex"};
-function renderPixelAvatar(id: string, size = 32) {
+function renderPixelAvatar(id: string, size = 32, animate = false) {
   const pixels = AVATAR_PIXELS[id as PixelAvatarId];
   if (!pixels) return null;
   return (
-    <svg width={size} height={size} viewBox="0 0 16 16" style={{imageRendering:"pixelated",display:"block",flexShrink:0}}>
+    <svg width={size} height={size} viewBox="0 0 16 16" className={animate ? "pixel-av-anim" : undefined} style={{imageRendering:"pixelated",display:"block",flexShrink:0}}>
       {pixels.map(([x,y,color],i) => <rect key={i} x={x} y={y} width={1} height={1} fill={color}/>)}
     </svg>
   );
@@ -4502,7 +4504,7 @@ export default function App() {
                 className="user-chip"
                 onClick={() => { setUsernameInput(player?.username || ""); setUsernameError(""); setProfileTab("overview"); setShowProfilePanel(p => !p); }}
               >
-                <span className="user-chip-av">{profileAvatar && AVATAR_PIXELS[profileAvatar] ? renderPixelAvatar(profileAvatar, 18) : (player?.username || authUser.email)[0].toUpperCase()}</span>
+                <span className="user-chip-av">{profileAvatar && AVATAR_PIXELS[profileAvatar] ? renderPixelAvatar(profileAvatar, 18, true) : (player?.username || authUser.email)[0].toUpperCase()}</span>
                 <span className="user-chip-name">{player?.username || authUser.email.split("@")[0]}</span>
               </button>
             </>
@@ -6520,7 +6522,7 @@ export default function App() {
         <div className="profile-overlay" onClick={() => setShowProfilePanel(false)} />
         <div className="profile-panel">
           <div className="pp-header" style={profileCardBg !== "bg0" ? { background: ["linear-gradient(135deg,rgba(168,85,247,0.2),rgba(230,57,70,0.15))","linear-gradient(135deg,rgba(59,130,246,0.2),rgba(168,85,247,0.15))","linear-gradient(135deg,rgba(244,197,66,0.18),rgba(230,57,70,0.15))","linear-gradient(135deg,rgba(20,184,166,0.18),rgba(59,130,246,0.15))","linear-gradient(135deg,rgba(34,197,94,0.15),rgba(20,184,166,0.15))"][["bg1","bg2","bg3","bg4","bg5"].indexOf(profileCardBg)] || undefined } : undefined}>
-            <div className="pp-avatar">{profileAvatar && AVATAR_PIXELS[profileAvatar] ? renderPixelAvatar(profileAvatar, 36) : (player?.username || authUser.email)[0].toUpperCase()}</div>
+            <div className="pp-avatar">{profileAvatar && AVATAR_PIXELS[profileAvatar] ? renderPixelAvatar(profileAvatar, 36, true) : (player?.username || authUser.email)[0].toUpperCase()}</div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="pp-name">{player?.username || authUser.email.split("@")[0]}</div>
               <div className="pp-email">{authUser.email}</div>
