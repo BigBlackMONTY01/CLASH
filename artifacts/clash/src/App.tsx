@@ -2692,21 +2692,23 @@ interface RecentActivity { username: string | null; deviceId: string; opponentNa
 function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
   if (activity.length === 0) return buildFeedItems();
   const realItems = activity.slice(0, 8).map((a) => {
-    const name = a.username || ("GUEST#" + a.deviceId.slice(-4).toUpperCase());
-    const opp = a.opponentName.replace("The ", "");
-    const topic = a.topic.length > 30 ? a.topic.slice(0, 30) + "…" : a.topic;
-    const minsAgo = Math.max(1, Math.floor((Date.now() - new Date(a.createdAt).getTime()) / 60000));
+    const guestSuffix = a.deviceId ? a.deviceId.slice(-4).toUpperCase() : "????";
+    const name = a.username || ("GUEST#" + guestSuffix);
+    const opp = (a.opponentName || "Unknown").replace("The ", "");
+    const topic = (a.topic || "").length > 30 ? a.topic.slice(0, 30) + "…" : (a.topic || "unknown topic");
+    const ts = a.createdAt ? new Date(a.createdAt).getTime() : Date.now();
+    const minsAgo = Math.max(1, Math.floor((Date.now() - ts) / 60000));
     const timeStr = minsAgo < 60 ? `${minsAgo}m ago` : minsAgo < 1440 ? `${Math.floor(minsAgo / 60)}h ago` : `${Math.floor(minsAgo / 1440)}d ago`;
     if (a.isGauntlet) {
       return { icon: "⚔️", text: `<strong>${name}</strong> ran Gauntlet vs ${opp}`, badge: a.won ? "WON" : "LOST", badgeClass: a.won ? "feed-win" : "feed-loss", time: timeStr };
     }
     if (a.won) {
-      return { icon: "🏆", text: `<strong>${name}</strong> defeated ${opp} — "${topic}"`, badge: a.rank, badgeClass: "feed-rank", time: timeStr };
+      return { icon: "🏆", text: `<strong>${name}</strong> defeated ${opp} — "${topic}"`, badge: a.rank || "?", badgeClass: "feed-rank", time: timeStr };
     }
-    return { icon: "💀", text: `<strong>${name}</strong> lost to ${opp} — "${topic}"`, badge: a.rank, badgeClass: "feed-loss", time: timeStr };
+    return { icon: "💀", text: `<strong>${name}</strong> lost to ${opp} — "${topic}"`, badge: a.rank || "?", badgeClass: "feed-loss", time: timeStr };
   });
   if (realItems.length < 3) {
-    const fakeBackfill = buildFeedItems().slice(0, 2 - realItems.length);
+    const fakeBackfill = buildFeedItems().slice(0, 3 - realItems.length);
     return [...realItems, ...fakeBackfill];
   }
   return realItems;
