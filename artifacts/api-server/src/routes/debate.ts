@@ -17,8 +17,7 @@ function is429(e: unknown): boolean {
 
 const CALL_TIMEOUT_MS = 25000;
 const MAX_CONCURRENT  = Number(process.env.GROQ_MAX_CONCURRENCY ?? 8);
-const MAX_QUEUE_DEPTH = 40;
-const QUEUE_WAIT_MS   = 30000;
+const QUEUE_WAIT_MS   = 120000;
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
@@ -37,9 +36,6 @@ class Semaphore {
     if (this.running < MAX_CONCURRENT) {
       this.running++;
       return;
-    }
-    if (this.queue.length >= MAX_QUEUE_DEPTH) {
-      throw new Error("Server is busy — too many AI requests queued. Try again in a moment.");
     }
     await withTimeout(
       new Promise<void>(resolve => this.queue.push(resolve)),
