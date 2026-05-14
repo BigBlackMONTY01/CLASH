@@ -41,6 +41,32 @@ router.post("/players/register", async (req, res) => {
   }
 });
 
+// PATCH /api/players/preferences — save per-account customisation (avatar, accent, cardBg, soundPack)
+router.patch("/players/preferences", async (req, res) => {
+  const { avatarId, accentColor, cardBg, soundPack } = req.body as Record<string, unknown>;
+  try {
+    const jwtPlayerId = getJwtPlayerId(req.headers.authorization);
+    if (!jwtPlayerId) {
+      res.status(401).json({ error: "Authentication required" });
+      return;
+    }
+    const updates: Record<string, unknown> = { updatedAt: new Date() };
+    if (typeof avatarId === "string") updates.avatarId = avatarId;
+    if (typeof accentColor === "string") updates.accentColor = accentColor;
+    if (typeof cardBg === "string") updates.cardBg = cardBg;
+    if (typeof soundPack === "string") updates.soundPack = soundPack;
+    const updated = await db.update(players).set(updates).where(eq(players.id, jwtPlayerId)).returning();
+    if (updated.length === 0) {
+      res.status(404).json({ error: "Player not found" });
+      return;
+    }
+    res.json(updated[0]);
+  } catch (err: any) {
+    req.log.error({ err }, "players/preferences failed");
+    res.status(500).json({ error: err?.message || "Database error" });
+  }
+});
+
 // PATCH /api/players/username — set or update username (supports JWT auth or deviceId)
 router.patch("/players/username", async (req, res) => {
   const { deviceId, username } = req.body as Record<string, unknown>;

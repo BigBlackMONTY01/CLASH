@@ -8,6 +8,10 @@ export const players = pgTable("players", {
   username: text("username").unique(),
   currentStreak: integer("current_streak").notNull().default(0),
   bestStreak: integer("best_streak").notNull().default(0),
+  avatarId: text("avatar_id").notNull().default(""),
+  accentColor: text("accent_color").notNull().default("#e63946"),
+  cardBg: text("card_bg").notNull().default("bg0"),
+  soundPack: text("sound_pack").notNull().default("classic"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
