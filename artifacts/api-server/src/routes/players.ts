@@ -29,14 +29,18 @@ router.post("/players/register", async (req, res) => {
       res.json(existing[0]);
       return;
     }
-    const inserted = await db.insert(players).values({ deviceId }).returning();
-    res.json(inserted[0]);
+    try {
+      const inserted = await db.insert(players).values({ deviceId }).returning();
+      res.json(inserted[0]);
+    } catch (insertErr: any) {
+      if (insertErr?.code === "23505") {
+        const found = await db.select().from(players).where(eq(players.deviceId, deviceId)).limit(1);
+        if (found.length > 0) { res.json(found[0]); return; }
+      }
+      throw insertErr;
+    }
   } catch (err: any) {
     req.log.error({ err }, "players/register failed");
-    if (err?.code === "23505") {
-      res.status(409).json({ error: "Player already registered" });
-      return;
-    }
     res.status(500).json({ error: err?.message || "Database error" });
   }
 });

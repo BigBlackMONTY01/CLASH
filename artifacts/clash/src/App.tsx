@@ -2665,12 +2665,16 @@ async function apiPatch<T>(path: string, body: unknown): Promise<T> {
 }
 
 function getOrCreateDeviceId(): string {
-  let id = localStorage.getItem("clash-device-id");
-  if (!id) {
-    id = "d_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 9);
-    localStorage.setItem("clash-device-id", id);
+  try {
+    let id = localStorage.getItem("clash-device-id");
+    if (!id) {
+      id = "d_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 9);
+      try { localStorage.setItem("clash-device-id", id); } catch {}
+    }
+    return id;
+  } catch {
+    return "d_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 9);
   }
-  return id;
 }
 
 interface PlayerProfile {
@@ -2953,6 +2957,7 @@ export default function App() {
   const [usernameInput, setUsernameInput] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [lbData, setLbData] = useState<LbEntry[]>([]);
+  const [lbRefreshKey, setLbRefreshKey] = useState(0);
   const [lbLoading, setLbLoading] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(() => { try { return localStorage.getItem("clash-sound") !== "off"; } catch { return true; } });
   const [soundPack, setSoundPack] = useState<"classic"|"retro"|"dark"|"minimal"|"arena"|"ghost">(() => { try { return (localStorage.getItem("clash-sound-pack") as "classic"|"retro"|"dark"|"minimal"|"arena"|"ghost") || "classic"; } catch { return "classic"; } });
@@ -3274,7 +3279,7 @@ export default function App() {
     const deviceId = getOrCreateDeviceId();
     (async () => {
       try {
-        await apiPost("/players/register", { deviceId });
+        try { await apiPost("/players/register", { deviceId }); } catch {}
         const profile = await apiGet<PlayerProfile>(`/players/${deviceId}`);
         setPlayer(profile);
         if (profile.stats.debates > 0) {
@@ -3430,15 +3435,16 @@ export default function App() {
     return () => { cancelled = true; };
   }, [screen]);
 
-  // Load leaderboard when that screen opens or when tab switches
+  // Load leaderboard when that screen opens, tab switches, or a registration just completed
   useEffect(() => {
+    if (screen !== "leaderboard" && lbRefreshKey === 0) return;
     if (screen !== "leaderboard") return;
     setLbLoading(true);
     const qs = lbTab === "weekly" ? "?period=weekly" : "";
     apiGet<LbEntry[]>(`/leaderboard${qs}`)
       .then((data) => { setLbData(data); setLbLoading(false); })
       .catch(() => setLbLoading(false));
-  }, [screen, lbTab]);
+  }, [screen, lbTab, lbRefreshKey]);
 
   const playSound = useCallback((type: "round-win"|"round-loss"|"victory"|"defeat"|"tick"|"submit") => {
     if (!soundEnabled) return;
@@ -4076,12 +4082,22 @@ export default function App() {
   const registerFn = async () => {
     setAuthLoading(true); setAuthError("");
     try {
-      const data = await apiAuthPost<{token: string; email: string; playerId: number}>("/auth/register", { email: authEmail, password: authPassword, deviceId: getOrCreateDeviceId() });
+      const deviceId = getOrCreateDeviceId();
+      try { await apiPost("/players/register", { deviceId }); } catch {}
+      const data = await apiAuthPost<{token: string; email: string; playerId: number}>("/auth/register", { email: authEmail, password: authPassword, deviceId });
       localStorage.setItem("clash-auth-token", data.token);
       setAuthUser({ email: data.email, playerId: data.playerId });
       const clean = regUsername.trim().toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 20);
+      let savedUsername: string | null = null;
       if (clean.length >= 2) {
-        try { await apiAuthPatch("/players/username", { username: clean }); } catch {}
+        try {
+          await apiAuthPatch("/players/username", { username: clean });
+          savedUsername = clean;
+        } catch (usernameErr: any) {
+          if (usernameErr?.message?.includes("taken")) {
+            setAuthError("Username already taken — account created, please set a different username in your profile.");
+          }
+        }
       }
       try {
         const profile = await apiAuthGet<PlayerProfile>("/auth/player");
@@ -4089,7 +4105,15 @@ export default function App() {
         if (profile.stats.debates > 0) {
           setStats({ wins: profile.stats.wins, debates: profile.stats.debates, bestScore: profile.stats.bestScore, currentStreak: profile.stats.currentStreak ?? 0, bestStreak: profile.stats.bestStreak ?? 0, opponentHistory: profile.stats.opponentHistory });
         }
+        // Update leaderboard in-place so GUEST#xxxx becomes the new username immediately
+        if (savedUsername || profile.username) {
+          const finalName = profile.username || savedUsername;
+          setLbData(prev => prev.map(entry =>
+            entry.id === data.playerId ? { ...entry, username: finalName } : entry
+          ));
+        }
       } catch {}
+      setLbRefreshKey(k => k + 1);
       setShowAuthModal(false);
       setAuthEmail(""); setAuthPassword(""); setRegUsername("");
     } catch (e) { setAuthError((e as Error).message); }
