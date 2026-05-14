@@ -103,14 +103,15 @@
     </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script><script>
+  <script>
   // Hide splash when React app fully loads
-  document.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('load', () => {
     setTimeout(() => {
       const splash = document.getElementById('splash');
       if (splash) {
         splash.classList.add('out');
       }
-    }, 1200); // Let animations complete
+    }, 500); // Reduce to 500ms since we're waiting for full load
   });
 </script>
   </body>
