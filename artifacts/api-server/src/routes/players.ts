@@ -285,7 +285,7 @@ router.get("/leaderboard", async (req, res) => {
       .groupBy(players.id)
       .having(sql`count(${debates.id}) > 0`)
       .orderBy(desc(sql`(sum(case when ${debates.won} then 1 else 0 end) * 200 + coalesce(max(${debates.avgScore}), 0) * 10)`))
-      .limit(20);
+      .limit(100);
 
     res.json(rows);
   } catch (err: any) {

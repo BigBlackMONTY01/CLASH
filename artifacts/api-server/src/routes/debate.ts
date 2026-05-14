@@ -320,9 +320,26 @@ For each sentence, assign ONE tag:
 - "weak_evidence" — assertion without support
 - "emotional_bait" — appeals to emotion over logic
 - "killer_point" — strongest, most devastating argument
+- "ai_writing" — sentence that reads as machine-generated, not written by a real person
+
+AI WRITING DETECTION — tag a sentence "ai_writing" if it shows any of these signals:
+MECHANICAL TELLS (almost never appear in real human debate):
+- Contains em dashes (—) or en dashes (–) typed mid-sentence
+- Opens with or contains: "furthermore", "moreover", "additionally", "in addition to", "in conclusion", "to summarize", "in summary", "in essence", "it is worth noting", "it is important to note", "it should be noted", "needless to say", "undeniably", "unquestionably", "one must consider", "it can be argued", "this is evidenced by"
+- Uses AI signature vocabulary: "delve", "shed light on", "multifaceted", "nuanced approach", "comprehensive overview", "robust", "pivotal", "leverage" (used as a verb), "streamline", "tapestry", "navigate the complexities", "in the realm of", "in today's rapidly changing world", "at the intersection of"
+STRUCTURAL TELLS (patterns real humans rarely produce under debate pressure):
+- Unnaturally balanced acknowledgment of the opponent before pivoting: "while X may seem compelling, Y actually demonstrates..." — this over-diplomatic framing is an AI hallmark
+- Zero contractions anywhere in the argument combined with zero informality or personality
+- Pre-emptively addresses every possible counter-argument before being challenged — humans don't do this naturally
+- Perfect parallel three-point structure where all three clauses are exactly the same grammatical form
+
+AI WRITING PENALTY (apply automatically to the scores if detected):
+- If 1 sentence is tagged "ai_writing": cap delivery at 35, reduce overall score by 15
+- If 2+ sentences are tagged "ai_writing": cap delivery at 20, cap overall score at 30
+- If the entire argument reads as AI-generated: score 10-20 range, delivery 10
 
 Respond ONLY with valid JSON, no markdown:
-{"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"the single strongest moment in one sharp phrase","weak":"the single most exploitable weakness in one sharp phrase","propaganda":[{"sentence":"exact sentence text","tag":"solid|fallacy|weak_evidence|emotional_bait|killer_point"}]}`;
+{"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"the single strongest moment in one sharp phrase","weak":"the single most exploitable weakness in one sharp phrase","propaganda":[{"sentence":"exact sentence text","tag":"solid|fallacy|weak_evidence|emotional_bait|killer_point|ai_writing"}]}`;
 
     let history = (messages as { role: string; text: string }[]).map((m) => ({
       role: (m.role === "ai" ? "assistant" : "user") as "user" | "assistant",

@@ -989,6 +989,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .prop-tag.weak_evidence{background:rgba(244,197,66,0.15);color:var(--gold);}
 .prop-tag.emotional_bait{background:rgba(168,85,247,0.15);color:#a855f7;}
 .prop-tag.killer_point{background:rgba(0,119,255,0.15);color:var(--blue);font-weight:600;}
+.prop-tag.ai_writing{background:rgba(230,57,70,0.18);color:#ff4655;text-decoration:underline wavy rgba(230,57,70,0.6);font-weight:600;}
 .prop-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius);}
 .prop-legend-item{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:1px;padding:2px 6px;border-radius:2px;display:flex;align-items:center;gap:4px;}
 .prop-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;margin-top:8px;}
@@ -1347,6 +1348,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .itc-fallacy{background:rgba(230,57,70,0.1);border-color:rgba(230,57,70,0.35);color:var(--red);}
 .itc-weak_evidence{background:rgba(244,197,66,0.1);border-color:rgba(244,197,66,0.28);color:var(--gold);}
 .itc-emotional_bait{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.28);color:#c084fc;}
+.itc-ai_writing{background:rgba(230,57,70,0.12);border-color:rgba(230,57,70,0.5);color:#ff4655;font-weight:600;}
 .spectator-banner{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.3);border-radius:var(--radius);padding:10px 16px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#a855f7;margin-bottom:16px;animation:spectatorPulse 2s ease-in-out infinite alternate;}
 @keyframes spectatorPulse{from{opacity:0.7;}to{opacity:1;}}
 .rival-profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;}
@@ -3375,7 +3377,7 @@ export default function App() {
     return () => clearInterval(iv);
   }, [screen, navigateFeatured]);
 
-  // Refresh live feed with real data every 5 minutes on home screen
+  // Refresh live feed every 30 seconds on home screen so friend activity appears quickly
   useEffect(() => {
     if (screen !== "home") return;
     const iv = setInterval(async () => {
@@ -3386,7 +3388,16 @@ export default function App() {
         // keep existing feed items on error
       }
       setFeedKey((k) => k + 1);
-    }, 5 * 60 * 1000);
+    }, 30 * 1000);
+    return () => clearInterval(iv);
+  }, [screen]);
+
+  // Auto-refresh leaderboard every 30 seconds while on that screen
+  useEffect(() => {
+    if (screen !== "leaderboard") return;
+    const iv = setInterval(() => {
+      setLbRefreshKey((k) => k + 1);
+    }, 30 * 1000);
     return () => clearInterval(iv);
   }, [screen]);
 
@@ -3940,18 +3951,25 @@ export default function App() {
         };
         doSave().then(() => {
           if (isLoggedIn) {
-            apiAuthGet<PlayerProfile>("/auth/player").then((p) => setPlayer(p)).catch(() => {});
             apiAuthPost<MmrResult>("/rankings/update", { won, avgScore, avgLogic, avgPersuasion, avgDelivery, opponentDifficulty: ai?.diff || "medium" })
               .then((mmr) => setMmrResult(mmr)).catch(() => {});
             apiAuthPost<ProgressionResult>("/progression/post-debate", { won, avgScore, currentStreak: won ? (stats.currentStreak ?? 0) + 1 : 0, opponentId: selectedAI || "unknown" })
               .then((prog) => setProgressionResult(prog)).catch(() => {});
+          }
+          setLbRefreshKey((k) => k + 1);
+        }).catch((saveErr: unknown) => {
+          console.error("[CLASH] debate save failed:", saveErr);
+        }).finally(() => {
+          // Always refresh profile and feed regardless of save success or failure
+          if (isLoggedIn) {
+            apiAuthGet<PlayerProfile>("/auth/player").then((p) => setPlayer(p)).catch(() => {});
           } else {
             apiGet<PlayerProfile>(`/players/${dId}`).then((p) => setPlayer(p)).catch(() => {});
           }
           apiGet<RecentActivity[]>("/activity/recent")
             .then((activity) => { if (activity.length > 0) { setFeedItems(buildRealFeedItems(activity)); setFeedKey((k) => k + 1); } })
             .catch(() => {});
-        }).catch(() => {});
+        });
       }
       // Save user arguments for Mirror Match
       try {
