@@ -5215,7 +5215,7 @@ export default function App() {
         }
         return (
           <div className="screen v1-laser-arena">
-            {incomingTaunt && (
+            {incomingTaunt && myRoundArg && (
               <div className="trash-bubble">
                 <div className="trash-bubble-who">{incomingTaunt.fromName}</div>
                 {incomingTaunt.text}
@@ -5235,7 +5235,7 @@ export default function App() {
                 </div>
               </div>
             )}
-            {myTrashBubble && (
+            {myTrashBubble && myRoundArg && (
               <div className="trash-bubble" style={{ right: "auto", left: "16px", borderRadius: "12px 4px 12px 12px", borderColor: "rgba(168,85,247,0.35)" }}>
                 <div className="trash-bubble-who" style={{ color: "#a855f7" }}>You</div>
                 {myTrashBubble}
