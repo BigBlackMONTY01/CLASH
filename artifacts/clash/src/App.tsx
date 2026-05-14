@@ -3644,8 +3644,9 @@ export default function App() {
       // Save debate to DB in background (non-blocking)
       {
         const isLoggedIn = !!localStorage.getItem("clash-auth-token");
+        const dId = getOrCreateDeviceId();
         const savePayload = {
-          deviceId: getOrCreateDeviceId(),
+          deviceId: dId,
           opponentId: selectedAI || "unknown",
           opponentName: ai?.name || "AI",
           topic: selectedTopic?.text || "",
@@ -3657,20 +3658,26 @@ export default function App() {
           won,
           isGauntlet: tournamentMode,
         };
-        (isLoggedIn ? apiAuthPost("/debates/save", savePayload) : apiPost("/debates/save", savePayload))
-          .then(() => {
-            if (isLoggedIn) {
-              apiAuthGet<PlayerProfile>("/auth/player").then((p) => setPlayer(p)).catch(() => {});
-              // Update MMR ranking
-              apiAuthPost<MmrResult>("/rankings/update", { won, avgScore, avgLogic, avgPersuasion, avgDelivery, opponentDifficulty: ai?.diff || "medium" })
-                .then((mmr) => setMmrResult(mmr)).catch(() => {});
-              // Update progression (shield tokens, dynasty, title)
-              apiAuthPost<ProgressionResult>("/progression/post-debate", { won, avgScore, currentStreak: won ? (stats.currentStreak ?? 0) + 1 : 0, opponentId: selectedAI || "unknown" })
-                .then((prog) => setProgressionResult(prog)).catch(() => {});
-            } else {
-              apiGet<PlayerProfile>(`/players/${getOrCreateDeviceId()}`).then((p) => setPlayer(p)).catch(() => {});
-            }
-          }).catch(() => {});
+        const doSave = async () => {
+          if (!isLoggedIn) {
+            try { await apiPost("/players/register", { deviceId: dId }); } catch {}
+          }
+          await (isLoggedIn ? apiAuthPost("/debates/save", savePayload) : apiPost("/debates/save", savePayload));
+        };
+        doSave().then(() => {
+          if (isLoggedIn) {
+            apiAuthGet<PlayerProfile>("/auth/player").then((p) => setPlayer(p)).catch(() => {});
+            apiAuthPost<MmrResult>("/rankings/update", { won, avgScore, avgLogic, avgPersuasion, avgDelivery, opponentDifficulty: ai?.diff || "medium" })
+              .then((mmr) => setMmrResult(mmr)).catch(() => {});
+            apiAuthPost<ProgressionResult>("/progression/post-debate", { won, avgScore, currentStreak: won ? (stats.currentStreak ?? 0) + 1 : 0, opponentId: selectedAI || "unknown" })
+              .then((prog) => setProgressionResult(prog)).catch(() => {});
+          } else {
+            apiGet<PlayerProfile>(`/players/${dId}`).then((p) => setPlayer(p)).catch(() => {});
+          }
+          apiGet<RecentActivity[]>("/activity/recent")
+            .then((activity) => { if (activity.length > 0) { setFeedItems(buildRealFeedItems(activity)); setFeedKey((k) => k + 1); } })
+            .catch(() => {});
+        }).catch(() => {});
       }
       // Save user arguments for Mirror Match
       try {

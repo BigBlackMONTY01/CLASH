@@ -154,16 +154,23 @@ router.post("/debates/save", async (req, res) => {
     if (jwtPlayerId) {
       const rows = await db.select().from(players).where(eq(players.id, jwtPlayerId)).limit(1);
       player = rows;
+      if (player.length === 0) {
+        res.status(404).json({ error: "Authenticated player not found" });
+        return;
+      }
     } else {
       if (!deviceId || typeof deviceId !== "string") {
         res.status(400).json({ error: "deviceId required when not authenticated" });
         return;
       }
-      player = await db.select().from(players).where(eq(players.deviceId, deviceId as string)).limit(1);
-    }
-    if (player.length === 0) {
-      res.status(404).json({ error: "Player not found" });
-      return;
+      const existing = await db.select().from(players).where(eq(players.deviceId, deviceId as string)).limit(1);
+      if (existing.length > 0) {
+        player = existing;
+      } else {
+        const created = await db.insert(players).values({ deviceId: deviceId as string }).returning();
+        player = created;
+        req.log.info({ deviceId }, "auto-created guest player on debate save");
+      }
     }
     const inserted = await db.insert(debates).values({
       playerId: player[0].id,
