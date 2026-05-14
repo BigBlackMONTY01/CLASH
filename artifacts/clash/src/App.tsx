@@ -703,6 +703,48 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .achievement-toast-icon{font-size:28px;flex-shrink:0;}.achievement-toast-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
 .achievement-toast-name{font-size:15px;font-weight:600;}.achievement-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .ach-badge{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:4px 12px 4px 8px;display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;}.ach-badge.gold-ach{border-color:var(--gold);background:rgba(244,197,66,0.08);}
+/* VOICE INPUT */
+.mic-btn{background:none;border:none;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;transition:color 0.15s,background 0.15s;flex-shrink:0;-webkit-tap-highlight-color:transparent;}.mic-btn:hover{color:var(--text);}.mic-btn.recording{color:var(--red);animation:micPulse 0.8s ease-in-out infinite;}@keyframes micPulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+/* DRAFT BANNER */
+.draft-banner{background:rgba(230,57,70,0.07);border:1px solid rgba(230,57,70,0.22);border-radius:var(--radius);padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.draft-banner-text{flex:1;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);}
+.draft-banner-btn{background:rgba(230,57,70,0.12);border:1px solid rgba(230,57,70,0.35);border-radius:4px;color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:4px 10px;transition:background 0.15s;flex-shrink:0;}.draft-banner-btn:hover{background:rgba(230,57,70,0.22);}
+/* FEEDBACK MODAL */
+.feedback-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.75);display:flex;align-items:flex-end;justify-content:center;}
+.feedback-modal{background:var(--surface);border:1px solid var(--border);border-top-left-radius:var(--radius);border-top-right-radius:var(--radius);padding:24px 20px 40px;width:100%;max-width:480px;animation:slideUp 0.28s cubic-bezier(0.22,1,0.36,1);}
+.feedback-modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;margin-bottom:14px;}
+.feedback-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.feedback-cat{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;transition:all 0.15s;}.feedback-cat.active{background:rgba(230,57,70,0.12);border-color:rgba(230,57,70,0.5);color:var(--red);}
+.feedback-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);resize:none;outline:none;transition:border-color 0.15s;box-sizing:border-box;}.feedback-textarea:focus{border-color:rgba(230,57,70,0.4);}
+.feedback-sent{text-align:center;padding:20px 0;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+/* FRIENDS MODAL */
+.friends-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.75);display:flex;align-items:flex-end;justify-content:center;}
+.friends-modal{background:var(--surface);border:1px solid var(--border);border-top-left-radius:var(--radius);border-top-right-radius:var(--radius);padding:24px 20px 40px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;animation:slideUp 0.28s cubic-bezier(0.22,1,0.36,1);}
+.friends-modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;margin-bottom:14px;}
+.friend-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:opacity 0.15s;}.friend-row:last-child{border-bottom:none;}.friend-row:hover{opacity:0.8;}
+.friend-av{width:32px;height:32px;border-radius:50%;background:rgba(230,57,70,0.12);border:1px solid rgba(230,57,70,0.3);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--red);flex-shrink:0;}
+.friend-info{flex:1;}.friend-username{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;}.friend-stats-txt{font-size:11px;color:var(--text-dim);}
+.friend-add-row{display:flex;gap:8px;margin-top:16px;}
+.friend-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color 0.15s;}.friend-input:focus{border-color:rgba(230,57,70,0.4);}
+/* PUBLIC PROFILE MODAL */
+.pub-profile-overlay{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:20px;}
+.pub-profile-modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 22px;width:100%;max-width:360px;animation:fadeInUp 0.25s ease;}
+.pub-profile-av{width:56px;height:56px;border-radius:50%;background:rgba(230,57,70,0.1);border:2px solid rgba(230,57,70,0.3);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--red);margin:0 auto 12px;}
+.pub-profile-name{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:4px;text-align:center;margin-bottom:16px;}
+.pub-profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.pub-stat{background:var(--surface2);border-radius:var(--radius);padding:10px;text-align:center;}
+.pub-stat-val{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);}
+.pub-stat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:2px;}
+/* REFERRAL + SHARE */
+.pp-share-section{background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+.pp-share-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;}
+.pp-share-row{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-bottom:8px;}
+.pp-share-link{flex:1;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:0.5px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pp-share-copy{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:4px;color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:4px 10px;flex-shrink:0;transition:background 0.15s;white-space:nowrap;}.pp-share-copy:hover{background:rgba(230,57,70,0.2);}
+/* TWO-TRUTHS MODE */
+.home-mode-btn.teal .home-mode-title{color:#2dd4bf;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 /* UPDATE BANNER */
 .update-banner{position:fixed;top:0;left:0;right:0;z-index:20000;background:#1a1a1a;border-bottom:1px solid rgba(230,57,70,0.5);display:flex;align-items:center;gap:10px;padding:10px 16px;animation:bannerSlideDown 0.3s ease;}
 @keyframes bannerSlideDown{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
@@ -2880,6 +2922,26 @@ export default function App() {
   const [showPwaModal, setShowPwaModal] = useState(false);
   const [pwaOs, setPwaOs] = useState<"ios"|"android"|"desktop">("ios");
   const [showUpdateBanner, setShowUpdateBanner] = useState(() => !!(window as any).__swUpdated);
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef<any>(null);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackCategory, setFeedbackCategory] = useState("bug");
+  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [showPublicProfile, setShowPublicProfile] = useState(false);
+  const [publicProfileData, setPublicProfileData] = useState<{username:string;debates:number;wins:number;bestScore:number;winRate:number}|null>(null);
+  const [publicProfileLoading, setPublicProfileLoading] = useState(false);
+  const [referralCopied, setReferralCopied] = useState(false);
+  const [profileLinkCopied, setProfileLinkCopied] = useState(false);
+  const [showFriendsModal, setShowFriendsModal] = useState(false);
+  const [friendsList, setFriendsList] = useState<Array<{username:string;addedAt:string}>>(() => { try { return JSON.parse(localStorage.getItem("clash-friends")||"[]"); } catch { return []; } });
+  const [addFriendInput, setAddFriendInput] = useState("");
+  const [addFriendError, setAddFriendError] = useState("");
+  const [viewingFriend, setViewingFriend] = useState<{username:string;debates:number;wins:number;bestScore:number;winRate:number}|null>(null);
+  const [friendChallengeCode, setFriendChallengeCode] = useState<string|null>(null);
+  const [friendChallengeCopied, setFriendChallengeCopied] = useState(false);
+  const [twoTruthsMode, setTwoTruthsMode] = useState(false);
+  const lastNotifiedRoundRef = useRef<number>(0);
 
   const [topicVotes, setTopicVotes] = useState<Record<string,number>>(() => { try { return JSON.parse(localStorage.getItem("clash-votes")||"{}"); } catch { return {}; } });
   const [votedTopics, setVotedTopics] = useState<Set<string>>(() => { try { return new Set<string>(JSON.parse(localStorage.getItem("clash-voted")||"[]")); } catch { return new Set<string>(); } });
@@ -2984,7 +3046,7 @@ export default function App() {
           splash.classList.add("out");
           setTimeout(() => splash.remove(), 500);
         }
-      }, 1800);
+      }, 2200);
       return () => {
         clearTimeout(exitTimer);
         const el = document.getElementById("clash-app-css");
@@ -3014,6 +3076,35 @@ export default function App() {
     window.addEventListener("unhandledrejection", handler);
     return () => window.removeEventListener("unhandledrejection", handler);
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const profileParam = params.get("profile");
+    const refParam = params.get("ref");
+    if (profileParam) {
+      setPublicProfileLoading(true);
+      setShowPublicProfile(true);
+      fetch(`/api/players/public/${encodeURIComponent(profileParam)}`)
+        .then(r => r.json())
+        .then(d => { if (!d.error) setPublicProfileData(d); })
+        .catch(() => {})
+        .finally(() => setPublicProfileLoading(false));
+    }
+    if (refParam) { try { localStorage.setItem("clash-referrer", refParam); } catch {} }
+    if (profileParam || refParam) window.history.replaceState({}, "", window.location.pathname);
+  }, []);
+
+  useEffect(() => {
+    if (screen !== "debate" || !selectedTopic?.text) return;
+    const key = `clash-draft-${selectedTopic.text}`;
+    const t = setTimeout(() => {
+      try {
+        if (inputText.trim().length > 15) localStorage.setItem(key, inputText);
+        else localStorage.removeItem(key);
+      } catch {}
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [inputText, screen, selectedTopic?.text]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -3157,6 +3248,10 @@ export default function App() {
         setCurrentRoom(room);
         if (room.status === "debating" && screen === "multiplayer-waiting") setScreen("multiplayer-debate");
         if (room.status === "complete" && screen !== "multiplayer-results" && !viewingArgsAfterMatch.current) setScreen("multiplayer-results");
+        if (room.status === "debating" && typeof room.currentRound === "number" && room.currentRound > lastNotifiedRoundRef.current && document.hidden && Notification.permission === "granted") {
+          lastNotifiedRoundRef.current = room.currentRound;
+          new Notification("CLASH — Your Turn!", { body: "Your opponent argued. Step up and respond.", icon: "/favicon.svg" });
+        }
         if (room.latestTaunt && room.latestTaunt.id > lastSeenTauntIdRef.current && room.latestTaunt.fromPlayerNum !== room.playerNum) {
           lastSeenTauntIdRef.current = room.latestTaunt.id;
           setIncomingTaunt(room.latestTaunt);
@@ -4418,6 +4513,11 @@ export default function App() {
               </svg>
             )}
           </button>
+          <button className="sound-btn" style={{opacity:0.6}} onClick={() => { setFeedbackSent(false); setFeedbackText(""); setFeedbackCategory("bug"); setShowFeedbackModal(true); }} title="Send feedback">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </button>
           {(stats.currentStreak ?? 0) >= 2 && (() => {
             const s = stats.currentStreak;
             const cls = s >= 10 ? "streak-blue" : s >= 5 ? "streak-green" : "streak-fire";
@@ -4515,6 +4615,30 @@ export default function App() {
                 <span className="home-mode-icon">🪞</span>
                 <div className="home-mode-title purple">Mirror</div>
                 <div className="home-mode-sub">{stats.debates < 5 ? `${5 - stats.debates} left` : "Your style"}</div>
+              </button>
+              <button
+                className="home-mode-btn teal"
+                onClick={() => {
+                  const NUANCED = [
+                    "Social media connects us, but it also deepens division — defend both truths",
+                    "AI will eliminate jobs AND create new ones — argue the balance",
+                    "Free speech has limits, but those limits must stay minimal — hold both",
+                    "Capitalism drives growth AND widens inequality — argue the nuance",
+                    "Immigration enriches nations but unmanaged borders create real strain — defend both",
+                    "Prisons protect society AND destroy the people inside them — argue the nuance",
+                  ];
+                  const t = NUANCED[Math.floor(Math.random() * NUANCED.length)];
+                  setTwoTruthsMode(true);
+                  setMirrorMatchMode(false);
+                  setSelectedTopic({ cat: "Two-Truths", text: t });
+                  setSelectedSide("for");
+                  setSetupStep(1);
+                  setScreen("setup");
+                }}
+              >
+                <span className="home-mode-icon" style={{fontSize:"16px"}}>⚖</span>
+                <div className="home-mode-title teal">Two-Truths</div>
+                <div className="home-mode-sub">Defend the nuance</div>
               </button>
             </div>
           </div>
@@ -5016,6 +5140,18 @@ export default function App() {
                   </>
                 );
               })()}
+              {(() => {
+                const draftKey = `clash-draft-${selectedTopic?.text}`;
+                const savedDraft = (() => { try { return localStorage.getItem(draftKey); } catch { return null; } })();
+                if (!savedDraft || inputText.length > 0) return null;
+                return (
+                  <div className="draft-banner">
+                    <span className="draft-banner-text">Draft saved — restore?</span>
+                    <button className="draft-banner-btn" onClick={() => { setInputText(savedDraft); try { localStorage.removeItem(draftKey); } catch {} }}>Restore</button>
+                    <button className="draft-banner-btn" style={{background:"none",border:"none",color:"var(--text-dim)",cursor:"pointer"}} onClick={() => { try { localStorage.removeItem(draftKey); } catch {} }}>Dismiss</button>
+                  </div>
+                );
+              })()}
               <textarea
                 ref={inputRef}
                 className={`debate-input${isExtreme && timerStarted && timeLeft !== null && timeLeft <= 10 ? " extreme-urgent" : ""}`}
@@ -5057,6 +5193,32 @@ export default function App() {
                       </span>
                     );
                   })()}
+                  <button
+                    className={`mic-btn${isRecording ? " recording" : ""}`}
+                    title={isRecording ? "Stop recording" : "Speak your argument"}
+                    onClick={() => {
+                      if (isRecording) { recognitionRef.current?.stop(); setIsRecording(false); return; }
+                      const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+                      if (!SR) { alert("Speech recognition not supported in this browser."); return; }
+                      const r = new SR();
+                      r.continuous = true; r.interimResults = true; r.lang = "en-US";
+                      recognitionRef.current = r;
+                      r.onresult = (e: any) => {
+                        let t = "";
+                        for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+                        setInputText(prev => { const b = prev.trimEnd(); return b ? b + " " + t : t; });
+                      };
+                      r.onend = () => setIsRecording(false);
+                      r.start(); setIsRecording(true);
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                      <line x1="12" y1="19" x2="12" y2="23"/>
+                      <line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                  </button>
                   {!timerStarted && (
                     <button
                       style={{
@@ -6622,6 +6784,24 @@ export default function App() {
               )}
             </div>
           )}
+          {player?.username && (
+            <div className="pp-share-section">
+              <div className="pp-share-lbl">Share &amp; Invite</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"10px",letterSpacing:"2px",textTransform:"uppercase",color:"var(--text-dim)",marginBottom:"4px"}}>My Profile</div>
+              <div className="pp-share-row">
+                <span className="pp-share-link">{`${window.location.origin}?profile=${player.username}`}</span>
+                <button className="pp-share-copy" onClick={() => { navigator.clipboard.writeText(`${window.location.origin}?profile=${player.username}`); setProfileLinkCopied(true); setTimeout(()=>setProfileLinkCopied(false),2000); }}>{profileLinkCopied ? "Copied!" : "Copy"}</button>
+              </div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"10px",letterSpacing:"2px",textTransform:"uppercase",color:"var(--text-dim)",marginBottom:"4px",marginTop:"8px"}}>Referral Link</div>
+              <div className="pp-share-row">
+                <span className="pp-share-link">{`${window.location.origin}?ref=${player.username}`}</span>
+                <button className="pp-share-copy" onClick={() => { navigator.clipboard.writeText(`${window.location.origin}?ref=${player.username}`); setReferralCopied(true); setTimeout(()=>setReferralCopied(false),2000); }}>{referralCopied ? "Copied!" : "Copy"}</button>
+              </div>
+              <button className="btn btn-ghost" style={{width:"100%",marginTop:"10px",fontSize:"12px",letterSpacing:"2px"}} onClick={() => { setAddFriendInput(""); setAddFriendError(""); setViewingFriend(null); setFriendChallengeCode(null); setShowFriendsModal(true); }}>
+                My Rivals ({friendsList.length})
+              </button>
+            </div>
+          )}
           <button className="pp-logout" onClick={logoutFn}>Log Out</button>
         </div>
       </>
@@ -6663,6 +6843,201 @@ export default function App() {
               <div className="pwa-step"><div className="pwa-step-num">2</div><div className="pwa-step-text">Look for the <strong>install icon</strong> in the address bar (a circle with a +)</div></div>
               <div className="pwa-step"><div className="pwa-step-num">3</div><div className="pwa-step-text">Click it and select <strong>Install</strong> — CLASH opens as a standalone app</div></div>
             </>
+          )}
+        </div>
+      </div>
+    )}
+
+    {/* FEEDBACK MODAL */}
+    {showFeedbackModal && (
+      <div className="feedback-overlay" onClick={() => setShowFeedbackModal(false)}>
+        <div className="feedback-modal" onClick={e => e.stopPropagation()}>
+          <div className="feedback-modal-title">Send Feedback</div>
+          {feedbackSent ? (
+            <div className="feedback-sent">Thanks — we read every message.</div>
+          ) : (
+            <>
+              <div className="feedback-cats">
+                {(["bug","suggestion","praise","other"] as const).map(c => (
+                  <button key={c} className={`feedback-cat${feedbackCategory===c?" active":""}`} onClick={() => setFeedbackCategory(c)}>
+                    {c === "bug" ? "Bug" : c === "suggestion" ? "Idea" : c === "praise" ? "Love it" : "Other"}
+                  </button>
+                ))}
+              </div>
+              <textarea
+                className="feedback-textarea"
+                rows={4}
+                placeholder={feedbackCategory === "bug" ? "What went wrong? Steps to reproduce…" : feedbackCategory === "suggestion" ? "What feature would you add?" : feedbackCategory === "praise" ? "What are you enjoying?" : "Anything on your mind…"}
+                value={feedbackText}
+                onChange={e => setFeedbackText(e.target.value)}
+                autoFocus
+              />
+              <button
+                className="btn btn-primary"
+                style={{width:"100%",marginTop:"12px"}}
+                disabled={feedbackText.trim().length < 3}
+                onClick={async () => {
+                  try {
+                    await fetch("/api/feedback", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ category: feedbackCategory, text: feedbackText }) });
+                    setFeedbackSent(true);
+                    setTimeout(() => setShowFeedbackModal(false), 2000);
+                  } catch {}
+                }}
+              >
+                Submit
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    )}
+
+    {/* FRIENDS / RIVALS MODAL */}
+    {showFriendsModal && (
+      <div className="friends-overlay" onClick={() => { setShowFriendsModal(false); setViewingFriend(null); setFriendChallengeCode(null); }}>
+        <div className="friends-modal" onClick={e => e.stopPropagation()}>
+          {viewingFriend ? (
+            <>
+              <button className="btn btn-ghost" style={{marginBottom:"14px",fontSize:"11px",letterSpacing:"2px"}} onClick={() => { setViewingFriend(null); setFriendChallengeCode(null); setFriendChallengeCopied(false); }}>← Back</button>
+              <div className="pub-profile-av">{viewingFriend.username[0].toUpperCase()}</div>
+              <div className="pub-profile-name">{viewingFriend.username}</div>
+              <div className="pub-profile-stats">
+                <div className="pub-stat"><div className="pub-stat-val">{viewingFriend.debates}</div><div className="pub-stat-lbl">Debates</div></div>
+                <div className="pub-stat"><div className="pub-stat-val">{viewingFriend.wins}</div><div className="pub-stat-lbl">Wins</div></div>
+                <div className="pub-stat"><div className="pub-stat-val">{viewingFriend.winRate}%</div><div className="pub-stat-lbl">Win Rate</div></div>
+                <div className="pub-stat"><div className="pub-stat-val">{viewingFriend.bestScore}</div><div className="pub-stat-lbl">Best Score</div></div>
+              </div>
+              {friendChallengeCode ? (
+                <div>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"11px",letterSpacing:"2px",textTransform:"uppercase",color:"var(--text-dim)",marginBottom:"8px"}}>Challenge sent — share this code:</div>
+                  <div className="pp-share-row">
+                    <span className="pp-share-link" style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"22px",letterSpacing:"4px",color:"var(--text)"}}>{friendChallengeCode}</span>
+                    <button className="pp-share-copy" onClick={() => { navigator.clipboard.writeText(friendChallengeCode); setFriendChallengeCopied(true); setTimeout(()=>setFriendChallengeCopied(false),2000); }}>{friendChallengeCopied?"Copied!":"Copy"}</button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  className="btn btn-primary"
+                  style={{width:"100%"}}
+                  onClick={async () => {
+                    try {
+                      const res = await fetch("/api/1v1/create", { method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${localStorage.getItem("clash-auth-token")}`}, body: JSON.stringify({}) });
+                      const data = await res.json();
+                      if (data.code) setFriendChallengeCode(data.code);
+                    } catch {}
+                  }}
+                >
+                  Challenge to 1v1
+                </button>
+              )}
+              <button
+                className="btn btn-ghost"
+                style={{width:"100%",marginTop:"8px",color:"var(--red)",fontSize:"11px",letterSpacing:"2px"}}
+                onClick={() => {
+                  const updated = friendsList.filter(f => f.username !== viewingFriend.username);
+                  setFriendsList(updated);
+                  try { localStorage.setItem("clash-friends", JSON.stringify(updated)); } catch {}
+                  setViewingFriend(null);
+                }}
+              >
+                Remove Rival
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="friends-modal-title">My Rivals</div>
+              {friendsList.length === 0 && (
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"12px",letterSpacing:"1px",color:"var(--text-dim)",marginBottom:"14px"}}>No rivals yet. Add someone by username.</div>
+              )}
+              {friendsList.map(f => (
+                <div key={f.username} className="friend-row" onClick={async () => {
+                  try {
+                    const res = await fetch(`/api/players/public/${encodeURIComponent(f.username)}`);
+                    const d = await res.json();
+                    if (!d.error) setViewingFriend(d);
+                  } catch {}
+                }}>
+                  <div className="friend-av">{f.username[0].toUpperCase()}</div>
+                  <div className="friend-info">
+                    <div className="friend-username">{f.username}</div>
+                    <div className="friend-stats-txt">Added {new Date(f.addedAt).toLocaleDateString()}</div>
+                  </div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{color:"var(--text-dim)"}}><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              ))}
+              <div className="friend-add-row">
+                <input
+                  className="friend-input"
+                  placeholder="Add rival by username…"
+                  value={addFriendInput}
+                  onChange={e => { setAddFriendInput(e.target.value); setAddFriendError(""); }}
+                  onKeyDown={e => { if (e.key === "Enter") e.currentTarget.blur(); }}
+                />
+                <button
+                  className="btn btn-primary"
+                  style={{flexShrink:0,padding:"0 16px"}}
+                  disabled={addFriendInput.trim().length < 2}
+                  onClick={async () => {
+                    const uname = addFriendInput.trim().toLowerCase();
+                    if (friendsList.some(f => f.username === uname)) { setAddFriendError("Already in your rivals list"); return; }
+                    try {
+                      const res = await fetch(`/api/players/public/${encodeURIComponent(uname)}`);
+                      const d = await res.json();
+                      if (d.error) { setAddFriendError("Player not found"); return; }
+                      const updated = [...friendsList, { username: uname, addedAt: new Date().toISOString() }];
+                      setFriendsList(updated);
+                      try { localStorage.setItem("clash-friends", JSON.stringify(updated)); } catch {}
+                      setAddFriendInput("");
+                    } catch { setAddFriendError("Could not connect"); }
+                  }}
+                >
+                  Add
+                </button>
+              </div>
+              {addFriendError && <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"11px",letterSpacing:"1px",color:"var(--red)",marginTop:"6px"}}>{addFriendError}</div>}
+            </>
+          )}
+        </div>
+      </div>
+    )}
+
+    {/* PUBLIC PROFILE MODAL */}
+    {showPublicProfile && (
+      <div className="pub-profile-overlay" onClick={() => { setShowPublicProfile(false); setPublicProfileData(null); }}>
+        <div className="pub-profile-modal" onClick={e => e.stopPropagation()}>
+          {publicProfileLoading ? (
+            <div style={{textAlign:"center",padding:"30px 0",fontFamily:"'Barlow Condensed',sans-serif",fontSize:"12px",letterSpacing:"2px",textTransform:"uppercase",color:"var(--text-dim)"}}>Loading…</div>
+          ) : publicProfileData ? (
+            <>
+              <div className="pub-profile-av">{publicProfileData.username[0].toUpperCase()}</div>
+              <div className="pub-profile-name">{publicProfileData.username}</div>
+              <div className="pub-profile-stats">
+                <div className="pub-stat"><div className="pub-stat-val">{publicProfileData.debates}</div><div className="pub-stat-lbl">Debates</div></div>
+                <div className="pub-stat"><div className="pub-stat-val">{publicProfileData.wins}</div><div className="pub-stat-lbl">Wins</div></div>
+                <div className="pub-stat"><div className="pub-stat-val">{publicProfileData.winRate}%</div><div className="pub-stat-lbl">Win Rate</div></div>
+                <div className="pub-stat"><div className="pub-stat-val">{publicProfileData.bestScore}</div><div className="pub-stat-lbl">Best Score</div></div>
+              </div>
+              <button
+                className="btn btn-ghost"
+                style={{width:"100%",marginBottom:"8px",fontSize:"11px",letterSpacing:"2px"}}
+                onClick={() => {
+                  const uname = publicProfileData.username;
+                  if (!friendsList.some(f => f.username === uname)) {
+                    const updated = [...friendsList, { username: uname, addedAt: new Date().toISOString() }];
+                    setFriendsList(updated);
+                    try { localStorage.setItem("clash-friends", JSON.stringify(updated)); } catch {}
+                  }
+                  setShowPublicProfile(false);
+                  setPublicProfileData(null);
+                  setTimeout(() => { setAddFriendInput(""); setAddFriendError(""); setViewingFriend(publicProfileData); setShowFriendsModal(true); }, 100);
+                }}
+              >
+                Add to Rivals
+              </button>
+              <button className="btn btn-ghost" style={{width:"100%",fontSize:"11px",letterSpacing:"2px",opacity:0.5}} onClick={() => { setShowPublicProfile(false); setPublicProfileData(null); }}>Close</button>
+            </>
+          ) : (
+            <div style={{textAlign:"center",padding:"30px 0",fontFamily:"'Barlow Condensed',sans-serif",fontSize:"12px",letterSpacing:"2px",textTransform:"uppercase",color:"var(--red)"}}>Player not found.</div>
           )}
         </div>
       </div>

@@ -28,122 +28,233 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
-  <style>
-    *{box-sizing:border-box;}
-    body{margin:0;background:#0a0a0a;visibility:visible;}
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #0a0a0a; visibility: visible; }
 
-    #pwa-splash{
-      position:fixed;inset:0;z-index:99999;background:#0a0a0a;
-      display:flex;align-items:center;justify-content:center;flex-direction:column;
-      transition:opacity 0.5s ease;overflow:hidden;
-    }
-    #pwa-splash.out{opacity:0;pointer-events:none;}
-
-    #splash-flash{
-      position:absolute;inset:0;background:rgba(230,57,70,0.18);
-      opacity:0;pointer-events:none;
-      animation:flashPulse 0.3s ease-out 0.77s forwards;
-    }
-
-    #splash-row{
-      display:flex;align-items:flex-end;
-      font-family:'Bebas Neue',system-ui,sans-serif;
-      font-size:80px;line-height:1;
-      position:relative;z-index:1;
-    }
-
-    #splash-cl{
-      color:#fff;letter-spacing:6px;
-      display:inline-block;
-      opacity:0;transform:translateX(-60px);
-      animation:clIn 0.32s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
-    }
-    #splash-sh{
-      color:#fff;letter-spacing:6px;
-      display:inline-block;
-      opacity:0;transform:translateX(60px);
-      animation:shIn 0.32s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
-    }
-
-    #splash-a-wrap{
-      position:relative;display:inline-block;line-height:1;
-    }
-    #splash-a{
-      color:#e63946;letter-spacing:6px;
-      display:inline-block;
-      opacity:0;transform:translateY(-260px);
-      animation:aDrop 0.2s cubic-bezier(0.4,0,1,1) 0.57s forwards,
-                aSquish 0.3s ease-out 0.77s forwards;
-    }
-
-    .splash-wave{
-      position:absolute;top:50%;left:50%;
-      width:8px;height:8px;border-radius:50%;
-      border:2px solid rgba(230,57,70,0.85);
-      transform:translate(-50%,-50%) scale(0);
-      opacity:0;
-      animation:waveOut 0.55s ease-out 0.77s forwards;
-    }
-    .splash-wave-2{
-      border-color:rgba(230,57,70,0.45);
-      animation:waveOut 0.6s ease-out 0.87s forwards;
-    }
-
-    #splash-sub{
-      font-family:'Barlow Condensed',system-ui,sans-serif;
-      font-size:11px;letter-spacing:5px;text-transform:uppercase;
-      color:rgba(255,255,255,0.25);
-      margin-top:20px;
-      opacity:0;
-      animation:subIn 0.4s ease 0.98s forwards;
-      position:relative;z-index:1;
-    }
-
-    @keyframes clIn{to{opacity:1;transform:translateX(0);}}
-    @keyframes shIn{to{opacity:1;transform:translateX(0);}}
-    @keyframes aDrop{
-      0%{opacity:1;transform:translateY(-260px);}
-      100%{opacity:1;transform:translateY(0);}
-    }
-    @keyframes aSquish{
-      0%{transform:translateY(0) scaleY(1) scaleX(1);text-shadow:none;}
-      20%{transform:translateY(0) scaleY(0.72) scaleX(1.18);text-shadow:0 0 40px rgba(230,57,70,1),0 0 80px rgba(230,57,70,0.5);}
-      100%{transform:translateY(0) scaleY(1) scaleX(1);text-shadow:none;}
-    }
-    @keyframes waveOut{
-      0%{transform:translate(-50%,-50%) scale(0);opacity:1;}
-      100%{transform:translate(-50%,-50%) scale(14);opacity:0;}
-    }
-    @keyframes flashPulse{
-      0%{opacity:1;}
-      100%{opacity:0;}
-    }
-    @keyframes subIn{to{opacity:1;}}
-  </style>
-  <script>
-    (function(){
-      var isPWA = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
-      if(!isPWA){
-        document.addEventListener('DOMContentLoaded', function(){
-          var el = document.getElementById('pwa-splash');
-          if(el) el.style.display = 'none';
-        });
+      #pwa-splash {
+        position: fixed; inset: 0; z-index: 99999;
+        background: #0a0a0a;
+        overflow: hidden;
+        transition: opacity 0.5s ease;
       }
-    })();
-  </script>
+      #pwa-splash.out { opacity: 0; pointer-events: none; }
+
+      #splash-flash {
+        position: absolute; inset: 0;
+        background: #fff;
+        opacity: 0; pointer-events: none;
+      }
+      #splash-flash.fire {
+        animation: flashBurst 0.25s ease-out forwards;
+      }
+
+      .arg-line {
+        position: absolute;
+        left: 50%;
+        font-family: 'Barlow Condensed', system-ui, sans-serif;
+        font-size: clamp(13px, 3.8vw, 17px);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        opacity: 0;
+        transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+      }
+
+      #arg-top {
+        top: calc(50% - 30px);
+        color: rgba(255, 255, 255, 0.8);
+        transform: translateX(calc(-50% - 72vw));
+      }
+      #arg-top.in {
+        opacity: 1;
+        transform: translateX(-50%);
+      }
+      #arg-top.collide {
+        transform: translateX(-50%) translateY(20px) scale(0.05);
+        opacity: 0;
+        transition: transform 0.18s ease-in, opacity 0.18s ease-in;
+      }
+
+      #arg-bot {
+        top: calc(50% + 10px);
+        color: rgba(230, 57, 70, 0.9);
+        transform: translateX(calc(-50% + 72vw));
+      }
+      #arg-bot.in {
+        opacity: 1;
+        transform: translateX(-50%);
+      }
+      #arg-bot.collide {
+        transform: translateX(-50%) translateY(-14px) scale(0.05);
+        opacity: 0;
+        transition: transform 0.18s ease-in, opacity 0.18s ease-in;
+      }
+
+      .arg-cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1em;
+        background: currentColor;
+        margin-left: 3px;
+        flex-shrink: 0;
+        animation: cursorBlink 0.55s step-end infinite;
+      }
+
+      #clash-logo {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%) scale(0.55);
+        font-family: 'Bebas Neue', system-ui, sans-serif;
+        font-size: clamp(68px, 20vw, 96px);
+        letter-spacing: 8px;
+        color: #fff;
+        line-height: 1;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.22s ease, transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      #clash-logo span { color: #e63946; }
+      #clash-logo.show {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .s-wave {
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        border: 2px solid rgba(230, 57, 70, 0.85);
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        pointer-events: none;
+      }
+      .s-wave.fire { animation: waveOut 0.65s ease-out forwards; }
+      #w2.fire {
+        animation: waveOut 0.7s ease-out 0.12s forwards;
+        border-color: rgba(230, 57, 70, 0.4);
+      }
+
+      #splash-sub {
+        position: absolute;
+        top: calc(50% + clamp(44px, 14vw, 68px));
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'Barlow Condensed', system-ui, sans-serif;
+        font-size: 11px; letter-spacing: 5px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.2);
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+      #splash-sub.show { opacity: 1; }
+
+      @keyframes cursorBlink { 50% { opacity: 0; } }
+      @keyframes flashBurst {
+        0%   { opacity: 0.92; }
+        100% { opacity: 0; }
+      }
+      @keyframes waveOut {
+        0%   { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+        100% { transform: translate(-50%, -50%) scale(18); opacity: 0; }
+      }
+    </style>
+    <script>
+      (function () {
+        var isPWA = window.matchMedia('(display-mode: standalone)').matches
+          || navigator.standalone === true;
+
+        if (!isPWA) {
+          document.addEventListener('DOMContentLoaded', function () {
+            var el = document.getElementById('pwa-splash');
+            if (el) el.style.display = 'none';
+          });
+          return;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+          var TOP_STR  = '\u201cFacts don\u2019t care about feelings.\u201d';
+          var BOT_STR  = '\u201cFeelings ARE evidence.\u201d';
+          var SPEED_MS = 14;
+
+          var topLine  = document.getElementById('arg-top');
+          var botLine  = document.getElementById('arg-bot');
+          var topText  = document.getElementById('arg-top-text');
+          var botText  = document.getElementById('arg-bot-text');
+          var cursorT  = document.getElementById('cursor-top');
+          var cursorB  = document.getElementById('cursor-bot');
+          var flash    = document.getElementById('splash-flash');
+          var logo     = document.getElementById('clash-logo');
+          var w1       = document.getElementById('w1');
+          var w2       = document.getElementById('w2');
+          var sub      = document.getElementById('splash-sub');
+
+          var leftDone = false, rightDone = false;
+
+          function typeText(el, str, onDone) {
+            var i = 0;
+            function step() {
+              if (i < str.length) {
+                el.textContent += str[i++];
+                setTimeout(step, SPEED_MS + Math.random() * 8);
+              } else {
+                if (onDone) onDone();
+              }
+            }
+            step();
+          }
+
+          function onBothDone() {
+            if (!leftDone || !rightDone) return;
+            cursorT.style.display = 'none';
+            cursorB.style.display = 'none';
+
+            setTimeout(function () {
+              topLine.classList.add('collide');
+              botLine.classList.add('collide');
+
+              setTimeout(function () {
+                flash.classList.add('fire');
+
+                setTimeout(function () {
+                  logo.classList.add('show');
+                  w1.classList.add('fire');
+                  setTimeout(function () { w2.classList.add('fire'); }, 120);
+                  setTimeout(function () { sub.classList.add('show'); }, 320);
+                }, 80);
+              }, 180);
+            }, 280);
+          }
+
+          setTimeout(function () {
+            topLine.classList.add('in');
+            botLine.classList.add('in');
+          }, 80);
+
+          setTimeout(function () {
+            typeText(topText, TOP_STR, function () { leftDone = true; onBothDone(); });
+            typeText(botText, BOT_STR, function () { rightDone = true; onBothDone(); });
+          }, 160);
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="pwa-splash">
       <div id="splash-flash"></div>
-      <div id="splash-row">
-        <span id="splash-cl">CL</span>
-        <span id="splash-a-wrap">
-          <span id="splash-a">A</span>
-          <div class="splash-wave"></div>
-          <div class="splash-wave splash-wave-2"></div>
-        </span>
-        <span id="splash-sh">SH</span>
+      <div class="arg-line" id="arg-top">
+        <span id="arg-top-text"></span><span class="arg-cursor" id="cursor-top"></span>
       </div>
+      <div class="arg-line" id="arg-bot">
+        <span id="arg-bot-text"></span><span class="arg-cursor" id="cursor-bot"></span>
+      </div>
+      <div id="clash-logo">CL<span>A</span>SH</div>
+      <div class="s-wave" id="w1"></div>
+      <div class="s-wave" id="w2"></div>
       <div id="splash-sub">Debate Arena</div>
     </div>
     <div id="root"></div>

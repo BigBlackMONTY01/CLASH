@@ -353,4 +353,20 @@ router.get("/activity/recent", async (_req, res) => {
   }
 });
 
+router.get("/players/public/:username", async (req, res) => {
+  const { username } = req.params;
+  if (!username || typeof username !== "string") { res.status(400).json({ error: "username required" }); return; }
+  try {
+    const found = await db.select(SAFE_PLAYER_COLS).from(players).where(eq(players.username, username)).limit(1);
+    if (found.length === 0) { res.status(404).json({ error: "Player not found" }); return; }
+    const p = found[0];
+    const dbats = await db.select({ won: debates.won, avgScore: debates.avgScore }).from(debates).where(eq(debates.playerId, p.id)).limit(200);
+    const wins = dbats.filter(d => d.won).length;
+    const bestScore = dbats.reduce((m, d) => Math.max(m, d.avgScore ?? 0), 0);
+    res.json({ username: p.username, debates: dbats.length, wins, bestScore, winRate: dbats.length > 0 ? Math.round((wins / dbats.length) * 100) : 0 });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Database error" });
+  }
+});
+
 export default router;

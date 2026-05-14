@@ -10,6 +10,7 @@ import cardsRouter from "./cards";
 import progressionRouter from "./progression";
 import aiPersonasRouter from "./ai-personas";
 import rivalsRouter from "./rivals";
+import feedbackRouter from "./feedback";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use(cardsRouter);
 router.use(progressionRouter);
 router.use(aiPersonasRouter);
 router.use(rivalsRouter);
+router.use(feedbackRouter);
 
 export default router;
