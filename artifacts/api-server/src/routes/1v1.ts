@@ -2,6 +2,8 @@ import { Router } from "express";
 import jwt from "jsonwebtoken";
 import Groq from "groq-sdk";
 import { JWT_SECRET } from "./auth";
+import { db, players, debates } from "@workspace/db";
+import { eq } from "drizzle-orm";
 
 const router = Router();
 const MODEL = "llama-3.3-70b-versatile";
@@ -66,6 +68,56 @@ interface InMemoryRoom {
 }
 
 const store = new Map<string, InMemoryRoom>();
+
+async function saveDebateRecord(callerId: string, room: InMemoryRoom, playerNum: 1 | 2): Promise<void> {
+  try {
+    let player;
+    if (callerId.startsWith("jwt:")) {
+      const id = parseInt(callerId.slice(4));
+      const rows = await db.select().from(players).where(eq(players.id, id)).limit(1);
+      player = rows[0];
+    } else {
+      const rows = await db.select().from(players).where(eq(players.deviceId, callerId)).limit(1);
+      player = rows[0];
+    }
+    if (!player) return;
+
+    const myArgs = room.arguments.filter(a => a.playerNum === playerNum);
+    const myScore = playerNum === 1 ? room.player1Score : room.player2Score;
+    const myRank = playerNum === 1 ? room.player1Rank : room.player2Rank;
+    const oppName = playerNum === 1 ? (room.joinerName ?? "Opponent") : room.creatorName;
+    const oppCallerId = playerNum === 1 ? (room.joiner ?? "human") : room.creator;
+    const won = room.winnerPlayerNum === playerNum;
+    const avgLogic = myArgs.length ? Math.round(myArgs.reduce((s, a) => s + a.logic, 0) / myArgs.length) : 0;
+    const avgPersuasion = myArgs.length ? Math.round(myArgs.reduce((s, a) => s + a.persuasion, 0) / myArgs.length) : 0;
+    const avgDelivery = myArgs.length ? Math.round(myArgs.reduce((s, a) => s + a.delivery, 0) / myArgs.length) : 0;
+
+    await db.insert(debates).values({
+      playerId: player.id,
+      opponentId: oppCallerId,
+      opponentName: oppName,
+      topic: room.topicText,
+      topicCat: room.topicCat || "1v1",
+      side: (playerNum === 1 ? room.player1Side : room.player2Side) ?? "for",
+      rounds: room.totalRounds,
+      avgScore: myScore ?? 0,
+      avgLogic,
+      avgPersuasion,
+      avgDelivery,
+      rank: myRank ?? "D",
+      won,
+      isGauntlet: false,
+    });
+
+    const newStreak = won ? (player.currentStreak ?? 0) + 1 : 0;
+    const newBestStreak = Math.max(player.bestStreak ?? 0, newStreak);
+    await db.update(players)
+      .set({ currentStreak: newStreak, bestStreak: newBestStreak, updatedAt: new Date() })
+      .where(eq(players.id, player.id));
+  } catch {
+    // fire-and-forget — never break the response
+  }
+}
 
 setInterval(() => {
   const cutoff = Date.now() - 3 * 60 * 60 * 1000;
@@ -345,6 +397,8 @@ Find 3-5 exact substrings from the argument text.`;
       room.player2Score = p2Avg;
       room.player1Rank = scoreToRank(p1Avg);
       room.player2Rank = scoreToRank(p2Avg);
+      saveDebateRecord(room.creator, room, 1);
+      if (room.joiner) saveDebateRecord(room.joiner, room, 2);
     } else {
       room.currentRound++;
     }
@@ -366,6 +420,8 @@ router.post("/1v1/:code/forfeit", (req, res) => {
   room.player2Score = playerNum === 2 ? 0 : (room.player2Score || 60);
   room.player1Rank = playerNum === 1 ? "F" : (room.player1Rank || "C");
   room.player2Rank = playerNum === 2 ? "F" : (room.player2Rank || "C");
+  saveDebateRecord(room.creator, room, 1);
+  if (room.joiner) saveDebateRecord(room.joiner, room, 2);
   res.json({ ok: true });
 });
 

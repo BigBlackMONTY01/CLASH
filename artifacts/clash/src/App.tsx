@@ -4695,7 +4695,15 @@ export default function App() {
               <div className="v1-send-bubble">
                 <span className="v1-send-bubble-lbl">Send this</span>
                 <span className="v1-send-bubble-text">{v1SendLine}</span>
-                <button className="v1-send-copy-btn" onClick={() => navigator.clipboard.writeText(v1SendLine).catch(() => {})}>Copy</button>
+                <button className="v1-send-copy-btn" onClick={async () => {
+                  if (!currentRoom || roomSubmitting) return;
+                  const text = v1SendLine!;
+                  setV1SendLine(null);
+                  setRoomSubmitting(true);
+                  try { await apiAuthPost(`/1v1/${currentRoom.code}/argue`, { argumentText: text }); }
+                  catch (e) { setRoomError((e as Error).message); }
+                  finally { setRoomSubmitting(false); }
+                }}>Send</button>
               </div>
             )}
             <div className="v1-arena-header">
