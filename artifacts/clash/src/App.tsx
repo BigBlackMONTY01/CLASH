@@ -2727,7 +2727,13 @@ function calcXP(logic: number, persuasion: number, delivery: number, won: boolea
 type Screen = "home" | "setup" | "matchmaking" | "debate" | "verdict" | "leaderboard" | "replay" | "gauntlet-intro" | "gauntlet-between" | "gauntlet-final" | "multiplayer-lobby" | "multiplayer-waiting" | "multiplayer-debate" | "multiplayer-results" | "dashboard" | "forge-rival" | "forge-rival-result";
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("home");
+  const RESTORABLE: Screen[] = ["home", "leaderboard", "multiplayer-lobby", "dashboard", "forge-rival"];
+  const [screen, setScreen] = useState<Screen>(() => {
+    try {
+      const saved = sessionStorage.getItem("clash-screen") as Screen | null;
+      return saved && RESTORABLE.includes(saved) ? saved : "home";
+    } catch { return "home"; }
+  });
   const [setupStep, setSetupStep] = useState(0);
   const [selectedAI, setSelectedAI] = useState<string | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<{ cat: string; text: string } | null>(null);
@@ -2880,6 +2886,10 @@ export default function App() {
       if (style.parentNode) style.parentNode.removeChild(style);
     };
   }, []);
+
+  useEffect(() => {
+    try { sessionStorage.setItem("clash-screen", screen); } catch {}
+  }, [screen]);
 
   // Swallow unhandled promise rejections so the Replit runtime-error overlay
   // never triggers a page reload from async errors we already handle in-app.
