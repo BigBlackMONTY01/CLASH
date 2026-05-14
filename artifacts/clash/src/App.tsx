@@ -3833,6 +3833,9 @@ export default function App() {
       try {
         const profile = await apiAuthGet<PlayerProfile>("/auth/player");
         setPlayer(profile);
+        if (profile.stats.debates > 0) {
+          setStats({ wins: profile.stats.wins, debates: profile.stats.debates, bestScore: profile.stats.bestScore, currentStreak: profile.stats.currentStreak ?? 0, bestStreak: profile.stats.bestStreak ?? 0, opponentHistory: profile.stats.opponentHistory });
+        }
       } catch {}
       setShowAuthModal(false);
       setAuthEmail(""); setAuthPassword(""); setRegUsername("");
@@ -5240,6 +5243,9 @@ export default function App() {
               </>
             )}
 
+            <div style={{ marginTop: "32px", textAlign: "center" }}>
+              <button className="btn btn-ghost" onClick={reset}>← Home</button>
+            </div>
           </div>
         );
       })()}
