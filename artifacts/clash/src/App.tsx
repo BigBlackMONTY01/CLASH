@@ -747,10 +747,6 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .join-code-input{width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:10px;padding:14px 18px;text-align:center;text-transform:uppercase;outline:none;transition:border-color 0.2s;margin-bottom:12px;}
 .join-code-input:focus{border-color:var(--blue);}
 .waiting-room{text-align:center;padding:8px 0;}
-.v1-lobby-footer{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border);}
-.v1-lobby-footer .btn{flex:1;font-size:12px;padding:11px 8px;}
-.v1-lobby-footer .btn-home{background:none;border:1px solid var(--border);color:var(--text-dim);}
-.v1-lobby-footer .btn-home:hover{border-color:var(--text-mid);color:var(--text);}
 .room-code-display{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,14vw,88px);letter-spacing:10px;color:var(--text);margin:12px 0 6px;cursor:pointer;transition:color 0.2s;}
 .room-code-display:hover{color:var(--gold);}
 .waiting-dots{display:flex;justify-content:center;gap:8px;margin:16px 0;}
@@ -2170,21 +2166,28 @@ function wrapCanvasText(
   y: number,
   maxWidth: number,
   lineHeight: number,
+  maxLines = 99,
 ): void {
   const words = text.split(" ");
   let line = "";
   let curY = y;
+  let drawn = 0;
   for (const word of words) {
     const test = line + word + " ";
     if (ctx.measureText(test).width > maxWidth && line !== "") {
+      if (drawn >= maxLines - 1) {
+        ctx.fillText(line.trim().replace(/[.,]?$/, "") + "…", x, curY);
+        return;
+      }
       ctx.fillText(line.trim(), x, curY);
       line = word + " ";
       curY += lineHeight;
+      drawn++;
     } else {
       line = test;
     }
   }
-  if (line.trim()) ctx.fillText(line.trim(), x, curY);
+  if (line.trim() && drawn < maxLines) ctx.fillText(line.trim(), x, curY);
 }
 
 function truncateAtWord(text: string, maxLen: number): string {
@@ -2348,12 +2351,12 @@ function generateShareCard(params: {
   ctx.textAlign = "left";
   ctx.fillText("\u201C", PAD - 8, 1110);
 
-  // Quote — full text, word-wrapped, up to ~220 chars
-  const judgeStr = truncateAtWord(params.judgeText, 220);
+  // Quote — full text, word-wrapped, max 4 lines so it never overflows the footer
+  const judgeStr = truncateAtWord(params.judgeText, 180);
   ctx.font = "italic 31px Georgia, 'Times New Roman', serif";
   ctx.fillStyle = "#888";
   ctx.textAlign = "center";
-  wrapCanvasText(ctx, `\u201C${judgeStr}\u201D`, W / 2, 1060, W - PAD * 2.2, 44);
+  wrapCanvasText(ctx, `\u201C${judgeStr}\u201D`, W / 2, 1060, W - PAD * 2.2, 44, 4);
 
   // ── FOOTER ──────────────────────────────────────────────────────────────
   ctx.fillStyle = "#1c1c1c";
@@ -3580,11 +3583,23 @@ export default function App() {
     try {
       const userArguments = _msgs.filter((m) => m.role === "user").map((m) => m.text);
       const safeTopic = selectedTopic?.text?.trim() || "General debate";
+      const computedRank = avgScore >= 85 ? "S" : avgScore >= 75 ? "A" : avgScore >= 62 ? "B" : avgScore >= 48 ? "C" : avgScore >= 35 ? "D" : "F";
       const judgeVerdict = await apiPost<{ verdict: string; improve: string; rank: string; outcome: string; coachWorked?: string; coachFailed?: string; coachDrill?: string }>("/debate/verdict", {
         topic: safeTopic,
         avgScore, avgLogic, avgPersuasion, avgDelivery,
         roundScores: scores,
-      });
+        userArguments,
+      }).catch(() => ({
+        verdict: avgScore >= 65
+          ? "A controlled performance — you held your ground and landed the key points."
+          : "Too many assertions without evidence. Your opponent had the stronger case.",
+        improve: "Anchor every claim with a specific real-world example before moving to your next point.",
+        rank: computedRank,
+        outcome: avgScore >= 80 ? "dominant win" : avgScore >= 65 ? "clear win" : avgScore >= 52 ? "narrow loss" : avgScore >= 38 ? "clear loss" : "crushing defeat",
+        coachWorked: undefined,
+        coachFailed: undefined,
+        coachDrill: undefined,
+      }));
 
       const allBest = scores.map((s) => s.best).filter(Boolean);
       const allWeak = scores.map((s) => s.weak).filter(Boolean);
@@ -4186,7 +4201,7 @@ export default function App() {
     <>
     <div className="app">
       <nav className="nav">
-        <div className="logo">CL<span>A</span>SH</div>
+        <div className="logo" onClick={() => setScreen("home")} style={{ cursor: "pointer" }}>CL<span>A</span>SH</div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute" : "Unmute"}>
             {soundEnabled ? (
@@ -4969,33 +4984,6 @@ export default function App() {
                   <span style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.improve}</span>
                 </div>
 
-                <div className="coach-panel">
-                  <div className="coach-panel-title"><span>🎯</span> COACH ANALYSIS</div>
-                  {verdict.coachWorked && (
-                    <div className="coach-row">
-                      <div className="coach-row-label worked">✓ What Worked</div>
-                      <div className="coach-row-text">{verdict.coachWorked}</div>
-                    </div>
-                  )}
-                  {verdict.coachFailed && (
-                    <div className="coach-row">
-                      <div className="coach-row-label failed">✗ What Failed</div>
-                      <div className="coach-row-text">{verdict.coachFailed}</div>
-                    </div>
-                  )}
-                  {(verdict.coachDrill || verdict.improve) && (
-                    <div className="coach-row">
-                      <div className="coach-row-label drill">⚡ Drill for Next Match</div>
-                      <div className="coach-row-text">{verdict.coachDrill || verdict.improve}</div>
-                    </div>
-                  )}
-                  {!verdict.coachWorked && !verdict.coachFailed && (
-                    <div className="coach-row">
-                      <div className="coach-row-label drill">⚡ Focus Area</div>
-                      <div className="coach-row-text">{verdict.improve || "Ground your claims with concrete evidence in each round."}</div>
-                    </div>
-                  )}
-                </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "12px 0 10px" }}>
                   {(() => { const tier = getRankedTier(verdict.avgScore); return <span className={`tier-badge ${tier.cls}`}>{tier.icon} {tier.tier}</span>; })()}
@@ -5272,11 +5260,6 @@ export default function App() {
               </>
             )}
 
-            <div className="v1-lobby-footer">
-              <button className="btn btn-home" onClick={reset}>← Home</button>
-              <button className="btn btn-primary" onClick={() => { setV1Tab("play"); setV1SubScreen(""); createRoom(); }}>⚔ Create</button>
-              <button className="btn btn-ghost" onClick={() => { setV1Tab("play"); setV1SubScreen("join"); }}>🔗 Join Room</button>
-            </div>
           </div>
         );
       })()}
