@@ -236,6 +236,7 @@ export default function Landing() {
     const style = document.createElement("style");
     style.textContent = LP_CSS;
     document.head.appendChild(style);
+    document.body.style.visibility = "visible";
     return () => { if (style.parentNode) style.parentNode.removeChild(style); };
   }, []);
 
