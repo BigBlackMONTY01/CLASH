@@ -676,6 +676,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .feed-loss{background:rgba(230,57,70,0.1);color:var(--red);}
 .feed-streak{background:rgba(244,197,66,0.1);color:var(--gold);}
 .feed-rank{background:rgba(168,85,247,0.1);color:#a855f7;}
+.feed-nuance{background:rgba(45,212,191,0.1);color:#2dd4bf;}
 
 /* Arena stats strip */
 @keyframes statCount{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
@@ -2262,6 +2263,8 @@ function buildFeedItems(): FeedItem[] {
     { icon: "💀", text: `<strong>${ghostPlayers[6]}</strong> lost to ${opponents[2]} · "${topics[0]}"`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "LOSS", badgeClass: "feed-loss" },
     { icon: "🏆", text: `<strong>${ghostPlayers[7]}</strong> won against ${opponents[3]} · 96 pts`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "WIN", badgeClass: "feed-win" },
     { icon: "⚡", text: `<strong>${ghostPlayers[9]}</strong> is on a 3-win streak`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "STREAK", badgeClass: "feed-streak" },
+    { icon: "⚖", text: `<strong>${ghostPlayers[3]}</strong> mastered the nuance — "AI creates and destroys jobs"`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "HELD", badgeClass: "feed-nuance" },
+    { icon: "⚖", text: `<strong>${ghostPlayers[8]}</strong> collapsed to one side on "Free speech has limits"`, time: sparseTimeLabels[Math.floor(Math.random() * sparseTimeLabels.length)], badge: "COLLAPSED", badgeClass: "feed-loss" },
   ];
   return pool.sort(() => Math.random() - 0.5);
 }
@@ -2642,7 +2645,7 @@ interface PlayerProfile {
 }
 interface LbEntry { id: number; username: string | null; deviceId: string; wins: number; totalDebates: number; bestScore: number; score: number; currentStreak: number; bestStreak: number; }
 interface GlobalStats { totalDebates: number; globalWinRate: number; uniqueTopics: number; activePlayers: number; }
-interface RecentActivity { username: string | null; deviceId: string; opponentName: string; topic: string; avgScore: number; won: boolean; isGauntlet: boolean; rank: string; createdAt: string; }
+interface RecentActivity { username: string | null; deviceId: string; opponentName: string; topic: string; topicCat?: string; avgScore: number; won: boolean; isGauntlet: boolean; rank: string; createdAt: string; }
 
 function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
   if (activity.length === 0) return buildFeedItems();
@@ -2656,6 +2659,10 @@ function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
     const timeStr = minsAgo < 60 ? `${minsAgo}m ago` : minsAgo < 1440 ? `${Math.floor(minsAgo / 60)}h ago` : `${Math.floor(minsAgo / 1440)}d ago`;
     if (a.isGauntlet) {
       return { icon: "⚔️", text: `<strong>${name}</strong> ran Gauntlet vs ${opp}`, badge: a.won ? "WON" : "LOST", badgeClass: a.won ? "feed-win" : "feed-loss", time: timeStr };
+    }
+    if (a.topicCat === "Two-Truths") {
+      const nuanceLabel = a.won ? "HELD" : "COLLAPSED";
+      return { icon: "⚖", text: `<strong>${name}</strong> ${a.won ? "mastered the nuance" : "collapsed to one side"} — "${topic}"`, badge: nuanceLabel, badgeClass: a.won ? "feed-nuance" : "feed-loss", time: timeStr };
     }
     if (a.won) {
       return { icon: "🏆", text: `<strong>${name}</strong> defeated ${opp} — "${topic}"`, badge: a.rank || "?", badgeClass: "feed-rank", time: timeStr };
@@ -3648,13 +3655,16 @@ export default function App() {
     if (roundsOverride !== undefined) setSelectedRounds(roundsOverride);
 
     const isMirror = mirrorMatchMode;
+    const isTwoTruths = twoTruthsMode;
 
-    const currentAI = isMirror
-      ? { id: "mirror", icon: "🪞", name: "The Mirror", diff: "hard" as const, diffLabel: "Hard", timer: 135, desc: "An AI trained on your own arguments.", personality: "" }
-      : aiId === "custom"
-        ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
-        : AI_OPPONENTS.find((a) => a.id === aiId);
-    if (!currentAI || (!isMirror && !currentAI.personality) || !topic || !side) return;
+    const currentAI = isTwoTruths
+      ? { id: "dialectician", icon: "⚖", name: "The Dialectician", diff: "hard" as const, diffLabel: "Hard", timer: 150, desc: "Guardian of nuance.", personality: "You are The Dialectician." }
+      : isMirror
+        ? { id: "mirror", icon: "🪞", name: "The Mirror", diff: "hard" as const, diffLabel: "Hard", timer: 135, desc: "An AI trained on your own arguments.", personality: "" }
+        : aiId === "custom"
+          ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
+          : AI_OPPONENTS.find((a) => a.id === aiId);
+    if (!currentAI || (!isMirror && !isTwoTruths && !currentAI.personality) || !topic || !side) return;
 
     setMessages([]);
     setRoundScores([]);
@@ -3698,6 +3708,7 @@ export default function App() {
               oppSide: devilsAdvocateMode ? sideLabel : oppSide,
               totalRounds: rounds,
               difficulty: currentAI.diff,
+              twoTruths: isTwoTruths,
             }),
         new Promise<void>((resolve) => setTimeout(resolve, 3500)),
       ] as [Promise<{ text: string }>, Promise<void>]);
@@ -3751,6 +3762,7 @@ export default function App() {
         isLastRound,
         adaptiveLevel,
         isOvertime,
+        twoTruths: twoTruthsMode,
       });
 
       // Enforce 4-6s minimum thinking time to build tension
@@ -3860,6 +3872,7 @@ export default function App() {
         avgScore, avgLogic, avgPersuasion, avgDelivery,
         roundScores: scores,
         userArguments,
+        twoTruths: twoTruthsMode,
       }).catch(() => ({
         verdict: avgScore >= 65
           ? "A controlled performance — you held your ground and landed the key points."
@@ -4077,6 +4090,7 @@ export default function App() {
     setRoomJoinCode("");
     setV1SubScreen("");
     setV1Tab("play");
+    setTwoTruthsMode(false);
   };
 
   const loginFn = async () => {
@@ -4655,7 +4669,7 @@ export default function App() {
                   setMirrorMatchMode(false);
                   setSelectedTopic({ cat: "Two-Truths", text: t });
                   setSelectedSide("for");
-                  setSetupStep(1);
+                  setSetupStep(2);
                   setScreen("setup");
                 }}
               >
@@ -4917,46 +4931,57 @@ export default function App() {
                   </button>
                 ))}
               </div>
-              <p className="section-label">Pick your side</p>
               <div className="topic-preview-card">
-                <div className="tpc-label">Topic</div>
+                <div className="tpc-label">{twoTruthsMode ? "Two-Truths Topic" : "Topic"}</div>
                 <div className="tpc-text">{selectedTopic?.text}</div>
               </div>
-              <div className="side-pick">
-                <button className={`side-btn for ${selectedSide === "for" ? "selected" : ""}`} onClick={() => setSelectedSide("for")}>
-                  <span className="side-icon">✅</span>
-                  <div className="side-label">For</div>
-                  <div className="side-sub">I agree with this</div>
-                </button>
-                <button className={`side-btn against ${selectedSide === "against" ? "selected" : ""}`} onClick={() => setSelectedSide("against")}>
-                  <span className="side-icon">❌</span>
-                  <div className="side-label">Against</div>
-                  <div className="side-sub">I disagree with this</div>
-                </button>
-              </div>
-              <div
-                className={`da-toggle${devilsAdvocateMode ? " active" : ""}`}
-                onClick={() => setDevilsAdvocateMode(p => !p)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={e => { if (e.key === "Enter" || e.key === " ") setDevilsAdvocateMode(p => !p); }}
-              >
-                <div className="da-toggle-knob" />
-                <div className="da-toggle-label">
-                  <div className="da-toggle-title">Devil's Advocate</div>
-                  <div className="da-toggle-sub">AI argues YOUR side — stress-test your own position</div>
+              {twoTruthsMode ? (
+                <div style={{ background: "rgba(45,212,191,0.06)", border: "1px solid rgba(45,212,191,0.25)", borderRadius: "var(--radius)", padding: "14px 16px", marginBottom: "4px" }}>
+                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "#2dd4bf", marginBottom: "7px" }}>The Assignment</div>
+                  <p style={{ fontSize: "14px", color: "var(--text-mid)", lineHeight: 1.5, margin: 0 }}>
+                    No sides. Your job is to hold <strong style={{ color: "var(--text)" }}>both truths</strong> at once — without letting one win. The Dialectician will challenge you every time you lean too hard on either half.
+                  </p>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <p className="section-label">Pick your side</p>
+                  <div className="side-pick">
+                    <button className={`side-btn for ${selectedSide === "for" ? "selected" : ""}`} onClick={() => setSelectedSide("for")}>
+                      <span className="side-icon">✅</span>
+                      <div className="side-label">For</div>
+                      <div className="side-sub">I agree with this</div>
+                    </button>
+                    <button className={`side-btn against ${selectedSide === "against" ? "selected" : ""}`} onClick={() => setSelectedSide("against")}>
+                      <span className="side-icon">❌</span>
+                      <div className="side-label">Against</div>
+                      <div className="side-sub">I disagree with this</div>
+                    </button>
+                  </div>
+                  <div
+                    className={`da-toggle${devilsAdvocateMode ? " active" : ""}`}
+                    onClick={() => setDevilsAdvocateMode(p => !p)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={e => { if (e.key === "Enter" || e.key === " ") setDevilsAdvocateMode(p => !p); }}
+                  >
+                    <div className="da-toggle-knob" />
+                    <div className="da-toggle-label">
+                      <div className="da-toggle-title">Devil's Advocate</div>
+                      <div className="da-toggle-sub">AI argues YOUR side — stress-test your own position</div>
+                    </div>
+                  </div>
+                </>
+              )}
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
                 <button
                   className="btn btn-primary"
-                  style={{ width: "100%", fontSize: "17px", letterSpacing: "4px", padding: "18px 32px" }}
-                  disabled={!selectedSide}
+                  style={{ width: "100%", fontSize: "17px", letterSpacing: "4px", padding: "18px 32px", ...(twoTruthsMode ? { background: "rgba(45,212,191,0.18)", borderColor: "rgba(45,212,191,0.55)", color: "#2dd4bf" } : {}) }}
+                  disabled={!twoTruthsMode && !selectedSide}
                   onClick={() => launchMatchmaking()}
                 >
-                  START CLASH
+                  {twoTruthsMode ? "BEGIN THE NUANCE" : "START CLASH"}
                 </button>
-                <button className="btn btn-ghost" style={{ alignSelf: "flex-start", fontSize: "13px" }} onClick={() => setSetupStep(1)}>← Back</button>
+                <button className="btn btn-ghost" style={{ alignSelf: "flex-start", fontSize: "13px" }} onClick={() => { if (twoTruthsMode) { setTwoTruthsMode(false); setScreen("home"); } else { setSetupStep(1); } }}>← Back</button>
               </div>
             </>
           )}
@@ -4985,16 +5010,25 @@ export default function App() {
 
           <div className="mf-topic">"{selectedTopic.text}"</div>
 
-          <div className="mf-stances">
-            <div className={`mf-stance ${selectedSide === "for" ? "for" : "against"}`}>
-              <div className="mf-swho">Your Side</div>
-              <div className="mf-sside">{selectedSide === "for" ? "FOR" : "AGAINST"}</div>
+          {twoTruthsMode ? (
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "8px" }}>
+              <div style={{ background: "rgba(45,212,191,0.1)", border: "1px solid rgba(45,212,191,0.3)", borderRadius: "var(--radius)", padding: "10px 20px", textAlign: "center" }}>
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "9px", letterSpacing: "3px", textTransform: "uppercase", color: "#2dd4bf", marginBottom: "4px" }}>Mode</div>
+                <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "20px", letterSpacing: "2px", color: "#2dd4bf" }}>BOTH TRUTHS</div>
+              </div>
             </div>
-            <div className={`mf-stance ${selectedSide === "for" ? "against" : "for"}`}>
-              <div className="mf-swho">{ai.name}</div>
-              <div className="mf-sside">{selectedSide === "for" ? "AGAINST" : "FOR"}</div>
+          ) : (
+            <div className="mf-stances">
+              <div className={`mf-stance ${selectedSide === "for" ? "for" : "against"}`}>
+                <div className="mf-swho">Your Side</div>
+                <div className="mf-sside">{selectedSide === "for" ? "FOR" : "AGAINST"}</div>
+              </div>
+              <div className={`mf-stance ${selectedSide === "for" ? "against" : "for"}`}>
+                <div className="mf-swho">{ai.name}</div>
+                <div className="mf-sside">{selectedSide === "for" ? "AGAINST" : "FOR"}</div>
+              </div>
             </div>
-          </div>
+          )}
 
           {error ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "14px", marginTop: "8px", width: "100%", maxWidth: "400px" }}>
@@ -5025,7 +5059,12 @@ export default function App() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
               <div className="arena-topic">{selectedTopic?.text}</div>
-              {adaptiveLevel !== 0 && (
+              {twoTruthsMode && (
+                <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "#2dd4bf", background: "rgba(45,212,191,0.08)", border: "1px solid rgba(45,212,191,0.2)", borderRadius: "100px", padding: "2px 8px" }}>
+                  TWO-TRUTHS MODE
+                </div>
+              )}
+              {!twoTruthsMode && adaptiveLevel !== 0 && (
                 <div className={`adaptive-badge ${adaptiveLevel > 0 ? "adaptive-up" : "adaptive-dn"}`}>
                   {adaptiveLevel > 0 ? "⬆ AI Escalating" : "⬇ AI Easing"}
                 </div>
@@ -5314,15 +5353,21 @@ export default function App() {
             <div className="verdict-header">
               <div className={`rank-badge rank-${verdict.rank}`}>{verdict.rank}</div>
               <div className={`verdict-title ${verdict.won ? "win" : "lose"}`}>
-                {verdict.won ? "VICTORY" : "DEFEATED"}
+                {twoTruthsMode
+                  ? verdict.won ? "NUANCED" : "OVERSIMPLIFIED"
+                  : verdict.won ? "VICTORY" : "DEFEATED"}
               </div>
-              <div className="verdict-sub">vs {ai?.icon} {ai?.name} · "{selectedTopic?.text}"</div>
+              <div className="verdict-sub">
+                {twoTruthsMode
+                  ? `⚖ Two-Truths · "${selectedTopic?.text}"`
+                  : `vs ${ai?.icon} ${ai?.name} · "${selectedTopic?.text}"`}
+              </div>
             </div>
 
             <div className="score-breakdown">
               <div className="score-pill">
                 <span className="sp-val" style={{ color: getScoreColor(verdict.avgScore) }}>{verdict.avgScore}</span>
-                <span className="sp-lbl">Overall</span>
+                <span className="sp-lbl">{twoTruthsMode ? "Nuance" : "Overall"}</span>
               </div>
               <div className="score-pill">
                 <span className="sp-val" style={{ color: getScoreColor(verdict.avgLogic) }}>{verdict.avgLogic}</span>
@@ -5330,19 +5375,19 @@ export default function App() {
               </div>
               <div className="score-pill">
                 <span className="sp-val" style={{ color: getScoreColor(verdict.avgPersuasion) }}>{verdict.avgPersuasion}</span>
-                <span className="sp-lbl">Persuasion</span>
+                <span className="sp-lbl">{twoTruthsMode ? "Balance" : "Persuasion"}</span>
               </div>
             </div>
 
             <div style={{
               background: "var(--surface2)",
-              borderLeft: `3px solid ${verdict.won ? "var(--green)" : "var(--red)"}`,
+              borderLeft: `3px solid ${twoTruthsMode ? "#2dd4bf" : verdict.won ? "var(--green)" : "var(--red)"}`,
               borderRadius: "0 var(--radius) var(--radius) 0",
               padding: "12px 16px",
               marginBottom: "12px",
             }}>
-              <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: verdict.won ? "var(--green)" : "var(--red)", marginBottom: "6px" }}>
-                Judge's Call
+              <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: twoTruthsMode ? "#2dd4bf" : verdict.won ? "var(--green)" : "var(--red)", marginBottom: "6px" }}>
+                {twoTruthsMode ? "Dialectician's Verdict" : "Judge's Call"}
               </div>
               <p style={{ fontSize: "15px", lineHeight: 1.5, color: "var(--text-mid)", margin: 0 }}>{verdict.judgeText}</p>
             </div>
@@ -5484,10 +5529,12 @@ export default function App() {
           )}
 
           <div className="verdict-actions">
-            <button className="btn btn-primary" style={{ width: "100%" }} onClick={instantRematch}>⚡ Instant Rematch</button>
+            <button className="btn btn-primary" style={{ width: "100%", ...(twoTruthsMode ? { background: "rgba(45,212,191,0.18)", borderColor: "rgba(45,212,191,0.55)", color: "#2dd4bf" } : {}) }} onClick={instantRematch}>
+              {twoTruthsMode ? "⚖ Try Again" : "⚡ Instant Rematch"}
+            </button>
             <div className="verdict-actions-primary">
-              <button className="btn btn-secondary" onClick={swapSidesRematch}>↕ Swap Sides</button>
-              <button className="btn btn-secondary" onClick={() => setScreen("replay")}>↺ Replay</button>
+              {!twoTruthsMode && <button className="btn btn-secondary" onClick={swapSidesRematch}>↕ Swap Sides</button>}
+              <button className={`btn btn-secondary${twoTruthsMode ? "" : ""}`} style={twoTruthsMode ? { width: "100%" } : {}} onClick={() => setScreen("replay")}>↺ Replay</button>
             </div>
             <div className="verdict-actions-secondary">
               <button className="btn btn-ghost" onClick={shareImage}>Share Card</button>

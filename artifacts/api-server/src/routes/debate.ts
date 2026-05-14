@@ -252,9 +252,21 @@ function getFallbackRound(): string {
   return FALLBACK_ROUNDS[Math.floor(Math.random() * FALLBACK_ROUNDS.length)];
 }
 
+const TWO_TRUTHS_FALLBACK_OPENS = [
+  "This topic doesn't have two sides — it has two truths that both need defending. Most people pick one and pretend the other doesn't exist. Don't do that. Show me you can hold both at once.",
+  "The easy move here is to collapse this into a simple argument. The hard move is to actually hold the tension. Let's see which one you go for.",
+  "Both halves of this topic are real. If you emphasize one and ignore the other, I'll call it out immediately. The challenge is holding both without letting either one win.",
+];
+
+const TWO_TRUTHS_FALLBACK_ROUNDS = [
+  "You're leaning too hard on one side of this. The other truth is still sitting there, unaddressed. You need to pull it back into balance.",
+  "That argument collapses the nuance. You've picked a winner when both deserve to stand. Try again — hold both truths without letting one swallow the other.",
+  "You're treating this like a standard debate where one side has to lose. It doesn't. The nuance is the point. Defend it properly.",
+];
+
 // POST /api/debate/start — AI opens the debate
 router.post("/debate/start", async (req, res) => {
-  const { personality, topic, userSide, oppSide, totalRounds, difficulty } = req.body as Record<string, unknown>;
+  const { personality, topic, userSide, oppSide, totalRounds, difficulty, twoTruths } = req.body as Record<string, unknown>;
   if (!str(personality) || !str(topic) || !str(userSide) || !str(oppSide) || !num(totalRounds)) {
     res.status(400).json({ error: "Invalid body" });
     return;
@@ -262,8 +274,23 @@ router.post("/debate/start", async (req, res) => {
 
   const diff = str(difficulty) ?? "medium";
   const tokens = responseTokens(diff);
+  const isTwoTruths = twoTruths === true;
 
-  const system = `${personality as string}
+  const system = isTwoTruths
+    ? `You are The Dialectician — a razor-sharp philosophical provocateur who specializes in exposing the tensions within nuanced positions.
+
+YOUR ROLE: You do not argue FOR or AGAINST this topic. You are the guardian of nuance. Your job is to challenge the user to hold BOTH truths simultaneously without collapsing into a single side.
+
+TACTICS:
+- If the user leans too hard on one truth, expose what they're sacrificing from the other
+- If they oversimplify the tension, surface the complexity they're avoiding
+- Demand they acknowledge the genuine validity of both sides before claiming to have "the answer"
+- Never let them escape into a simple win/lose framing
+
+Topic: "${topic as string}"
+
+Open with: One sharp sentence exposing the core tension in this topic. Then immediately challenge them — make it clear that picking a side is not the assignment. The assignment is to hold both truths at once.${FORMATTING}`
+    : `${personality as string}
 ${difficultyInstructions(diff)}
 
 You are debating the topic: "${topic as string}"
@@ -271,18 +298,24 @@ You are arguing ${oppSide as string} this statement. The user is arguing ${userS
 This is a ${totalRounds as number}-round debate. Open with a brief in-character intro taunt or provocation (one sharp sentence), then immediately launch into your opening argument. Obey your HARD RESPONSE LIMIT above. Do NOT say "Round 1" or any meta-commentary. Just start.${FORMATTING}`;
 
   try {
-    const text = await claudeText(system, "Open the debate.", tokens).catch(() => getFallbackOpen());
-    const taunt = getAiTaunt(personality as string);
+    const fallbackOpen = isTwoTruths
+      ? TWO_TRUTHS_FALLBACK_OPENS[Math.floor(Math.random() * TWO_TRUTHS_FALLBACK_OPENS.length)]
+      : getFallbackOpen();
+    const text = await claudeText(system, "Open the debate.", tokens).catch(() => fallbackOpen);
+    const taunt = isTwoTruths ? "" : getAiTaunt(personality as string);
     res.json({ text, taunt });
   } catch (err) {
     req.log.error({ err }, "debate/start failed");
-    res.json({ text: getFallbackOpen(), taunt: getAiTaunt(personality as string) });
+    const fallback = isTwoTruths
+      ? TWO_TRUTHS_FALLBACK_OPENS[0]
+      : getFallbackOpen();
+    res.json({ text: fallback, taunt: isTwoTruths ? "" : getAiTaunt(personality as string) });
   }
 });
 
 // POST /api/debate/round — Score user arg + propaganda analysis + get AI response
 router.post("/debate/round", async (req, res) => {
-  const { personality, topic, userSide, oppSide, messages, userArgument, round, totalRounds, isLastRound, difficulty, adaptiveLevel, isOvertime } =
+  const { personality, topic, userSide, oppSide, messages, userArgument, round, totalRounds, isLastRound, difficulty, adaptiveLevel, isOvertime, twoTruths } =
     req.body as Record<string, unknown>;
 
   if (
@@ -294,9 +327,11 @@ router.post("/debate/round", async (req, res) => {
     return;
   }
 
+  try {
   const diff = str(difficulty) ?? "medium";
   const adapt = typeof adaptiveLevel === "number" ? Math.max(-1, Math.min(2, adaptiveLevel)) : 0;
   const overtimeMode = isOvertime === true;
+  const isTwoTruths = twoTruths === true;
 
   const adaptiveNote =
     adapt > 0
@@ -308,8 +343,36 @@ router.post("/debate/round", async (req, res) => {
     ? `\n\nSUDDEN DEATH OVERTIME: This is the tiebreaker round. Everything is on the line. Make this your most decisive, unforgettable argument.`
     : "";
 
-  try {
-    const scorePrompt = `You are a ranked competitive debate judge. Score this argument with precision and distribute scores across the full range.
+  const twoTruthsScorePrompt = `You are a nuance debate judge scoring how well a debater HELD BOTH TRUTHS simultaneously in a Two-Truths debate.
+
+Topic: "${topic as string}"
+Round: ${round as number} of ${totalRounds as number}
+
+User's argument:
+"${userArgument as string}"
+
+TWO-TRUTHS SCORING RUBRIC — score how well they held BOTH sides of the nuance:
+
+85-100 — MASTERFUL. Explicitly acknowledges both truths, explains the tension between them, provides a specific example for each side, and articulates why both remain valid without one winning. Rare.
+70-84  — BALANCED. Clearly acknowledges both truths, good reasoning, doesn't collapse to one side. Minor imbalance or missing specifics.
+50-69  — PARTIAL. Attempts nuance but leans noticeably to one side. The other truth is present but underdeveloped.
+30-49  — COLLAPSED. Effectively argues one side only. Pays lip service to the other truth but doesn't genuinely defend it.
+0-29   — FAILED. Picked a side and argued it like a standard debate. The nuance is entirely absent.
+
+NUANCE DETECTOR — analyze each sentence:
+- "solid" — genuinely holds both truths or explains the tension clearly
+- "fallacy" — logical error or false equivalence
+- "one_sided" — argues only one half of the nuance, ignoring the other
+- "emotional_bait" — appeals to emotion rather than the actual tension
+- "killer_point" — the single sharpest moment of genuine nuance
+- "ai_writing" — sentence reads as machine-generated
+
+AI WRITING PENALTY: same as standard debates — 1 ai_writing tag: -15 score, 2+: cap at 30.
+
+Respond ONLY with valid JSON, no markdown:
+{"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"strongest nuance moment in one sharp phrase","weak":"where they collapsed to one side, in one sharp phrase","propaganda":[{"sentence":"exact sentence text","tag":"solid|fallacy|one_sided|emotional_bait|killer_point|ai_writing"}]}`;
+
+  const standardScorePrompt = `You are a ranked competitive debate judge. Score this argument with precision and distribute scores across the full range.
 
 Topic: "${topic as string}"
 User is arguing: ${userSide as string}
@@ -364,6 +427,8 @@ AI WRITING PENALTY (apply automatically to the scores if detected):
 Respond ONLY with valid JSON, no markdown:
 {"score":0-100,"logic":0-100,"persuasion":0-100,"delivery":0-100,"best":"the single strongest moment in one sharp phrase","weak":"the single most exploitable weakness in one sharp phrase","propaganda":[{"sentence":"exact sentence text","tag":"solid|fallacy|weak_evidence|emotional_bait|killer_point|ai_writing"}]}`;
 
+    const scorePrompt = isTwoTruths ? twoTruthsScorePrompt : standardScorePrompt;
+
     let history = (messages as { role: string; text: string }[]).map((m) => ({
       role: (m.role === "ai" ? "assistant" : "user") as "user" | "assistant",
       content: m.text,
@@ -381,7 +446,21 @@ Respond ONLY with valid JSON, no markdown:
     const diffInstr = difficultyInstructions(diff);
     const tokens = responseTokens(diff);
 
-    const systemResp = (isLastRound as boolean)
+    const twoTruthsSystemResp = (isLastRound as boolean)
+      ? `You are The Dialectician — guardian of nuance.
+
+Topic: "${topic as string}"
+This is the final round of a Two-Truths debate.
+
+The user must close by synthesizing both truths into a coherent position — not by picking a winner. In your final response, identify exactly where they succeeded in holding the tension and where they let one truth dominate. Be decisive. Leave them with one sharp insight about the nuance they almost — or fully — grasped.${FORMATTING}`
+      : `You are The Dialectician — guardian of nuance.
+
+Topic: "${topic as string}"
+This is a Two-Truths debate. The user's job is to hold BOTH truths simultaneously.
+
+In their last argument, identify: which truth did they lean into more heavily? What are they sacrificing from the other side? Push back on whichever direction they collapsed. Force them to pick up what they dropped. Never argue a fixed position — you are the tension itself.${FORMATTING}`;
+
+    const standardSystemResp = (isLastRound as boolean)
       ? `${personality as string}
 ${diffInstr}${adaptiveNote}${overtimeNote}
 
@@ -393,16 +472,23 @@ ${diffInstr}${adaptiveNote}${overtimeNote}
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
 Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`;
 
+    const systemResp = isTwoTruths ? twoTruthsSystemResp : standardSystemResp;
+
     const [scoreResult, aiText] = await Promise.all([
       claudeText(
-        "You are a ranked competitive debate judge. Use the full scoring range. Respond only with valid JSON.",
+        isTwoTruths
+          ? "You are a nuance debate judge scoring how well the debater held both truths. Respond only with valid JSON."
+          : "You are a ranked competitive debate judge. Use the full scoring range. Respond only with valid JSON.",
         scorePrompt,
         1000
       ).catch(() => null),
       claudeConversation(systemResp, [
         ...history,
         { role: "user", content: userArgument as string },
-      ], tokens).catch(() => getFallbackRound()),
+      ], tokens).catch(() => isTwoTruths
+        ? TWO_TRUTHS_FALLBACK_ROUNDS[Math.floor(Math.random() * TWO_TRUTHS_FALLBACK_ROUNDS.length)]
+        : getFallbackRound()
+      ),
     ]);
 
     let roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; propaganda?: Array<{sentence: string; tag: string}> } = {
@@ -424,7 +510,7 @@ Counter the user's last argument directly and sharply. Obey your HARD RESPONSE L
       iq >= 90  ? "Average" :
       iq >= 80  ? "Low Average" : "Below Average";
 
-    const taunt = getAiTaunt(personality as string);
+    const taunt = isTwoTruths ? "" : getAiTaunt(personality as string);
 
     res.json({ aiText, taunt, roundScore: { ...roundScore, iq, iqLabel } });
   } catch (err) {
@@ -435,13 +521,14 @@ Counter the user's last argument directly and sharply. Obey your HARD RESPONSE L
 
 // POST /api/debate/verdict — Generate final ranked verdict with coach mode
 router.post("/debate/verdict", async (req, res) => {
-  const { topic, avgScore, avgLogic, avgPersuasion, avgDelivery, roundScores, userArguments } = req.body as Record<string, unknown>;
+  const { topic, avgScore, avgLogic, avgPersuasion, avgDelivery, roundScores, userArguments, twoTruths } = req.body as Record<string, unknown>;
   if (!str(topic) || num(avgScore) === null || num(avgLogic) === null || num(avgPersuasion) === null || num(avgDelivery) === null) {
     res.status(400).json({ error: "Invalid body" });
     return;
   }
 
   const score = avgScore as number;
+  const isTwoTruths = twoTruths === true;
   const argsText = Array.isArray(userArguments)
     ? (userArguments as string[]).slice(0, 3).join(" | ")
     : "";
@@ -453,13 +540,35 @@ router.post("/debate/verdict", async (req, res) => {
     score >= 48 ? "C" :
     score >= 35 ? "D" : "F";
 
-  const outcome =
-    score >= 80 ? "dominant win" :
-    score >= 65 ? "clear win" :
-    score >= 52 ? "narrow loss" :
-    score >= 38 ? "clear loss" : "crushing defeat";
+  const outcome = isTwoTruths
+    ? score >= 80 ? "nuance mastered" :
+      score >= 65 ? "balance held" :
+      score >= 52 ? "partial nuance" :
+      score >= 38 ? "collapsed" : "oversimplified"
+    : score >= 80 ? "dominant win" :
+      score >= 65 ? "clear win" :
+      score >= 52 ? "narrow loss" :
+      score >= 38 ? "clear loss" : "crushing defeat";
 
-  const prompt = `You are a competitive ranked debate judge delivering a match verdict and coaching session. Be decisive, fast, and game-like — no hedging, no academic language.
+  const prompt = isTwoTruths
+    ? `You are The Dialectician delivering a nuance verdict. Be direct and game-like — no academic hedging.
+
+Topic: "${topic as string}"
+Nuance score: ${score}/100
+Rank: ${rank} — ${outcome}
+Logic: ${avgLogic as number} | Balance: ${avgPersuasion as number} | Clarity: ${avgDelivery as number}
+${argsText ? `Sample arguments: "${argsText}"` : ""}
+
+VERDICT FORMAT — follow exactly:
+- "verdict": 1-2 sentences. Did they hold both truths or collapse? Name which truth they sacrificed if they failed.
+- "improve": 1 sentence starting with a verb. Specific technique for holding tension better.
+- "coach_worked": 1-2 sentences on where the nuance landed. Be specific.
+- "coach_failed": 1-2 sentences on where they collapsed to one side. Blunt and specific.
+- "coach_drill": One exercise for practicing holding two conflicting truths simultaneously.
+
+Respond ONLY with valid JSON:
+{"verdict":"1-2 sentence nuance verdict","improve":"1 sentence tip","coach_worked":"what landed","coach_failed":"where they collapsed","coach_drill":"specific drill"}`
+    : `You are a competitive ranked debate judge delivering a match verdict and coaching session. Be decisive, fast, and game-like — no hedging, no academic language.
 
 Topic: "${topic as string}"
 Overall score: ${score}/100

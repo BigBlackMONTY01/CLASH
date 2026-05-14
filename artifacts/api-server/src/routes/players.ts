@@ -336,6 +336,7 @@ router.get("/activity/recent", async (_req, res) => {
         deviceId: players.deviceId,
         opponentName: debates.opponentName,
         topic: debates.topic,
+        topicCat: debates.topicCat,
         avgScore: debates.avgScore,
         won: debates.won,
         isGauntlet: debates.isGauntlet,
