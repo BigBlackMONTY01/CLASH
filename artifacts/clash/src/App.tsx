@@ -2134,6 +2134,7 @@ export default function App() {
   const lastTrashRoundRef = useRef(0);
   const viewingArgsAfterMatch = useRef(false);
   const [viewingArgsMode, setViewingArgsMode] = useState(false);
+  const [myTrashBubble, setMyTrashBubble] = useState<string | null>(null);
   const [graveyardArgs, setGraveyardArgs] = useState<{text: string; round: number; score: number}[]>([]);
   const [newCard, setNewCard] = useState<DebateCard | null>(null);
   const [showCardReveal, setShowCardReveal] = useState(false);
@@ -4691,18 +4692,21 @@ export default function App() {
                 {trashTalkBubble}
               </div>
             )}
+            {myTrashBubble && (
+              <div className="trash-bubble" style={{ right: "auto", left: "16px", borderRadius: "12px 12px 12px 4px", borderColor: "rgba(168,85,247,0.35)" }}>
+                <div className="trash-bubble-who" style={{ color: "#a855f7" }}>You</div>
+                {myTrashBubble}
+              </div>
+            )}
             {v1SendLine && (
               <div className="v1-send-bubble">
                 <span className="v1-send-bubble-lbl">Send this</span>
                 <span className="v1-send-bubble-text">{v1SendLine}</span>
-                <button className="v1-send-copy-btn" onClick={async () => {
-                  if (!currentRoom || roomSubmitting) return;
+                <button className="v1-send-copy-btn" onClick={() => {
                   const text = v1SendLine!;
                   setV1SendLine(null);
-                  setRoomSubmitting(true);
-                  try { await apiAuthPost(`/1v1/${currentRoom.code}/argue`, { argumentText: text }); }
-                  catch (e) { setRoomError((e as Error).message); }
-                  finally { setRoomSubmitting(false); }
+                  setMyTrashBubble(text);
+                  setTimeout(() => setMyTrashBubble(null), 4000);
                 }}>Send</button>
               </div>
             )}
