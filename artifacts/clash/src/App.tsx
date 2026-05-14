@@ -1978,7 +1978,8 @@ interface ProgressionResult { shieldTokens: number; shieldConsumed: boolean; sig
 interface Stats { wins: number; debates: number; bestScore: number; currentStreak: number; bestStreak: number; opponentHistory: Record<string, { wins: number; losses: number }>; }
 interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fallacy"; note: string; }
 interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
-interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; }
+interface RoomTaunt { id: number; text: string; fromName: string; fromPlayerNum: 1 | 2; }
+interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; }
 interface V1HistoryEntry { code: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
 interface DebateCard { id: number; playerId: number; debateId: number | null; opponentId: string; opponentName: string; topic: string; score: number; rank: string; rarity: string; bestQuote: string; createdAt: string; }
 
@@ -2135,6 +2136,8 @@ export default function App() {
   const viewingArgsAfterMatch = useRef(false);
   const [viewingArgsMode, setViewingArgsMode] = useState(false);
   const [myTrashBubble, setMyTrashBubble] = useState<string | null>(null);
+  const [incomingTaunt, setIncomingTaunt] = useState<RoomTaunt | null>(null);
+  const lastSeenTauntIdRef = useRef(0);
   const [graveyardArgs, setGraveyardArgs] = useState<{text: string; round: number; score: number}[]>([]);
   const [newCard, setNewCard] = useState<DebateCard | null>(null);
   const [showCardReveal, setShowCardReveal] = useState(false);
@@ -2313,6 +2316,11 @@ export default function App() {
         setCurrentRoom(room);
         if (room.status === "debating" && screen === "multiplayer-waiting") setScreen("multiplayer-debate");
         if (room.status === "complete" && screen !== "multiplayer-results" && !viewingArgsAfterMatch.current) setScreen("multiplayer-results");
+        if (room.latestTaunt && room.latestTaunt.id > lastSeenTauntIdRef.current && room.latestTaunt.fromPlayerNum !== room.playerNum) {
+          lastSeenTauntIdRef.current = room.latestTaunt.id;
+          setIncomingTaunt(room.latestTaunt);
+          setTimeout(() => setIncomingTaunt(null), 5000);
+        }
       } catch { /* silent poll fail */ }
     };
     poll();
@@ -4686,10 +4694,10 @@ export default function App() {
         }
         return (
           <div className="screen v1-laser-arena">
-            {trashTalkBubble && (
+            {incomingTaunt && (
               <div className="trash-bubble">
-                <div className="trash-bubble-who">Opponent</div>
-                {trashTalkBubble}
+                <div className="trash-bubble-who">{incomingTaunt.fromName}</div>
+                {incomingTaunt.text}
               </div>
             )}
             {myTrashBubble && (
@@ -4702,11 +4710,14 @@ export default function App() {
               <div className="v1-send-bubble">
                 <span className="v1-send-bubble-lbl">Send this</span>
                 <span className="v1-send-bubble-text">{v1SendLine}</span>
-                <button className="v1-send-copy-btn" onClick={() => {
+                <button className="v1-send-copy-btn" onClick={async () => {
+                  if (!currentRoom) return;
                   const text = v1SendLine!;
                   setV1SendLine(null);
                   setMyTrashBubble(text);
-                  setTimeout(() => setMyTrashBubble(null), 4000);
+                  setTimeout(() => setMyTrashBubble(null), 5000);
+                  try { await apiAuthPost(`/1v1/${currentRoom.code}/taunt`, { text }); }
+                  catch { /* best-effort */ }
                 }}>Send</button>
               </div>
             )}

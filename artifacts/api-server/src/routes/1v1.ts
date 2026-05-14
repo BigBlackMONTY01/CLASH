@@ -42,6 +42,13 @@ interface InMemoryArg {
   highlights: { text: string; type: string; note: string }[];
 }
 
+interface InMemoryTaunt {
+  id: number;
+  text: string;
+  fromName: string;
+  fromPlayerNum: 1 | 2;
+}
+
 interface InMemoryRoom {
   code: string;
   topicText: string;
@@ -64,6 +71,8 @@ interface InMemoryRoom {
   player2Rank: string | null;
   arguments: InMemoryArg[];
   argCounter: number;
+  latestTaunt: InMemoryTaunt | null;
+  tauntCounter: number;
   createdAt: Date;
 }
 
@@ -193,6 +202,7 @@ function roomToState(room: InMemoryRoom, callerId: string | null) {
     playerNum,
     iq1,
     iq2,
+    latestTaunt: room.latestTaunt,
   };
 }
 
@@ -250,6 +260,8 @@ router.post("/1v1/create", (req, res) => {
     player2Rank: null,
     arguments: [],
     argCounter: 0,
+    latestTaunt: null,
+    tauntCounter: 0,
     createdAt: new Date(),
   };
   store.set(code, room);
@@ -405,6 +417,21 @@ Find 3-5 exact substrings from the argument text.`;
   }
 
   res.json({ ...arg, highlights: arg.highlights, roomId: 0 });
+});
+
+router.post("/1v1/:code/taunt", (req, res) => {
+  const callerId = getCallerId(req);
+  if (!callerId) { res.status(401).json({ error: "Not authenticated" }); return; }
+  const { code } = req.params;
+  const room = store.get(code.toUpperCase());
+  if (!room) { res.status(404).json({ error: "Room not found" }); return; }
+  const { text } = req.body as { text: string };
+  if (!text?.trim()) { res.status(400).json({ error: "Text required" }); return; }
+  const fromPlayerNum: 1 | 2 = room.creator === callerId ? 1 : 2;
+  const fromName = fromPlayerNum === 1 ? room.creatorName : (room.joinerName ?? "Opponent");
+  room.tauntCounter += 1;
+  room.latestTaunt = { id: room.tauntCounter, text: text.trim(), fromName, fromPlayerNum };
+  res.json({ ok: true });
 });
 
 router.post("/1v1/:code/forfeit", (req, res) => {
