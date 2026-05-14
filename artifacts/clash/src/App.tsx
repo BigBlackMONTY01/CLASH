@@ -22,7 +22,7 @@ ${FONTS}
   --green:#22c55e;
   --radius:8px;
 }
-html,body{height:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+html,body{min-height:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100dvh;overflow-x:hidden;display:flex;flex-direction:column;}
 
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
