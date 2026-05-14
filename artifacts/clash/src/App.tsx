@@ -4318,26 +4318,6 @@ export default function App() {
               </button>
             </div>
           </div>
-          {/* RIVAL CHIP */}
-          {authUser && (() => {
-            const rivalEntry = Object.entries(stats.opponentHistory ?? {})
-              .filter(([, h]) => (h as {wins:number;losses:number}).losses > 0)
-              .sort((a, b) => (b[1] as {wins:number;losses:number}).losses - (a[1] as {wins:number;losses:number}).losses)[0];
-            const rival = rivalEntry ? AI_OPPONENTS.find(a => a.id === rivalEntry[0]) : null;
-            if (!rival) return null;
-            const rh = rivalEntry[1] as {wins:number;losses:number};
-            return (
-              <div className="rival-chip-wrap">
-                <button
-                  className="rival-chip"
-                  onClick={() => { setSelectedAI(rival.id); setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
-                  title={`${rh.losses} loss${rh.losses !== 1 ? "es" : ""} — get revenge`}
-                >
-                  Rival: {rival.icon} {rival.name} · {rh.losses}L
-                </button>
-              </div>
-            );
-          })()}
 
           {/* TODAY'S CLASH — swipeable featured topic card */}
           <div>

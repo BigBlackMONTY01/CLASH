@@ -288,10 +288,14 @@ Respond ONLY with valid JSON, no markdown:
       try { roundScore = JSON.parse(jMatch[0]); } catch { /* use default */ }
     }
 
-    const history = (messages as { role: string; text: string }[]).map((m) => ({
+    let history = (messages as { role: string; text: string }[]).map((m) => ({
       role: (m.role === "ai" ? "assistant" : "user") as "user" | "assistant",
       content: m.text,
     }));
+
+    if (history.length > 0 && history[0].role === "assistant") {
+      history = [{ role: "user", content: "Begin the debate." }, ...history];
+    }
 
     const diffInstr = difficultyInstructions(diff);
     const tokens = responseTokens(diff);
