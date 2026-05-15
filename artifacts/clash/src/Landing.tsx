@@ -17,7 +17,7 @@ interface LbEntry {
   score: number;
 }
 
-const APP_URL = "/play";
+const APP_URL = (import.meta.env.BASE_URL || "/").replace(/\/$/, "") + "/play";
 
 const MARQUEE_ITEMS = [
   { cat: "ethics", catLabel: "Ethics",      text: "Lying is sometimes morally justified" },
