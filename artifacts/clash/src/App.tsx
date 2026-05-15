@@ -4558,11 +4558,6 @@ export default function App() {
               </svg>
             )}
           </button>
-          <button className="sound-btn" style={{opacity:0.6}} onClick={() => { setFeedbackSent(false); setFeedbackText(""); setFeedbackCategory("bug"); setShowFeedbackModal(true); }} title="Send feedback">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-          </button>
           {(stats.currentStreak ?? 0) >= 2 && (() => {
             const s = stats.currentStreak;
             const cls = s >= 10 ? "streak-blue" : s >= 5 ? "streak-green" : "streak-fire";
@@ -4636,10 +4631,7 @@ export default function App() {
                 className="home-duel-card blue"
                 onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}
               >
-                <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "5px" }}>
-                  <div className="home-duel-label blue">1V1</div>
-                  <div style={{ fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "rgba(59,130,246,0.55)", border: "1px solid rgba(59,130,246,0.28)", borderRadius: "100px", padding: "2px 7px", flexShrink: 0 }}>vs Human</div>
-                </div>
+                <div className="home-duel-label blue" style={{ marginBottom: "5px" }}>1V1</div>
                 <div className="home-duel-sub">Challenge a human. Real stakes.</div>
                 <div className="home-duel-cta blue">Find Match →</div>
               </button>
@@ -4813,6 +4805,14 @@ export default function App() {
                 </div>
               </div>
             )}
+          </div>
+          <div style={{ textAlign: "center", paddingBottom: "8px", paddingTop: "4px" }}>
+            <button
+              className="nav-lb-link"
+              onClick={() => { setFeedbackSent(false); setFeedbackText(""); setFeedbackCategory("bug"); setShowFeedbackModal(true); }}
+            >
+              Send Feedback
+            </button>
           </div>
         </div>
       )}
