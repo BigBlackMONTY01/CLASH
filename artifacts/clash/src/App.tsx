@@ -940,7 +940,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .pp-section{padding:10px 14px;border-bottom:1px solid var(--border);}
 .pp-section-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
 .pp-username-row{display:flex;gap:6px;align-items:center;}
-.pp-username-field{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 9px;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--text);outline:none;transition:border-color 0.2s;}
+.pp-username-field{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 9px;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text);outline:none;transition:border-color 0.2s;}
 .pp-username-field:focus{border-color:var(--blue);}
 .pp-save-btn{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:6px 11px;background:var(--red);color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap;transition:background 0.18s;}
 .pp-save-btn:hover{background:#ff4655;}
@@ -1241,6 +1241,67 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .whisper-loading-dot:nth-child(3){animation-delay:0.4s;}
 @keyframes whisperDot{0%,80%,100%{transform:scale(0.6);opacity:0.3}40%{transform:scale(1);opacity:1}}
 .whisper-loading-text{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(168,85,247,0.6);}
+
+/* CRITICAL HIT FLASH */
+.crit-hit-overlay{position:fixed;inset:0;pointer-events:none;z-index:9998;animation:critFlash 1.4s ease-out forwards;}
+@keyframes critFlash{0%{box-shadow:inset 0 0 0 3px rgba(250,204,21,0.9),inset 0 0 60px rgba(250,204,21,0.18);}60%{box-shadow:inset 0 0 0 2px rgba(250,204,21,0.35),inset 0 0 30px rgba(250,204,21,0.06);}100%{box-shadow:inset 0 0 0 0px transparent;}}
+
+/* REPLAY BOOKMARKS */
+.bookmark-btn{background:none;border:none;cursor:pointer;color:var(--text-dim);font-size:15px;padding:2px 4px;line-height:1;flex-shrink:0;transition:color 0.15s;-webkit-tap-highlight-color:transparent;}
+.bookmark-btn.starred{color:#f59e0b;}.bookmark-btn:hover{color:#f59e0b;}
+.v1-hist-starred{border-color:rgba(245,158,11,0.3)!important;background:rgba(245,158,11,0.03)!important;}
+
+/* GLOSSARY */
+.gloss-term{border-bottom:1px dashed rgba(168,85,247,0.5);cursor:help;transition:border-color 0.15s;}
+.gloss-term:hover{border-color:#a855f7;}
+.gloss-popup{position:fixed;z-index:8000;background:#1a1225;border:1px solid rgba(168,85,247,0.35);border-radius:10px;padding:10px 14px;max-width:220px;animation:fadeIn 0.15s ease;box-shadow:0 8px 32px rgba(0,0,0,0.6);}
+.gloss-popup-term{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#a855f7;margin-bottom:4px;}
+.gloss-popup-def{font-size:12px;line-height:1.5;color:rgba(255,255,255,0.8);}
+
+/* FALLACY TRAP MODE */
+.fallacy-mode-btn{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid var(--border);color:var(--text-dim);background:transparent;cursor:pointer;transition:all 0.2s;}
+.fallacy-mode-btn.active{border-color:rgba(249,115,22,0.6);background:rgba(249,115,22,0.1);color:#f97316;}
+.fallacy-callout-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(249,115,22,0.07);border:1px solid rgba(249,115,22,0.22);border-radius:10px;margin-top:10px;animation:fadeIn 0.3s ease;}
+.fallacy-callout-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#f97316;flex:1;}
+.fallacy-callout-btn{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:5px 12px;border-radius:6px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.35);color:#f97316;cursor:pointer;transition:all 0.15s;}
+.fallacy-callout-btn:hover{background:rgba(249,115,22,0.22);}
+.fallacy-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.8);display:flex;align-items:flex-end;justify-content:center;}
+.fallacy-modal{background:var(--surface);border:1px solid rgba(249,115,22,0.28);border-radius:16px 16px 0 0;padding:22px 20px 40px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;animation:slideUp 0.28s cubic-bezier(0.22,1,0.36,1);}
+.fallacy-modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;margin-bottom:4px;color:#f97316;}
+.fallacy-modal-sub{font-size:12px;color:var(--text-dim);margin-bottom:16px;line-height:1.5;}
+.fallacy-chips{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.fallacy-chip{display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.15s;}
+.fallacy-chip:hover{border-color:rgba(249,115,22,0.5);background:rgba(249,115,22,0.05);}
+.fallacy-chip.selected{border-color:rgba(249,115,22,0.65);background:rgba(249,115,22,0.1);}
+.fallacy-chip-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;font-weight:600;color:#f97316;}
+.fallacy-chip-desc{font-size:11px;color:var(--text-dim);line-height:1.4;}
+.fallacy-result{padding:12px 14px;border-radius:8px;animation:fadeIn 0.3s ease;margin-top:10px;}
+.fallacy-result.correct{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);}
+.fallacy-result.wrong{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);}
+.fallacy-result-verdict{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:5px;}
+.fallacy-result-expl{font-size:12px;color:var(--text-dim);line-height:1.5;}
+
+/* TUTORIAL */
+.tutorial-overlay{position:fixed;inset:0;z-index:10500;background:rgba(0,0,0,0.9);display:flex;align-items:flex-end;justify-content:center;padding:16px;}
+.tutorial-card{background:var(--surface);border:1px solid rgba(230,57,70,0.35);border-radius:16px;padding:22px 20px 28px;width:100%;max-width:480px;animation:slideUp 0.3s cubic-bezier(0.22,1,0.36,1);}
+.tutorial-dots{display:flex;gap:6px;margin-bottom:14px;}.tutorial-dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:background 0.2s;}.tutorial-dot.on{background:var(--red);}
+.tutorial-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--red);margin-bottom:6px;}
+.tutorial-body{font-size:13px;line-height:1.6;color:var(--text-mid);margin-bottom:20px;}.tutorial-body strong{color:var(--text);}
+
+/* ROOM TITLE */
+.room-title-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px;display:block;margin-top:12px;}
+.room-title-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text);outline:none;transition:border-color 0.2s;box-sizing:border-box;}
+.room-title-input:focus{border-color:rgba(59,130,246,0.5);}
+
+/* PINNED ACHIEVEMENTS */
+.pinned-ach-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
+.pinned-ach-badge{display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(244,197,66,0.07);border:1px solid rgba(244,197,66,0.28);border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:var(--gold);}
+.ach-pin-btn{background:none;border:none;cursor:pointer;font-size:11px;padding:2px 0 2px 5px;color:var(--text-dim);transition:color 0.15s;}.ach-pin-btn.pinned{color:#f59e0b;}.ach-pin-btn:hover{color:#f59e0b;}
+
+/* LANGUAGE SELECTOR */
+.lang-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.lang-opt{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:5px 11px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);cursor:pointer;color:var(--text-dim);transition:all 0.15s;}
+.lang-opt.selected{background:rgba(230,57,70,0.1);border-color:var(--red);color:var(--text);}
 
 /* ARGUMENT GRAVEYARD */
 .graveyard-section{margin-top:10px;background:rgba(230,57,70,0.04);border:1px solid rgba(230,57,70,0.15);border-radius:var(--radius);overflow:hidden;}
@@ -2251,6 +2312,65 @@ const ACHIEVEMENTS = [
   { id: "veteran",            icon: "📊", name: "Veteran",                desc: "Complete 10 debates" },
   { id: "prosecutor-slayer",  icon: "⚖️", name: "Cross Examined",         desc: "Beat The Prosecutor" },
   { id: "perfect-round",      icon: "⭐", name: "Flawless",               desc: "Score 95+ in a round" },
+  { id: "fallacy-hunter",     icon: "🎯", name: "Fallacy Hunter",          desc: "Correctly identify a fallacy" },
+  { id: "polyglot",           icon: "🌍", name: "Polyglot",                desc: "Change the app language" },
+];
+
+const GLOSSARY_TERMS: Record<string, string> = {
+  "ad hominem": "Attacking the person making the argument rather than the argument itself.",
+  "straw man": "Misrepresenting someone's position to make it easier to attack.",
+  "false dichotomy": "Presenting only two options when more alternatives exist.",
+  "slippery slope": "Claiming one event will inevitably lead to extreme consequences.",
+  "appeal to authority": "Claiming something is true solely because an authority figure said so.",
+  "circular reasoning": "Using the conclusion as a premise to support itself.",
+  "hasty generalization": "Drawing broad conclusions from insufficient evidence.",
+  "red herring": "Introducing irrelevant information to distract from the real issue.",
+  "whataboutism": "Deflecting criticism by pointing to someone else's alleged wrongdoing.",
+  "bandwagon": "Arguing something is correct because many people believe it.",
+  "false equivalence": "Treating two fundamentally different things as if they are equal.",
+  "non sequitur": "A conclusion that doesn't logically follow from its premises.",
+  "tu quoque": "Deflecting a charge by accusing the accuser of the same thing.",
+  "burden of proof": "The obligation to provide evidence for a claim being made.",
+  "equivocation": "Using a word with two meanings to create a deliberately misleading argument.",
+  "reductio ad absurdum": "Disproving an argument by reducing it to an absurd conclusion.",
+  "modus ponens": "If A implies B and A is true, then B must be true.",
+  "syllogism": "A logical argument using two premises to reach a specific conclusion.",
+  "epistemic": "Relating to knowledge or the degree of justified belief in something.",
+  "empirical": "Based on observation or experiment rather than pure theory.",
+  "a priori": "Knowledge independent of experience — derived from reasoning alone.",
+  "a posteriori": "Knowledge derived from observation or sensory experience.",
+  "deductive": "Reasoning from general premises to a specific, logically certain conclusion.",
+  "inductive": "Reasoning from specific observations to a probable general conclusion.",
+  "anecdotal": "Based on personal stories rather than systematic evidence.",
+};
+
+const FALLACY_LIST = [
+  { name: "Ad Hominem",         desc: "Attacking the person instead of their argument" },
+  { name: "Straw Man",          desc: "Misrepresenting the opponent's position to knock it down" },
+  { name: "False Dichotomy",    desc: "Presenting only two options when more exist" },
+  { name: "Slippery Slope",     desc: "Claiming one thing inevitably leads to extreme consequences" },
+  { name: "Appeal to Authority",desc: "Treating expert opinion as automatic proof" },
+  { name: "Circular Reasoning", desc: "Using the conclusion as a premise to support itself" },
+  { name: "Hasty Generalization",desc: "Drawing broad conclusions from too little evidence" },
+  { name: "Red Herring",        desc: "Introducing irrelevant information to distract" },
+  { name: "Whataboutism",       desc: "Deflecting by pointing to someone else's faults" },
+  { name: "Bandwagon",          desc: "Arguing something is true because many people believe it" },
+  { name: "False Equivalence",  desc: "Treating two fundamentally different things as equal" },
+  { name: "Non Sequitur",       desc: "Conclusion that doesn't follow logically from the premises" },
+];
+
+const TRANSLATIONS: Record<string, Record<string, string>> = {
+  en: { vs_ai:"VS AI", challenge:"1V1 CHALLENGE", gauntlet:"Gauntlet", mirror:"Mirror Match", two_truths:"Two Truths", for:"FOR", against:"AGAINST", submit:"Submit", forfeit:"Forfeit", round:"Round", home:"Home", leaderboard:"Leaderboard", profile:"Profile", win:"WIN", loss:"LOSS", score:"Score", rank:"Rank", you:"You", topic:"Topic", victory:"VICTORY", defeat:"DEFEAT", whisper:"Whisper", facts:"Facts", start:"Start Debating", choose_opponent:"Choose your opponent", choose_topic:"Choose a topic", your_side:"Your side", verdict:"Verdict", thinking:"Thinking", send:"Send", back:"Back" },
+  es: { vs_ai:"VS IA", challenge:"DUELO 1V1", gauntlet:"Guantelete", mirror:"Partido Espejo", two_truths:"Dos Verdades", for:"A FAVOR", against:"EN CONTRA", submit:"Enviar", forfeit:"Rendirse", round:"Ronda", home:"Inicio", leaderboard:"Clasificación", profile:"Perfil", win:"VICTORIA", loss:"DERROTA", score:"Puntuación", rank:"Rango", you:"Tú", topic:"Tema", victory:"VICTORIA", defeat:"DERROTA", whisper:"Susurro", facts:"Hechos", start:"Empezar Debate", choose_opponent:"Elige tu oponente", choose_topic:"Elige un tema", your_side:"Tu posición", verdict:"Veredicto", thinking:"Pensando", send:"Enviar", back:"Atrás" },
+  fr: { vs_ai:"VS IA", challenge:"DUEL 1V1", gauntlet:"Gant", mirror:"Match Miroir", two_truths:"Deux Vérités", for:"POUR", against:"CONTRE", submit:"Soumettre", forfeit:"Abandonner", round:"Manche", home:"Accueil", leaderboard:"Classement", profile:"Profil", win:"VICTOIRE", loss:"DÉFAITE", score:"Score", rank:"Rang", you:"Vous", topic:"Sujet", victory:"VICTOIRE", defeat:"DÉFAITE", whisper:"Murmure", facts:"Faits", start:"Commencer", choose_opponent:"Choisissez votre adversaire", choose_topic:"Choisissez un sujet", your_side:"Votre côté", verdict:"Verdict", thinking:"Réflexion", send:"Envoyer", back:"Retour" },
+  pt: { vs_ai:"VS IA", challenge:"DUELO 1V1", gauntlet:"Guantelete", mirror:"Combate Espelho", two_truths:"Duas Verdades", for:"A FAVOR", against:"CONTRA", submit:"Enviar", forfeit:"Desistir", round:"Rodada", home:"Início", leaderboard:"Classificação", profile:"Perfil", win:"VITÓRIA", loss:"DERROTA", score:"Pontuação", rank:"Classificação", you:"Você", topic:"Tópico", victory:"VITÓRIA", defeat:"DERROTA", whisper:"Sussurro", facts:"Fatos", start:"Começar Debate", choose_opponent:"Escolha seu oponente", choose_topic:"Escolha um tópico", your_side:"Seu lado", verdict:"Veredicto", thinking:"Pensando", send:"Enviar", back:"Voltar" },
+};
+
+const TUTORIAL_STEPS = [
+  { title: "Welcome to Clash", body: "<strong>Clash</strong> is a competitive debate arena. You'll argue a topic against an AI opponent across 3 rounds. Every argument is scored on <strong>logic, persuasion, and delivery</strong>." },
+  { title: "Pick Your Side", body: "Each topic has two sides — <strong>FOR</strong> and <strong>AGAINST</strong>. You'll defend your assigned position throughout the match. The stronger your reasoning, the higher your score." },
+  { title: "Submit Your Argument", body: "Type your argument in the text box and hit <strong>Submit</strong>. Be specific — vague claims score poorly. Use evidence, examples, and clear logic. You have a character limit, so make every word count." },
+  { title: "Read the Feedback", body: "After each round, you'll see your score breakdown and the AI's rebuttal. Use <strong>Whisper Mode</strong> for private coaching tips between rounds. Win the match to climb the leaderboard." },
 ];
 
 function pickTopics() {
@@ -2728,7 +2848,7 @@ interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fal
 interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
 interface RoomTaunt { id: number; text: string; fromName: string; fromPlayerNum: 1 | 2; }
 interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; speedRound: boolean; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; player1TypingAt: number | null; player2TypingAt: number | null; }
-interface V1HistoryEntry { code: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
+interface V1HistoryEntry { code: string; title?: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
 interface DebateCard { id: number; playerId: number; debateId: number | null; opponentId: string; opponentName: string; topic: string; score: number; rank: string; rarity: string; bestQuote: string; createdAt: string; }
 
 function generateV1ShareCard(params: {
@@ -3054,6 +3174,20 @@ export default function App() {
   const [whisperMode, setWhisperMode] = useState(false);
   const [whisperFeedback, setWhisperFeedback] = useState<{score: number; text: string; tip: string} | null>(null);
   const [whisperLoading, setWhisperLoading] = useState(false);
+  const [critHit, setCritHit] = useState(false);
+  const [pinnedAchs, setPinnedAchs] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem("clash-pinned-achs")||"[]"); } catch { return []; } });
+  const [bookmarkedMatches, setBookmarkedMatches] = useState<Set<string>>(() => { try { return new Set(JSON.parse(localStorage.getItem("clash-bookmarks")||"[]")); } catch { return new Set(); } });
+  const [glossaryPopup, setGlossaryPopup] = useState<{term: string; def: string; x: number; y: number} | null>(null);
+  const [fallacyMode, setFallacyMode] = useState(false);
+  const [showFallacyModal, setShowFallacyModal] = useState(false);
+  const [selectedFallacy, setSelectedFallacy] = useState("");
+  const [fallacyResult, setFallacyResult] = useState<{correct: boolean; actualFallacy: string; explanation: string; bonus: number} | null>(null);
+  const [fallacyLoading, setFallacyLoading] = useState(false);
+  const [lastAiArg, setLastAiArg] = useState("");
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
+  const [lang, setLang] = useState(() => { try { return localStorage.getItem("clash-lang") || "en"; } catch { return "en"; } });
+  const [newRoomTitle, setNewRoomTitle] = useState("");
   const [showWarRoom, setShowWarRoom] = useState(false);
   const [trashTalkBubble, setTrashTalkBubble] = useState<string | null>(null);
   const [v1SendLine, setV1SendLine] = useState<string | null>(null);
@@ -4438,7 +4572,7 @@ export default function App() {
   };
 
   const handleSetUsername = async () => {
-  const cleaned = usernameInput.trim().toUpperCase().replace(/[^A-Z0-9_]/g, "");
+  const cleaned = usernameInput.trim().replace(/[^a-zA-Z0-9_]/g, "");
   if (cleaned.length < 2) {
     setUsernameError("Must be at least 2 characters (letters, numbers, underscores).");
     return;

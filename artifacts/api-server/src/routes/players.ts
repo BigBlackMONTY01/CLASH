@@ -94,7 +94,7 @@ router.patch("/players/username", async (req, res) => {
     res.status(400).json({ error: "username required" });
     return;
   }
-  const trimmed = username.trim().toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 20);
+  const trimmed = username.trim().replace(/[^a-zA-Z0-9_]/g, "").slice(0, 20);
   if (trimmed.length < 2) {
     res.status(400).json({ error: "Invalid username — use 2–20 letters, numbers, or underscores" });
     return;

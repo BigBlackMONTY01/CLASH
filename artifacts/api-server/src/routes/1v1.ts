@@ -51,6 +51,7 @@ interface InMemoryTaunt {
 
 interface InMemoryRoom {
   code: string;
+  title: string;
   topicText: string;
   topicCat: string;
   creator: string;
@@ -81,6 +82,14 @@ const store = new Map<string, InMemoryRoom>();
 
 interface TypingEntry { p1At: Date | null; p2At: Date | null; }
 const typingMap = new Map<string, TypingEntry>();
+
+const sseClients1v1 = new Map<string, Set<import("express").Response>>();
+function broadcastRoom1v1(code: string): void {
+  const clients = sseClients1v1.get(code.toUpperCase());
+  if (!clients || !clients.size) return;
+  const payload = `data: {"type":"update"}\n\n`;
+  for (const res of clients) { try { res.write(payload); } catch {} }
+}
 
 async function saveDebateRecord(callerId: string, room: InMemoryRoom, playerNum: 1 | 2): Promise<void> {
   try {
@@ -213,6 +222,7 @@ function roomToState(room: InMemoryRoom, callerId: string | null) {
     latestTaunt: room.latestTaunt,
     player1TypingAt: typingMap.get(room.code)?.p1At?.toISOString() ?? null,
     player2TypingAt: typingMap.get(room.code)?.p2At?.toISOString() ?? null,
+    title: room.title,
   };
 }
 
@@ -412,7 +422,7 @@ router.post("/1v1/create", (req, res) => {
   const callerId = getCallerId(req);
   if (!callerId) { res.status(401).json({ error: "Device ID or auth required" }); return; }
   const callerName = getCallerName(req);
-  const { totalRounds, topicText: topicParam, topicCat: topicCatParam, speedRound } = req.body as { totalRounds?: number; topicText?: string; topicCat?: string; speedRound?: boolean };
+  const { totalRounds, topicText: topicParam, topicCat: topicCatParam, speedRound, title: titleParam } = req.body as { totalRounds?: number; topicText?: string; topicCat?: string; speedRound?: boolean; title?: string };
   const topic = topicParam?.trim()
     ? { text: topicParam.trim(), cat: topicCatParam || "Custom" }
     : TOPICS[Math.floor(Math.random() * TOPICS.length)];

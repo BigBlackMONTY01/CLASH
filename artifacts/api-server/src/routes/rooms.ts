@@ -10,6 +10,15 @@ const MODEL = "llama-3.3-70b-versatile";
 
 const typingMap = new Map<string, { p1: number; p2: number }>();
 
+const sseClients = new Map<string, Set<import("express").Response>>();
+
+function broadcastToRoom(code: string): void {
+  const clients = sseClients.get(code.toUpperCase());
+  if (!clients || clients.size === 0) return;
+  const payload = `data: {"type":"update"}\n\n`;
+  for (const res of clients) { try { res.write(payload); } catch {} }
+}
+
 let _groq: Groq | null = null;
 function getGroq(): Groq {
   if (!_groq) _groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -291,6 +300,25 @@ router.post("/rooms/:code/typing", async (req, res) => {
   res.json({ ok: true });
 });
 
+// GET /api/rooms/:code/events — SSE push for real-time room updates
+router.get("/rooms/:code/events", (req, res) => {
+  const roomCode = req.params.code.toUpperCase();
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+  res.flushHeaders();
+  res.write("event: connected\ndata: {}\n\n");
+  if (!sseClients.has(roomCode)) sseClients.set(roomCode, new Set());
+  sseClients.get(roomCode)!.add(res);
+  const heartbeat = setInterval(() => { try { res.write(": ping\n\n"); } catch {} }, 25000);
+  req.on("close", () => {
+    clearInterval(heartbeat);
+    sseClients.get(roomCode)?.delete(res);
+    if (sseClients.get(roomCode)?.size === 0) sseClients.delete(roomCode);
+  });
+});
+
 // GET /api/rooms/:code — poll state
 router.get("/rooms/:code", async (req, res) => {
   const playerId = await getPlayerId(req);
@@ -331,6 +359,7 @@ router.post("/rooms/:code/sides", async (req, res) => {
   if (r.player1Id !== playerId) { res.status(403).json({ error: "Only the room creator picks sides" }); return; }
   const oppSide = side === "for" ? "against" : "for";
   await db.update(rooms).set({ player1Side: side, player2Side: oppSide }).where(eq(rooms.id, r.id));
+  broadcastToRoom(r.code);
   res.json({ ok: true });
 });
 
@@ -349,6 +378,7 @@ router.post("/rooms/:code/ready", async (req, res) => {
   const p2Ready = (updates.player2Ready as boolean) || r.player2Ready;
   if (p1Ready && p2Ready) updates.status = "debating";
   await db.update(rooms).set(updates).where(eq(rooms.id, r.id));
+  broadcastToRoom(r.code);
   res.json({ ok: true });
 });
 
@@ -438,6 +468,7 @@ Find 3-5 exact substrings from the argument text. Be precise and harsh.`;
     }
   }
 
+  broadcastToRoom(r.code);
   res.json({ ...saved[0], highlights: judgment.highlights || [], critique: judgment.critique });
 });
 
@@ -457,6 +488,7 @@ router.post("/rooms/:code/forfeit", async (req, res) => {
     player1Rank: playerNum === 1 ? "F" : (r.player1Rank || "C"),
     player2Rank: playerNum === 2 ? "F" : (r.player2Rank || "C"),
   }).where(eq(rooms.id, r.id));
+  broadcastToRoom(r.code);
   res.json({ ok: true });
 });
 

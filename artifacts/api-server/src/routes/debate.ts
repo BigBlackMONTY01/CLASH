@@ -748,4 +748,33 @@ Respond ONLY with valid JSON:
   }
 });
 
+// POST /api/debate/fallacy-check — validate player's fallacy identification against AI argument
+router.post("/debate/fallacy-check", async (req, res) => {
+  const { aiArgument, claimedFallacy, topic } = req.body as Record<string, unknown>;
+  if (!str(aiArgument) || !str(claimedFallacy)) { res.status(400).json({ error: "Invalid body" }); return; }
+  try {
+    const prompt = `You are a logic professor. A debater claimed they spotted a "${claimedFallacy as string}" fallacy in this argument.
+
+Topic: "${str(topic) ?? "general"}"
+Argument: "${aiArgument as string}"
+
+Does this argument actually contain a "${claimedFallacy as string}" fallacy? Be strict — only confirm if the fallacy is clearly present.
+
+If there IS a fallacy (whether or not it matches exactly), name the actual one found.
+
+Respond ONLY with valid JSON:
+{"correct":true|false,"actualFallacy":"exact fallacy name","explanation":"one sharp sentence explaining why","bonusPoints":0-15}
+
+bonusPoints: 15 if exactly right, 8 if close (right family of fallacy), 0 if wrong.`;
+    const result = await claudeText("You are a logic professor. Respond only with valid JSON.", prompt, 200);
+    const jMatch = result.match(/\{[\s\S]*\}/);
+    let parsed = { correct: false, actualFallacy: "None detected", explanation: "That fallacy was not clearly present in the argument.", bonusPoints: 0 };
+    if (jMatch) { try { parsed = { ...parsed, ...JSON.parse(jMatch[0]) }; } catch {} }
+    res.json(parsed);
+  } catch (err) {
+    req.log.error({ err }, "fallacy-check failed");
+    res.status(500).json({ error: "AI error" });
+  }
+});
+
 export default router;
