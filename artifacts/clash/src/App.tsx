@@ -8,6 +8,7 @@ ${FONTS}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --bg:#0a0a0a;
+  --bg2:#0e0e14;
   --surface:#111;
   --surface2:#1a1a1a;
   --border:#222;
@@ -3273,8 +3274,8 @@ export default function App() {
   const submitRoomArgRef = useRef<(() => Promise<void>) | null>(null);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    if ("serviceWorker" in navigator && !import.meta.env.DEV) {
+      navigator.serviceWorker.register(import.meta.env.BASE_URL + "sw.js").catch(() => {});
     }
     if (isPWA && "Notification" in window && Notification.permission === "default") {
       Notification.requestPermission().catch(() => {});

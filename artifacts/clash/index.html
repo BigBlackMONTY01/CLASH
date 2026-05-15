@@ -33,11 +33,13 @@
       body { margin: 0; background: #0a0a0a; visibility: visible; }
 
       #pwa-splash {
+        display: none;
         position: fixed; inset: 0; z-index: 99999;
         background: #0a0a0a;
         overflow: hidden;
         transition: opacity 0.5s ease;
       }
+      html.pwa #pwa-splash { display: block; }
       #pwa-splash.out { opacity: 0; pointer-events: none; }
 
       #splash-flash {
@@ -148,13 +150,9 @@
         var isPWA = window.matchMedia('(display-mode: standalone)').matches
           || navigator.standalone === true;
 
-        if (!isPWA) {
-          document.addEventListener('DOMContentLoaded', function () {
-            var el = document.getElementById('pwa-splash');
-            if (el) el.style.display = 'none';
-          });
-          return;
-        }
+        if (!isPWA) return;
+
+        document.documentElement.classList.add('pwa');
 
         document.addEventListener('DOMContentLoaded', function () {
           var TOP_STR  = '\u201cFacts don\u2019t care about feelings.\u201d';
