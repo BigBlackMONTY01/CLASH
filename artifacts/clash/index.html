@@ -205,6 +205,13 @@
                   w1.classList.add('fire');
                   setTimeout(function () { w2.classList.add('fire'); }, 120);
                   setTimeout(function () { sub.classList.add('show'); }, 320);
+                  setTimeout(function () {
+                    var splashEl = document.getElementById('pwa-splash');
+                    if (splashEl) {
+                      splashEl.classList.add('out');
+                      setTimeout(function () { if (splashEl) splashEl.style.display = 'none'; }, 520);
+                    }
+                  }, 900);
                 }, 80);
               }, 180);
             }, 280);
