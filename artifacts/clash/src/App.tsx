@@ -757,9 +757,23 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 /* GAUNTLET WRAP (div acting as card with nested mirror pill) */
 .home-mode-wrap{cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .home-mode-wrap:hover{transform:translateY(-2px);}
-/* LEADERBOARD NAV LINK */
-.nav-lb-link{background:none;border:none;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;padding:4px 2px;transition:color 0.15s;-webkit-tap-highlight-color:transparent;}
+/* LEADERBOARD LINK (home content, not nav) */
+.nav-lb-link{background:none;border:none;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;padding:2px 0;transition:color 0.15s;-webkit-tap-highlight-color:transparent;}
 .nav-lb-link:hover{color:var(--text);}
+/* HOME DUEL ROW — VS AI + 1V1 side by side */
+.home-duel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;margin-bottom:10px;}
+.home-duel-card{display:flex;flex-direction:column;align-items:flex-start;border-radius:var(--radius);padding:20px 16px 16px;cursor:pointer;text-align:left;transition:all 0.2s;font-family:'Barlow Condensed',sans-serif;box-sizing:border-box;-webkit-tap-highlight-color:transparent;border:1px solid;}
+.home-duel-card.red{background:linear-gradient(135deg,rgba(230,57,70,0.13) 0%,rgba(230,57,70,0.03) 100%);border-color:rgba(230,57,70,0.38);}
+.home-duel-card.red:hover{background:linear-gradient(135deg,rgba(230,57,70,0.2) 0%,rgba(230,57,70,0.07) 100%);border-color:rgba(230,57,70,0.62);transform:translateY(-1px);}
+.home-duel-card.blue{background:linear-gradient(135deg,rgba(59,130,246,0.12) 0%,rgba(59,130,246,0.03) 100%);border-color:rgba(59,130,246,0.35);}
+.home-duel-card.blue:hover{background:linear-gradient(135deg,rgba(59,130,246,0.2) 0%,rgba(59,130,246,0.07) 100%);border-color:rgba(59,130,246,0.6);transform:translateY(-1px);}
+.home-duel-label{font-size:clamp(20px,5vw,28px);font-weight:800;letter-spacing:3px;text-transform:uppercase;line-height:1;margin-bottom:5px;}
+.home-duel-label.red{color:var(--red);}
+.home-duel-label.blue{color:#3b82f6;}
+.home-duel-sub{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);flex:1;margin-bottom:12px;line-height:1.4;}
+.home-duel-cta{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-top:auto;}
+.home-duel-cta.red{color:rgba(230,57,70,0.65);}
+.home-duel-cta.blue{color:rgba(59,130,246,0.6);}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 /* UPDATE BANNER */
@@ -4524,9 +4538,6 @@ export default function App() {
       <nav className="nav">
         <div className="logo" onClick={() => setScreen("home")} style={{ cursor: "pointer" }}>CL<span style={{color:"#e63946"}}>A</span>SH</div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          {screen === "home" && (
-            <button className="nav-lb-link" onClick={() => setScreen("leaderboard")}>Leaderboard</button>
-          )}
           {!isPWA && <button className="pwa-nav-btn" onClick={() => setShowPwaModal(true)} title="Install App">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
@@ -4609,50 +4620,49 @@ export default function App() {
               <span className="taunt-who">{TAUNTS[tauntIndex].icon}</span>
               {TAUNTS[tauntIndex].text}
             </p>
-            <button
-              className="home-vsai-card"
-              onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
-            >
-              <div className="home-vsai-top">
-                <div className="home-vsai-label">VS AI</div>
-                <div className="home-vsai-tag">Recommended</div>
-              </div>
-              <div className="home-vsai-sub">Pick a topic. Pick a side. Argue.</div>
-              <div className="home-vsai-cta">Start Debate →</div>
-            </button>
-            <div className="home-modes">
+            <div className="home-duel">
               <button
-                className="home-mode-btn red"
+                className="home-duel-card red"
+                onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
+              >
+                <div className="home-duel-label red">VS AI</div>
+                <div className="home-duel-sub">Pick a topic. Pick a side. Argue.</div>
+                <div className="home-duel-cta red">Start Debate →</div>
+              </button>
+              <button
+                className="home-duel-card blue"
                 onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}
               >
-                <span className="home-mode-icon">⚔</span>
-                <div className="home-mode-title red">1V1</div>
-                <div className="home-mode-sub">vs Human</div>
+                <div className="home-duel-label blue">1V1</div>
+                <div className="home-duel-sub">Challenge a human. Real stakes.</div>
+                <div className="home-duel-cta blue">Find Match →</div>
               </button>
-              <div
-                className="home-mode-btn gold home-mode-wrap"
+            </div>
+            <div className="home-modes">
+              <button
+                className="home-mode-btn gold"
                 onClick={() => { setGauntletNextSide(null); setScreen("gauntlet-intro"); }}
               >
                 <span className="home-mode-icon">🏆</span>
                 <div className="home-mode-title gold">Gauntlet</div>
-                <div className="home-mode-sub">6 opponents</div>
-                <button
-                  className="mirror-pill"
-                  style={{marginTop:"8px"}}
-                  title={stats.debates < 5 ? `Unlocks after ${5 - stats.debates} more debate${5 - stats.debates !== 1 ? "s" : ""}` : "Fight an AI trained on your own style"}
-                  disabled={stats.debates < 5}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (stats.debates < 5) return;
-                    setMirrorMatchMode(true);
-                    setDisplayTopics(pickTopics());
-                    setSetupStep(1);
-                    setScreen("setup");
-                  }}
-                >
-                  🪞 Mirror{stats.debates < 5 ? ` · ${5 - stats.debates} left` : ""}
-                </button>
-              </div>
+                <div className="home-mode-sub">6 opponents back-to-back</div>
+              </button>
+              <button
+                className="home-mode-btn purple"
+                title={stats.debates < 5 ? `Unlocks after ${5 - stats.debates} more debate${5 - stats.debates !== 1 ? "s" : ""}` : "Fight an AI trained on your own style"}
+                disabled={stats.debates < 5}
+                onClick={() => {
+                  if (stats.debates < 5) return;
+                  setMirrorMatchMode(true);
+                  setDisplayTopics(pickTopics());
+                  setSetupStep(1);
+                  setScreen("setup");
+                }}
+              >
+                <span className="home-mode-icon">🪞</span>
+                <div className="home-mode-title purple">Mirror</div>
+                <div className="home-mode-sub">{stats.debates < 5 ? `${5 - stats.debates} debates to unlock` : "Fight yourself"}</div>
+              </button>
               <button
                 className="home-mode-btn teal"
                 onClick={() => {
@@ -4677,6 +4687,9 @@ export default function App() {
                 <div className="home-mode-title teal">Two-Truths</div>
                 <div className="home-mode-sub">Defend the nuance</div>
               </button>
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "2px", marginBottom: "6px" }}>
+              <button className="nav-lb-link" onClick={() => setScreen("leaderboard")}>Leaderboard →</button>
             </div>
           </div>
 
