@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo, type ReactElement } from "react";
 import { API } from "./lib/api";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap');`;
@@ -2886,7 +2886,7 @@ interface Stats { wins: number; debates: number; bestScore: number; currentStrea
 interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fallacy"; note: string; }
 interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
 interface RoomTaunt { id: number; text: string; fromName: string; fromPlayerNum: 1 | 2; }
-interface RoomState { id: number; code: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; speedRound: boolean; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; player1TypingAt: number | null; player2TypingAt: number | null; }
+interface RoomState { id: number; code: string; title?: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; speedRound: boolean; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; player1TypingAt: number | null; player2TypingAt: number | null; }
 interface V1HistoryEntry { code: string; title?: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
 interface DebateCard { id: number; playerId: number; debateId: number | null; opponentId: string; opponentName: string; topic: string; score: number; rank: string; rarity: string; bestQuote: string; createdAt: string; }
 
@@ -3724,7 +3724,7 @@ export default function App() {
       .catch(() => setLbLoading(false));
   }, [screen, lbTab, lbRefreshKey]);
 
-  const playSound = useCallback((type: "round-win"|"round-loss"|"victory"|"defeat"|"tick"|"submit") => {
+  const playSound = useCallback((type: "round-win"|"round-loss"|"victory"|"defeat"|"tick"|"submit"|`ambient-${string}`) => {
     if (!soundEnabled) return;
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -3781,7 +3781,7 @@ export default function App() {
 
   const renderGlossaryText = useCallback((text: string) => {
     const terms = Object.keys(GLOSSARY_TERMS).sort((a,b) => b.length - a.length);
-    const parts: (string | JSX.Element)[] = [];
+    const parts: (string | ReactElement)[] = [];
     let remaining = text;
     let key = 0;
     while (remaining.length > 0) {
@@ -3821,19 +3821,23 @@ export default function App() {
   }, [pendingFallacy, fallacyLoading, unlockAch]);
 
   const toggleBookmark = useCallback(() => {
-    if (!verdict || !selectedTopic || !ai) return;
-    const existing = bookmarkedDebates.find(b => b.topic === selectedTopic.text && b.opponent === ai.name);
+    if (!verdict || !selectedTopic) return;
+    const resolvedAi = selectedAI === "custom"
+      ? { name: customOpponent.name || "Custom Opponent", icon: customOpponent.icon || "🎭" }
+      : AI_OPPONENTS.find((a) => a.id === selectedAI);
+    if (!resolvedAi) return;
+    const existing = bookmarkedDebates.find(b => b.topic === selectedTopic.text && b.opponent === resolvedAi.name);
     if (existing) {
       const next = bookmarkedDebates.filter(b => b.id !== existing.id);
       setBookmarkedDebates(next);
       try { localStorage.setItem("clash-bookmarks-v2", JSON.stringify(next)); } catch {}
     } else {
-      const entry = { id: `${selectedTopic.text}|${Date.now()}`, topic: selectedTopic.text, opponent: ai.name, icon: ai.icon, score: verdict.avgScore, rank: verdict.rank, won: verdict.won, date: new Date().toISOString() };
+      const entry = { id: `${selectedTopic.text}|${Date.now()}`, topic: selectedTopic.text, opponent: resolvedAi.name, icon: resolvedAi.icon, score: verdict.avgScore, rank: verdict.rank, won: verdict.won, date: new Date().toISOString() };
       const next = [...bookmarkedDebates, entry];
       setBookmarkedDebates(next);
       try { localStorage.setItem("clash-bookmarks-v2", JSON.stringify(next)); } catch {}
     }
-  }, [verdict, selectedTopic, ai, bookmarkedDebates]);
+  }, [verdict, selectedTopic, selectedAI, customOpponent, bookmarkedDebates]);
 
   const voteForTopic = useCallback((text: string) => {
     if (votedTopics.has(text)) return;

@@ -1,4 +1,6 @@
 // usePlayerSettings.ts
+import { useState } from 'react';
+
 export function usePlayerSettings() {
   const [settings, setSettings] = useState({
     avatar: 'default',

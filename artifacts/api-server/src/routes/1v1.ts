@@ -436,6 +436,7 @@ router.post("/1v1/create", (req, res) => {
 
   const room: InMemoryRoom = {
     code,
+    title: titleParam?.trim() || "",
     topicText: topic.text,
     topicCat: topic.cat,
     creator: callerId,
