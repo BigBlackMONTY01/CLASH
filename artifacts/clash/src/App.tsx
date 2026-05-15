@@ -4769,7 +4769,7 @@ export default function App() {
                 </p>
               </div>
               <div key={feedKey} className="live-feed">
-                {(feedExpanded ? feedItems : feedItems.slice(0, 3)).map((item, i) => (
+                {feedItems.slice(0, 4).map((item, i) => (
                   <div key={i} className="feed-item" style={{ animationDelay: `${i * 60}ms` }}>
                     <span className="feed-icon">{item.icon}</span>
                     <span className="feed-text" dangerouslySetInnerHTML={{ __html: item.text }} />
@@ -4778,14 +4778,6 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              {feedItems.length > 3 && (
-                <button
-                  className="feed-show-more"
-                  onClick={() => setFeedExpanded(e => !e)}
-                >
-                  {feedExpanded ? "Show less ↑" : `Show ${feedItems.length - 3} more ↓`}
-                </button>
-              )}
             </div>
 
             {unlockedAchs.length > 0 && (
