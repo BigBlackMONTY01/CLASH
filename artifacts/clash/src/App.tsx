@@ -4279,7 +4279,7 @@ export default function App() {
           await (isLoggedIn ? apiAuthPost("/debates/save", savePayload) : apiPost("/debates/save", savePayload));
         };
         doSave().then(() => {
-          if (isLoggedIn) {
+          if (isLoggedIn && !twoTruthsMode) {
             apiAuthPost<MmrResult>("/rankings/update", { won, avgScore, avgLogic, avgPersuasion, avgDelivery, opponentDifficulty: ai?.diff || "medium" })
               .then((mmr) => setMmrResult(mmr)).catch(() => {});
             apiAuthPost<ProgressionResult>("/progression/post-debate", { won, avgScore, currentStreak: won ? (stats.currentStreak ?? 0) + 1 : 0, opponentId: selectedAI || "unknown" })
