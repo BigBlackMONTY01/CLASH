@@ -267,9 +267,11 @@ margin:0 0 6px;}
 .username-dialog .ud-sub{font-size:13px;color:var(--text-dim);margin:0 0 20px;line-height:1.5;}
 .username-field{width:100%;background:var(--surface);border:1.5px solid var(--border);
 border-radius:var(--radius);padding:12px 14px;font-family:'Barlow Condensed',sans-serif;
-font-size:17px;letter-spacing:3px;text-transform:uppercase;color:var(--text);outline:none;
+font-size:17px;letter-spacing:1px;color:var(--text);outline:none;
 transition:border-color 0.2s;box-sizing:border-box;}
 .username-field:focus{border-color:var(--red);}
+@keyframes recoPulse{0%,100%{opacity:0.6;border-color:rgba(230,57,70,0.3);}50%{opacity:1;border-color:rgba(230,57,70,0.7);color:rgba(230,57,70,0.95);}}
+.reco-badge{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(230,57,70,0.7);border:1px solid rgba(230,57,70,0.3);border-radius:100px;padding:2px 7px;flex-shrink:0;animation:recoPulse 2.2s ease-in-out infinite;}
 .username-err{font-size:12px;color:var(--red);margin:6px 0 0;min-height:16px;}
 .username-hint{font-size:11px;color:var(--text-dim);margin:6px 0 18px;
 font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
@@ -4790,7 +4792,7 @@ export default function App() {
               >
                 <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "5px" }}>
                   <div className="home-duel-label red">VS AI</div>
-                  <div style={{ fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "rgba(230,57,70,0.55)", border: "1px solid rgba(230,57,70,0.28)", borderRadius: "100px", padding: "2px 7px", flexShrink: 0 }}>Recommended</div>
+                  <div className="reco-badge">Recommended</div>
                 </div>
                 <div className="home-duel-sub">Pick a topic. Pick a side. Argue.</div>
                 <div className="home-duel-cta red">Start Debate →</div>
@@ -7005,7 +7007,7 @@ export default function App() {
                   placeholder="YOURNAME"
                   maxLength={20}
                   value={usernameInput}
-                  onChange={(e) => { setUsernameInput(e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, "")); setUsernameError(""); }}
+                  onChange={(e) => { setUsernameInput(e.target.value.replace(/[^a-zA-Z0-9_]/g, "")); setUsernameError(""); }}
                   onKeyDown={(e) => { if (e.key === "Enter") handleSetUsername(); }}
                 />
                 <button className="pp-save-btn" onClick={handleSetUsername}>Save</button>
@@ -7815,7 +7817,7 @@ export default function App() {
             placeholder="YOURNAME"
             maxLength={20}
             value={usernameInput}
-            onChange={(e) => { setUsernameInput(e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, "")); setUsernameError(""); }}
+            onChange={(e) => { setUsernameInput(e.target.value.replace(/[^a-zA-Z0-9_]/g, "")); setUsernameError(""); }}
             onKeyDown={(e) => { if (e.key === "Enter") handleSetUsername(); }}
             autoFocus
           />
