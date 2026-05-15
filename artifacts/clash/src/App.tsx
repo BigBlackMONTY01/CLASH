@@ -4625,7 +4625,10 @@ export default function App() {
                 className="home-duel-card red"
                 onClick={() => { setDisplayTopics(pickTopics()); setSetupStep(0); setScreen("setup"); }}
               >
-                <div className="home-duel-label red">VS AI</div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "5px" }}>
+                  <div className="home-duel-label red">VS AI</div>
+                  <div style={{ fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "rgba(230,57,70,0.55)", border: "1px solid rgba(230,57,70,0.28)", borderRadius: "100px", padding: "2px 7px", flexShrink: 0 }}>Recommended</div>
+                </div>
                 <div className="home-duel-sub">Pick a topic. Pick a side. Argue.</div>
                 <div className="home-duel-cta red">Start Debate →</div>
               </button>
@@ -4633,7 +4636,10 @@ export default function App() {
                 className="home-duel-card blue"
                 onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}
               >
-                <div className="home-duel-label blue">1V1</div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "5px" }}>
+                  <div className="home-duel-label blue">1V1</div>
+                  <div style={{ fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "rgba(59,130,246,0.55)", border: "1px solid rgba(59,130,246,0.28)", borderRadius: "100px", padding: "2px 7px", flexShrink: 0 }}>vs Human</div>
+                </div>
                 <div className="home-duel-sub">Challenge a human. Real stakes.</div>
                 <div className="home-duel-cta blue">Find Match →</div>
               </button>
