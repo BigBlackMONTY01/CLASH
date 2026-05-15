@@ -1353,6 +1353,42 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .rival-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px 4px 8px;border-radius:100px;background:rgba(244,197,66,0.08);border:1px solid rgba(244,197,66,0.28);font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .rival-chip:hover{background:rgba(244,197,66,0.14);border-color:rgba(244,197,66,0.5);}
 
+/* CRITICAL HIT FLASH */
+@keyframes critEdge{0%{opacity:0;}15%{opacity:1;}80%{opacity:0.8;}100%{opacity:0;}}
+.crit-flash-overlay{position:fixed;inset:0;pointer-events:none;z-index:5000;box-shadow:inset 0 0 70px 18px rgba(244,197,66,0.55),inset 0 0 140px 50px rgba(244,197,66,0.2);animation:critEdge 1.1s ease forwards;}
+/* FALLACY TRAP */
+.fallacy-panel{background:rgba(168,85,247,0.07);border:1px solid rgba(168,85,247,0.3);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;animation:fadeIn 0.3s ease;}
+.fallacy-panel-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#a855f7;margin-bottom:10px;}
+.fallacy-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.fallacy-opt{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-align:left;color:var(--text-dim);transition:all 0.15s;}
+.fallacy-opt:hover{border-color:rgba(168,85,247,0.5);color:var(--text);}
+.fallacy-opt.selected{border-color:#a855f7;background:rgba(168,85,247,0.12);color:#a855f7;}
+.fallacy-result-bar{padding:10px 12px;border-radius:6px;font-size:13px;margin-bottom:12px;line-height:1.4;}
+.fallacy-result-bar.correct{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);color:var(--green);}
+.fallacy-result-bar.wrong{background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.3);color:#ff6b6b;}
+/* TUTORIAL MODAL */
+.tutorial-overlay{position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;padding:24px;}
+.tutorial-modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px 28px;width:100%;max-width:400px;animation:fadeInUp 0.3s ease;}
+.tutorial-step-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;}
+.tutorial-title{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:3px;margin-bottom:8px;}
+.tutorial-body{font-size:14px;color:var(--text-mid);line-height:1.65;margin-bottom:22px;}
+.tutorial-dots{display:flex;gap:6px;justify-content:center;margin-bottom:20px;}
+.tutorial-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background 0.2s;}
+.tutorial-dot.active{background:var(--red);}
+/* BOOKMARK BTN */
+.bookmark-btn{background:none;border:1px solid var(--border);border-radius:var(--radius);padding:9px 14px;cursor:pointer;color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;transition:all 0.15s;display:inline-flex;align-items:center;gap:5px;}
+.bookmark-btn.bookmarked{border-color:var(--gold);color:var(--gold);background:rgba(244,197,66,0.07);}
+.bookmark-btn:hover{border-color:var(--gold);color:var(--gold);}
+/* GLOSSARY */
+.glossary-term{border-bottom:1px dashed rgba(168,85,247,0.5);cursor:pointer;transition:color 0.15s;}
+.glossary-term:hover{color:#a855f7;}
+.glossary-popup{position:fixed;z-index:9999;background:#0e0e14;border:1px solid rgba(168,85,247,0.45);border-radius:8px;padding:10px 14px;max-width:240px;width:max-content;box-shadow:0 8px 24px rgba(0,0,0,0.8);animation:fadeIn 0.15s ease;cursor:pointer;}
+.glossary-popup-term{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a855f7;margin-bottom:5px;}
+.glossary-popup-def{font-size:12px;color:var(--text-mid);line-height:1.5;}
+/* ROOM TITLE INPUT */
+.room-title-wrap{margin-bottom:14px;}
+.room-title-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;box-sizing:border-box;}
+.room-title-input:focus{border-color:rgba(0,119,255,0.5);}
 /* WAR ROOM MODAL */
 .war-room-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.85);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease;}
 .war-room-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px 22px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;}
@@ -3190,6 +3226,8 @@ export default function App() {
   const [tutorialStep, setTutorialStep] = useState(0);
   const [lang, setLang] = useState(() => { try { return localStorage.getItem("clash-lang") || "en"; } catch { return "en"; } });
   const [newRoomTitle, setNewRoomTitle] = useState("");
+  const [pendingFallacy, setPendingFallacy] = useState<string|null>(null);
+  const [bookmarkedDebates, setBookmarkedDebates] = useState<Array<{id:string;topic:string;opponent:string;icon:string;score:number;rank:string;won:boolean;date:string}>>(() => { try { return JSON.parse(localStorage.getItem("clash-bookmarks-v2")||"[]"); } catch { return []; } });
   const [showWarRoom, setShowWarRoom] = useState(false);
   const [trashTalkBubble, setTrashTalkBubble] = useState<string | null>(null);
   const [v1SendLine, setV1SendLine] = useState<string | null>(null);
@@ -3561,6 +3599,11 @@ export default function App() {
     return;
   }, [currentRoom?.currentRound, screen]);
 
+  // Show tutorial on first ever visit
+  useEffect(() => {
+    try { if (!localStorage.getItem("clash-tutorial-done")) setShowTutorial(true); } catch {}
+  }, []);
+
   // Rotate status taunts every 4s on home screen
   useEffect(() => {
     if (screen !== "home") return;
@@ -3702,6 +3745,22 @@ export default function App() {
       else if (type === "defeat") { play(380,0.15); play(290,0.18,0.16); play(200,0.3,0.35,"triangle",0.2); }
       else if (type === "tick")   { play(1400,0.04,0,"square",0.06); }
       else if (type === "submit") { play(440,0.08,0,"sine",0.12); }
+      else if (type.startsWith("ambient-")) {
+        const tm: Record<string,[number,OscillatorType,number]> = {
+          "ambient-professor":    [196,"sine",0.12],
+          "ambient-politician":   [330,"triangle",0.10],
+          "ambient-philosopher":  [220,"sine",0.11],
+          "ambient-devil":        [280,"sawtooth",0.08],
+          "ambient-debunker":     [523,"square",0.06],
+          "ambient-prosecutor":   [370,"triangle",0.09],
+          "ambient-dialectician": [165,"sine",0.09],
+          "ambient-custom":       [294,"sine",0.09],
+          "ambient-mirror":       [440,"triangle",0.07],
+        };
+        const t = tm[type] ?? [300,"sine",0.08];
+        play(t[0],0.45,0,t[1],t[2]);
+        play(t[0]*1.5,0.28,0.5,"sine",t[2]*0.45);
+      }
       setTimeout(() => { try { ctx.close(); } catch {} }, 2000);
     } catch {}
   }, [soundEnabled]);
@@ -3718,6 +3777,62 @@ export default function App() {
       return next;
     });
   }, []);
+
+  const renderGlossaryText = useCallback((text: string) => {
+    const terms = Object.keys(GLOSSARY_TERMS).sort((a,b) => b.length - a.length);
+    const parts: (string | JSX.Element)[] = [];
+    let remaining = text;
+    let key = 0;
+    while (remaining.length > 0) {
+      const lower = remaining.toLowerCase();
+      let earliest = -1;
+      let earliestTerm = "";
+      for (const term of terms) {
+        const idx = lower.indexOf(term);
+        if (idx !== -1 && (earliest === -1 || idx < earliest)) { earliest = idx; earliestTerm = term; }
+      }
+      if (earliest === -1) { parts.push(remaining); break; }
+      if (earliest > 0) parts.push(remaining.slice(0, earliest));
+      const matched = remaining.slice(earliest, earliest + earliestTerm.length);
+      const def = GLOSSARY_TERMS[earliestTerm];
+      parts.push(
+        <span key={key++} className="glossary-term" onClick={(e) => {
+          e.stopPropagation();
+          const r = (e.target as HTMLElement).getBoundingClientRect();
+          setGlossaryPopup({ term: matched, def, x: Math.min(r.left, window.innerWidth - 256), y: Math.min(r.bottom + 8, window.innerHeight - 110) });
+        }}>{matched}</span>
+      );
+      remaining = remaining.slice(earliest + earliestTerm.length);
+    }
+    return parts;
+  }, []);
+
+  const handleFallacyGuess = useCallback((guess: string) => {
+    if (!pendingFallacy || fallacyLoading) return;
+    setFallacyLoading(true);
+    setTimeout(() => {
+      const correct = guess.toLowerCase() === pendingFallacy.toLowerCase();
+      setFallacyResult({ correct, actualFallacy: pendingFallacy, explanation: correct ? `Correct — the AI used ${pendingFallacy}.` : `Not quite. The AI embedded ${pendingFallacy}.`, bonus: correct ? 5 : 0 });
+      setFallacyLoading(false);
+      setPendingFallacy(null);
+      if (correct) unlockAch("fallacy-hunter");
+    }, 700);
+  }, [pendingFallacy, fallacyLoading, unlockAch]);
+
+  const toggleBookmark = useCallback(() => {
+    if (!verdict || !selectedTopic || !ai) return;
+    const existing = bookmarkedDebates.find(b => b.topic === selectedTopic.text && b.opponent === ai.name);
+    if (existing) {
+      const next = bookmarkedDebates.filter(b => b.id !== existing.id);
+      setBookmarkedDebates(next);
+      try { localStorage.setItem("clash-bookmarks-v2", JSON.stringify(next)); } catch {}
+    } else {
+      const entry = { id: `${selectedTopic.text}|${Date.now()}`, topic: selectedTopic.text, opponent: ai.name, icon: ai.icon, score: verdict.avgScore, rank: verdict.rank, won: verdict.won, date: new Date().toISOString() };
+      const next = [...bookmarkedDebates, entry];
+      setBookmarkedDebates(next);
+      try { localStorage.setItem("clash-bookmarks-v2", JSON.stringify(next)); } catch {}
+    }
+  }, [verdict, selectedTopic, ai, bookmarkedDebates]);
 
   const voteForTopic = useCallback((text: string) => {
     if (votedTopics.has(text)) return;
@@ -3925,9 +4040,10 @@ export default function App() {
 
     try {
       const thinkStart = Date.now();
-      const { aiText, roundScore } = await apiPost<{
+      const { aiText, roundScore, embeddedFallacy } = await apiPost<{
         aiText: string;
         roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; propaganda?: PropagandaTag[] };
+        embeddedFallacy?: string;
       }>("/debate/round", {
         personality: ai.personality,
         topic: selectedTopic.text,
@@ -3942,6 +4058,7 @@ export default function App() {
         adaptiveLevel,
         isOvertime,
         twoTruths: twoTruthsMode,
+        fallacyTrap: fallacyMode,
       });
 
       // Enforce 4-6s minimum thinking time to build tension
@@ -3984,8 +4101,12 @@ export default function App() {
         }).catch(() => { setWhisperLoading(false); });
       }
       playSound(roundScore.score >= 60 ? "round-win" : "round-loss");
+      playSound(`ambient-${ai?.id ?? ""}`);
+      if (roundScore.score >= 90) { setCritHit(true); setTimeout(() => setCritHit(false), 1200); }
       if (roundScore.score >= 95) unlockAch("perfect-round");
       setMessages([...newMessages, { role: "ai", text: aiText }]);
+      setLastAiArg(aiText);
+      if (fallacyMode && embeddedFallacy) { setPendingFallacy(embeddedFallacy); setFallacyResult(null); setSelectedFallacy(""); }
       lastUserArgsRef.current = [...newMessages.filter(m => m.role === "user").map(m => m.text)];
       if (factCheckMode) {
         setFactCheckResults(null);
@@ -4008,7 +4129,7 @@ export default function App() {
       setThinking(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputText, thinking, ai, selectedTopic, selectedSide, roundScores, messages, stopTimer, adaptiveLevel, consecutiveHigh, consecutiveLow, isOvertime]);
+  }, [inputText, thinking, ai, selectedTopic, selectedSide, roundScores, messages, stopTimer, adaptiveLevel, consecutiveHigh, consecutiveLow, isOvertime, fallacyMode]);
 
   // Keep submitArgumentRef in sync so the timer can call the latest version
   useEffect(() => { submitArgumentRef.current = submitArgument; }, [submitArgument]);
@@ -4391,7 +4512,7 @@ export default function App() {
   const createRoom = async (opts?: { topicText?: string; topicCat?: string; speedRound?: boolean }) => {
     setRoomLoading(true); setRoomError("");
     try {
-      const data = await apiAuthPost<{code: string}>("/1v1/create", { totalRounds: 3, ...opts });
+      const data = await apiAuthPost<{code: string}>("/1v1/create", { totalRounds: 3, ...(newRoomTitle.trim() ? { title: newRoomTitle.trim() } : {}), ...opts });
       const room = await apiAuthGet<RoomState>(`/1v1/room/${data.code}`);
       const pool = TOPIC_POOL.slice();
       for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
@@ -4704,6 +4825,49 @@ export default function App() {
 
   return (
     <>
+      {critHit && <div className="crit-flash-overlay" />}
+      {glossaryPopup && (
+        <div className="glossary-popup" style={{ top: glossaryPopup.y, left: glossaryPopup.x }} onClick={() => setGlossaryPopup(null)}>
+          <div className="glossary-popup-term">{glossaryPopup.term}</div>
+          <div className="glossary-popup-def">{glossaryPopup.def}</div>
+        </div>
+      )}
+      {showTutorial && (
+        <div className="tutorial-overlay">
+          <div className="tutorial-modal">
+            <div className="tutorial-step-label">Step {tutorialStep + 1} of 3</div>
+            {tutorialStep === 0 && (
+              <>
+                <div className="tutorial-title">WELCOME TO CLASH</div>
+                <div className="tutorial-body">CLASH is an AI debate arena. Pick a topic, pick a side, and argue against an AI opponent across multiple rounds. Each round scores 0–100 on logic, persuasion, and delivery.</div>
+              </>
+            )}
+            {tutorialStep === 1 && (
+              <>
+                <div className="tutorial-title">KNOW YOUR ENEMY</div>
+                <div className="tutorial-body">Six AI opponents from easy to extreme. The Professor is methodical. The Prosecutor is relentless. The Devil argues the opposite of everything. Each has a distinct style designed to test different weaknesses.</div>
+              </>
+            )}
+            {tutorialStep === 2 && (
+              <>
+                <div className="tutorial-title">WIN THE ARGUMENT</div>
+                <div className="tutorial-body">Vague assertions score 45–60. Specific examples and direct rebuttals score 70+. A score of 90+ triggers a Critical Hit flash. Call out fallacies, cite evidence, and never let a weak point slide.</div>
+              </>
+            )}
+            <div className="tutorial-dots">
+              {[0,1,2].map(i => <div key={i} className={`tutorial-dot${tutorialStep === i ? " active" : ""}`} />)}
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {tutorialStep < 2 ? (
+                <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => setTutorialStep(s => s + 1)}>Next →</button>
+              ) : (
+                <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => { setShowTutorial(false); try { localStorage.setItem("clash-tutorial-done","1"); } catch {} }}>Let's Go →</button>
+              )}
+              <button className="btn btn-ghost" onClick={() => { setShowTutorial(false); try { localStorage.setItem("clash-tutorial-done","1"); } catch {} }}>Skip</button>
+            </div>
+          </div>
+        </div>
+      )}
     <div className="app">
       <nav className="nav">
         <div className="logo" onClick={() => setScreen("home")} style={{ cursor: "pointer" }}>CL<span style={{color:"#e63946"}}>A</span>SH</div>
@@ -5151,6 +5315,19 @@ export default function App() {
                       <div className="da-toggle-sub">AI argues YOUR side — stress-test your own position</div>
                     </div>
                   </div>
+                  <div
+                    className={`da-toggle${fallacyMode ? " active" : ""}`}
+                    onClick={() => { setFallacyMode(p => !p); setFallacyResult(null); setPendingFallacy(null); setSelectedFallacy(""); }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={e => { if (e.key === "Enter" || e.key === " ") setFallacyMode(p => !p); }}
+                  >
+                    <div className="da-toggle-knob" />
+                    <div className="da-toggle-label">
+                      <div className="da-toggle-title">Fallacy Trap</div>
+                      <div className="da-toggle-sub">AI hides a fallacy each round — catch it for a bonus</div>
+                    </div>
+                  </div>
                 </>
               )}
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
@@ -5300,7 +5477,7 @@ export default function App() {
                 </div>
                 <div className="msg-bubble">
                   <div className="msg-name">{m.role === "ai" ? ai?.name : "You"}</div>
-                  <div className="msg-text">{m.text}</div>
+                  <div className="msg-text">{m.role === "ai" ? renderGlossaryText(m.text) : m.text}</div>
                 </div>
               </div>
             ))}
@@ -5332,6 +5509,38 @@ export default function App() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {fallacyMode && pendingFallacy && !thinking && (
+            <div className="fallacy-panel">
+              <div className="fallacy-panel-lbl">Fallacy Trap — Which fallacy did the AI just use?</div>
+              <div className="fallacy-grid">
+                {FALLACY_LIST.slice(0, 8).map(f => (
+                  <button
+                    key={f.name}
+                    className={`fallacy-opt${selectedFallacy === f.name ? " selected" : ""}`}
+                    onClick={() => setSelectedFallacy(f.name)}
+                    title={f.desc}
+                  >
+                    {f.name}
+                  </button>
+                ))}
+              </div>
+              <button
+                className="btn btn-primary"
+                style={{ fontSize: "11px", padding: "9px 16px", letterSpacing: "2px", background: "rgba(168,85,247,0.18)", borderColor: "rgba(168,85,247,0.6)", color: "#a855f7" }}
+                disabled={!selectedFallacy || fallacyLoading}
+                onClick={() => handleFallacyGuess(selectedFallacy)}
+              >
+                {fallacyLoading ? "Checking…" : "Call It Out →"}
+              </button>
+            </div>
+          )}
+          {fallacyMode && fallacyResult && !thinking && (
+            <div className={`fallacy-result-bar${fallacyResult.correct ? " correct" : " wrong"}`}>
+              <strong>{fallacyResult.correct ? "Caught it!" : "Missed."}</strong> {fallacyResult.explanation}
+              {fallacyResult.correct && <span style={{ marginLeft: "8px", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "1px", color: "var(--gold)" }}>+5 BONUS</span>}
             </div>
           )}
 
@@ -5774,6 +5983,12 @@ export default function App() {
             </div>
             <div className="verdict-actions-secondary">
               <button className="btn btn-ghost" onClick={shareImage}>Share Card</button>
+              <button
+                className={`bookmark-btn${bookmarkedDebates.some(b => b.topic === selectedTopic?.text && b.opponent === ai?.name) ? " bookmarked" : ""}`}
+                onClick={toggleBookmark}
+              >
+                {bookmarkedDebates.some(b => b.topic === selectedTopic?.text && b.opponent === ai?.name) ? "★ Saved" : "☆ Save"}
+              </button>
               <button className="btn btn-ghost" onClick={reset}>Home</button>
             </div>
           </div>
@@ -5812,18 +6027,30 @@ export default function App() {
             {v1Tab === "play" && (
               <>
                 {!v1SubScreen ? (
-                  <div className="lobby-options">
-                    <div className="lobby-card create" onClick={() => createRoom()}>
-                      <div className="lobby-card-icon">⚔</div>
-                      <div className="lobby-card-title">Create Room</div>
-                      <div className="lobby-card-sub">Get a code · Share with a friend</div>
+                  <>
+                    <div className="room-title-wrap">
+                      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "6px" }}>Match Name (optional)</div>
+                      <input
+                        className="room-title-input"
+                        maxLength={40}
+                        placeholder="e.g. Friday Night Grudge Match"
+                        value={newRoomTitle}
+                        onChange={e => setNewRoomTitle(e.target.value)}
+                      />
                     </div>
-                    <div className="lobby-card join" onClick={() => setV1SubScreen("join")}>
-                      <div className="lobby-card-icon">🔗</div>
-                      <div className="lobby-card-title">Join Room</div>
-                      <div className="lobby-card-sub">Enter a code from a friend</div>
+                    <div className="lobby-options">
+                      <div className="lobby-card create" onClick={() => createRoom()}>
+                        <div className="lobby-card-icon">⚔</div>
+                        <div className="lobby-card-title">Create Room</div>
+                        <div className="lobby-card-sub">Get a code · Share with a friend</div>
+                      </div>
+                      <div className="lobby-card join" onClick={() => setV1SubScreen("join")}>
+                        <div className="lobby-card-icon">🔗</div>
+                        <div className="lobby-card-title">Join Room</div>
+                        <div className="lobby-card-sub">Enter a code from a friend</div>
+                      </div>
                     </div>
-                  </div>
+                  </>
                 ) : (
                   <div className="join-form">
                     <p className="section-label">Enter room code</p>
@@ -6974,6 +7201,18 @@ export default function App() {
               </div>
             </div>
           )}
+          {pinnedAchs.length > 0 && (
+            <div style={{ padding: "10px 14px", borderTop: "1px solid rgba(255,255,255,0.04)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+              <div className="pp-section-lbl" style={{ marginBottom: "7px" }}>Pinned</div>
+              <div className="pinned-ach-strip">
+                {pinnedAchs.map(id => {
+                  const def = ACHIEVEMENTS.find(a => a.id === id);
+                  if (!def) return null;
+                  return <div key={id} className="pinned-ach-badge"><span>{def.icon}</span><span>{def.name}</span></div>;
+                })}
+              </div>
+            </div>
+          )}
           {nemesisBot && (
             <div className="pp-nemesis">
               <div className="pp-nemesis-icon">{nemesisBot.icon}</div>
@@ -7088,6 +7327,21 @@ export default function App() {
                   </div>
                 ))
               )}
+            </div>
+          )}
+          {bookmarkedDebates.length > 0 && (
+            <div style={{ padding: "12px 14px", borderTop: "1px solid rgba(255,255,255,0.04)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+              <div className="pp-section-lbl" style={{ marginBottom: "8px" }}>Saved Debates ({bookmarkedDebates.length})</div>
+              {bookmarkedDebates.slice(-5).reverse().map(b => (
+                <div key={b.id} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "7px 0", borderBottom: "1px solid rgba(255,255,255,0.03)" }}>
+                  <span style={{ fontSize: "15px", flexShrink: 0 }}>{b.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "12px", color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.topic}</div>
+                    <div style={{ fontSize: "10px", color: "var(--text-dim)", marginTop: "1px" }}>{b.opponent} · Rank {b.rank} · {b.score} pts</div>
+                  </div>
+                  <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "1px", color: b.won ? "var(--green)" : "var(--red)", flexShrink: 0 }}>{b.won ? "WIN" : "LOSS"}</span>
+                </div>
+              ))}
             </div>
           )}
           {player?.username && (
@@ -7533,10 +7787,28 @@ export default function App() {
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
               {ACHIEVEMENTS.map(a => {
                 const unlocked = unlockedAchs.includes(a.id);
+                const isPinned = pinnedAchs.includes(a.id);
                 return (
-                  <div key={a.id} title={a.name} style={{ padding: "8px 12px", background: unlocked ? "var(--surface)" : "transparent", border: `1px solid ${unlocked ? "var(--border)" : "rgba(255,255,255,0.05)"}`, borderRadius: "var(--radius)", opacity: unlocked ? 1 : 0.3, fontSize: "11px", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <div key={a.id} title={a.desc} style={{ padding: "8px 12px", background: unlocked ? "var(--surface)" : "transparent", border: `1px solid ${unlocked ? "var(--border)" : "rgba(255,255,255,0.05)"}`, borderRadius: "var(--radius)", opacity: unlocked ? 1 : 0.3, fontSize: "11px", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{a.icon}</span>
-                    <span style={{ fontFamily: "'Barlow Condensed',sans-serif", letterSpacing: "1px" }}>{a.name}</span>
+                    <span style={{ fontFamily: "'Barlow Condensed',sans-serif", letterSpacing: "1px", flex: 1 }}>{a.name}</span>
+                    {unlocked && (
+                      <button
+                        className={`ach-pin-btn${isPinned ? " pinned" : ""}`}
+                        title={isPinned ? "Unpin" : "Pin to profile"}
+                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: isPinned ? "var(--gold)" : "var(--text-dim)", padding: "0 2px", lineHeight: 1 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPinnedAchs(prev => {
+                            const next = isPinned ? prev.filter(id => id !== a.id) : prev.length < 3 ? [...prev, a.id] : prev;
+                            try { localStorage.setItem("clash-pinned-achs", JSON.stringify(next)); } catch {}
+                            return next;
+                          });
+                        }}
+                      >
+                        {isPinned ? "★" : "☆"}
+                      </button>
+                    )}
                   </div>
                 );
               })}

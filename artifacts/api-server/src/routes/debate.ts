@@ -229,6 +229,12 @@ function getAiTaunt(personality: string): string {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+const TRAP_FALLACY_NAMES = [
+  "Ad Hominem", "Straw Man", "False Dichotomy", "Slippery Slope",
+  "Appeal to Authority", "Circular Reasoning", "Hasty Generalization",
+  "Red Herring", "Whataboutism", "False Equivalence",
+];
+
 const FALLBACK_OPENS = [
   "Bold claim. Let's see if you can back it up — because from where I'm standing, your position collapses the moment you apply any real scrutiny.",
   "I've heard this argument before, and it didn't hold up then either. Your premise assumes facts not in evidence. Let's dissect that.",
@@ -315,7 +321,7 @@ This is a ${totalRounds as number}-round debate. Open with a brief in-character 
 
 // POST /api/debate/round — Score user arg + propaganda analysis + get AI response
 router.post("/debate/round", async (req, res) => {
-  const { personality, topic, userSide, oppSide, messages, userArgument, round, totalRounds, isLastRound, difficulty, adaptiveLevel, isOvertime, twoTruths } =
+  const { personality, topic, userSide, oppSide, messages, userArgument, round, totalRounds, isLastRound, difficulty, adaptiveLevel, isOvertime, twoTruths, fallacyTrap } =
     req.body as Record<string, unknown>;
 
   if (
@@ -341,6 +347,13 @@ router.post("/debate/round", async (req, res) => {
       : "";
   const overtimeNote = overtimeMode
     ? `\n\nSUDDEN DEATH OVERTIME: This is the tiebreaker round. Everything is on the line. Make this your most decisive, unforgettable argument.`
+    : "";
+  const isFallacyTrap = fallacyTrap === true && !isTwoTruths;
+  const trapFallacy = isFallacyTrap
+    ? TRAP_FALLACY_NAMES[Math.floor(Math.random() * TRAP_FALLACY_NAMES.length)]
+    : "";
+  const fallacyTrapNote = isFallacyTrap
+    ? `\n\nFALLACY TRAP (secret — do NOT reveal): Deliberately embed the "${trapFallacy}" fallacy in your argument. Use it naturally, do not name it, do not signal it. The player will try to identify it.`
     : "";
 
   const twoTruthsScorePrompt = `You are a nuance debate judge scoring how well a debater HELD BOTH TRUTHS simultaneously in a Two-Truths debate.
@@ -462,12 +475,12 @@ In their last argument, identify: which truth did they lean into more heavily? W
 
     const standardSystemResp = (isLastRound as boolean)
       ? `${personality as string}
-${diffInstr}${adaptiveNote}${overtimeNote}
+${diffInstr}${adaptiveNote}${overtimeNote}${fallacyTrapNote}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
 This is your FINAL closing argument. Make it decisive and land your strongest point. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`
       : `${personality as string}
-${diffInstr}${adaptiveNote}${overtimeNote}
+${diffInstr}${adaptiveNote}${overtimeNote}${fallacyTrapNote}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
 Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`;
@@ -512,7 +525,7 @@ Counter the user's last argument directly and sharply. Obey your HARD RESPONSE L
 
     const taunt = isTwoTruths ? "" : getAiTaunt(personality as string);
 
-    res.json({ aiText, taunt, roundScore: { ...roundScore, iq, iqLabel } });
+    res.json({ aiText, taunt, roundScore: { ...roundScore, iq, iqLabel }, ...(isFallacyTrap ? { embeddedFallacy: trapFallacy } : {}) });
   } catch (err) {
     req.log.error({ err }, "debate/round failed");
     res.status(500).json({ error: "AI error" });
