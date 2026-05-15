@@ -1211,9 +1211,36 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .whisper-btn{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid var(--border);color:var(--text-dim);background:transparent;cursor:pointer;transition:all 0.2s;}
 .whisper-btn:hover{border-color:rgba(168,85,247,0.5);color:#a855f7;}
 .whisper-btn.active{border-color:rgba(168,85,247,0.6);background:rgba(168,85,247,0.1);color:#a855f7;}
-.whisper-feedback{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.25);border-radius:var(--radius);padding:10px 14px;margin-top:8px;animation:fadeIn 0.3s ease;}
-.whisper-feedback-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#a855f7;margin-bottom:4px;}
-.whisper-feedback-text{font-size:13px;color:var(--text-mid);line-height:1.5;}
+.whisper-card{position:relative;margin-top:10px;border-radius:12px;background:rgba(15,10,25,0.85);border:1px solid rgba(168,85,247,0.22);overflow:hidden;animation:whisperSlideIn 0.35s cubic-bezier(0.16,1,0.3,1);}
+@keyframes whisperSlideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.whisper-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(168,85,247,0.06) 0%,transparent 60%);pointer-events:none;}
+.whisper-card-accent{position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#a855f7,#7c3aed);}
+.whisper-card-inner{padding:12px 14px 12px 18px;}
+.whisper-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.whisper-card-title{display:flex;align-items:center;gap:7px;}
+.whisper-card-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#a855f7;font-weight:600;}
+.whisper-card-round{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(168,85,247,0.5);padding:2px 6px;border-radius:4px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.15);}
+.whisper-dismiss{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.2);font-size:14px;padding:0;line-height:1;transition:color 0.15s;}
+.whisper-dismiss:hover{color:rgba(255,255,255,0.5);}
+.whisper-card-body{display:flex;gap:14px;align-items:flex-start;}
+.whisper-score-ring{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.whisper-score-svg{width:52px;height:52px;transform:rotate(-90deg);}
+.whisper-score-track{fill:none;stroke:rgba(168,85,247,0.12);stroke-width:4;}
+.whisper-score-fill{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 0.8s cubic-bezier(0.16,1,0.3,1);}
+.whisper-score-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:-0.5px;}
+.whisper-score-wrap{position:relative;width:52px;height:52px;}
+.whisper-score-lbl{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(168,85,247,0.5);}
+.whisper-notes{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;}
+.whisper-note{display:flex;flex-direction:column;gap:3px;}
+.whisper-note-tag{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+.whisper-note-text{font-size:12px;line-height:1.5;color:rgba(255,255,255,0.7);}
+.whisper-loading{padding:16px 18px;display:flex;align-items:center;gap:10px;}
+.whisper-loading-dots{display:flex;gap:5px;}
+.whisper-loading-dot{width:5px;height:5px;border-radius:50%;background:#a855f7;animation:whisperDot 1.2s ease-in-out infinite;}
+.whisper-loading-dot:nth-child(2){animation-delay:0.2s;}
+.whisper-loading-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes whisperDot{0%,80%,100%{transform:scale(0.6);opacity:0.3}40%{transform:scale(1);opacity:1}}
+.whisper-loading-text{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(168,85,247,0.6);}
 
 /* ARGUMENT GRAVEYARD */
 .graveyard-section{margin-top:10px;background:rgba(230,57,70,0.04);border:1px solid rgba(230,57,70,0.15);border-radius:var(--radius);overflow:hidden;}
@@ -3025,7 +3052,8 @@ export default function App() {
   const [v1History, setV1History] = useState<V1HistoryEntry[]>(() => { try { return JSON.parse(localStorage.getItem("clash-1v1-history") || "[]"); } catch { return []; } });
   const [devilsAdvocateMode, setDevilsAdvocateMode] = useState(false);
   const [whisperMode, setWhisperMode] = useState(false);
-  const [whisperFeedback, setWhisperFeedback] = useState<{score: number; text: string} | null>(null);
+  const [whisperFeedback, setWhisperFeedback] = useState<{score: number; text: string; tip: string} | null>(null);
+  const [whisperLoading, setWhisperLoading] = useState(false);
   const [showWarRoom, setShowWarRoom] = useState(false);
   const [trashTalkBubble, setTrashTalkBubble] = useState<string | null>(null);
   const [v1SendLine, setV1SendLine] = useState<string | null>(null);
@@ -3693,6 +3721,7 @@ export default function App() {
     setMirrorMatchMode(false);
     setGraveyardArgs([]);
     setWhisperFeedback(null);
+    setWhisperLoading(false);
     setWhisperMode(false);
     setScreen("matchmaking");
 
@@ -3806,12 +3835,17 @@ export default function App() {
         setPropagandaTags(prev => [...prev, roundScore.propaganda!]);
       }
       if (whisperMode) {
-        apiPost<{ feedback: string; score: number }>("/debate/whisper-score", {
+        setWhisperLoading(true);
+        setWhisperFeedback(null);
+        apiPost<{ feedback: string; tip: string; score: number }>("/debate/whisper-score", {
           argument: userMsg,
           topic: selectedTopic?.text ?? "",
           userSide: sideLabel,
           round: roundNumber,
-        }).then(w => setWhisperFeedback({ score: w.score, text: w.feedback })).catch(() => {});
+        }).then(w => {
+          setWhisperFeedback({ score: w.score, text: w.feedback, tip: w.tip ?? "" });
+          setWhisperLoading(false);
+        }).catch(() => { setWhisperLoading(false); });
       }
       playSound(roundScore.score >= 60 ? "round-win" : "round-loss");
       if (roundScore.score >= 95) unlockAch("perfect-round");
@@ -5204,12 +5238,67 @@ export default function App() {
                         <div className="strength-bar-fill" style={{ width: `${s.score}%`, backgroundColor: s.color }} />
                       </div>
                     </div>
-                    {whisperFeedback && (
-                      <div className="whisper-feedback">
-                        <div className="whisper-feedback-lbl">🔇 Whisper — Round {roundScores.length} coaching (score: {whisperFeedback.score})</div>
-                        <div className="whisper-feedback-text">{whisperFeedback.text}</div>
-                      </div>
-                    )}
+                    {(whisperLoading || whisperFeedback) && (() => {
+                      const sc = whisperFeedback?.score ?? 0;
+                      const circumference = 2 * Math.PI * 22;
+                      const offset = circumference - (sc / 100) * circumference;
+                      const scoreColor = sc >= 80 ? "#a3e635" : sc >= 60 ? "#a855f7" : sc >= 40 ? "#f59e0b" : "#ef4444";
+                      return (
+                        <div className="whisper-card">
+                          <div className="whisper-card-accent" />
+                          {whisperLoading ? (
+                            <div className="whisper-loading">
+                              <div className="whisper-loading-dots">
+                                <div className="whisper-loading-dot" />
+                                <div className="whisper-loading-dot" />
+                                <div className="whisper-loading-dot" />
+                              </div>
+                              <span className="whisper-loading-text">Coach is watching...</span>
+                            </div>
+                          ) : (
+                            <div className="whisper-card-inner">
+                              <div className="whisper-card-header">
+                                <div className="whisper-card-title">
+                                  <span className="whisper-card-label">Whisper Coach</span>
+                                  <span className="whisper-card-round">Round {roundScores.length}</span>
+                                </div>
+                                <button className="whisper-dismiss" onClick={() => setWhisperFeedback(null)}>✕</button>
+                              </div>
+                              <div className="whisper-card-body">
+                                <div className="whisper-score-ring">
+                                  <div className="whisper-score-wrap">
+                                    <svg className="whisper-score-svg" viewBox="0 0 52 52">
+                                      <circle className="whisper-score-track" cx="26" cy="26" r="22" />
+                                      <circle
+                                        className="whisper-score-fill"
+                                        cx="26" cy="26" r="22"
+                                        stroke={scoreColor}
+                                        strokeDasharray={circumference}
+                                        strokeDashoffset={offset}
+                                      />
+                                    </svg>
+                                    <div className="whisper-score-num" style={{ color: scoreColor }}>{sc}</div>
+                                  </div>
+                                  <span className="whisper-score-lbl">Score</span>
+                                </div>
+                                <div className="whisper-notes">
+                                  <div className="whisper-note">
+                                    <span className="whisper-note-tag" style={{ color: "#a855f7" }}>What landed</span>
+                                    <span className="whisper-note-text">{whisperFeedback?.text}</span>
+                                  </div>
+                                  {whisperFeedback?.tip && (
+                                    <div className="whisper-note">
+                                      <span className="whisper-note-tag" style={{ color: "#f59e0b" }}>Next move</span>
+                                      <span className="whisper-note-text">{whisperFeedback.tip}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </>
                 );
               })()}
