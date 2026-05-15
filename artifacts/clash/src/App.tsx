@@ -180,7 +180,7 @@ color:var(--text);resize:none;outline:none;transition:border-color 0.2s;line-hei
 .char-count.warn{color:var(--gold);}
 .char-count.danger{color:var(--red);}
 .char-over{font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;color:var(--red);margin-left:4px;}
-.submit-row{display:flex;gap:8px;}
+.submit-row{display:flex;gap:8px;align-items:stretch;}
 
 .thinking-row{display:flex;align-items:center;gap:10px;padding:12px 16px;color:var(--text-dim);font-size:14px;}
 .thinking-phase{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);animation:fadeIn 0.3s ease;}
@@ -1211,9 +1211,10 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .bebas-title{font-family:'Bebas Neue',sans-serif;letter-spacing:3px;text-align:center;margin-bottom:20px;}
 
 /* WHISPER MODE */
-.whisper-btn{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid var(--border);color:var(--text-dim);background:transparent;cursor:pointer;transition:all 0.2s;}
-.whisper-btn:hover{border-color:rgba(168,85,247,0.5);color:#a855f7;}
-.whisper-btn.active{border-color:rgba(168,85,247,0.6);background:rgba(168,85,247,0.1);color:#a855f7;}
+.whisper-btn{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;border-radius:var(--radius);border:1px solid var(--border);color:var(--text-dim);background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.18s;white-space:nowrap;flex-shrink:0;line-height:1;}
+.whisper-btn:hover{border-color:rgba(255,255,255,0.25);color:var(--text);background:rgba(255,255,255,0.06);}
+.whisper-btn.active{border-color:rgba(168,85,247,0.55);background:rgba(168,85,247,0.1);color:#a855f7;}
+.whisper-btn.facts-active{border-color:rgba(59,172,235,0.55);background:rgba(59,172,235,0.1);color:#3baceb;}
 .whisper-card{position:relative;margin-top:10px;border-radius:12px;background:rgba(15,10,25,0.85);border:1px solid rgba(168,85,247,0.22);overflow:hidden;animation:whisperSlideIn 0.35s cubic-bezier(0.16,1,0.3,1);}
 @keyframes whisperSlideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .whisper-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(168,85,247,0.06) 0%,transparent 60%);pointer-events:none;}
@@ -3885,9 +3886,13 @@ export default function App() {
   }, [forgeForm]);
 
 
-  const ai = selectedAI === "custom"
-    ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
-    : AI_OPPONENTS.find((a) => a.id === selectedAI);
+  const ai = twoTruthsMode
+    ? { id: "dialectician", icon: "⚖", name: "The Dialectician", diff: "hard" as const, diffLabel: "Hard", timer: 150, desc: "Guardian of nuance.", personality: "You are The Dialectician." }
+    : mirrorMatchMode || selectedAI === "mirror"
+      ? { id: "mirror", icon: "🪞", name: "The Mirror", diff: "hard" as const, diffLabel: "Hard", timer: 135, desc: "An AI trained on your own arguments.", personality: "" }
+      : selectedAI === "custom"
+        ? { id: "custom", icon: customOpponent.icon || "🎭", name: customOpponent.name || "Custom Opponent", diff: customOpponent.diff, diffLabel: customOpponent.diff.charAt(0).toUpperCase() + customOpponent.diff.slice(1), timer: 120, desc: "Your custom opponent.", personality: customOpponent.personality }
+        : AI_OPPONENTS.find((a) => a.id === selectedAI);
   const currentRound = Math.min(roundScores.length + 1, selectedRounds);
   const roundTimerDuration = ai?.diff === "extreme" ? 45 : ai?.timer ?? 60;
   const charLimit = ai?.diff === "easy" ? 1000 : ai?.diff === "extreme" ? 600 : ai?.diff === "hard" ? 750 : 850;
@@ -4991,6 +4996,7 @@ export default function App() {
                 onClick={() => {
                   if (stats.debates < 5) return;
                   setMirrorMatchMode(true);
+                  setSelectedAI("mirror");
                   setDisplayTopics(pickTopics());
                   setSetupStep(1);
                   setScreen("setup");
@@ -5014,6 +5020,7 @@ export default function App() {
                   const t = NUANCED[Math.floor(Math.random() * NUANCED.length)];
                   setTwoTruthsMode(true);
                   setMirrorMatchMode(false);
+                  setSelectedAI("dialectician");
                   setSelectedTopic({ cat: "Two-Truths", text: t });
                   setSelectedSide("for");
                   setSetupStep(2);
@@ -5753,18 +5760,18 @@ export default function App() {
                 </div>
                 <div className="submit-row">
                   <button
-                    className={`whisper-btn${factCheckMode ? " active" : ""}`}
+                    className={`whisper-btn${factCheckMode ? " facts-active" : ""}`}
                     onClick={() => { setFactCheckMode(p => !p); setFactCheckResults(null); }}
-                    title="Fact-check mode: AI flags incorrect claims in your arguments"
+                    title="Fact-check: AI flags incorrect claims in your argument after you submit"
                   >
-                    {factCheckMode ? "🔍 Facts ON" : "🔍 Facts"}
+                    {factCheckMode ? "✓ Facts" : "Facts"}
                   </button>
                   <button
                     className={`whisper-btn${whisperMode ? " active" : ""}`}
                     onClick={() => { setWhisperMode(p => !p); setWhisperFeedback(null); }}
-                    title="Whisper Mode: get private coaching on your argument before AI responds"
+                    title="Coach: get private feedback on your argument before the AI responds"
                   >
-                    {whisperMode ? "🔇 Whisper ON" : "🔇 Whisper"}
+                    {whisperMode ? "✓ Coach" : "Coach"}
                   </button>
                   {forfeitCountdown === null ? (
                     <button className="btn btn-ghost" onClick={startForfeit}>Forfeit</button>
