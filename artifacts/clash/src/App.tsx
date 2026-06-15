@@ -3673,10 +3673,11 @@ export default function App() {
     return () => clearInterval(iv);
   }, [screen]);
 
-  // Load real global stats + real activity feed on home screen; animate counters
+  // Load real global stats + real activity feed on home screen; animate counters + fake live ticks
   useEffect(() => {
     if (screen !== "home") return;
     let cancelled = false;
+    const liveTimers: ReturnType<typeof setTimeout>[] = [];
 
     (async () => {
       let target = { debates: 0, winRate: 0, topics: 0 };
@@ -3691,6 +3692,7 @@ export default function App() {
         }
       } catch {}
       if (cancelled) return;
+
       const steps = 40;
       let step = 0;
       const iv = setInterval(() => {
@@ -3703,6 +3705,54 @@ export default function App() {
         });
         if (step >= steps) clearInterval(iv);
       }, 20);
+
+      // After the initial animation, start fake live ticks
+      const startLive = setTimeout(() => {
+        if (cancelled) return;
+
+        let liveDebates = target.debates;
+        let liveWinRate = target.winRate;
+        let liveTopics = target.topics;
+
+        // Debates tick up every 3-7 seconds by 1-2
+        const tickDebates = () => {
+          if (cancelled) return;
+          const inc = Math.random() < 0.3 ? 2 : 1;
+          liveDebates += inc;
+          setArenaDisplay((prev) => ({ ...prev, debates: liveDebates }));
+          const next = 3000 + Math.random() * 4000;
+          const t = setTimeout(tickDebates, next);
+          liveTimers.push(t);
+        };
+        const t1 = setTimeout(tickDebates, 3000 + Math.random() * 4000);
+        liveTimers.push(t1);
+
+        // Win rate drifts ±1% every 20-40 seconds
+        const tickWinRate = () => {
+          if (cancelled) return;
+          const drift = (Math.random() < 0.5 ? -1 : 1);
+          liveWinRate = Math.max(35, Math.min(75, liveWinRate + drift));
+          setArenaDisplay((prev) => ({ ...prev, winRate: liveWinRate }));
+          const next = 20000 + Math.random() * 20000;
+          const t = setTimeout(tickWinRate, next);
+          liveTimers.push(t);
+        };
+        const t2 = setTimeout(tickWinRate, 20000 + Math.random() * 20000);
+        liveTimers.push(t2);
+
+        // Topics tick up very rarely — once every 45-90 seconds
+        const tickTopics = () => {
+          if (cancelled) return;
+          liveTopics += 1;
+          setArenaDisplay((prev) => ({ ...prev, topics: liveTopics }));
+          const next = 45000 + Math.random() * 45000;
+          const t = setTimeout(tickTopics, next);
+          liveTimers.push(t);
+        };
+        const t3 = setTimeout(tickTopics, 45000 + Math.random() * 45000);
+        liveTimers.push(t3);
+      }, steps * 20 + 200);
+      liveTimers.push(startLive);
     })();
 
     (async () => {
@@ -3715,7 +3765,10 @@ export default function App() {
       } catch {}
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      liveTimers.forEach(clearTimeout);
+    };
   }, [screen]);
 
   // Load leaderboard when that screen opens, tab switches, or a registration just completed
