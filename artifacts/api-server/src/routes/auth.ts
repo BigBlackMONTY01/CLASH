@@ -38,7 +38,7 @@ router.post("/auth/register", async (req, res) => {
     const user = await db.insert(users).values({ email: emailLower, passwordHash, playerId }).returning();
     // Guest -> registered: mark player as registered and link user_id
     await db.update(players).set({ isGuest: false, userId: String(user[0].id), lastSeen: new Date(), updatedAt: new Date() }).where(eq(players.id, playerId));
-    const token = jwt.sign({ userId: user[0].id, playerId, email: emailLower }, JWT_SECRET, { expiresIn: "30d" });
+    const token = jwt.sign({ userId: user[0].id, playerId, email: emailLower }, JWT_SECRET, { expiresIn: "90d" });
     res.json({ token, userId: user[0].id, playerId, email: emailLower });
   } catch (err: any) {
     if (err?.code === "23505") {
@@ -69,7 +69,7 @@ router.post("/auth/login", async (req, res) => {
       res.status(401).json({ error: "Invalid email or password" });
       return;
     }
-    const token = jwt.sign({ userId: user[0].id, playerId: user[0].playerId, email: emailLower }, JWT_SECRET, { expiresIn: "30d" });
+    const token = jwt.sign({ userId: user[0].id, playerId: user[0].playerId, email: emailLower }, JWT_SECRET, { expiresIn: "90d" });
     res.json({ token, userId: user[0].id, playerId: user[0].playerId, email: emailLower });
   } catch (err) {
     req.log.error({ err }, "auth/login failed");
