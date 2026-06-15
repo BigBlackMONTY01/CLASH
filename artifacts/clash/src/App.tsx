@@ -2450,6 +2450,28 @@ const FEATURED_TOPICS = [
 
 interface FeedItem { icon: string; text: string; time: string; badge: string; badgeClass: string; }
 
+function generateOneFakeEntry(): FeedItem {
+  const ghostPlayers = ["LOGICWOLF", "FOXFIRE99", "SHARPTAKE", "VOLTIX", "BLAZELOGIC", "BIGBRAIN47", "GHOSTLOGIC", "IRONMIND", "SHADOWTAKE", "REDCLASH"];
+  const opponents = ["The Prosecutor", "The Professor", "The Philosopher", "The Debunker", "The Politician", "The Devil"];
+  const topics = ["Free will is an illusion", "AI will do more good than harm", "Cancel culture has gone too far"];
+  const player = ghostPlayers[Math.floor(Math.random() * ghostPlayers.length)];
+  const roll = Math.random();
+  if (roll < 0.4) {
+    const pts = 70 + Math.floor(Math.random() * 27);
+    const opp = opponents[Math.floor(Math.random() * opponents.length)];
+    return { icon: "🏆", text: `<strong>${player}</strong> won against ${opp} · ${pts} pts`, time: "just now", badge: "WIN", badgeClass: "feed-win" };
+  } else if (roll < 0.7) {
+    const opp = opponents[Math.floor(Math.random() * opponents.length)];
+    const topic = topics[Math.floor(Math.random() * topics.length)];
+    return { icon: "💀", text: `<strong>${player}</strong> lost to ${opp} · "${topic}"`, time: "just now", badge: "LOSS", badgeClass: "feed-loss" };
+  } else if (roll < 0.87) {
+    const streak = 3 + Math.floor(Math.random() * 4);
+    return { icon: "⚡", text: `<strong>${player}</strong> is on a ${streak}-win streak`, time: "just now", badge: "STREAK", badgeClass: "feed-streak" };
+  } else {
+    return { icon: "⚔️", text: `<strong>${player}</strong> completed a full Gauntlet run`, time: "just now", badge: "GAUNTLET", badgeClass: "feed-streak" };
+  }
+}
+
 function buildFeedItems(): FeedItem[] {
   const ghostPlayers = ["LOGICWOLF", "FOXFIRE99", "SHARPTAKE", "VOLTIX", "BLAZELOGIC", "BIGBRAIN47", "GHOSTLOGIC", "IRONMIND", "SHADOWTAKE", "REDCLASH"];
   const opponents = ["The Prosecutor", "The Professor", "The Philosopher", "The Debunker", "The Politician", "The Devil"];
@@ -3127,6 +3149,7 @@ export default function App() {
   const [featuredDir, setFeaturedDir] = useState<1 | -1>(1);
   const touchStartX = useRef<number | null>(null);
   const [feedItems, setFeedItems] = useState<FeedItem[]>(() => buildFeedItems());
+  const [fakeFeedItems, setFakeFeedItems] = useState<FeedItem[]>([]);
   const [feedKey, setFeedKey] = useState(0);
   const [feedExpanded, setFeedExpanded] = useState(false);
   const [showMatchDetails, setShowMatchDetails] = useState(false);
@@ -3706,53 +3729,29 @@ export default function App() {
         if (step >= steps) clearInterval(iv);
       }, 20);
 
-      // After the initial animation, start fake live ticks
-      const startLive = setTimeout(() => {
+      // After the initial animation, inject fake entries ~2 per hour at random times
+      const scheduleFakeEntry = () => {
         if (cancelled) return;
-
-        let liveDebates = target.debates;
-        let liveWinRate = target.winRate;
-        let liveTopics = target.topics;
-
-        // Debates tick up every 3-7 seconds by 1-2
-        const tickDebates = () => {
+        const delay = 15 * 60 * 1000 + Math.random() * 30 * 60 * 1000;
+        const t = setTimeout(() => {
           if (cancelled) return;
-          const inc = Math.random() < 0.3 ? 2 : 1;
-          liveDebates += inc;
-          setArenaDisplay((prev) => ({ ...prev, debates: liveDebates }));
-          const next = 3000 + Math.random() * 4000;
-          const t = setTimeout(tickDebates, next);
-          liveTimers.push(t);
-        };
-        const t1 = setTimeout(tickDebates, 3000 + Math.random() * 4000);
-        liveTimers.push(t1);
-
-        // Win rate drifts ±1% every 20-40 seconds
-        const tickWinRate = () => {
-          if (cancelled) return;
-          const drift = (Math.random() < 0.5 ? -1 : 1);
-          liveWinRate = Math.max(35, Math.min(75, liveWinRate + drift));
-          setArenaDisplay((prev) => ({ ...prev, winRate: liveWinRate }));
-          const next = 20000 + Math.random() * 20000;
-          const t = setTimeout(tickWinRate, next);
-          liveTimers.push(t);
-        };
-        const t2 = setTimeout(tickWinRate, 20000 + Math.random() * 20000);
-        liveTimers.push(t2);
-
-        // Topics tick up very rarely — once every 45-90 seconds
-        const tickTopics = () => {
-          if (cancelled) return;
-          liveTopics += 1;
-          setArenaDisplay((prev) => ({ ...prev, topics: liveTopics }));
-          const next = 45000 + Math.random() * 45000;
-          const t = setTimeout(tickTopics, next);
-          liveTimers.push(t);
-        };
-        const t3 = setTimeout(tickTopics, 45000 + Math.random() * 45000);
-        liveTimers.push(t3);
-      }, steps * 20 + 200);
-      liveTimers.push(startLive);
+          const entry = generateOneFakeEntry();
+          setFakeFeedItems((prev) => [entry, ...prev].slice(0, 6));
+          setFeedKey((k) => k + 1);
+          setArenaDisplay((prev) => ({
+            ...prev,
+            debates: prev.debates + 1,
+            winRate: entry.badge === "WIN"
+              ? Math.min(75, prev.winRate + 1)
+              : entry.badge === "LOSS"
+              ? Math.max(35, prev.winRate - 1)
+              : prev.winRate,
+          }));
+          scheduleFakeEntry();
+        }, delay);
+        liveTimers.push(t);
+      };
+      scheduleFakeEntry();
     })();
 
     (async () => {
@@ -5182,7 +5181,7 @@ export default function App() {
                 </p>
               </div>
               <div key={feedKey} className="live-feed">
-                {feedItems.slice(0, 4).map((item, i) => (
+                {[...fakeFeedItems, ...feedItems].slice(0, 4).map((item, i) => (
                   <div key={i} className="feed-item" style={{ animationDelay: `${i * 60}ms` }}>
                     <span className="feed-icon">{item.icon}</span>
                     <span className="feed-text" dangerouslySetInnerHTML={{ __html: item.text }} />
