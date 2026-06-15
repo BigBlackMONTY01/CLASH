@@ -2448,28 +2448,45 @@ const FEATURED_TOPICS = [
   { cat: "Philosophy", text: "Money can buy happiness", heat: "Casual" },
 ];
 
-interface FeedItem { icon: string; text: string; time: string; badge: string; badgeClass: string; }
+interface FeedItem { icon: string; text: string; time: string; badge: string; badgeClass: string; eventTime?: number; }
 
-function generateOneFakeEntry(): FeedItem {
-  const ghostPlayers = ["LOGICWOLF", "FOXFIRE99", "SHARPTAKE", "VOLTIX", "BLAZELOGIC", "BIGBRAIN47", "GHOSTLOGIC", "IRONMIND", "SHADOWTAKE", "REDCLASH"];
-  const opponents = ["The Prosecutor", "The Professor", "The Philosopher", "The Debunker", "The Politician", "The Devil"];
-  const topics = ["Free will is an illusion", "AI will do more good than harm", "Cancel culture has gone too far"];
-  const player = ghostPlayers[Math.floor(Math.random() * ghostPlayers.length)];
-  const roll = Math.random();
+const FAKE_SLOT_MS = 30 * 60 * 1000;
+
+function slotRand(slot: number, idx: number): number {
+  const x = Math.sin(slot * 9301 + idx * 49297 + 233720) * 10000;
+  return x - Math.floor(x);
+}
+
+function generateFakeEntryForSlot(slot: number): FeedItem {
+  const ghostPlayers = ["LOGICWOLF","FOXFIRE99","SHARPTAKE","VOLTIX","BLAZELOGIC","BIGBRAIN47","GHOSTLOGIC","IRONMIND","SHADOWTAKE","REDCLASH"];
+  const opponents = ["The Prosecutor","The Professor","The Philosopher","The Debunker","The Politician","The Devil"];
+  const topics = ["Free will is an illusion","AI will do more good than harm","Cancel culture has gone too far"];
+  const player = ghostPlayers[Math.floor(slotRand(slot, 1) * ghostPlayers.length)];
+  const roll = slotRand(slot, 0);
+  const eventTime = slot * FAKE_SLOT_MS + Math.floor(slotRand(slot, 2) * FAKE_SLOT_MS);
   if (roll < 0.4) {
-    const pts = 70 + Math.floor(Math.random() * 27);
-    const opp = opponents[Math.floor(Math.random() * opponents.length)];
-    return { icon: "🏆", text: `<strong>${player}</strong> won against ${opp} · ${pts} pts`, time: "just now", badge: "WIN", badgeClass: "feed-win" };
+    const pts = 70 + Math.floor(slotRand(slot, 3) * 27);
+    const opp = opponents[Math.floor(slotRand(slot, 4) * opponents.length)];
+    return { icon: "🏆", text: `<strong>${player}</strong> won against ${opp} · ${pts} pts`, time: "", badge: "WIN", badgeClass: "feed-win", eventTime };
   } else if (roll < 0.7) {
-    const opp = opponents[Math.floor(Math.random() * opponents.length)];
-    const topic = topics[Math.floor(Math.random() * topics.length)];
-    return { icon: "💀", text: `<strong>${player}</strong> lost to ${opp} · "${topic}"`, time: "just now", badge: "LOSS", badgeClass: "feed-loss" };
+    const opp = opponents[Math.floor(slotRand(slot, 4) * opponents.length)];
+    const topic = topics[Math.floor(slotRand(slot, 5) * topics.length)];
+    return { icon: "💀", text: `<strong>${player}</strong> lost to ${opp} · "${topic}"`, time: "", badge: "LOSS", badgeClass: "feed-loss", eventTime };
   } else if (roll < 0.87) {
-    const streak = 3 + Math.floor(Math.random() * 4);
-    return { icon: "⚡", text: `<strong>${player}</strong> is on a ${streak}-win streak`, time: "just now", badge: "STREAK", badgeClass: "feed-streak" };
+    const streak = 3 + Math.floor(slotRand(slot, 3) * 4);
+    return { icon: "⚡", text: `<strong>${player}</strong> is on a ${streak}-win streak`, time: "", badge: "STREAK", badgeClass: "feed-streak", eventTime };
   } else {
-    return { icon: "⚔️", text: `<strong>${player}</strong> completed a full Gauntlet run`, time: "just now", badge: "GAUNTLET", badgeClass: "feed-streak" };
+    return { icon: "⚔️", text: `<strong>${player}</strong> completed a full Gauntlet run`, time: "", badge: "GAUNTLET", badgeClass: "feed-streak", eventTime };
   }
+}
+
+function getFeedTimeLabel(eventTime: number): string {
+  const diff = Date.now() - eventTime;
+  if (diff < 60000) return "just now";
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  return hrs === 1 ? "1h ago" : `${hrs}h ago`;
 }
 
 function buildFeedItems(): FeedItem[] {
@@ -3149,8 +3166,12 @@ export default function App() {
   const [featuredDir, setFeaturedDir] = useState<1 | -1>(1);
   const touchStartX = useRef<number | null>(null);
   const [feedItems, setFeedItems] = useState<FeedItem[]>(() => buildFeedItems());
-  const [fakeFeedItems, setFakeFeedItems] = useState<FeedItem[]>([]);
+  const [fakeFeedItems, setFakeFeedItems] = useState<FeedItem[]>(() => {
+    const slot = Math.floor(Date.now() / FAKE_SLOT_MS);
+    return Array.from({ length: 4 }, (_, i) => generateFakeEntryForSlot(slot - i));
+  });
   const [feedKey, setFeedKey] = useState(0);
+  const [tickMin, setTickMin] = useState(0);
   const [feedExpanded, setFeedExpanded] = useState(false);
   const [showMatchDetails, setShowMatchDetails] = useState(false);
   const [showCoachReveal, setShowCoachReveal] = useState(false);
@@ -3656,6 +3677,12 @@ export default function App() {
     return () => clearInterval(iv);
   }, [screen, navigateFeatured]);
 
+  // Tick every minute so feed time labels ("3m ago", "1h ago") stay current
+  useEffect(() => {
+    const iv = setInterval(() => setTickMin((m) => m + 1), 60 * 1000);
+    return () => clearInterval(iv);
+  }, []);
+
   // Refresh live feed every 30 seconds on home screen so friend activity appears quickly
   useEffect(() => {
     if (screen !== "home") return;
@@ -3696,11 +3723,11 @@ export default function App() {
     return () => clearInterval(iv);
   }, [screen]);
 
-  // Load real global stats + real activity feed on home screen; animate counters + fake live ticks
+  // Load real global stats + real activity feed on home screen; animate counters
+  // Fake feed entries are slot-based (deterministic, same for everyone, ~2/hr)
   useEffect(() => {
     if (screen !== "home") return;
     let cancelled = false;
-    const liveTimers: ReturnType<typeof setTimeout>[] = [];
 
     (async () => {
       let target = { debates: 0, winRate: 0, topics: 0 };
@@ -3728,30 +3755,7 @@ export default function App() {
         });
         if (step >= steps) clearInterval(iv);
       }, 20);
-
-      // After the initial animation, inject fake entries ~2 per hour at random times
-      const scheduleFakeEntry = () => {
-        if (cancelled) return;
-        const delay = 15 * 60 * 1000 + Math.random() * 30 * 60 * 1000;
-        const t = setTimeout(() => {
-          if (cancelled) return;
-          const entry = generateOneFakeEntry();
-          setFakeFeedItems((prev) => [entry, ...prev].slice(0, 6));
-          setFeedKey((k) => k + 1);
-          setArenaDisplay((prev) => ({
-            ...prev,
-            debates: prev.debates + 1,
-            winRate: entry.badge === "WIN"
-              ? Math.min(75, prev.winRate + 1)
-              : entry.badge === "LOSS"
-              ? Math.max(35, prev.winRate - 1)
-              : prev.winRate,
-          }));
-          scheduleFakeEntry();
-        }, delay);
-        liveTimers.push(t);
-      };
-      scheduleFakeEntry();
+      if (cancelled) clearInterval(iv);
     })();
 
     (async () => {
@@ -3764,9 +3768,34 @@ export default function App() {
       } catch {}
     })();
 
+    // Check every 30s whether a new slot has arrived; if so, prepend entry + tick stats
+    let lastSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
+    const slotIv = setInterval(() => {
+      if (cancelled) return;
+      const nowSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
+      if (nowSlot > lastSlot) {
+        const newEntries = Array.from({ length: nowSlot - lastSlot }, (_, i) =>
+          generateFakeEntryForSlot(lastSlot + 1 + i)
+        ).reverse();
+        const newest = newEntries[0];
+        setFakeFeedItems((prev) => [...newEntries, ...prev].slice(0, 6));
+        setFeedKey((k) => k + 1);
+        setArenaDisplay((prev) => ({
+          ...prev,
+          debates: prev.debates + newEntries.length,
+          winRate: newest.badge === "WIN"
+            ? Math.min(75, prev.winRate + 1)
+            : newest.badge === "LOSS"
+            ? Math.max(35, prev.winRate - 1)
+            : prev.winRate,
+        }));
+        lastSlot = nowSlot;
+      }
+    }, 30 * 1000);
+
     return () => {
       cancelled = true;
-      liveTimers.forEach(clearTimeout);
+      clearInterval(slotIv);
     };
   }, [screen]);
 
@@ -5186,7 +5215,7 @@ export default function App() {
                     <span className="feed-icon">{item.icon}</span>
                     <span className="feed-text" dangerouslySetInnerHTML={{ __html: item.text }} />
                     <span className={`feed-badge ${item.badgeClass}`}>{item.badge}</span>
-                    <span className="feed-time">{item.time}</span>
+                    <span className="feed-time">{item.eventTime !== undefined ? getFeedTimeLabel(item.eventTime) : item.time}</span>
                   </div>
                 ))}
               </div>
