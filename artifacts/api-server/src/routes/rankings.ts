@@ -164,4 +164,46 @@ router.get("/rankings/leaderboard", async (_req, res) => {
   }
 });
 
+// GET /api/rankings/seasons — All past seasons with their top 3 champions
+router.get("/rankings/seasons", async (_req, res) => {
+  try {
+    const pastSeasons = await db
+      .select()
+      .from(seasons)
+      .where(eq(seasons.isActive, 0))
+      .orderBy(desc(seasons.id));
+
+    const result = await Promise.all(
+      pastSeasons.map(async (season) => {
+        const champions = await db
+          .select({
+            username: players.username,
+            deviceId: players.deviceId,
+            mmr: rankings.mmr,
+            peakMmr: rankings.peakMmr,
+            wins: rankings.wins,
+            losses: rankings.losses,
+          })
+          .from(rankings)
+          .leftJoin(players, eq(rankings.playerId, players.id))
+          .where(eq(rankings.seasonId, season.id))
+          .orderBy(desc(rankings.mmr))
+          .limit(3);
+
+        return {
+          id: season.id,
+          name: season.name,
+          startDate: season.startDate,
+          endDate: season.endDate,
+          champions,
+        };
+      })
+    );
+
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Database error" });
+  }
+});
+
 export default router;

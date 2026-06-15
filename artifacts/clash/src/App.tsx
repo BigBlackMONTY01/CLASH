@@ -2845,6 +2845,8 @@ interface PlayerProfile {
   stats: { debates: number; wins: number; bestScore: number; avgScore: number; currentStreak: number; bestStreak: number; opponentHistory: Record<string, { wins: number; losses: number }> };
 }
 interface LbEntry { id: number; username: string | null; deviceId: string; wins: number; totalDebates: number; bestScore: number; score: number; currentStreak: number; bestStreak: number; }
+interface SeasonChampion { username: string | null; deviceId: string | null; mmr: number; peakMmr: number; wins: number; losses: number; }
+interface SeasonSummary { id: number; name: string; startDate: string; endDate: string; champions: SeasonChampion[]; }
 interface GlobalStats { totalDebates: number; globalWinRate: number; uniqueTopics: number; activePlayers: number; }
 interface RecentActivity { username: string | null; deviceId: string; opponentName: string; topic: string; topicCat?: string; avgScore: number; won: boolean; isGauntlet: boolean; rank: string; createdAt: string; }
 
@@ -3138,6 +3140,8 @@ export default function App() {
   const [lbData, setLbData] = useState<LbEntry[]>([]);
   const [lbRefreshKey, setLbRefreshKey] = useState(0);
   const [lbLoading, setLbLoading] = useState(false);
+  const [seasonHistory, setSeasonHistory] = useState<SeasonSummary[]>([]);
+  const [seasonHistoryLoading, setSeasonHistoryLoading] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(() => { try { return localStorage.getItem("clash-sound") !== "off"; } catch { return true; } });
 
   const [factCheckMode, setFactCheckMode] = useState(false);
@@ -3718,12 +3722,22 @@ export default function App() {
   useEffect(() => {
     if (screen !== "leaderboard" && lbRefreshKey === 0) return;
     if (screen !== "leaderboard") return;
+    if (lbTab === "history") return;
     setLbLoading(true);
     const qs = lbTab === "weekly" ? "?period=weekly" : "";
     apiGet<LbEntry[]>(`/leaderboard${qs}`)
       .then((data) => { setLbData(data); setLbLoading(false); })
       .catch(() => setLbLoading(false));
   }, [screen, lbTab, lbRefreshKey]);
+
+  // Load season history when history tab is selected
+  useEffect(() => {
+    if (screen !== "leaderboard" || lbTab !== "history") return;
+    setSeasonHistoryLoading(true);
+    apiGet<SeasonSummary[]>("/rankings/seasons")
+      .then((data) => { setSeasonHistory(data); setSeasonHistoryLoading(false); })
+      .catch(() => setSeasonHistoryLoading(false));
+  }, [screen, lbTab]);
 
   const playSound = useCallback((type: "round-win"|"round-loss"|"victory"|"defeat"|"tick"|"submit"|`ambient-${string}`) => {
     if (!soundEnabled) return;
@@ -7043,14 +7057,15 @@ export default function App() {
           <div className="tabs">
             <button className={`tab ${lbTab === "global" ? "active" : ""}`} onClick={() => setLbTab("global")}>Global</button>
             <button className={`tab ${lbTab === "weekly" ? "active" : ""}`} onClick={() => setLbTab("weekly")}>This Week</button>
+            <button className={`tab ${lbTab === "history" ? "active" : ""}`} onClick={() => setLbTab("history")}>Season History</button>
           </div>
 
-          {lbLoading && (
+          {lbTab !== "history" && lbLoading && (
             <div style={{ textAlign: "center", padding: "40px 0", color: "var(--text-dim)", fontFamily: "'Barlow Condensed',sans-serif", letterSpacing: "3px", fontSize: "13px" }}>
               LOADING...
             </div>
           )}
-          {!lbLoading && lbData.length === 0 && (
+          {lbTab !== "history" && !lbLoading && lbData.length === 0 && (
             <div style={{ textAlign: "center", padding: "40px 16px", color: "var(--text-dim)" }}>
               <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", letterSpacing: "2px", marginBottom: "8px" }}>
                 {lbTab === "weekly" ? "NO DEBATES THIS WEEK" : "NO PLAYERS YET"}
@@ -7060,7 +7075,7 @@ export default function App() {
               </div>
             </div>
           )}
-          {lbData.map((p, i) => {
+          {lbTab !== "history" && lbData.map((p, i) => {
             const isMe = player?.deviceId === p.deviceId;
             const AVATARS = ["🦁","🐺","🦊","🎯","⚡","🔥","🧠","🏆","👊","💎","🌊","🎭","🗡","🛡","🔬","⚖️","🐉","🦅","🎪","🌟"];
             const emoji = AVATARS[p.id % AVATARS.length];
@@ -7087,6 +7102,52 @@ export default function App() {
               </div>
             );
           })}
+
+          {lbTab === "history" && seasonHistoryLoading && (
+            <div style={{ textAlign: "center", padding: "40px 0", color: "var(--text-dim)", fontFamily: "'Barlow Condensed',sans-serif", letterSpacing: "3px", fontSize: "13px" }}>
+              LOADING...
+            </div>
+          )}
+          {lbTab === "history" && !seasonHistoryLoading && seasonHistory.length === 0 && (
+            <div style={{ textAlign: "center", padding: "40px 16px", color: "var(--text-dim)" }}>
+              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "28px", letterSpacing: "2px", marginBottom: "8px" }}>NO PAST SEASONS</div>
+              <div style={{ fontSize: "13px" }}>Season history will appear here once a season ends.</div>
+            </div>
+          )}
+          {lbTab === "history" && !seasonHistoryLoading && seasonHistory.map((season) => {
+            const medals = ["🥇", "🥈", "🥉"];
+            const fmt = (d: string) => new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+            return (
+              <div key={season.id} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", padding: "16px", marginBottom: "12px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "4px" }}>
+                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "20px", letterSpacing: "2px", color: "var(--red)" }}>{season.name}</div>
+                  <div style={{ fontSize: "11px", color: "var(--text-dim)", fontFamily: "'Barlow Condensed',sans-serif", letterSpacing: "1px" }}>
+                    {fmt(season.startDate)} — {fmt(season.endDate)}
+                  </div>
+                </div>
+                {season.champions.length === 0 && (
+                  <div style={{ fontSize: "12px", color: "var(--text-dim)", fontStyle: "italic" }}>No ranked players this season.</div>
+                )}
+                {season.champions.map((c, i) => {
+                  const name = c.username || (c.deviceId ? "GUEST#" + c.deviceId.slice(-4).toUpperCase() : "Unknown");
+                  return (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 0", borderTop: i > 0 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                      <div style={{ fontSize: "20px", width: "28px", textAlign: "center" }}>{medals[i]}</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: "15px", letterSpacing: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</div>
+                        <div style={{ fontSize: "11px", color: "var(--text-dim)" }}>{c.wins}W · {c.losses}L · Peak {c.peakMmr} MMR</div>
+                      </div>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "18px", color: i === 0 ? "#ffd700" : i === 1 ? "#c0c0c0" : "#cd7f32" }}>{c.mmr}</div>
+                        <div style={{ fontSize: "10px", color: "var(--text-dim)", letterSpacing: "1px" }}>MMR</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+
           <button className="btn btn-ghost" style={{ marginTop: "20px", width: "100%" }} onClick={reset}>← Home</button>
         </div>
       )}
