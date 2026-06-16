@@ -2451,6 +2451,7 @@ const FEATURED_TOPICS = [
 interface FeedItem { icon: string; text: string; time: string; badge: string; badgeClass: string; eventTime?: number; }
 
 const FAKE_SLOT_MS = 30 * 60 * 1000;
+const BASE_ONLINE = [7, 4, 10, 15];
 
 function slotRand(slot: number, idx: number): number {
   const x = Math.sin(slot * 9301 + idx * 49297 + 233720) * 10000;
@@ -3172,7 +3173,7 @@ export default function App() {
   const forfeitIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [tauntIndex, setTauntIndex] = useState(0);
   const [tauntKey, setTauntKey] = useState(0);
-  const [arenaDisplay, setArenaDisplay] = useState({ debates: 0, winRate: 0, topics: 0 });
+  const [arenaDisplay, setArenaDisplay] = useState({ debates: 0, winRate: 0, topics: 0, playersOnline: 0 });
   const [featuredIdx, setFeaturedIdx] = useState(() => Math.floor(Math.random() * FEATURED_TOPICS.length));
   const [featuredKey, setFeaturedKey] = useState(0);
   const [featuredDir, setFeaturedDir] = useState<1 | -1>(1);
@@ -3740,9 +3741,10 @@ export default function App() {
   useEffect(() => {
     if (screen !== "home") return;
     let cancelled = false;
+    const onlineTimers: ReturnType<typeof setTimeout>[] = [];
 
     (async () => {
-      let target = { debates: 0, winRate: 0, topics: 0 };
+      let target = { debates: 0, winRate: 0, topics: 0, activePlayers: 0 };
       try {
         const gs = await apiGet<GlobalStats>("/stats/global");
         if (!cancelled) {
@@ -3750,6 +3752,7 @@ export default function App() {
             debates: gs.totalDebates,
             winRate: gs.globalWinRate || 0,
             topics: gs.uniqueTopics,
+            activePlayers: gs.activePlayers || 0,
           };
         }
       } catch {}
@@ -3762,6 +3765,7 @@ export default function App() {
           debates: 1100 + Math.floor(slotRand(sl, 99) * 300),
           winRate: 52 + Math.floor(slotRand(sl, 98) * 8),
           topics: 35 + Math.floor(slotRand(sl, 97) * 10),
+          activePlayers: 0,
         };
       }
 
@@ -3788,14 +3792,32 @@ export default function App() {
       const iv = setInterval(() => {
         step++;
         const ease = 1 - Math.pow(1 - step / steps, 3);
-        setArenaDisplay({
+        setArenaDisplay((prev) => ({
+          ...prev,
           debates: Math.round(finalTarget.debates * ease),
           winRate: Math.round(finalTarget.winRate * ease),
           topics: Math.round(finalTarget.topics * ease),
-        });
+        }));
         if (step >= steps) clearInterval(iv);
       }, 20);
       if (cancelled) clearInterval(iv);
+
+      // Online count: random value from BASE_ONLINE + real active players, shifts every 2-8 min
+      const realOnline = target.activePlayers || 0;
+      let onlineIdx = Math.floor(Math.random() * BASE_ONLINE.length);
+      setArenaDisplay((prev) => ({ ...prev, playersOnline: BASE_ONLINE[onlineIdx] + realOnline }));
+      const scheduleOnlineShift = () => {
+        if (cancelled) return;
+        const next = (2 + Math.random() * 6) * 60 * 1000;
+        const t = setTimeout(() => {
+          if (cancelled) return;
+          onlineIdx = (onlineIdx + 1) % BASE_ONLINE.length;
+          setArenaDisplay((prev) => ({ ...prev, playersOnline: BASE_ONLINE[onlineIdx] + realOnline }));
+          scheduleOnlineShift();
+        }, next);
+        onlineTimers.push(t);
+      };
+      scheduleOnlineShift();
     })();
 
     (async () => {
@@ -3833,6 +3855,7 @@ export default function App() {
             debates: totalDebates,
             winRate: Math.max(20, Math.min(80, Math.round(totalWins / totalDebates * 100))),
             topics: prev.topics + newTopics.size,
+            playersOnline: prev.playersOnline,
           };
         });
         lastSlot = nowSlot;
@@ -3842,6 +3865,7 @@ export default function App() {
     return () => {
       cancelled = true;
       clearInterval(slotIv);
+      onlineTimers.forEach(clearTimeout);
     };
   }, [screen]);
 
@@ -5242,6 +5266,10 @@ export default function App() {
             <div className="arena-stat">
               <span key={arenaDisplay.topics} className="as-val">{arenaDisplay.topics}</span>
               <span className="as-lbl">Topics</span>
+            </div>
+            <div className="arena-stat">
+              <span key={arenaDisplay.playersOnline} className="as-val" style={{ color: "var(--green)" }}>{arenaDisplay.playersOnline}</span>
+              <span className="as-lbl">Online now</span>
             </div>
           </div>
 
