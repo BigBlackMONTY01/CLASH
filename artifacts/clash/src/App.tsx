@@ -2458,9 +2458,16 @@ function slotRand(slot: number, idx: number): number {
 }
 
 function generateFakeEntryForSlot(slot: number): FeedItem {
-  const ghostPlayers = ["LOGICWOLF","FOXFIRE99","SHARPTAKE","VOLTIX","BLAZELOGIC","BIGBRAIN47","GHOSTLOGIC","IRONMIND","SHADOWTAKE","REDCLASH"];
+  const ghostPlayers = ["LOGICWOLF","FOXFIRE99","SHARPTAKE","VOLTIX","BLAZELOGIC","BIGBRAIN47","GHOSTLOGIC","IRONMIND","SHADOWTAKE","REDCLASH","MINDSTRIKE","COLDLOGIC","VOXPRIME","SHARPWIT","NULLPOINT"];
   const opponents = ["The Prosecutor","The Professor","The Philosopher","The Debunker","The Politician","The Devil"];
-  const topics = ["Free will is an illusion","AI will do more good than harm","Cancel culture has gone too far"];
+  const topics = [
+    "Free will is an illusion","AI will do more good than harm","Cancel culture has gone too far",
+    "Social media does more harm than good","Democracy is the worst system except for all others",
+    "Billionaires should not exist","The death penalty should be abolished",
+    "Capitalism needs to be replaced","War is never justified","Privacy is dead and we should accept it",
+    "Religion does more harm than good","Affirmative action is necessary","Automation will destroy jobs",
+    "Space exploration is a waste of money","Universal basic income is inevitable",
+  ];
   const player = ghostPlayers[Math.floor(slotRand(slot, 1) * ghostPlayers.length)];
   const roll = slotRand(slot, 0);
   const eventTime = slot * FAKE_SLOT_MS + Math.floor(slotRand(slot, 2) * FAKE_SLOT_MS);
@@ -3748,15 +3755,43 @@ export default function App() {
       } catch {}
       if (cancelled) return;
 
+      // Seeded fallback so stats are never 0/0/0 when API is unreachable
+      if (target.debates === 0) {
+        const sl = Math.floor(Date.now() / FAKE_SLOT_MS);
+        target = {
+          debates: 1100 + Math.floor(slotRand(sl, 99) * 300),
+          winRate: 52 + Math.floor(slotRand(sl, 98) * 8),
+          topics: 35 + Math.floor(slotRand(sl, 97) * 10),
+        };
+      }
+
+      // Compute the delta from the 4 initial fake entries already visible in the feed
+      const sl = Math.floor(Date.now() / FAKE_SLOT_MS);
+      const initFakes = Array.from({ length: 4 }, (_, i) => generateFakeEntryForSlot(sl - i));
+      const initWins = initFakes.filter(e => e.badge === "WIN").length;
+      const initTopics = new Set<string>();
+      for (const e of initFakes) {
+        const m = e.text.match(/·\s*"([^"]+)"/);
+        if (m) initTopics.add(m[1]);
+      }
+      const finalTarget = {
+        debates: target.debates + initFakes.length,
+        winRate: Math.round(
+          (Math.round(target.debates * target.winRate / 100) + initWins) /
+          (target.debates + initFakes.length) * 100
+        ),
+        topics: target.topics + initTopics.size,
+      };
+
       const steps = 40;
       let step = 0;
       const iv = setInterval(() => {
         step++;
         const ease = 1 - Math.pow(1 - step / steps, 3);
         setArenaDisplay({
-          debates: Math.round(target.debates * ease),
-          winRate: Math.round(target.winRate * ease),
-          topics: Math.round(target.topics * ease),
+          debates: Math.round(finalTarget.debates * ease),
+          winRate: Math.round(finalTarget.winRate * ease),
+          topics: Math.round(finalTarget.topics * ease),
         });
         if (step >= steps) clearInterval(iv);
       }, 20);
@@ -3773,7 +3808,7 @@ export default function App() {
       } catch {}
     })();
 
-    // Check every 30s whether a new slot has arrived; if so, prepend entry + tick stats
+    // Check every 30s whether a new slot has arrived; if so, prepend entry + update all stats
     let lastSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
     const slotIv = setInterval(() => {
       if (cancelled) return;
@@ -3782,18 +3817,24 @@ export default function App() {
         const newEntries = Array.from({ length: nowSlot - lastSlot }, (_, i) =>
           generateFakeEntryForSlot(lastSlot + 1 + i)
         ).reverse();
-        const newest = newEntries[0];
+        const newWins = newEntries.filter(e => e.badge === "WIN").length;
+        const newTopics = new Set<string>();
+        for (const e of newEntries) {
+          const m = e.text.match(/·\s*"([^"]+)"/);
+          if (m) newTopics.add(m[1]);
+        }
         setFakeFeedItems((prev) => [...newEntries, ...prev].slice(0, 6));
         setFeedKey((k) => k + 1);
-        setArenaDisplay((prev) => ({
-          ...prev,
-          debates: prev.debates + newEntries.length,
-          winRate: newest.badge === "WIN"
-            ? Math.min(75, prev.winRate + 1)
-            : newest.badge === "LOSS"
-            ? Math.max(35, prev.winRate - 1)
-            : prev.winRate,
-        }));
+        setArenaDisplay((prev) => {
+          const totalDebates = prev.debates + newEntries.length;
+          const prevWins = Math.round(prev.debates * prev.winRate / 100);
+          const totalWins = prevWins + newWins;
+          return {
+            debates: totalDebates,
+            winRate: Math.max(20, Math.min(80, Math.round(totalWins / totalDebates * 100))),
+            topics: prev.topics + newTopics.size,
+          };
+        });
         lastSlot = nowSlot;
       }
     }, 30 * 1000);
