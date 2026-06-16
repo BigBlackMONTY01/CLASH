@@ -789,6 +789,10 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .update-banner-close:hover{color:var(--text);}
 /* SOUND TOGGLE */
 .sound-btn{background:none;border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:color 0.18s,opacity 0.18s;color:var(--text-dim);-webkit-tap-highlight-color:transparent;flex-shrink:0;}.sound-btn:hover{color:var(--text);}.sound-btn.muted{color:var(--text-dim);opacity:0.4;}
+.online-pill{display:flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;border-radius:20px;background:rgba(38,210,120,0.07);border:1px solid rgba(38,210,120,0.2);cursor:default;flex-shrink:0;}
+.online-dot{width:5px;height:5px;border-radius:50%;background:#26d278;flex-shrink:0;animation:onlinePulse 2.4s ease-in-out infinite;}
+.online-num{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:0.5px;color:#26d278;line-height:1;}
+@keyframes onlinePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(38,210,120,0.5);}50%{opacity:0.35;box-shadow:0 0 0 3px rgba(38,210,120,0);}}
 /* Personal record */
 .nemesis-card{background:var(--surface);border:1px solid rgba(230,57,70,0.3);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-top:10px;transition:border-color 0.2s;}
 .nemesis-card:hover{border-color:rgba(230,57,70,0.6);}
@@ -5052,6 +5056,12 @@ export default function App() {
               <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
             </svg>
           </button>}
+          {screen === "home" && arenaDisplay.playersOnline > 0 && (
+            <div className="online-pill" title={`${arenaDisplay.playersOnline} players online`}>
+              <span className="online-dot" />
+              <span className="online-num">{arenaDisplay.playersOnline}</span>
+            </div>
+          )}
           <button className={`sound-btn${soundEnabled ? "" : " muted"}`} onClick={toggleSound} title={soundEnabled ? "Mute" : "Unmute"}>
             {soundEnabled ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -5266,10 +5276,6 @@ export default function App() {
             <div className="arena-stat">
               <span key={arenaDisplay.topics} className="as-val">{arenaDisplay.topics}</span>
               <span className="as-lbl">Topics</span>
-            </div>
-            <div className="arena-stat">
-              <span key={arenaDisplay.playersOnline} className="as-val" style={{ color: "var(--green)" }}>{arenaDisplay.playersOnline}</span>
-              <span className="as-lbl">Online now</span>
             </div>
           </div>
 
