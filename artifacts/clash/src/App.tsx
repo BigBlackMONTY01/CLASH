@@ -2794,7 +2794,12 @@ function getAuthHeaders(): Record<string, string> {
 
 async function apiAuthPost<T>(path: string, body: unknown): Promise<T> {
   const url = `${API}/api${path}`;
-  const res = await fetch(url, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(body) });
+  let res: Response;
+  try {
+    res = await fetch(url, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(body) });
+  } catch {
+    throw new Error("Connection failed — please try again.");
+  }
   const data = await parseResponse(res) as Record<string, unknown>;
   if (!res.ok) throw new Error((data.error as string) || `HTTP ${res.status}`);
   return data as T;
