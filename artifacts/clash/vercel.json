@@ -12,7 +12,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://clash-1xpu.onrender.com/api/:path*"
+      "destination": "https://clash-6clx.onrender.com*"
     },
     {
       "source": "/(.*)",
