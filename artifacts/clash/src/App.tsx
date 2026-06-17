@@ -3857,41 +3857,39 @@ export default function App() {
       } catch {}
     })();
 
-    // Check every 30s whether a new slot has arrived; if so, prepend entry + update all stats
-    let lastSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
-    const slotIv = setInterval(() => {
+    // Fire a new fake activity entry every 3-6 minutes (random interval)
+    let fakeSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
+    let fakeEntryTimer: ReturnType<typeof setTimeout>;
+    const scheduleFakeEntry = () => {
       if (cancelled) return;
-      const nowSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
-      if (nowSlot > lastSlot) {
-        const newEntries = Array.from({ length: nowSlot - lastSlot }, (_, i) =>
-          generateFakeEntryForSlot(lastSlot + 1 + i)
-        ).reverse();
-        const newWins = newEntries.filter(e => e.badge === "WIN").length;
-        const newTopics = new Set<string>();
-        for (const e of newEntries) {
-          const m = e.text.match(/·\s*"([^"]+)"/);
-          if (m) newTopics.add(m[1]);
-        }
-        setFakeFeedItems((prev) => [...newEntries, ...prev].slice(0, 6));
+      const delay = (3 + Math.random() * 3) * 60 * 1000;
+      fakeEntryTimer = setTimeout(() => {
+        if (cancelled) return;
+        fakeSlot++;
+        const entry = generateFakeEntryForSlot(fakeSlot);
+        const isWin = entry.badge === "WIN";
+        const topicMatch = entry.text.match(/·\s*"([^"]+)"/);
+        setFakeFeedItems((prev) => [entry, ...prev].slice(0, 6));
         setFeedKey((k) => k + 1);
         setArenaDisplay((prev) => {
-          const totalDebates = prev.debates + newEntries.length;
+          const totalDebates = prev.debates + 1;
           const prevWins = Math.round(prev.debates * prev.winRate / 100);
-          const totalWins = prevWins + newWins;
+          const totalWins = prevWins + (isWin ? 1 : 0);
           return {
+            ...prev,
             debates: totalDebates,
             winRate: Math.max(20, Math.min(80, Math.round(totalWins / totalDebates * 100))),
-            topics: prev.topics + newTopics.size,
-            playersOnline: prev.playersOnline,
+            topics: prev.topics + (topicMatch ? 1 : 0),
           };
         });
-        lastSlot = nowSlot;
-      }
-    }, 30 * 1000);
+        scheduleFakeEntry();
+      }, delay);
+    };
+    scheduleFakeEntry();
 
     return () => {
       cancelled = true;
-      clearInterval(slotIv);
+      clearTimeout(fakeEntryTimer);
       onlineTimers.forEach(clearTimeout);
     };
   }, [screen]);
