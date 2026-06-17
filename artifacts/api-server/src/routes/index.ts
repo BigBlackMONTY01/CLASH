@@ -11,6 +11,7 @@ import progressionRouter from "./progression";
 import aiPersonasRouter from "./ai-personas";
 import rivalsRouter from "./rivals";
 import feedbackRouter from "./feedback";
+import activityRouter from "./activity";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use(progressionRouter);
 router.use(aiPersonasRouter);
 router.use(rivalsRouter);
 router.use(feedbackRouter);
+router.use(activityRouter);
 
 export default router;

@@ -2456,7 +2456,7 @@ const FEATURED_TOPICS = [
 
 interface FeedItem { icon: string; text: string; time: string; badge: string; badgeClass: string; eventTime?: number; }
 
-const FAKE_SLOT_MS = 30 * 60 * 1000;
+const FAKE_SLOT_MS = 2 * 60 * 1000;
 function nextOnlineCount(current: number): number {
   const delta = Math.floor(Math.random() * 7) - 3; // -3 to +3 drift
   return Math.max(3, Math.min(16, current + delta));
@@ -3885,12 +3885,28 @@ export default function App() {
     };
   }, [screen]);
 
+  // Big 3 background ticker — bumps debates/topics slowly regardless of screen
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setArenaDisplay((prev) => {
+        const totalDebates = prev.debates + 1 + Math.floor(Math.random() * 2);
+        const prevWins = Math.round(prev.debates * prev.winRate / 100);
+        const newWins = prevWins + (Math.random() > 0.38 ? 1 : 0);
+        const newWinRate = Math.max(20, Math.min(80, Math.round(newWins / totalDebates * 100)));
+        const newTopics = prev.topics + (Math.random() > 0.7 ? 1 : 0);
+        saveCachedStats(totalDebates, newWinRate, newTopics);
+        return { ...prev, debates: totalDebates, winRate: newWinRate, topics: newTopics };
+      });
+    }, 60 * 1000);
+    return () => clearInterval(iv);
+  }, []);
+
   // Fake activity entry timer — runs once on mount, never resets on navigation
   useEffect(() => {
     let fakeSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
     let timer: ReturnType<typeof setTimeout>;
     const schedule = () => {
-      const delay = (3 + Math.random() * 3) * 60 * 1000;
+      const delay = (45 + Math.random() * 45) * 1000;
       timer = setTimeout(() => {
         fakeSlot++;
         const entry = generateFakeEntryForSlot(fakeSlot);
