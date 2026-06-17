@@ -2928,16 +2928,16 @@ function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
     const minsAgo = Math.max(1, Math.floor((Date.now() - ts) / 60000));
     const timeStr = minsAgo < 60 ? `${minsAgo}m ago` : minsAgo < 1440 ? `${Math.floor(minsAgo / 60)}h ago` : `${Math.floor(minsAgo / 1440)}d ago`;
     if (a.isGauntlet) {
-      return { icon: "⚔️", text: `<strong>${name}</strong> ran Gauntlet vs ${opp}`, badge: a.won ? "WON" : "LOST", badgeClass: a.won ? "feed-win" : "feed-loss", time: timeStr };
+      return { icon: "⚔️", text: `<strong>${name}</strong> ran Gauntlet vs ${opp}`, badge: a.won ? "WON" : "LOST", badgeClass: a.won ? "feed-win" : "feed-loss", time: timeStr, eventTime: ts };
     }
     if (a.topicCat === "Two-Truths") {
       const nuanceLabel = a.won ? "HELD" : "COLLAPSED";
-      return { icon: "⚖", text: `<strong>${name}</strong> ${a.won ? "mastered the nuance" : "collapsed to one side"} — "${topic}"`, badge: nuanceLabel, badgeClass: a.won ? "feed-nuance" : "feed-loss", time: timeStr };
+      return { icon: "⚖", text: `<strong>${name}</strong> ${a.won ? "mastered the nuance" : "collapsed to one side"} — "${topic}"`, badge: nuanceLabel, badgeClass: a.won ? "feed-nuance" : "feed-loss", time: timeStr, eventTime: ts };
     }
     if (a.won) {
-      return { icon: "🏆", text: `<strong>${name}</strong> defeated ${opp} — "${topic}"`, badge: a.rank || "?", badgeClass: "feed-rank", time: timeStr };
+      return { icon: "🏆", text: `<strong>${name}</strong> defeated ${opp} — "${topic}"`, badge: a.rank || "?", badgeClass: "feed-rank", time: timeStr, eventTime: ts };
     }
-    return { icon: "💀", text: `<strong>${name}</strong> lost to ${opp} — "${topic}"`, badge: a.rank || "?", badgeClass: "feed-loss", time: timeStr };
+    return { icon: "💀", text: `<strong>${name}</strong> lost to ${opp} — "${topic}"`, badge: a.rank || "?", badgeClass: "feed-loss", time: timeStr, eventTime: ts };
   });
   if (realItems.length < 3) {
     const fakeBackfill = buildFeedItems().slice(0, 3 - realItems.length);
@@ -3711,7 +3711,7 @@ export default function App() {
     return () => clearInterval(iv);
   }, []);
 
-  // Refresh live feed every 30 seconds on home screen so friend activity appears quickly
+  // Refresh live feed + stats every 30 seconds on home screen
   useEffect(() => {
     if (screen !== "home") return;
     const iv = setInterval(async () => {
@@ -3721,41 +3721,18 @@ export default function App() {
           apiGet<GlobalStats>("/stats/global").catch(() => null),
         ]);
         setFeedItems(buildRealFeedItems(activity));
-        if (activity.length > 0) {
-          // Real items exist — clear fake items so they're actually visible in the feed
-          setFakeFeedItems([]);
-        }
         if (gs) {
-          // Sync big-3 stats; never let displayed numbers drop below what fakes already bumped them to
+          // Sync big-3; never let displayed numbers drop below what activity already bumped them to
           setArenaDisplay((prev) => ({
+            ...prev,
             debates: Math.max(prev.debates, gs.totalDebates),
-            winRate: gs.globalWinRate || prev.winRate,
+            winRate: Math.max(prev.winRate, gs.globalWinRate || 0),
             topics: Math.max(prev.topics, gs.uniqueTopics),
-            playersOnline: prev.playersOnline,
           }));
         }
-      } catch {
-        // keep existing feed items on error
-      }
+      } catch {}
       setFeedKey((k) => k + 1);
     }, 30 * 1000);
-    return () => clearInterval(iv);
-  }, [screen]);
-
-  // Refresh global stats every 60 seconds on home screen
-  useEffect(() => {
-    if (screen !== "home") return;
-    const iv = setInterval(async () => {
-      try {
-        const gs = await apiGet<GlobalStats>("/stats/global");
-        setArenaDisplay((prev) => ({
-          ...prev,
-          debates: gs.totalDebates,
-          winRate: gs.globalWinRate || 0,
-          topics: gs.uniqueTopics,
-        }));
-      } catch {}
-    }, 60 * 1000);
     return () => clearInterval(iv);
   }, [screen]);
 
@@ -3850,23 +3827,24 @@ export default function App() {
         const activity = await apiGet<RecentActivity[]>("/activity/recent");
         if (!cancelled) {
           setFeedItems(buildRealFeedItems(activity));
-          if (activity.length > 0) {
-            // Real items arrived — evict fake slot items so they can actually be seen
-            setFakeFeedItems([]);
-          }
           setFeedKey((k) => k + 1);
         }
       } catch {}
     })();
 
-    // Fire a new fake activity entry every 3-6 minutes (random interval)
+    return () => {
+      cancelled = true;
+      onlineTimers.forEach(clearTimeout);
+    };
+  }, [screen]);
+
+  // Fake activity entry timer — runs once on mount, never resets on navigation
+  useEffect(() => {
     let fakeSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
-    let fakeEntryTimer: ReturnType<typeof setTimeout>;
-    const scheduleFakeEntry = () => {
-      if (cancelled) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const schedule = () => {
       const delay = (3 + Math.random() * 3) * 60 * 1000;
-      fakeEntryTimer = setTimeout(() => {
-        if (cancelled) return;
+      timer = setTimeout(() => {
         fakeSlot++;
         const entry = generateFakeEntryForSlot(fakeSlot);
         const isWin = entry.badge === "WIN";
@@ -3884,17 +3862,12 @@ export default function App() {
             topics: prev.topics + (topicMatch ? 1 : 0),
           };
         });
-        scheduleFakeEntry();
+        schedule();
       }, delay);
     };
-    scheduleFakeEntry();
-
-    return () => {
-      cancelled = true;
-      clearTimeout(fakeEntryTimer);
-      onlineTimers.forEach(clearTimeout);
-    };
-  }, [screen]);
+    schedule();
+    return () => clearTimeout(timer);
+  }, []);
 
   // Load leaderboard when that screen opens, tab switches, or a registration just completed
   useEffect(() => {
@@ -5325,7 +5298,10 @@ export default function App() {
                 </p>
               </div>
               <div key={feedKey} className="live-feed">
-                {[...fakeFeedItems, ...feedItems].slice(0, 4).map((item, i) => (
+                {[...fakeFeedItems, ...feedItems]
+                  .sort((a, b) => (b.eventTime ?? 0) - (a.eventTime ?? 0))
+                  .slice(0, 4)
+                  .map((item, i) => (
                   <div key={i} className={`feed-item${i === 0 ? " feed-item-new" : ""}`} style={{ animationDelay: `${i * 60}ms` }}>
                     <span className="feed-icon">{item.icon}</span>
                     <span className="feed-text" dangerouslySetInnerHTML={{ __html: item.text }} />
