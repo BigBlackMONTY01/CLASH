@@ -2462,13 +2462,30 @@ function nextOnlineCount(current: number): number {
   return Math.max(3, Math.min(16, current + delta));
 }
 
+const STAT_EPOCH = new Date("2026-06-15T00:00:00Z").getTime();
+const STAT_BASE_DEBATES = 38;
+const STAT_MS_PER_DEBATE = 12 * 60 * 60 * 1000;
+const STAT_BASE_WIN_RATE = 58;
+const STAT_BASE_TOPICS = 48;
+const STAT_MS_PER_TOPIC = 24 * 60 * 60 * 1000;
+const TOPIC_ROTATE_MS = 4 * 60 * 60 * 1000;
+
+function getDeterministicStats(): { debates: number; winRate: number; topics: number } {
+  const elapsed = Math.max(0, Date.now() - STAT_EPOCH);
+  return {
+    debates: STAT_BASE_DEBATES + Math.floor(elapsed / STAT_MS_PER_DEBATE),
+    winRate: STAT_BASE_WIN_RATE,
+    topics: STAT_BASE_TOPICS + Math.floor(elapsed / STAT_MS_PER_TOPIC),
+  };
+}
+
 const STATS_CACHE_KEY = "clash-display-stats";
 function loadCachedStats(): { debates: number; winRate: number; topics: number } | null {
   try {
     const raw = localStorage.getItem(STATS_CACHE_KEY);
     if (!raw) return null;
     const p = JSON.parse(raw);
-    if (Date.now() - p.ts > 48 * 60 * 60 * 1000) return null; // expire after 48h
+    if (Date.now() - p.ts > 48 * 60 * 60 * 1000) return null;
     return { debates: p.debates || 0, winRate: p.winRate || 0, topics: p.topics || 0 };
   } catch { return null; }
 }
@@ -3216,10 +3233,9 @@ export default function App() {
   const [tauntIndex, setTauntIndex] = useState(0);
   const [tauntKey, setTauntKey] = useState(0);
   const [arenaDisplay, setArenaDisplay] = useState(() => {
-    const cached = loadCachedStats();
-    return { debates: cached?.debates ?? 0, winRate: cached?.winRate ?? 0, topics: cached?.topics ?? 0, playersOnline: 0 };
+    return { ...getDeterministicStats(), playersOnline: 0 };
   });
-  const [featuredIdx, setFeaturedIdx] = useState(() => Math.floor(Math.random() * FEATURED_TOPICS.length));
+  const [featuredIdx, setFeaturedIdx] = useState(() => Math.floor(Date.now() / TOPIC_ROTATE_MS) % FEATURED_TOPICS.length);
   const [featuredKey, setFeaturedKey] = useState(0);
   const [featuredDir, setFeaturedDir] = useState<1 | -1>(1);
   const touchStartX = useRef<number | null>(null);
@@ -3826,12 +3842,12 @@ export default function App() {
         ),
         topics: target.topics + initTopics.size,
       };
-      // Never animate DOWN — use cached values if they're higher (from previous session's fake bumps)
-      const cached = loadCachedStats();
+      // Never animate DOWN — take the highest of: deterministic baseline, server value
+      const det = getDeterministicStats();
       const finalTarget = {
-        debates: Math.max(cached?.debates ?? 0, apiTarget.debates),
-        winRate: Math.max(cached?.winRate ?? 0, apiTarget.winRate),
-        topics: Math.max(cached?.topics ?? 0, apiTarget.topics),
+        debates: Math.max(det.debates, apiTarget.debates),
+        winRate: apiTarget.winRate || det.winRate,
+        topics: Math.max(det.topics, apiTarget.topics),
       };
       prevApiDebatesRef.current = target.debates;
 
@@ -3885,18 +3901,15 @@ export default function App() {
     };
   }, [screen]);
 
-  // Big 3 background ticker — bumps debates/topics slowly regardless of screen
+  // Big 3 background ticker — recomputes deterministic baseline every minute so all clients stay in sync
   useEffect(() => {
     const iv = setInterval(() => {
-      setArenaDisplay((prev) => {
-        const totalDebates = prev.debates + 1 + Math.floor(Math.random() * 2);
-        const prevWins = Math.round(prev.debates * prev.winRate / 100);
-        const newWins = prevWins + (Math.random() > 0.38 ? 1 : 0);
-        const newWinRate = Math.max(20, Math.min(80, Math.round(newWins / totalDebates * 100)));
-        const newTopics = prev.topics + (Math.random() > 0.7 ? 1 : 0);
-        saveCachedStats(totalDebates, newWinRate, newTopics);
-        return { ...prev, debates: totalDebates, winRate: newWinRate, topics: newTopics };
-      });
+      const det = getDeterministicStats();
+      setArenaDisplay((prev) => ({
+        ...prev,
+        debates: Math.max(prev.debates, det.debates),
+        topics: Math.max(prev.topics, det.topics),
+      }));
     }, 60 * 1000);
     return () => clearInterval(iv);
   }, []);
