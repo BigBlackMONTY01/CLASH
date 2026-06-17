@@ -2476,6 +2476,19 @@ function saveCachedStats(debates: number, winRate: number, topics: number): void
   try { localStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ debates, winRate, topics, ts: Date.now() })); } catch {}
 }
 
+const SEEN_TOPICS_KEY = "clash-seen-topics";
+function loadSeenTopics(): Set<string> {
+  try {
+    const raw = localStorage.getItem(SEEN_TOPICS_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch { return new Set(); }
+}
+function saveSeenTopics(set: Set<string>): void {
+  try { localStorage.setItem(SEEN_TOPICS_KEY, JSON.stringify([...set])); } catch {}
+}
+
 function slotRand(slot: number, idx: number): number {
   const x = Math.sin(slot * 9301 + idx * 49297 + 233720) * 10000;
   return x - Math.floor(x);
@@ -3336,6 +3349,7 @@ export default function App() {
   const [incomingTaunt, setIncomingTaunt] = useState<RoomTaunt | null>(null);
   const lastSeenTauntIdRef = useRef(0);
   const prevApiDebatesRef = useRef(0);
+  const seenTopicsRef = useRef<Set<string>>(loadSeenTopics());
   const [graveyardArgs, setGraveyardArgs] = useState<{text: string; round: number; score: number}[]>([]);
   const [newCard, setNewCard] = useState<DebateCard | null>(null);
   const [showCardReveal, setShowCardReveal] = useState(false);
@@ -3739,6 +3753,8 @@ export default function App() {
           apiGet<GlobalStats>("/stats/global").catch(() => null),
         ]);
         setFeedItems(buildRealFeedItems(activity));
+        // Seed seenTopics from real DB activity so fakes don't double-count them
+        activity.forEach(a => { if (a.topic) seenTopicsRef.current.add(a.topic); });
         if (gs) {
           // Add the delta of new real debates on top of whatever fakes already bumped it to
           const delta = Math.max(0, gs.totalDebates - prevApiDebatesRef.current);
@@ -3856,6 +3872,8 @@ export default function App() {
         const activity = await apiGet<RecentActivity[]>("/activity/recent");
         if (!cancelled) {
           setFeedItems(buildRealFeedItems(activity));
+          // Seed seenTopics from real activity so fakes don't double-count known topics
+          activity.forEach(a => { if (a.topic) seenTopicsRef.current.add(a.topic); });
           setFeedKey((k) => k + 1);
         }
       } catch {}
@@ -3878,6 +3896,12 @@ export default function App() {
         const entry = generateFakeEntryForSlot(fakeSlot);
         const isWin = entry.badge === "WIN";
         const topicMatch = entry.text.match(/·\s*"([^"]+)"/);
+        const topicStr = topicMatch ? topicMatch[1] : null;
+        const isNewTopic = topicStr !== null && !seenTopicsRef.current.has(topicStr);
+        if (isNewTopic && topicStr) {
+          seenTopicsRef.current.add(topicStr);
+          saveSeenTopics(seenTopicsRef.current);
+        }
         setFakeFeedItems((prev) => [entry, ...prev].slice(0, 6));
         setFeedKey((k) => k + 1);
         setArenaDisplay((prev) => {
@@ -3885,7 +3909,7 @@ export default function App() {
           const prevWins = Math.round(prev.debates * prev.winRate / 100);
           const totalWins = prevWins + (isWin ? 1 : 0);
           const newWinRate = Math.max(20, Math.min(80, Math.round(totalWins / totalDebates * 100)));
-          const newTopics = prev.topics + (topicMatch ? 1 : 0);
+          const newTopics = prev.topics + (isNewTopic ? 1 : 0);
           saveCachedStats(totalDebates, newWinRate, newTopics);
           return { ...prev, debates: totalDebates, winRate: newWinRate, topics: newTopics };
         });
@@ -4471,13 +4495,19 @@ export default function App() {
           await (isLoggedIn ? apiAuthPost("/debates/save", savePayload) : apiPost("/debates/save", savePayload));
         };
         doSave().then(() => {
-          // Update home-screen stats immediately and persist so refresh doesn't lose it
+          // Check if this debate's topic is genuinely new before bumping the topics counter
+          const debateTopic = selectedTopic?.text || savePayload.topic || "";
+          const isNewTopic = debateTopic !== "" && !seenTopicsRef.current.has(debateTopic);
+          if (isNewTopic) {
+            seenTopicsRef.current.add(debateTopic);
+            saveSeenTopics(seenTopicsRef.current);
+          }
           setArenaDisplay((prev) => {
             const newDebates = prev.debates + 1;
             const prevWins = Math.round(prev.debates * prev.winRate / 100);
             const newWins = prevWins + (won ? 1 : 0);
             const newWinRate = Math.round((newWins / newDebates) * 100);
-            const newTopics = prev.topics + 1;
+            const newTopics = prev.topics + (isNewTopic ? 1 : 0);
             saveCachedStats(newDebates, newWinRate, newTopics);
             return { ...prev, debates: newDebates, winRate: newWinRate, topics: newTopics };
           });
