@@ -2466,7 +2466,13 @@ function slotRand(slot: number, idx: number): number {
 }
 
 function generateFakeEntryForSlot(slot: number): FeedItem {
-  const ghostPlayers = ["LOGICWOLF","FOXFIRE99","SHARPTAKE","VOLTIX","BLAZELOGIC","BIGBRAIN47","GHOSTLOGIC","IRONMIND","SHADOWTAKE","REDCLASH","MINDSTRIKE","COLDLOGIC","VOXPRIME","SHARPWIT","NULLPOINT"];
+  const ghostPlayers = [
+    "PhilBuster99","kira_debates","SyllogismSam","BurdenOfProof","NuanceNinja",
+    "HotTakeHannah","RhetoricRaj","CriticalMass7","PlatoBro","FallacyFinder",
+    "TakeItOrLeave","contrarian_irl","ArgueKing88","SocraticSlap","xoxodebater",
+    "gg_no_rebuttal","LogicLord","DebateDave_","mr_counterpoint","steelmanner",
+    "NotYourFallacy","EthosPathosBro","WrongOpinions","JustAskingQ","rebuttal.exe",
+  ];
   const opponents = ["The Prosecutor","The Professor","The Philosopher","The Debunker","The Politician","The Devil"];
   const topics = [
     "Free will is an illusion","AI will do more good than harm","Cancel culture has gone too far",
@@ -2505,7 +2511,7 @@ function getFeedTimeLabel(eventTime: number): string {
 }
 
 function buildFeedItems(): FeedItem[] {
-  const ghostPlayers = ["LOGICWOLF", "FOXFIRE99", "SHARPTAKE", "VOLTIX", "BLAZELOGIC", "BIGBRAIN47", "GHOSTLOGIC", "IRONMIND", "SHADOWTAKE", "REDCLASH"];
+  const ghostPlayers = ["PhilBuster99","kira_debates","SyllogismSam","BurdenOfProof","NuanceNinja","HotTakeHannah","RhetoricRaj","CriticalMass7","PlatoBro","FallacyFinder"];
   const opponents = ["The Prosecutor", "The Professor", "The Philosopher", "The Debunker", "The Politician", "The Devil"];
   const topics = ["Free will is an illusion", "AI will do more good than harm", "Cancel culture has gone too far", "Billionaires should not exist", "The death penalty should be abolished"];
   const sparseTimeLabels = ["34m ago", "47m ago", "1h ago", "1h 12m ago", "1h 28m ago", "1h 45m ago", "2h ago", "2h 20m ago"];

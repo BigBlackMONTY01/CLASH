@@ -336,7 +336,7 @@ router.get("/leaderboard", async (req, res) => {
   }
 });
 
-// GET /api/activity/recent — last 15 debates for the live feed
+// GET /api/activity/recent — last 15 debates for the live feed (returns [] on DB error so frontend can fall back gracefully)
 router.get("/activity/recent", async (_req, res) => {
   try {
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -359,8 +359,8 @@ router.get("/activity/recent", async (_req, res) => {
       .orderBy(desc(debates.createdAt))
       .limit(15);
     res.json(rows);
-  } catch (err: any) {
-    res.status(500).json({ error: err?.message || "Database error" });
+  } catch {
+    res.json([]);
   }
 });
 
