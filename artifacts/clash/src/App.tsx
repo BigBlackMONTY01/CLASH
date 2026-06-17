@@ -3714,8 +3714,24 @@ export default function App() {
     if (screen !== "home") return;
     const iv = setInterval(async () => {
       try {
-        const activity = await apiGet<RecentActivity[]>("/activity/recent");
+        const [activity, gs] = await Promise.all([
+          apiGet<RecentActivity[]>("/activity/recent"),
+          apiGet<GlobalStats>("/stats/global").catch(() => null),
+        ]);
         setFeedItems(buildRealFeedItems(activity));
+        if (activity.length > 0) {
+          // Real items exist — clear fake items so they're actually visible in the feed
+          setFakeFeedItems([]);
+        }
+        if (gs) {
+          // Sync big-3 stats; never let displayed numbers drop below what fakes already bumped them to
+          setArenaDisplay((prev) => ({
+            debates: Math.max(prev.debates, gs.totalDebates),
+            winRate: gs.globalWinRate || prev.winRate,
+            topics: Math.max(prev.topics, gs.uniqueTopics),
+            playersOnline: prev.playersOnline,
+          }));
+        }
       } catch {
         // keep existing feed items on error
       }
@@ -3830,8 +3846,12 @@ export default function App() {
     (async () => {
       try {
         const activity = await apiGet<RecentActivity[]>("/activity/recent");
-        if (!cancelled && activity.length > 0) {
+        if (!cancelled) {
           setFeedItems(buildRealFeedItems(activity));
+          if (activity.length > 0) {
+            // Real items arrived — evict fake slot items so they can actually be seen
+            setFakeFeedItems([]);
+          }
           setFeedKey((k) => k + 1);
         }
       } catch {}
