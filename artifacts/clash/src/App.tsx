@@ -2457,7 +2457,7 @@ interface FeedItem { icon: string; text: string; time: string; badge: string; ba
 const FAKE_SLOT_MS = 30 * 60 * 1000;
 function nextOnlineCount(current: number): number {
   const delta = Math.floor(Math.random() * 7) - 3; // -3 to +3 drift
-  return Math.max(3, Math.min(20, current + delta));
+  return Math.max(3, Math.min(16, current + delta));
 }
 
 function slotRand(slot: number, idx: number): number {
@@ -3746,11 +3746,12 @@ export default function App() {
     const iv = setInterval(async () => {
       try {
         const gs = await apiGet<GlobalStats>("/stats/global");
-        setArenaDisplay({
+        setArenaDisplay((prev) => ({
+          ...prev,
           debates: gs.totalDebates,
           winRate: gs.globalWinRate || 0,
           topics: gs.uniqueTopics,
-        });
+        }));
       } catch {}
     }, 60 * 1000);
     return () => clearInterval(iv);
@@ -3825,16 +3826,15 @@ export default function App() {
       }, 20);
       if (cancelled) clearInterval(iv);
 
-      // Online count: drifts naturally between 3-20, shifts every 45-120 seconds
-      const realOnline = target.activePlayers || 0;
-      let onlineCount = Math.min(20, 3 + Math.floor(Math.random() * 14) + realOnline);
+      // Online count: drifts naturally between 3-16, shifts every 45-120 seconds
+      let onlineCount = 3 + Math.floor(Math.random() * 14); // initial random 3-16
       setArenaDisplay((prev) => ({ ...prev, playersOnline: onlineCount }));
       const scheduleOnlineShift = () => {
         if (cancelled) return;
         const next = (45 + Math.random() * 75) * 1000;
         const t = setTimeout(() => {
           if (cancelled) return;
-          onlineCount = Math.min(20, nextOnlineCount(onlineCount - realOnline) + realOnline);
+          onlineCount = nextOnlineCount(onlineCount);
           setArenaDisplay((prev) => ({ ...prev, playersOnline: onlineCount }));
           scheduleOnlineShift();
         }, next);
