@@ -669,7 +669,9 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 @keyframes liveBlink{0%,100%{opacity:1;}50%{opacity:0.3;}}
 .live-feed{display:flex;flex-direction:column;gap:6px;}
 @keyframes feedItemIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+@keyframes feedItemNew{0%{opacity:0;transform:translateY(-14px) scale(0.97);}60%{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}100%{opacity:1;transform:translateY(0) scale(1);border-color:var(--border);box-shadow:none;}}
 .feed-item{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);animation:feedItemIn 0.35s ease;}
+.feed-item-new{animation:feedItemNew 0.5s cubic-bezier(0.22,1,0.36,1) both;}
 .feed-icon{font-size:14px;flex-shrink:0;}
 .feed-text{flex:1;font-size:13px;color:var(--text-mid);line-height:1.35;}
 .feed-text strong{color:var(--text);font-weight:600;}
@@ -5324,7 +5326,7 @@ export default function App() {
               </div>
               <div key={feedKey} className="live-feed">
                 {[...fakeFeedItems, ...feedItems].slice(0, 4).map((item, i) => (
-                  <div key={i} className="feed-item" style={{ animationDelay: `${i * 60}ms` }}>
+                  <div key={i} className={`feed-item${i === 0 ? " feed-item-new" : ""}`} style={{ animationDelay: `${i * 60}ms` }}>
                     <span className="feed-icon">{item.icon}</span>
                     <span className="feed-text" dangerouslySetInnerHTML={{ __html: item.text }} />
                     <span className={`feed-badge ${item.badgeClass}`}>{item.badge}</span>
