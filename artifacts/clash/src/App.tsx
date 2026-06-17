@@ -2455,7 +2455,10 @@ const FEATURED_TOPICS = [
 interface FeedItem { icon: string; text: string; time: string; badge: string; badgeClass: string; eventTime?: number; }
 
 const FAKE_SLOT_MS = 30 * 60 * 1000;
-const BASE_ONLINE = [7, 4, 10, 15];
+function nextOnlineCount(current: number): number {
+  const delta = Math.floor(Math.random() * 7) - 3; // -3 to +3 drift
+  return Math.max(3, Math.min(20, current + delta));
+}
 
 function slotRand(slot: number, idx: number): number {
   const x = Math.sin(slot * 9301 + idx * 49297 + 233720) * 10000;
@@ -3762,15 +3765,9 @@ export default function App() {
       } catch {}
       if (cancelled) return;
 
-      // Seeded fallback so stats are never 0/0/0 when API is unreachable
+      // Baseline fallback when API is unreachable or DB has no rows yet
       if (target.debates === 0) {
-        const sl = Math.floor(Date.now() / FAKE_SLOT_MS);
-        target = {
-          debates: 1100 + Math.floor(slotRand(sl, 99) * 300),
-          winRate: 52 + Math.floor(slotRand(sl, 98) * 8),
-          topics: 35 + Math.floor(slotRand(sl, 97) * 10),
-          activePlayers: 0,
-        };
+        target = { debates: 32, winRate: 65, topics: 43, activePlayers: 0 };
       }
 
       // Compute the delta from the 4 initial fake entries already visible in the feed
@@ -3806,17 +3803,17 @@ export default function App() {
       }, 20);
       if (cancelled) clearInterval(iv);
 
-      // Online count: random value from BASE_ONLINE + real active players, shifts every 2-8 min
+      // Online count: drifts naturally between 3-20, shifts every 45-120 seconds
       const realOnline = target.activePlayers || 0;
-      let onlineIdx = Math.floor(Math.random() * BASE_ONLINE.length);
-      setArenaDisplay((prev) => ({ ...prev, playersOnline: BASE_ONLINE[onlineIdx] + realOnline }));
+      let onlineCount = Math.min(20, 3 + Math.floor(Math.random() * 14) + realOnline);
+      setArenaDisplay((prev) => ({ ...prev, playersOnline: onlineCount }));
       const scheduleOnlineShift = () => {
         if (cancelled) return;
-        const next = (2 + Math.random() * 6) * 60 * 1000;
+        const next = (45 + Math.random() * 75) * 1000;
         const t = setTimeout(() => {
           if (cancelled) return;
-          onlineIdx = (onlineIdx + 1) % BASE_ONLINE.length;
-          setArenaDisplay((prev) => ({ ...prev, playersOnline: BASE_ONLINE[onlineIdx] + realOnline }));
+          onlineCount = Math.min(20, nextOnlineCount(onlineCount - realOnline) + realOnline);
+          setArenaDisplay((prev) => ({ ...prev, playersOnline: onlineCount }));
           scheduleOnlineShift();
         }, next);
         onlineTimers.push(t);
@@ -4448,6 +4445,18 @@ export default function App() {
           await (isLoggedIn ? apiAuthPost("/debates/save", savePayload) : apiPost("/debates/save", savePayload));
         };
         doSave().then(() => {
+          // Update home-screen stats immediately — real debate counts the same as fake activity
+          setArenaDisplay((prev) => {
+            const newDebates = prev.debates + 1;
+            const prevWins = Math.round(prev.debates * prev.winRate / 100);
+            const newWins = prevWins + (won ? 1 : 0);
+            return {
+              ...prev,
+              debates: newDebates,
+              winRate: Math.round((newWins / newDebates) * 100),
+              topics: prev.topics + 1,
+            };
+          });
           if (isLoggedIn && !twoTruthsMode) {
             apiAuthPost<MmrResult>("/rankings/update", { won, avgScore, avgLogic, avgPersuasion, avgDelivery, opponentDifficulty: ai?.diff || "medium" })
               .then((mmr) => setMmrResult(mmr)).catch(() => {});
