@@ -2462,6 +2462,20 @@ function nextOnlineCount(current: number): number {
   return Math.max(3, Math.min(16, current + delta));
 }
 
+const STATS_CACHE_KEY = "clash-display-stats";
+function loadCachedStats(): { debates: number; winRate: number; topics: number } | null {
+  try {
+    const raw = localStorage.getItem(STATS_CACHE_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    if (Date.now() - p.ts > 48 * 60 * 60 * 1000) return null; // expire after 48h
+    return { debates: p.debates || 0, winRate: p.winRate || 0, topics: p.topics || 0 };
+  } catch { return null; }
+}
+function saveCachedStats(debates: number, winRate: number, topics: number): void {
+  try { localStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ debates, winRate, topics, ts: Date.now() })); } catch {}
+}
+
 function slotRand(slot: number, idx: number): number {
   const x = Math.sin(slot * 9301 + idx * 49297 + 233720) * 10000;
   return x - Math.floor(x);
@@ -3188,7 +3202,10 @@ export default function App() {
   const forfeitIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [tauntIndex, setTauntIndex] = useState(0);
   const [tauntKey, setTauntKey] = useState(0);
-  const [arenaDisplay, setArenaDisplay] = useState({ debates: 0, winRate: 0, topics: 0, playersOnline: 0 });
+  const [arenaDisplay, setArenaDisplay] = useState(() => {
+    const cached = loadCachedStats();
+    return { debates: cached?.debates ?? 0, winRate: cached?.winRate ?? 0, topics: cached?.topics ?? 0, playersOnline: 0 };
+  });
   const [featuredIdx, setFeaturedIdx] = useState(() => Math.floor(Math.random() * FEATURED_TOPICS.length));
   const [featuredKey, setFeaturedKey] = useState(0);
   const [featuredDir, setFeaturedDir] = useState<1 | -1>(1);
@@ -3318,6 +3335,7 @@ export default function App() {
   const [myTrashBubble, setMyTrashBubble] = useState<string | null>(null);
   const [incomingTaunt, setIncomingTaunt] = useState<RoomTaunt | null>(null);
   const lastSeenTauntIdRef = useRef(0);
+  const prevApiDebatesRef = useRef(0);
   const [graveyardArgs, setGraveyardArgs] = useState<{text: string; round: number; score: number}[]>([]);
   const [newCard, setNewCard] = useState<DebateCard | null>(null);
   const [showCardReveal, setShowCardReveal] = useState(false);
@@ -3722,13 +3740,16 @@ export default function App() {
         ]);
         setFeedItems(buildRealFeedItems(activity));
         if (gs) {
-          // Sync big-3; never let displayed numbers drop below what activity already bumped them to
-          setArenaDisplay((prev) => ({
-            ...prev,
-            debates: Math.max(prev.debates, gs.totalDebates),
-            winRate: Math.max(prev.winRate, gs.globalWinRate || 0),
-            topics: Math.max(prev.topics, gs.uniqueTopics),
-          }));
+          // Add the delta of new real debates on top of whatever fakes already bumped it to
+          const delta = Math.max(0, gs.totalDebates - prevApiDebatesRef.current);
+          prevApiDebatesRef.current = gs.totalDebates;
+          setArenaDisplay((prev) => {
+            const newDebates = prev.debates + delta;
+            const newWinRate = Math.max(prev.winRate, gs.globalWinRate || 0);
+            const newTopics = Math.max(prev.topics, gs.uniqueTopics);
+            saveCachedStats(newDebates, newWinRate, newTopics);
+            return { ...prev, debates: newDebates, winRate: newWinRate, topics: newTopics };
+          });
         }
       } catch {}
       setFeedKey((k) => k + 1);
@@ -3781,7 +3802,7 @@ export default function App() {
         const m = e.text.match(/·\s*"([^"]+)"/);
         if (m) initTopics.add(m[1]);
       }
-      const finalTarget = {
+      const apiTarget = {
         debates: target.debates + initFakes.length,
         winRate: Math.round(
           (Math.round(target.debates * target.winRate / 100) + initWins) /
@@ -3789,6 +3810,14 @@ export default function App() {
         ),
         topics: target.topics + initTopics.size,
       };
+      // Never animate DOWN — use cached values if they're higher (from previous session's fake bumps)
+      const cached = loadCachedStats();
+      const finalTarget = {
+        debates: Math.max(cached?.debates ?? 0, apiTarget.debates),
+        winRate: Math.max(cached?.winRate ?? 0, apiTarget.winRate),
+        topics: Math.max(cached?.topics ?? 0, apiTarget.topics),
+      };
+      prevApiDebatesRef.current = target.debates;
 
       const steps = 40;
       let step = 0;
@@ -3797,9 +3826,9 @@ export default function App() {
         const ease = 1 - Math.pow(1 - step / steps, 3);
         setArenaDisplay((prev) => ({
           ...prev,
-          debates: Math.round(finalTarget.debates * ease),
-          winRate: Math.round(finalTarget.winRate * ease),
-          topics: Math.round(finalTarget.topics * ease),
+          debates: Math.round(prev.debates + (finalTarget.debates - prev.debates) * ease),
+          winRate: Math.round(prev.winRate + (finalTarget.winRate - prev.winRate) * ease),
+          topics: Math.round(prev.topics + (finalTarget.topics - prev.topics) * ease),
         }));
         if (step >= steps) clearInterval(iv);
       }, 20);
@@ -3855,12 +3884,10 @@ export default function App() {
           const totalDebates = prev.debates + 1;
           const prevWins = Math.round(prev.debates * prev.winRate / 100);
           const totalWins = prevWins + (isWin ? 1 : 0);
-          return {
-            ...prev,
-            debates: totalDebates,
-            winRate: Math.max(20, Math.min(80, Math.round(totalWins / totalDebates * 100))),
-            topics: prev.topics + (topicMatch ? 1 : 0),
-          };
+          const newWinRate = Math.max(20, Math.min(80, Math.round(totalWins / totalDebates * 100)));
+          const newTopics = prev.topics + (topicMatch ? 1 : 0);
+          saveCachedStats(totalDebates, newWinRate, newTopics);
+          return { ...prev, debates: totalDebates, winRate: newWinRate, topics: newTopics };
         });
         schedule();
       }, delay);
@@ -4444,17 +4471,15 @@ export default function App() {
           await (isLoggedIn ? apiAuthPost("/debates/save", savePayload) : apiPost("/debates/save", savePayload));
         };
         doSave().then(() => {
-          // Update home-screen stats immediately — real debate counts the same as fake activity
+          // Update home-screen stats immediately and persist so refresh doesn't lose it
           setArenaDisplay((prev) => {
             const newDebates = prev.debates + 1;
             const prevWins = Math.round(prev.debates * prev.winRate / 100);
             const newWins = prevWins + (won ? 1 : 0);
-            return {
-              ...prev,
-              debates: newDebates,
-              winRate: Math.round((newWins / newDebates) * 100),
-              topics: prev.topics + 1,
-            };
+            const newWinRate = Math.round((newWins / newDebates) * 100);
+            const newTopics = prev.topics + 1;
+            saveCachedStats(newDebates, newWinRate, newTopics);
+            return { ...prev, debates: newDebates, winRate: newWinRate, topics: newTopics };
           });
           if (isLoggedIn && !twoTruthsMode) {
             apiAuthPost<MmrResult>("/rankings/update", { won, avgScore, avgLogic, avgPersuasion, avgDelivery, opponentDifficulty: ai?.diff || "medium" })
