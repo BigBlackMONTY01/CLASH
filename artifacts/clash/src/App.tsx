@@ -5979,25 +5979,6 @@ export default function App() {
                       <line x1="8" y1="23" x2="16" y2="23"/>
                     </svg>
                   </button>
-                  {!timerStarted && (
-                    <button
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "var(--text-dim)",
-                        font: "inherit",
-                        fontFamily: "'Barlow Condensed', sans-serif",
-                        fontSize: "11px",
-                        letterSpacing: "2px",
-                        textTransform: "uppercase",
-                        cursor: "pointer",
-                        padding: 0,
-                      }}
-                      onClick={startResponseTimer}
-                    >
-                      ▶ Start Clock
-                    </button>
-                  )}
                 </div>
                 <div className="submit-row">
                   <button
