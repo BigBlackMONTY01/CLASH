@@ -4211,29 +4211,35 @@ export default function App() {
       })();
       const userArguments = lastUserArgsRef.current.length > 0 ? lastUserArgsRef.current : storedArgs;
 
-      const [result] = await Promise.all([
-        isMirror
-          ? apiPost<{ text: string }>("/debate/mirror-match-start", {
-              userArguments,
-              topic: topic.text,
-              userSide: sideLabel,
-              totalRounds: rounds,
-            })
-          : apiPost<{ text: string }>("/debate/start", {
-              personality: devilsAdvocateMode
-                ? `${currentAI.personality}\n\nIMPORTANT: For this debate you are arguing the SAME side as the user (${sideLabel}). Act as their ally — but expose weaknesses, steelman alternative views, and push them to make stronger, more nuanced arguments. Challenge them to improve, not to defeat them.`
-                : currentAI.personality,
-              topic: topic.text,
-              userSide: sideLabel,
-              oppSide: devilsAdvocateMode ? sideLabel : oppSide,
-              totalRounds: rounds,
-              difficulty: currentAI.diff,
-              twoTruths: isTwoTruths,
-            }),
-        new Promise<void>((resolve) => setTimeout(resolve, 3500)),
-      ] as [Promise<{ text: string }>, Promise<void>]);
+      const userGoesFirst = side === "for" && !isMirror && !isTwoTruths && !devilsAdvocateMode;
 
-      setMessages([{ role: "ai", text: result.text }]);
+      if (userGoesFirst) {
+        await new Promise<void>((resolve) => setTimeout(resolve, 3500));
+        setMessages([]);
+      } else {
+        const [result] = await Promise.all([
+          isMirror
+            ? apiPost<{ text: string }>("/debate/mirror-match-start", {
+                userArguments,
+                topic: topic.text,
+                userSide: sideLabel,
+                totalRounds: rounds,
+              })
+            : apiPost<{ text: string }>("/debate/start", {
+                personality: devilsAdvocateMode
+                  ? `${currentAI.personality}\n\nIMPORTANT: For this debate you are arguing the SAME side as the user (${sideLabel}). Act as their ally — but expose weaknesses, steelman alternative views, and push them to make stronger, more nuanced arguments. Challenge them to improve, not to defeat them.`
+                  : currentAI.personality,
+                topic: topic.text,
+                userSide: sideLabel,
+                oppSide: devilsAdvocateMode ? sideLabel : oppSide,
+                totalRounds: rounds,
+                difficulty: currentAI.diff,
+                twoTruths: isTwoTruths,
+              }),
+          new Promise<void>((resolve) => setTimeout(resolve, 3500)),
+        ] as [Promise<{ text: string }>, Promise<void>]);
+        setMessages([{ role: "ai", text: result.text }]);
+      }
       setScreen("debate");
     } catch (e) {
       console.error("[CLASH] debate/start failed:", e);
@@ -5723,6 +5729,19 @@ export default function App() {
           ))}
 
           <div className="messages">
+            {messages.length === 0 && !thinking && (
+              <div style={{
+                display: "flex", flexDirection: "column", alignItems: "center",
+                justifyContent: "center", flex: 1, gap: "10px",
+                padding: "40px 20px", textAlign: "center",
+              }}>
+                <div style={{ fontSize: "36px" }}>{ai?.icon}</div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: "11px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--red)" }}>You Open</div>
+                <div style={{ fontSize: "15px", color: "var(--text-mid)", maxWidth: "320px", lineHeight: 1.5 }}>
+                  You picked <strong style={{ color: "var(--green)" }}>FOR</strong> — make your opening argument. {ai?.name} will fire back.
+                </div>
+              </div>
+            )}
             {messages.map((m, i) => (
               <div key={i} className={`msg ${m.role === "ai" ? "ai-msg" : ""}`}>
                 <div className={`msg-avatar ${m.role === "ai" ? "ai-av" : "user-av"}`}>
