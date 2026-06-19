@@ -2,15 +2,15 @@ import { db, debates, seasons } from "@workspace/db";
 import { lt, eq } from "drizzle-orm";
 import { logger } from "./logger";
 
-const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
 
 async function pruneOldDebates() {
-  const cutoff = new Date(Date.now() - FOURTEEN_DAYS_MS);
+  const cutoff = new Date(Date.now() - SEVEN_DAYS_MS);
   try {
     const deleted = await db.delete(debates).where(lt(debates.createdAt, cutoff)).returning({ id: debates.id });
     if (deleted.length > 0) {
-      logger.info({ count: deleted.length, cutoff }, "Cleanup: pruned debates older than 14 days");
+      logger.info({ count: deleted.length, cutoff }, "Cleanup: pruned debates older than 7 days — player profile stats are preserved");
     }
   } catch (err) {
     logger.error({ err }, "Cleanup: failed to prune old debates");

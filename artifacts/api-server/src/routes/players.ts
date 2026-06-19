@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db, players, debates } from "@workspace/db";
 import { eq, desc, sql, and, gte } from "drizzle-orm";
+import { incrementPlatformStats, getPlatformStats } from "../lib/stats.js";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "./auth.js";
 
@@ -252,6 +253,9 @@ router.post("/debates/save", async (req, res) => {
       isGauntlet: Boolean(isGauntlet),
     }).returning();
 
+    // Increment running counter — fire and forget, never block the response
+    incrementPlatformStats(Boolean(won), true).catch(() => {});
+
     const newStreak = Boolean(won) ? (player[0].currentStreak ?? 0) + 1 : 0;
     const newBestStreak = Math.max(player[0].bestStreak ?? 0, newStreak);
     await db
@@ -266,38 +270,21 @@ router.post("/debates/save", async (req, res) => {
   }
 });
 
-// GET /api/stats/global — real platform-wide stats, offset by baseline so numbers are never 0
-const STAT_BASELINE = { debates: 32, wins: 21, topics: 43 }; // 21/32 ≈ 65% win rate
-
+// GET /api/stats/global — reads from platform_stats running counter (persists across debate cleanup)
 router.get("/stats/global", async (_req, res) => {
   try {
-    const [debateStats, playerCount] = await Promise.all([
-      db.select({
-        total: sql<number>`count(*)::int`,
-        wins: sql<number>`sum(case when ${debates.won} then 1 else 0 end)::int`,
-        uniqueTopics: sql<number>`count(distinct ${debates.topic})::int`,
-      }).from(debates),
+    const [stats, playerCount] = await Promise.all([
+      getPlatformStats(),
       db.select({ count: sql<number>`count(*)::int` }).from(players),
     ]);
-    const dbDebates = debateStats[0]?.total ?? 0;
-    const dbWins = debateStats[0]?.wins ?? 0;
-    const dbTopics = debateStats[0]?.uniqueTopics ?? 0;
-    const total = STAT_BASELINE.debates + dbDebates;
-    const wins = STAT_BASELINE.wins + dbWins;
-    const winRate = Math.round((wins / total) * 100);
     res.json({
-      totalDebates: total,
-      globalWinRate: winRate,
-      uniqueTopics: STAT_BASELINE.topics + dbTopics,
+      totalDebates: stats.totalDebates,
+      globalWinRate: stats.globalWinRate,
+      uniqueTopics: stats.uniqueTopics,
       activePlayers: playerCount[0]?.count ?? 0,
     });
   } catch {
-    res.json({
-      totalDebates: STAT_BASELINE.debates,
-      globalWinRate: 65,
-      uniqueTopics: STAT_BASELINE.topics,
-      activePlayers: 0,
-    });
+    res.json({ totalDebates: 0, globalWinRate: 58, uniqueTopics: 0, activePlayers: 0 });
   }
 });
 
@@ -336,33 +323,6 @@ router.get("/leaderboard", async (req, res) => {
   }
 });
 
-// GET /api/activity/recent — last 15 debates for the live feed (returns [] on DB error so frontend can fall back gracefully)
-router.get("/activity/recent", async (_req, res) => {
-  try {
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const rows = await db
-      .select({
-        username: players.username,
-        deviceId: players.deviceId,
-        opponentName: debates.opponentName,
-        topic: debates.topic,
-        topicCat: debates.topicCat,
-        avgScore: debates.avgScore,
-        won: debates.won,
-        isGauntlet: debates.isGauntlet,
-        rank: debates.rank,
-        createdAt: debates.createdAt,
-      })
-      .from(debates)
-      .leftJoin(players, eq(debates.playerId, players.id))
-      .where(gte(debates.createdAt, weekAgo))
-      .orderBy(desc(debates.createdAt))
-      .limit(15);
-    res.json(rows);
-  } catch {
-    res.json([]);
-  }
-});
 
 router.get("/players/public/:username", async (req, res) => {
   const { username } = req.params;

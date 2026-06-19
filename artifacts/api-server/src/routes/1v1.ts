@@ -4,6 +4,7 @@ import Groq from "groq-sdk";
 import { JWT_SECRET } from "./auth";
 import { db, players, debates } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { incrementPlatformStats } from "../lib/stats.js";
 
 const router = Router();
 const MODEL = "llama-3.3-70b-versatile";
@@ -130,6 +131,9 @@ async function saveDebateRecord(callerId: string, room: InMemoryRoom, playerNum:
       won,
       isGauntlet: false,
     });
+
+    // Increment running counter — fire and forget, never block the response
+    incrementPlatformStats(won, true).catch(() => {});
 
     const newStreak = won ? (player.currentStreak ?? 0) + 1 : 0;
     const newBestStreak = Math.max(player.bestStreak ?? 0, newStreak);

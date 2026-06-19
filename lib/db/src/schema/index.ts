@@ -9,3 +9,5 @@ export * from "./cards";
 export * from "./progression";
 export * from "./ai_personas";
 export * from "./custom_rivals";
+export * from "./activity_events";
+export * from "./platform_stats";

@@ -1590,7 +1590,7 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .pwa-step-text strong{color:var(--text);}
 .pwa-close-btn{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;line-height:1;padding:4px 6px;}
 .pwa-nav-btn{background:none;border:none;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:color 0.18s;-webkit-tap-highlight-color:transparent;flex-shrink:0;}.pwa-nav-btn:hover{color:var(--text);}
-.install-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;background:#181818;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 14px 16px;display:flex;align-items:center;gap:12px;transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.22,1,0.36,1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
+.install-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;background:#181818;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px max(env(safe-area-inset-bottom),14px) 16px;display:flex;align-items:center;gap:12px;transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.22,1,0.36,1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
 .install-banner.visible{transform:translateY(0);}
 .install-banner-icon{width:42px;height:42px;border-radius:10px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#fff;}
 .install-banner-body{flex:1;min-width:0;}
@@ -2968,35 +2968,35 @@ interface LbEntry { id: number; username: string | null; deviceId: string; wins:
 interface SeasonChampion { username: string | null; deviceId: string | null; mmr: number; peakMmr: number; wins: number; losses: number; }
 interface SeasonSummary { id: number; name: string; startDate: string; endDate: string; champions: SeasonChampion[]; }
 interface GlobalStats { totalDebates: number; globalWinRate: number; uniqueTopics: number; activePlayers: number; }
-interface RecentActivity { username: string | null; deviceId: string; opponentName: string; topic: string; topicCat?: string; avgScore: number; won: boolean; isGauntlet: boolean; rank: string; createdAt: string; }
+interface RecentActivity { id: number; text: string; badge: string; icon: string; topic: string | null; createdAt: string; }
+
+const FEED_BADGE_CLASS: Record<string, string> = { WIN: "feed-win", LOSS: "feed-loss", STREAK: "feed-streak" };
+const FEED_ICON_MAP: Record<string, string> = { trophy: "🏆", skull: "💀", bolt: "⚡" };
 
 function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
   if (activity.length === 0) return buildFeedItems();
-  const realItems = activity.slice(0, 8).map((a) => {
-    const guestSuffix = a.deviceId ? a.deviceId.slice(-4).toUpperCase() : "????";
-    const name = a.username || ("GUEST#" + guestSuffix);
-    const opp = (a.opponentName || "Unknown").replace("The ", "");
-    const topic = (a.topic || "").length > 30 ? a.topic.slice(0, 30) + "…" : (a.topic || "unknown topic");
+  const items = activity.slice(0, 8).map((a) => {
     const ts = a.createdAt ? new Date(a.createdAt).getTime() : Date.now();
     const minsAgo = Math.max(1, Math.floor((Date.now() - ts) / 60000));
     const timeStr = minsAgo < 60 ? `${minsAgo}m ago` : minsAgo < 1440 ? `${Math.floor(minsAgo / 60)}h ago` : `${Math.floor(minsAgo / 1440)}d ago`;
-    if (a.isGauntlet) {
-      return { icon: "⚔️", text: `<strong>${name}</strong> ran Gauntlet vs ${opp}`, badge: a.won ? "WON" : "LOST", badgeClass: a.won ? "feed-win" : "feed-loss", time: timeStr, eventTime: ts };
-    }
-    if (a.topicCat === "Two-Truths") {
-      const nuanceLabel = a.won ? "HELD" : "COLLAPSED";
-      return { icon: "⚖", text: `<strong>${name}</strong> ${a.won ? "mastered the nuance" : "collapsed to one side"} — "${topic}"`, badge: nuanceLabel, badgeClass: a.won ? "feed-nuance" : "feed-loss", time: timeStr, eventTime: ts };
-    }
-    if (a.won) {
-      return { icon: "🏆", text: `<strong>${name}</strong> defeated ${opp} — "${topic}"`, badge: a.rank || "?", badgeClass: "feed-rank", time: timeStr, eventTime: ts };
-    }
-    return { icon: "💀", text: `<strong>${name}</strong> lost to ${opp} — "${topic}"`, badge: a.rank || "?", badgeClass: "feed-loss", time: timeStr, eventTime: ts };
+    const spaceIdx = a.text.indexOf(" ");
+    const displayText = spaceIdx > 0
+      ? `<strong>${a.text.slice(0, spaceIdx)}</strong>${a.text.slice(spaceIdx)}`
+      : a.text;
+    return {
+      icon: FEED_ICON_MAP[a.icon] ?? "💀",
+      text: displayText,
+      time: timeStr,
+      badge: a.badge,
+      badgeClass: FEED_BADGE_CLASS[a.badge] ?? "feed-loss",
+      eventTime: ts,
+    };
   });
-  if (realItems.length < 3) {
-    const fakeBackfill = buildFeedItems().slice(0, 3 - realItems.length);
-    return [...realItems, ...fakeBackfill];
+  if (items.length < 3) {
+    const fakeBackfill = buildFeedItems().slice(0, 3 - items.length);
+    return [...items, ...fakeBackfill];
   }
-  return realItems;
+  return items;
 }
 
 interface Message { role: "user" | "ai"; text: string; }
@@ -3960,25 +3960,8 @@ export default function App() {
       timer = setTimeout(() => {
         fakeSlot++;
         const entry = generateFakeEntryForSlot(fakeSlot);
-        const isWin = entry.badge === "WIN";
-        const topicMatch = entry.text.match(/·\s*"([^"]+)"/);
-        const topicStr = topicMatch ? topicMatch[1] : null;
-        const isNewTopic = topicStr !== null && !seenTopicsRef.current.has(topicStr);
-        if (isNewTopic && topicStr) {
-          seenTopicsRef.current.add(topicStr);
-          saveSeenTopics(seenTopicsRef.current);
-        }
         setFakeFeedItems((prev) => [entry, ...prev].slice(0, 6));
         setFeedKey((k) => k + 1);
-        setArenaDisplay((prev) => {
-          const totalDebates = prev.debates + 1;
-          const prevWins = Math.round(prev.debates * prev.winRate / 100);
-          const totalWins = prevWins + (isWin ? 1 : 0);
-          const newWinRate = Math.max(20, Math.min(80, Math.round(totalWins / totalDebates * 100)));
-          const newTopics = prev.topics + (isNewTopic ? 1 : 0);
-          saveCachedStats(totalDebates, newWinRate, newTopics);
-          return { ...prev, debates: totalDebates, winRate: newWinRate, topics: newTopics };
-        });
         schedule();
       }, delay);
     };
