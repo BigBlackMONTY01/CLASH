@@ -18,6 +18,22 @@ if (_isPWA) {
 }
 
 if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register(base + "/sw.js", { scope: base + "/" })
+    .then((reg) => {
+      reg.addEventListener("updatefound", () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener("statechange", () => {
+          if (nw.state === "activated") {
+            (window as any).__swUpdated = true;
+            window.dispatchEvent(new CustomEvent("sw-updated"));
+          }
+        });
+      });
+    })
+    .catch(() => {});
+
   navigator.serviceWorker.addEventListener("message", (e) => {
     if (e.data?.type === "SW_UPDATED") {
       (window as any).__swUpdated = true;

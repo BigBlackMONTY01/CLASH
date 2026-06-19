@@ -1590,6 +1590,15 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .pwa-step-text strong{color:var(--text);}
 .pwa-close-btn{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;line-height:1;padding:4px 6px;}
 .pwa-nav-btn{background:none;border:none;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:color 0.18s;-webkit-tap-highlight-color:transparent;flex-shrink:0;}.pwa-nav-btn:hover{color:var(--text);}
+.install-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;background:#181818;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 14px 16px;display:flex;align-items:center;gap:12px;transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.22,1,0.36,1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
+.install-banner.visible{transform:translateY(0);}
+.install-banner-icon{width:42px;height:42px;border-radius:10px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#fff;}
+.install-banner-body{flex:1;min-width:0;}
+.install-banner-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.3px;color:#fff;margin-bottom:2px;}
+.install-banner-sub{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.45;}
+.install-banner-btn{background:#e63946;color:#fff;border:none;border-radius:8px;padding:9px 15px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity 0.15s;-webkit-tap-highlight-color:transparent;}
+.install-banner-btn:active{opacity:0.75;}
+.install-banner-dismiss{background:none;border:none;color:rgba(255,255,255,0.28);font-size:22px;cursor:pointer;padding:2px 4px;flex-shrink:0;line-height:1;-webkit-tap-highlight-color:transparent;margin-left:2px;}
 
 /* FACT-CHECK PANEL */
 .fc-panel{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
@@ -3267,6 +3276,10 @@ export default function App() {
   const isPWA = window.matchMedia("(display-mode: standalone)").matches || !!(navigator as any).standalone;
   const [showPwaModal, setShowPwaModal] = useState(false);
   const [pwaOs, setPwaOs] = useState<"ios"|"android"|"desktop">("ios");
+  const deferredPromptRef = useRef<any>(null);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [installBannerType, setInstallBannerType] = useState<"native"|"ios"|null>(null);
+  const isIOSSafari = /iphone|ipad|ipod/i.test(navigator.userAgent) && /safari/i.test(navigator.userAgent) && !/crios|fxios|chrome/i.test(navigator.userAgent);
   const [showUpdateBanner, setShowUpdateBanner] = useState(() => !!(window as any).__swUpdated);
   const [isRecording, setIsRecording] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -3429,6 +3442,30 @@ export default function App() {
     const handler = () => setShowUpdateBanner(true);
     window.addEventListener("sw-updated", handler);
     return () => window.removeEventListener("sw-updated", handler);
+  }, []);
+
+  // PWA install prompt — native (Chrome/Edge) and iOS Safari
+  useEffect(() => {
+    if (isPWA) return;
+    try { if (localStorage.getItem("clash-install-dismissed")) return; } catch {}
+
+    if (isIOSSafari) {
+      const t = setTimeout(() => {
+        setInstallBannerType("ios");
+        setShowInstallBanner(true);
+      }, 8000);
+      return () => clearTimeout(t);
+    }
+
+    const handler = (e: Event) => {
+      e.preventDefault();
+      deferredPromptRef.current = e;
+      setInstallBannerType("native");
+      setShowInstallBanner(true);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -5149,7 +5186,18 @@ export default function App() {
       <nav className="nav">
         <div className="logo" onClick={() => setScreen("home")} style={{ cursor: "pointer" }}>CL<span style={{color:"#e63946"}}>A</span>SH</div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          {!isPWA && <button className="pwa-nav-btn" onClick={() => setShowPwaModal(true)} title="Install App">
+          {!isPWA && <button className="pwa-nav-btn" title="Install App" onClick={() => {
+            if (deferredPromptRef.current) {
+              const prompt = deferredPromptRef.current;
+              prompt.prompt();
+              prompt.userChoice.then(({ outcome }: { outcome: string }) => {
+                deferredPromptRef.current = null;
+                if (outcome === "accepted") setShowInstallBanner(false);
+              });
+            } else {
+              setShowPwaModal(true);
+            }
+          }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
             </svg>
@@ -7709,6 +7757,37 @@ export default function App() {
           <button className="pp-logout" onClick={logoutFn}>Log Out</button>
         </div>
       </>
+    )}
+
+    {/* PWA INSTALL BANNER */}
+    {!isPWA && (
+      <div className={`install-banner${showInstallBanner ? " visible" : ""}`}>
+        <div className="install-banner-icon">CL<span style={{color:"#e63946"}}>A</span>SH</div>
+        <div className="install-banner-body">
+          <div className="install-banner-title">
+            {installBannerType === "ios" ? "Add to Home Screen" : "Install CLASH"}
+          </div>
+          <div className="install-banner-sub">
+            {installBannerType === "ios" ? (
+              <>Tap <svg style={{display:"inline",verticalAlign:"middle",margin:"0 2px"}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>{" "}then <strong style={{color:"rgba(255,255,255,0.65)"}}>Add to Home Screen</strong></>
+            ) : "No browser bar. Full screen. Instant open."}
+          </div>
+        </div>
+        {installBannerType === "native" && (
+          <button className="install-banner-btn" onClick={async () => {
+            const prompt = deferredPromptRef.current;
+            if (!prompt) return;
+            prompt.prompt();
+            const { outcome } = await prompt.userChoice;
+            deferredPromptRef.current = null;
+            if (outcome === "accepted") setShowInstallBanner(false);
+          }}>Install</button>
+        )}
+        <button className="install-banner-dismiss" onClick={() => {
+          setShowInstallBanner(false);
+          try { localStorage.setItem("clash-install-dismissed", "1"); } catch {}
+        }}>×</button>
+      </div>
     )}
 
     {/* PWA INSTALL MODAL */}
