@@ -5195,6 +5195,10 @@ export default function App() {
                 if (outcome === "accepted") setShowInstallBanner(false);
               });
             } else {
+              const ua = navigator.userAgent;
+              if (/iphone|ipad|ipod/i.test(ua)) setPwaOs("ios");
+              else if (/android/i.test(ua)) setPwaOs("android");
+              else setPwaOs("desktop");
               setShowPwaModal(true);
             }
           }}>
