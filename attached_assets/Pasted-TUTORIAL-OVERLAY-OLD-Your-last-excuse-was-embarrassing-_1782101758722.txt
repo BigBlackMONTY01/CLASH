@@ -1,0 +1,174 @@
+TUTORIAL OVERLAY
+
+OLD: Your last excuse was embarrassing. Try again. 
+NEW: That landed weak. Try harder. / You’re losing this one. / The AI’s tearing you apart.
+
+OLD: How to Play 
+NEW: Here’s how it works
+
+HOME SCREEN
+
+OLD: Take on an AI opponent 
+NEW: Fight Ai.
+
+SETUP SCREEN - OPPONENT
+
+OLD: Who are you fighting? 
+NEW: Pick your opponent
+
+OLD: Beginner / Novice / Challenger / Warrior / Legend / EXTREME 
+NEW: Easy / Medium / Hard / Brutal / Unhinged
+
+SETUP SCREEN - TOPIC
+
+OLD: What’s the fight about? 
+NEW: What are you debating?
+
+OLD: Or bring your own topic 
+NEW: Have something else in mind?
+
+SETUP SCREEN - SIDE
+
+OLD: How long are you willing to fight? 
+NEW: How many rounds?
+
+OLD: I agree with this / I disagree with this 
+NEW: Yeah / Nah (or: I’m for this / I’m against this)
+
+OLD: No sides. Your job is to hold both truths at once — without letting one win. The Dialectician will challenge you every time you lean too hard on either half. 
+NEW: Hold both sides at once. Don’t let one dominate. The Dialectician will push back when you lean too hard.
+
+OLD: AI argues YOUR side — stress-test your own position 
+NEW: AI argues YOUR side, stress-test your own position 
+
+OLD: AI hides a fallacy each round — catch it for a bonus 
+NEW: Spot the BS. Get extra points.
+
+OLD: BEGIN THE NUANCE 
+NEW: Start (or: Begin Two-Truths)
+
+MATCHMAKING
+
+OLD: Entering the arena 
+NEW: Loading (or remove)
+
+OLD: Preparing opponent 
+NEW: Setting up
+
+DEBATE SCREEN
+
+OLD: You picked FOR — make your opening argument. [AI name] will fire back. 
+NEW: You’re FOR. Go first. [AI name] fires back.
+
+OLD: Reading your argument / Finding weaknesses / Calculating counter / Preparing response / Sharpening rebuttal 
+NEW: Reading… / Thinking… / Cooking… / Almost ready…
+
+OLD: Which fallacy did the AI just use? 
+NEW: What’s the fallacy?
+
+OLD: Caught it! / Missed. 
+NEW: Got it! / Nope.
+
+VERDICT SCREEN
+
+OLD: NUANCED / OVERSIMPLIFIED 
+NEW: Nuanced / Basic (or: Sharp / Flat)
+
+OLD: Your Style 
+NEW: How you argue
+
+OLD: IMPROVE · (improve text) 
+NEW: Next time… (improve text)
+
+OLD: Debate Dynasty / [n] Consecutive Wins 
+NEW: On a roll. [n] wins in a row.
+
+GAUNTLET
+
+OLD: All six opponents. Three rounds each. Lose once and it’s over. Most people don’t finish. 
+NEW: 6 bots. 3 rounds each. Lose once and you’re done. Not many people make it.
+
+OLD: Pick your side for the first match 
+NEW: Which side?
+
+OLD: I agree with this / I disagree with this 
+NEW: Yeah / Nah
+
+MULTIPLAYER
+
+OLD: Name this match (optional) 
+NEW: (just leave blank or: Give it a name? (optional))
+
+OLD: Enter a code from a friend 
+NEW: Have a code? Join
+
+OLD: NO MATCHES YET / Play your first 1v1 match to start your history. 
+NEW: No matches yet. Play one and it’ll show up here.
+
+OLD: Host setup panel / Rounds / round buttons 
+NEW: How many rounds?
+
+OLD: 60 seconds per round — auto-submits when timer expires 
+NEW: 60 sec per round. Auto-submit when time’s up.
+
+LEADERBOARD
+
+OLD: Be the first to debate this week and claim #1. 
+NEW: Be first. Claim #1.
+
+OLD: Finish a debate to appear on the leaderboard. 
+NEW: finish a debate to show up here.
+
+PROFILE
+
+OLD: 2–20 CHARS · LETTERS, NUMBERS, UNDERSCORES 
+NEW: 2-20 chars. Letters, numbers, underscores.
+
+OLD: Claim your identity on the leaderboard. Appears next to all your results. 
+NEW: Shows up next to all your wins.
+
+AUTH
+
+OLD: Save your progress · Climb the leaderboard 
+NEW: Keep your streak. Claim the board.
+
+CARD REVEAL
+
+OLD: Card Unlocked / CLASH (card back face) 
+NEW: New card. You earned it.
+
+GHOST REVEAL
+
+OLD: Hidden argument tags detected in your debate. These reveal patterns the AI identified in real-time. 
+NEW: Here’s what the AI caught in your arguments.
+
+FORGE RIVAL
+
+OLD: Design your opponent. Share it with the world. 
+NEW: Build your perfect opponent.
+
+OLD: Cold & Controlled — Precise, measured, quietly devastating 
+NEW: Cold & Calculated; Precise, surgical, deadly
+
+OLD: Logic Engine — Pure reasoning. Demolishes bad logic. 
+NEW: Pure Logic; Crushes bad arguments
+
+OLD: Remembers your past arguments / Resets every match 
+NEW: Remembers your past / Resets every match 
+
+OLD: Give your rival a backstory, quirks, or extra personality details… 
+NEW: Add a backstory. Make them peak.
+
+OLD: Your opponent is ready for battle. 
+NEW: Your rival is ready.
+
+GLOBAL
+
+OLD: You’re offline — check your connection / Server warming up — hang tight… 
+NEW: No connection / Waking up the server…
+
+OLD: New version available · Tap to update 
+NEW: Update available
+
+OLD: No browser bar. Full screen. Instant open. 
+NEW: No bars. Full screen. Fast.

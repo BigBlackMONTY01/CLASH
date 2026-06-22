@@ -1694,10 +1694,10 @@ const TOURNAMENT_BOT_ORDER = ["troll", "professor", "politician", "prosecutor", 
 const AI_OPPONENTS = [
   { id: "professor", icon: "🎓", name: "The Professor", desc: "Calm, methodical. Exposes every gap. Won't let a single assertion slide.", diff: "medium", diffLabel: "Medium", timer: 180, personality: "You're a professor and you've seen this argument fail a hundred times. You know where it's going before they've finished making it. When someone says something vague, you ask — flat, unimpressed — exactly where they're getting that from. Not hostile. Just waiting. You've read enough to spot a gap in about two seconds and you don't let it slide. If they made a claim without any backing, that's not a point, it's a mistake, and you tell them so. If they said something earlier in this debate without evidence, you bring it back. You're not mean exactly. You're just accurate in a way that feels mean." },
   { id: "politician", icon: "🏛️", name: "The Politician", desc: "Makes your strongest point sound like it proves their side. Infuriatingly smooth.", diff: "medium", diffLabel: "Medium", timer: 180, personality: "You're a politician and you've been doing this a long time. Your move every round: start by acknowledging their strongest point — something like 'they're not wrong that X' — then calmly explain why that exact thing proves your side. You absorb their argument, you don't fight it. Never admit you're losing. Reframe it. When they land a decent hit, you nod like it's a fair point and keep going like it didn't touch you. You've got that slightly smug energy of someone who knows the room's on their side before the debate even starts. Smooth. A little insufferable. Completely in control." },
-  { id: "prosecutor", icon: "⚖️", name: "The Prosecutor", desc: "Relentless cross-examiner. Quotes your own words back at you. No exit is safe.", diff: "hard", diffLabel: "Hard", timer: 135, personality: "You cross-examine. You don't debate. Find the weakest part of what they said and go straight for it, don't let go. You have the full conversation — if they said something earlier that contradicts right now, quote it back word for word and make them deal with it. Ask questions they can't dodge without giving something up. Don't raise your voice. Don't need to. Just keep narrowing the options until there's nowhere left to go. You're not trying to be mean. You're just relentless and that ends up being worse." },
-  { id: "philosopher", icon: "🔮", name: "The Philosopher", desc: "Opens every round with the question you can't dodge. Exposes what you didn't know you assumed.", diff: "hard", diffLabel: "Hard", timer: 135, personality: "You're a philosopher. Open every response with a real question — not rhetorical, actually ask it — that goes after the assumption underneath what they just said. The thing they didn't realize they were taking for granted. Then explain what that assumption is and why it breaks everything they just argued. You're not aggressive. You're almost curious about it. But your questions back people into corners they didn't see coming. When they make a logical error you name it. Not to show off. Just because that's what it is." },
+  { id: "prosecutor", icon: "⚖️", name: "The Prosecutor", desc: "Relentless cross-examiner. Quotes your own words back at you. No exit is safe.", diff: "hard", diffLabel: "Brutal", timer: 135, personality: "You cross-examine. You don't debate. Find the weakest part of what they said and go straight for it, don't let go. You have the full conversation — if they said something earlier that contradicts right now, quote it back word for word and make them deal with it. Ask questions they can't dodge without giving something up. Don't raise your voice. Don't need to. Just keep narrowing the options until there's nowhere left to go. You're not trying to be mean. You're just relentless and that ends up being worse." },
+  { id: "philosopher", icon: "🔮", name: "The Philosopher", desc: "Opens every round with the question you can't dodge. Exposes what you didn't know you assumed.", diff: "hard", diffLabel: "Brutal", timer: 135, personality: "You're a philosopher. Open every response with a real question — not rhetorical, actually ask it — that goes after the assumption underneath what they just said. The thing they didn't realize they were taking for granted. Then explain what that assumption is and why it breaks everything they just argued. You're not aggressive. You're almost curious about it. But your questions back people into corners they didn't see coming. When they make a logical error you name it. Not to show off. Just because that's what it is." },
   { id: "troll", icon: "😈", name: "The Devil", desc: "Chaotic. Takes the most extreme position always. Funnier than you'd like.", diff: "easy", diffLabel: "Easy", timer: 270, personality: "You're the devil's advocate and you go all the way in. Take the most extreme version of the opposing side and commit, no hedging. Your points are harder to knock down than they look because you've actually thought them through, even the ridiculous ones. You're enjoying yourself. You're a bit mean about it and that's fine. When they can't counter you, say so. If they say something dumb, tell them it's dumb. Short, punchy, chaotic — that's the vibe. You're not here to be fair. You're here to win and have fun doing it." },
-  { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Names your fallacy by name. Demands dates, sources, mechanisms. Has never lost.", diff: "extreme", diffLabel: "Extreme", timer: 45, personality: "You're the debunker and you've heard this before. You know the exact spots where it falls apart. When you see a logical fallacy you name it — not 'your reasoning is off,' you say strawman, false equivalence, post hoc, whatever it actually is. If they made a claim without a real source, a date, or an actual mechanism, it doesn't count as a point and you say that plainly. You're not angry about it. You're not even that interested. You just keep pointing at the holes because someone has to, and honestly you knew it'd come to this." },
+  { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Names your fallacy by name. Demands dates, sources, mechanisms. Has never lost.", diff: "extreme", diffLabel: "Unhinged", timer: 45, personality: "You're the debunker and you've heard this before. You know the exact spots where it falls apart. When you see a logical fallacy you name it — not 'your reasoning is off,' you say strawman, false equivalence, post hoc, whatever it actually is. If they made a claim without a real source, a date, or an actual mechanism, it doesn't count as a point and you say that plainly. You're not angry about it. You're not even that interested. You just keep pointing at the holes because someone has to, and honestly you knew it'd come to this." },
 ];
 
 function buildRivalPersonality(form: { name: string; tone: string; aggression: number; logicLevel: number; humorLevel: number; difficulty: string; memoryEnabled: boolean; backstory?: string }): string {
@@ -2444,16 +2444,16 @@ function pickTopics() {
 
 
 const TAUNTS = [
-  { icon: "⚖️", text: "The Prosecutor is waiting." },
-  { icon: "💀", text: "87 players lost today. You're next." },
-  { icon: "📊", text: "Your logic rating is unranked." },
-  { icon: "🔥", text: "3 players are in Gauntlet Mode right now." },
+  { icon: "⚖️", text: "That landed weak. Try harder." },
+  { icon: "💀", text: "You're losing this one." },
+  { icon: "🔥", text: "The AI's tearing you apart." },
   { icon: "🎓", text: "The Professor hasn't lost in 11 debates." },
-  { icon: "⚡", text: "Last match lasted 4 rounds." },
+  { icon: "⚡", text: "3 players are in Gauntlet right now." },
   { icon: "🔬", text: "The Debunker demands evidence." },
-  { icon: "🏛️", text: "The Politician is ready to reframe your point." },
+  { icon: "🏛️", text: "The Politician already knows how to flip your point." },
   { icon: "🎯", text: "KINGDEBATE just hit rank #1." },
-  { icon: "🔮", text: "The Philosopher questioned someone's entire worldview." },
+  { icon: "🔮", text: "The Philosopher will expose what you didn't know you assumed." },
+  { icon: "😈", text: "No one wins without showing up." },
 ];
 
 const FEATURED_TOPICS = [
@@ -5532,7 +5532,7 @@ export default function App() {
           </div>
           {setupStep === 0 && (
             <>
-              <p className="section-label">Who are you fighting?</p>
+              <p className="section-label">Pick your opponent</p>
               {nemesisBot && (
                 <div className="nemesis-card" style={{ marginBottom: "16px", cursor: "pointer" }} onClick={() => { setSelectedAI(nemesisBot.id); setSetupStep(1); }}>
                   <div className="nemesis-icon">{nemesisBot.icon}</div>
@@ -5571,7 +5571,7 @@ export default function App() {
 
           {setupStep === 1 && (
             <>
-              <p className="section-label">What's the fight about?</p>
+              <p className="section-label">What are you debating?</p>
               {Object.keys(topicVotes).length > 0 && (() => {
                 const sorted = Object.entries(topicVotes).sort((a, b) => b[1] - a[1]).slice(0, 3);
                 return (
@@ -5605,7 +5605,7 @@ export default function App() {
                 })}
               </div>
               <div style={{ marginBottom: "24px" }}>
-                <p className="section-label" style={{ marginBottom: "10px" }}>Or bring your own topic</p>
+                <p className="section-label" style={{ marginBottom: "10px" }}>Have something else in mind?</p>
                 <div style={{ display: "flex", gap: "8px" }}>
                   <input
                     type="text"
@@ -5644,7 +5644,7 @@ export default function App() {
 
           {setupStep === 2 && (
             <>
-              <p className="section-label">How long are you willing to fight?</p>
+              <p className="section-label">How many rounds?</p>
               <div className="rounds-pick">
                 {[1, 3, 5, 10].map((r) => (
                   <button key={r} className={`rounds-btn ${selectedRounds === r ? "selected" : ""}`} onClick={() => setSelectedRounds(r)}>
@@ -5661,7 +5661,7 @@ export default function App() {
                 <div style={{ background: "rgba(45,212,191,0.06)", border: "1px solid rgba(45,212,191,0.25)", borderRadius: "var(--radius)", padding: "14px 16px", marginBottom: "4px" }}>
                   <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "#2dd4bf", marginBottom: "7px" }}>The Assignment</div>
                   <p style={{ fontSize: "14px", color: "var(--text-mid)", lineHeight: 1.5, margin: 0 }}>
-                    No sides. Your job is to hold <strong style={{ color: "var(--text)" }}>both truths</strong> at once — without letting one win. The Dialectician will challenge you every time you lean too hard on either half.
+                    Hold both sides at once. Don't let one dominate. The Dialectician will push back when you lean too hard.
                   </p>
                 </div>
               ) : (
@@ -5671,12 +5671,12 @@ export default function App() {
                     <button className={`side-btn for ${selectedSide === "for" ? "selected" : ""}`} onClick={() => setSelectedSide("for")}>
                       <span className="side-icon">✅</span>
                       <div className="side-label">For</div>
-                      <div className="side-sub">Defend it</div>
+                      <div className="side-sub">Yeah</div>
                     </button>
                     <button className={`side-btn against ${selectedSide === "against" ? "selected" : ""}`} onClick={() => setSelectedSide("against")}>
                       <span className="side-icon">❌</span>
                       <div className="side-label">Against</div>
-                      <div className="side-sub">Tear it down</div>
+                      <div className="side-sub">Nah</div>
                     </button>
                   </div>
                   <div
@@ -5689,7 +5689,7 @@ export default function App() {
                     <div className="da-toggle-knob" />
                     <div className="da-toggle-label">
                       <div className="da-toggle-title">Devil's Advocate</div>
-                      <div className="da-toggle-sub">AI argues YOUR side — stress-test your own position</div>
+                      <div className="da-toggle-sub">AI argues YOUR side, stress-test your own position</div>
                     </div>
                   </div>
                   <div
@@ -5702,7 +5702,7 @@ export default function App() {
                     <div className="da-toggle-knob" />
                     <div className="da-toggle-label">
                       <div className="da-toggle-title">Fallacy Trap</div>
-                      <div className="da-toggle-sub">AI hides a fallacy each round — catch it for a bonus</div>
+                      <div className="da-toggle-sub">Spot the BS. Get extra points.</div>
                     </div>
                   </div>
                 </>
@@ -5714,7 +5714,7 @@ export default function App() {
                   disabled={!twoTruthsMode && !selectedSide}
                   onClick={() => launchMatchmaking()}
                 >
-                  {twoTruthsMode ? "BEGIN THE NUANCE" : "START CLASH"}
+                  {twoTruthsMode ? "Begin Two-Truths" : "START CLASH"}
                 </button>
                 <button className="btn btn-ghost" style={{ alignSelf: "flex-start", fontSize: "13px" }} onClick={() => { if (twoTruthsMode) { setTwoTruthsMode(false); setScreen("home"); } else { setSetupStep(1); } }}>← Back</button>
               </div>
@@ -5727,7 +5727,7 @@ export default function App() {
       {screen === "matchmaking" && ai && selectedTopic && selectedSide && (
         <div className="matchmaking">
           <div className="mf-found">MATCH FOUND</div>
-          <div className="mf-sub">Entering the arena</div>
+          <div className="mf-sub">Loading</div>
 
           <div className="mf-vs-card">
             <div className="mf-player">
@@ -5778,7 +5778,7 @@ export default function App() {
           ) : (
             <div className="mf-waiting">
               <div className="dots"><span>●</span><span>●</span><span>●</span></div>
-              Preparing opponent
+              Setting up
             </div>
           )}
         </div>
@@ -5856,7 +5856,7 @@ export default function App() {
                 <div style={{ fontSize: "36px" }}>{ai?.icon}</div>
                 <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: "11px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--red)" }}>You Open</div>
                 <div style={{ fontSize: "15px", color: "var(--text-mid)", maxWidth: "320px", lineHeight: 1.5 }}>
-                  You picked <strong style={{ color: "var(--green)" }}>FOR</strong> — make your opening argument. {ai?.name} will fire back.
+                  You're <strong style={{ color: "var(--green)" }}>{selectedSide === "for" ? "FOR" : "AGAINST"}</strong>. Go first. {ai?.name} fires back.
                 </div>
               </div>
             )}
@@ -5879,7 +5879,7 @@ export default function App() {
                   <div className="msg-text thinking-row">
                     <div className="dots"><span>●</span><span>●</span><span>●</span></div>
                     <span key={thinkingPhase} className="thinking-phase">
-                      {["Reading your argument","Finding weaknesses","Calculating counter","Preparing response","Sharpening rebuttal"][thinkingPhase]}
+                      {["Reading…","Thinking…","Cooking…","Almost ready…","Almost ready…"][thinkingPhase]}
                     </span>
                   </div>
                 </div>
@@ -5904,7 +5904,7 @@ export default function App() {
 
           {fallacyMode && pendingFallacy && !thinking && (
             <div className="fallacy-panel">
-              <div className="fallacy-panel-lbl">Fallacy Trap — Which fallacy did the AI just use?</div>
+              <div className="fallacy-panel-lbl">Fallacy Trap — What's the fallacy?</div>
               <div className="fallacy-grid">
                 {FALLACY_LIST.slice(0, 8).map(f => (
                   <button
@@ -5929,7 +5929,7 @@ export default function App() {
           )}
           {fallacyMode && fallacyResult && !thinking && (
             <div className={`fallacy-result-bar${fallacyResult.correct ? " correct" : " wrong"}`}>
-              <strong>{fallacyResult.correct ? "Caught it!" : "Missed."}</strong> {fallacyResult.explanation}
+              <strong>{fallacyResult.correct ? "Got it!" : "Nope."}</strong> {fallacyResult.explanation}
               {fallacyResult.correct && <span style={{ marginLeft: "8px", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "1px", color: "var(--gold)" }}>+5 BONUS</span>}
             </div>
           )}
@@ -6161,8 +6161,8 @@ export default function App() {
               <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 14px", background: "rgba(244,197,66,0.07)", border: "1px solid rgba(244,197,66,0.2)", borderRadius: "var(--radius)", marginBottom: "12px" }}>
                 <span style={{ fontSize: "20px" }}>👑</span>
                 <div>
-                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "9px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--gold)", marginBottom: "2px" }}>Debate Dynasty</div>
-                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "18px", letterSpacing: "2px", color: "var(--gold)" }}>{progressionResult.dynastyStreak} Consecutive Wins</div>
+                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "9px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--gold)", marginBottom: "2px" }}>On a roll.</div>
+                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "18px", letterSpacing: "2px", color: "var(--gold)" }}>{progressionResult.dynastyStreak} wins in a row.</div>
                 </div>
               </div>
             )}
@@ -6170,7 +6170,7 @@ export default function App() {
               <div className={`rank-badge rank-${verdict.rank}`}>{verdict.rank}</div>
               <div className={`verdict-title ${verdict.won ? "win" : "lose"}`}>
                 {twoTruthsMode
-                  ? verdict.won ? "NUANCED" : "OVERSIMPLIFIED"
+                  ? verdict.won ? "NUANCED" : "BASIC"
                   : verdict.won ? "VICTORY" : "DEFEATED"}
               </div>
               <div className="verdict-sub">
@@ -6227,7 +6227,7 @@ export default function App() {
                 </div>
 
                 <div style={{ background: "rgba(0,119,255,0.07)", border: "1px solid rgba(0,119,255,0.2)", borderRadius: "var(--radius)", padding: "10px 14px", display: "flex", gap: "10px", alignItems: "baseline", marginBottom: "12px" }}>
-                  <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--blue)", whiteSpace: "nowrap" }}>IMPROVE</span>
+                  <span style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "var(--blue)", whiteSpace: "nowrap" }}>Next time…</span>
                   <span style={{ fontSize: "14px", color: "var(--text-mid)" }}>{verdict.improve}</span>
                 </div>
 
@@ -6263,7 +6263,7 @@ export default function App() {
                   <div className="sig-card" style={{ marginTop: "8px" }}>
                     <div className="sig-icon">{sigStyle.icon}</div>
                     <div>
-                      <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "2px" }}>Your Style</div>
+                      <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "2px" }}>How you argue</div>
                       <div className="sig-name">{sigStyle.name}</div>
                       <div className="sig-desc">{sigStyle.desc}</div>
                     </div>
@@ -6400,7 +6400,7 @@ export default function App() {
                 {!v1SubScreen ? (
                   <>
                     <div className="room-title-wrap">
-                      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "6px" }}>Match Name (optional)</div>
+                      <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "6px" }}>Give it a name? (optional)</div>
                       <input
                         className="room-title-input"
                         maxLength={40}
@@ -6418,7 +6418,7 @@ export default function App() {
                       <div className="lobby-card join" onClick={() => setV1SubScreen("join")}>
                         <div className="lobby-card-icon">🔗</div>
                         <div className="lobby-card-title">Join Room</div>
-                        <div className="lobby-card-sub">Enter a code from a friend</div>
+                        <div className="lobby-card-sub">Have a code? Join</div>
                       </div>
                     </div>
                   </>
@@ -6470,8 +6470,8 @@ export default function App() {
 
                 {v1History.length === 0 ? (
                   <div style={{ textAlign: "center", padding: "48px 16px", color: "var(--text-dim)" }}>
-                    <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "26px", letterSpacing: "2px", marginBottom: "8px" }}>NO MATCHES YET</div>
-                    <div style={{ fontSize: "13px" }}>Play your first 1v1 match to start your history.</div>
+                    <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "26px", letterSpacing: "2px", marginBottom: "8px" }}>No matches yet.</div>
+                    <div style={{ fontSize: "13px" }}>Play one and it'll show up here.</div>
                     <button className="btn btn-primary" style={{ marginTop: "20px" }} onClick={() => setV1Tab("play")}>Play Now →</button>
                   </div>
                 ) : (
@@ -6613,7 +6613,7 @@ export default function App() {
 
             {currentRoom.status === "waiting" && roomPlayerNum === 1 && (
               <div className="v1-setup-block">
-                <div className="v1-setup-lbl">Rounds</div>
+                <div className="v1-setup-lbl">How many rounds?</div>
                 <div className="v1-rounds-row">
                   {[1,2,3,4,5,7,12,15].map(r => (
                     <button
@@ -6639,7 +6639,7 @@ export default function App() {
                   >Speed · 60 sec</button>
                 </div>
                 <div style={{ fontFamily: "'Barlow Condensed'", fontSize: "10px", letterSpacing: "1px", color: "var(--text-dim)", marginBottom: "14px" }}>
-                  {currentRoom.speedRound ? "60 seconds per round — auto-submits when timer expires" : "5 minutes per round"}
+                  {currentRoom.speedRound ? "60 sec per round. Auto-submit when time's up." : "5 minutes per round"}
                 </div>
 
                 <div className="v1-setup-lbl" style={{ marginTop: "4px" }}>Topic</div>
@@ -6699,12 +6699,12 @@ export default function App() {
                   <button className="side-btn for" onClick={() => setRoomSide("for")}>
                     <span className="side-icon">✅</span>
                     <div className="side-label">For</div>
-                    <div className="side-sub">I agree with this</div>
+                    <div className="side-sub">Yeah</div>
                   </button>
                   <button className="side-btn against" onClick={() => setRoomSide("against")}>
                     <span className="side-icon">❌</span>
                     <div className="side-label">Against</div>
-                    <div className="side-sub">I disagree</div>
+                    <div className="side-sub">Nah</div>
                   </button>
                 </div>
               </div>
@@ -7209,7 +7209,7 @@ export default function App() {
           <div className="gauntlet-intro-header">
             <div className="gauntlet-intro-eyebrow">One Shot. No Respawn.</div>
             <h2 className="gauntlet-intro-title">⚔ THE GAUNTLET</h2>
-            <p className="gauntlet-intro-sub">All six opponents. Three rounds each. Lose once and it's over. Most people don't finish.</p>
+            <p className="gauntlet-intro-sub">6 bots. 3 rounds each. Lose once and you're done. Not many people make it.</p>
           </div>
 
           <p className="section-label">Your opponents — in order</p>
@@ -7227,7 +7227,7 @@ export default function App() {
             })}
           </div>
 
-          <p className="section-label">Pick your side for the first match</p>
+          <p className="section-label">Which side?</p>
           <div className="topic-preview-card" style={{ marginBottom: "16px" }}>
             <div className="tpc-label">Topic 1</div>
             <div className="tpc-text">"{tournamentTopics[0]?.text || "Topics are picked when you begin"}"</div>
@@ -7236,12 +7236,12 @@ export default function App() {
             <button className={`side-btn for ${gauntletNextSide === "for" ? "selected" : ""}`} onClick={() => setGauntletNextSide("for")}>
               <span className="side-icon">✅</span>
               <div className="side-label">For</div>
-              <div className="side-sub">I agree with this</div>
+              <div className="side-sub">Yeah</div>
             </button>
             <button className={`side-btn against ${gauntletNextSide === "against" ? "selected" : ""}`} onClick={() => setGauntletNextSide("against")}>
               <span className="side-icon">❌</span>
               <div className="side-label">Against</div>
-              <div className="side-sub">I disagree with this</div>
+              <div className="side-sub">Nah</div>
             </button>
           </div>
 
@@ -7318,7 +7318,7 @@ export default function App() {
             })()}
           </div>
 
-          <p className="section-label">Pick your side for the next match</p>
+          <p className="section-label">Which side?</p>
           <div className="side-pick" style={{ marginBottom: "20px" }}>
             <button className={`side-btn for ${gauntletNextSide === "for" ? "selected" : ""}`} onClick={() => setGauntletNextSide("for")}>
               <span className="side-icon">✅</span>
@@ -7416,7 +7416,7 @@ export default function App() {
                 {lbTab === "weekly" ? "NO DEBATES THIS WEEK" : "NO PLAYERS YET"}
               </div>
               <div style={{ fontSize: "13px" }}>
-                {lbTab === "weekly" ? "Be the first to debate this week and claim #1." : "Finish a debate to appear on the leaderboard."}
+                {lbTab === "weekly" ? "Be first. Claim #1." : "Finish a debate to show up here."}
               </div>
             </div>
           )}
@@ -7502,7 +7502,7 @@ export default function App() {
       {/* round-flash intentionally removed */}
     {isPWA && showUpdateBanner && (
       <div className="update-banner">
-        <span className="update-banner-msg">New version available</span>
+        <span className="update-banner-msg">Update available</span>
         <button className="update-banner-btn" onClick={() => window.location.reload()}>Tap to update</button>
         <button className="update-banner-close" onClick={() => setShowUpdateBanner(false)} aria-label="Dismiss">✕</button>
       </div>
@@ -7523,7 +7523,7 @@ export default function App() {
         <div className="auth-box" onClick={(e) => e.stopPropagation()}>
           <button className="auth-close" onClick={() => setShowAuthModal(false)}>✕</button>
           <div className="auth-title">CLASH</div>
-          <div className="auth-sub">Save your progress · Climb the leaderboard</div>
+          <div className="auth-sub">Keep your streak. Claim the board.</div>
           <div className="auth-tabs">
             <button className={`auth-tab${authMode === "login" ? " active" : ""}`} onClick={() => { setAuthMode("login"); setAuthError(""); }}>Login</button>
             <button className={`auth-tab${authMode === "register" ? " active" : ""}`} onClick={() => { setAuthMode("register"); setAuthError(""); }}>Register</button>
@@ -7809,7 +7809,7 @@ export default function App() {
     {(isOffline || serverWaking) && (
       <div className="server-waking-banner">
         <span className="server-waking-dot" style={isOffline ? {background:"#888"} : undefined} />
-        {isOffline ? "You're offline — check your connection" : "Server warming up — hang tight..."}
+        {isOffline ? "No connection" : "Waking up the server…"}
       </div>
     )}
 
@@ -7824,7 +7824,7 @@ export default function App() {
           <div className="install-banner-sub">
             {installBannerType === "ios" ? (
               <>Tap <svg style={{display:"inline",verticalAlign:"middle",margin:"0 2px"}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>{" "}then <strong style={{color:"rgba(255,255,255,0.65)"}}>Add to Home Screen</strong></>
-            ) : "No browser bar. Full screen. Instant open."}
+            ) : "No bars. Full screen. Fast."}
           </div>
         </div>
         {installBannerType === "native" && (
@@ -8084,7 +8084,7 @@ export default function App() {
     {showCardReveal && newCard && (
       <div className="card-reveal-overlay" onClick={() => setShowCardReveal(false)}>
         <div className="eyebrow" style={{ letterSpacing: "5px", marginBottom: "16px" }}>
-          Card Unlocked
+          New card. You earned it.
         </div>
         <div className={`card-reveal-scene card-rarity-${newCard.rarity.toLowerCase()}`} onClick={(e) => e.stopPropagation()}>
           <div className="card-reveal-inner">
@@ -8131,7 +8131,7 @@ export default function App() {
         <div className="ghost-modal" onClick={(e) => e.stopPropagation()}>
           <div className="ghost-modal-title">🔍 GHOST REVEAL</div>
           <p style={{ fontSize: "13px", color: "var(--text-dim)", marginBottom: "18px", lineHeight: 1.5 }}>
-            Hidden argument tags detected in your debate. These reveal patterns the AI identified in real-time.
+            Here's what the AI caught in your arguments.
           </p>
           {propagandaTags.length === 0 ? (
             <div style={{ color: "var(--text-dim)", fontSize: "13px" }}>No tags detected in this debate.</div>
@@ -8285,7 +8285,7 @@ export default function App() {
       <div className="screen forge-page">
         <div style={{ textAlign: "center", paddingBottom: "20px" }}>
           <p className="forge-page-title">FORGE YOUR RIVAL</p>
-          <p className="forge-page-sub">Design your opponent. Share it with the world.</p>
+          <p className="forge-page-sub">Build your perfect opponent.</p>
         </div>
         <div className="forge-bound">
         <div className="forge-section">
@@ -8316,10 +8316,10 @@ export default function App() {
           <span className="forge-section-lbl">Debate Tone</span>
           <div className="forge-tone-grid">
             {([
-              { id: "calm", name: "Cold & Controlled", desc: "Precise, measured, quietly devastating" },
+              { id: "calm", name: "Cold & Calculated", desc: "Precise, surgical, deadly." },
               { id: "aggressive", name: "Relentless", desc: "Max pressure, attacks every weak point" },
               { id: "sarcastic", name: "Sharp & Cutting", desc: "Wit as a weapon. Every word stings." },
-              { id: "analytical", name: "Logic Engine", desc: "Pure reasoning. Demolishes bad logic." },
+              { id: "analytical", name: "Pure Logic", desc: "Crushes bad arguments." },
             ] as const).map((t) => (
               <button
                 key={t.id}
@@ -8367,7 +8367,7 @@ export default function App() {
           <div className="forge-memory-row">
             <div className="forge-memory-info">
               <span className="forge-memory-title">Memory</span>
-              <span className="forge-memory-desc">{forgeForm.memoryEnabled ? "Remembers your past arguments" : "Resets every match"}</span>
+              <span className="forge-memory-desc">{forgeForm.memoryEnabled ? "Remembers your past" : "Resets every match"}</span>
             </div>
             <button
               className={`forge-toggle-btn${forgeForm.memoryEnabled ? " on" : ""}`}
@@ -8382,7 +8382,7 @@ export default function App() {
           <textarea
             className="custom-input"
             rows={3}
-            placeholder="Give your rival a backstory, quirks, or extra personality details..."
+            placeholder="Add a backstory. Make them peak."
             maxLength={300}
             value={forgeForm.backstory}
             onChange={(e) => setForgeForm((f) => ({ ...f, backstory: e.target.value }))}
@@ -8413,7 +8413,7 @@ export default function App() {
       <div className="screen forge-page">
         <div style={{ textAlign: "center", paddingBottom: "20px" }}>
           <p className="forge-page-title">RIVAL FORGED</p>
-          <p className="forge-page-sub">Your opponent is ready for battle.</p>
+          <p className="forge-page-sub">Your rival is ready.</p>
         </div>
         <div className="forge-section">
           <div className="forge-result-card">
@@ -8545,7 +8545,7 @@ export default function App() {
       <div className="username-modal" onClick={() => setShowUsernameModal(false)}>
         <div className="username-dialog" onClick={(e) => e.stopPropagation()}>
           <h3>SET YOUR NAME</h3>
-          <p className="ud-sub">Claim your identity on the leaderboard. Appears next to all your results.</p>
+          <p className="ud-sub">Shows up next to all your wins.</p>
           <input
             className="username-field"
             placeholder="YOURNAME"
@@ -8556,7 +8556,7 @@ export default function App() {
             autoFocus
           />
           <div className="username-err">{usernameError}</div>
-          <div className="username-hint">2–20 CHARS · LETTERS, NUMBERS, UNDERSCORES</div>
+          <div className="username-hint">2-20 chars. Letters, numbers, underscores.</div>
           <div style={{ display: "flex", gap: "10px" }}>
             <button className="btn btn-primary" onClick={handleSetUsername}>
               {player?.username ? "Update" : "Set Name"}
