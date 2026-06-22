@@ -126,10 +126,17 @@ router.post("/rankings/update", async (req, res) => {
       .set({ mmr: newMmr, rank: newRank, peakMmr: newPeak, wins: newWins, losses: newLosses, updatedAt: new Date() })
       .where(eq(rankings.id, current.id));
 
+    const rankDown = newRank !== current.rank && MMR_THRESHOLDS[newRank] < MMR_THRESHOLDS[current.rank];
     res.json({
-      mmr: newMmr, rank: newRank, peakMmr: newPeak, mmrDelta,
-      wins: newWins, losses: newLosses, rankUp,
-      prevRank: current.rank,
+      newMmr,
+      delta: mmrDelta,
+      newTier: newRank,
+      prevTier: current.rank,
+      rankUp,
+      rankDown,
+      peakMmr: newPeak,
+      wins: newWins,
+      losses: newLosses,
       nextRankThreshold: Object.entries(MMR_THRESHOLDS).find(([r]) => MMR_THRESHOLDS[r] > newMmr)?.[1] ?? null,
       nextRankName: Object.entries(MMR_THRESHOLDS).find(([r]) => MMR_THRESHOLDS[r] > newMmr)?.[0] ?? "Clash Master",
     });

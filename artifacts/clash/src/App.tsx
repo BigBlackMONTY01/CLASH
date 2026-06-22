@@ -5209,7 +5209,7 @@ export default function App() {
           })()}
           {authUser ? (
             <>
-              {mmrResult && (
+              {mmrResult && mmrResult.newTier && (
                 <span className={`nav-mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`}>
                   {mmrResult.newTier.toUpperCase()}
                 </span>
@@ -6240,11 +6240,11 @@ export default function App() {
                   Ranked Rating
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <span className={`mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`}>
+                  {mmrResult.newTier && <span className={`mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`}>
                     {mmrResult.newTier.toUpperCase()}
-                  </span>
-                  <span className="mmr-delta" style={{ color: mmrResult.delta >= 0 ? "var(--green)" : "var(--red)" }}>
-                    {mmrResult.delta >= 0 ? "+" : ""}{mmrResult.delta} MMR
+                  </span>}
+                  <span className="mmr-delta" style={{ color: (mmrResult.delta ?? 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                    {(mmrResult.delta ?? 0) >= 0 ? "+" : ""}{mmrResult.delta ?? 0} MMR
                   </span>
                   {mmrResult.rankUp && <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", color: "var(--gold)" }}>▲ RANK UP</span>}
                   {mmrResult.rankDown && <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "10px", letterSpacing: "2px", color: "var(--red)" }}>▼ RANK DOWN</span>}
@@ -7628,12 +7628,12 @@ export default function App() {
                     <div>
                       <div className="pp-section-lbl">Rank</div>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
-                        <span className={`mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`} style={{ fontSize: "12px" }}>
+                        {mmrResult.newTier && <span className={`mmr-chip ${mmrResult.newTier.toLowerCase().replace(" ", "-")}`} style={{ fontSize: "12px" }}>
                           {mmrResult.newTier.toUpperCase()}
-                        </span>
+                        </span>}
                         <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: "18px", color: "var(--text)" }}>{mmrResult.newMmr}</span>
-                        <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", color: mmrResult.delta >= 0 ? "var(--green)" : "var(--red)" }}>
-                          {mmrResult.delta >= 0 ? "+" : ""}{mmrResult.delta}
+                        <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", color: (mmrResult.delta ?? 0) >= 0 ? "var(--green)" : "var(--red)" }}>
+                          {(mmrResult.delta ?? 0) >= 0 ? "+" : ""}{mmrResult.delta ?? 0}
                         </span>
                       </div>
                     </div>
