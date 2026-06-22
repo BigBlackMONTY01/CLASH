@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { sql } from "drizzle-orm";
-import { incrementPlatformStats } from "../lib/stats.js";
+
 import { logger } from "../lib/logger.js";
 
 const router = Router();

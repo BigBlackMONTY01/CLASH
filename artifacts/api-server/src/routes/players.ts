@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db, players, debates } from "@workspace/db";
 import { eq, desc, sql, and, gte } from "drizzle-orm";
-import { incrementPlatformStats, getPlatformStats } from "../lib/stats.js";
+import { getPlatformStats } from "../lib/stats.js";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "./auth.js";
 
@@ -253,8 +253,6 @@ router.post("/debates/save", async (req, res) => {
       isGauntlet: Boolean(isGauntlet),
     }).returning();
 
-    // Increment running counter — fire and forget, never block the response
-    incrementPlatformStats(Boolean(won), true).catch(() => {});
 
     // Write to the live activity feed so real debates appear alongside fake ones
     const displayName = (player[0].username as string | null) || "Guest";
