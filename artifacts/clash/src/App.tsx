@@ -3304,8 +3304,6 @@ export default function App() {
   const [serverWaking, setServerWaking] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [backOnline, setBackOnline] = useState(false);
-  const [showInstallBanner, setShowInstallBanner] = useState(false);
-  const [installBannerType, setInstallBannerType] = useState<"native"|"ios"|null>(null);
   const isIOSSafari = /iphone|ipad|ipod/i.test(navigator.userAgent) && /safari/i.test(navigator.userAgent) && !/crios|fxios|chrome/i.test(navigator.userAgent);
   const [showUpdateBanner, setShowUpdateBanner] = useState(() => !!(window as any).__swUpdated);
   const [isRecording, setIsRecording] = useState(false);
@@ -3502,16 +3500,12 @@ export default function App() {
     };
   }, []);
 
-  // PWA install prompt — native (Chrome/Edge) and iOS Safari
+  // Capture native install prompt for use inside the PWA modal Android tab
   useEffect(() => {
     if (isPWA) return;
-    try { if (localStorage.getItem("clash-install-dismissed")) return; } catch {}
-
     const handler = (e: Event) => {
       e.preventDefault();
       deferredPromptRef.current = e;
-      setInstallBannerType("native");
-      setShowInstallBanner(true);
     };
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
@@ -5173,20 +5167,11 @@ export default function App() {
         <div className="logo" onClick={() => setScreen("home")} style={{ cursor: "pointer" }}>CL<span style={{color:"#e63946"}}>A</span>SH</div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           {!isPWA && <button className="pwa-nav-btn" title="Install App" onClick={() => {
-            if (deferredPromptRef.current) {
-              const prompt = deferredPromptRef.current;
-              prompt.prompt();
-              prompt.userChoice.then(({ outcome }: { outcome: string }) => {
-                deferredPromptRef.current = null;
-                if (outcome === "accepted") setShowInstallBanner(false);
-              });
-            } else {
-              const ua = navigator.userAgent;
-              if (/iphone|ipad|ipod/i.test(ua)) setPwaOs("ios");
-              else if (/android/i.test(ua)) setPwaOs("android");
-              else setPwaOs("desktop");
-              setShowPwaModal(true);
-            }
+            const ua = navigator.userAgent;
+            if (/iphone|ipad|ipod/i.test(ua)) setPwaOs("ios");
+            else if (/android/i.test(ua)) setPwaOs("android");
+            else setPwaOs("desktop");
+            setShowPwaModal(true);
           }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
@@ -7767,37 +7752,6 @@ export default function App() {
       </div>
     )}
 
-    {/* PWA INSTALL BANNER */}
-    {!isPWA && (
-      <div className={`install-banner${showInstallBanner ? " visible" : ""}`}>
-        <div className="install-banner-icon">CL<span style={{color:"#e63946"}}>A</span>SH</div>
-        <div className="install-banner-body">
-          <div className="install-banner-title">
-            {installBannerType === "ios" ? "Add to Home Screen" : "Install CLASH"}
-          </div>
-          <div className="install-banner-sub">
-            {installBannerType === "ios" ? (
-              <>Tap <svg style={{display:"inline",verticalAlign:"middle",margin:"0 2px"}} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>{" "}then <strong style={{color:"rgba(255,255,255,0.65)"}}>Add to Home Screen</strong></>
-            ) : "No bars. Full screen. Fast."}
-          </div>
-        </div>
-        {installBannerType === "native" && (
-          <button className="install-banner-btn" onClick={async () => {
-            const prompt = deferredPromptRef.current;
-            if (!prompt) return;
-            prompt.prompt();
-            const { outcome } = await prompt.userChoice;
-            deferredPromptRef.current = null;
-            if (outcome === "accepted") setShowInstallBanner(false);
-          }}>Install</button>
-        )}
-        <button className="install-banner-dismiss" onClick={() => {
-          setShowInstallBanner(false);
-          try { localStorage.setItem("clash-install-dismissed", "1"); } catch {}
-        }}>×</button>
-      </div>
-    )}
-
     {/* PWA INSTALL MODAL */}
     {showPwaModal && (
       <div className="pwa-overlay" onClick={() => setShowPwaModal(false)}>
@@ -7822,10 +7776,23 @@ export default function App() {
           )}
           {pwaOs === "android" && (
             <>
-              <div className="pwa-step"><div className="pwa-step-num">1</div><div className="pwa-step-text">Open CLASH in <strong>Chrome</strong></div></div>
-              <div className="pwa-step"><div className="pwa-step-num">2</div><div className="pwa-step-text">Tap the <strong>three dots</strong> menu in the top right</div></div>
-              <div className="pwa-step"><div className="pwa-step-num">3</div><div className="pwa-step-text">Tap <strong>Add to Home screen</strong></div></div>
-              <div className="pwa-step"><div className="pwa-step-num">4</div><div className="pwa-step-text">Tap <strong>Add</strong> to confirm — it appears on your home screen instantly</div></div>
+              {deferredPromptRef.current ? (
+                <button className="install-banner-btn" style={{width:"100%",marginBottom:"14px",padding:"12px 16px",fontSize:"14px"}} onClick={async () => {
+                  const prompt = deferredPromptRef.current;
+                  if (!prompt) return;
+                  prompt.prompt();
+                  const { outcome } = await prompt.userChoice;
+                  deferredPromptRef.current = null;
+                  if (outcome === "accepted") setShowPwaModal(false);
+                }}>Install Now</button>
+              ) : (
+                <>
+                  <div className="pwa-step"><div className="pwa-step-num">1</div><div className="pwa-step-text">Open CLASH in <strong>Chrome</strong></div></div>
+                  <div className="pwa-step"><div className="pwa-step-num">2</div><div className="pwa-step-text">Tap the <strong>three dots</strong> menu in the top right</div></div>
+                  <div className="pwa-step"><div className="pwa-step-num">3</div><div className="pwa-step-text">Tap <strong>Add to Home screen</strong></div></div>
+                  <div className="pwa-step"><div className="pwa-step-num">4</div><div className="pwa-step-text">Tap <strong>Add</strong> to confirm — it appears on your home screen instantly</div></div>
+                </>
+              )}
             </>
           )}
           {pwaOs === "desktop" && (
