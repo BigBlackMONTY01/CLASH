@@ -256,6 +256,32 @@ router.post("/debates/save", async (req, res) => {
     // Increment running counter — fire and forget, never block the response
     incrementPlatformStats(Boolean(won), true).catch(() => {});
 
+    // Write to the live activity feed so real debates appear alongside fake ones
+    const displayName = (player[0].username as string | null) || "Guest";
+    let activityText: string;
+    let activityBadge: string;
+    let activityIcon: string;
+    let activityTopic: string | null = null;
+    if (Boolean(isGauntlet)) {
+      activityText = `${displayName} completed a full Gauntlet run`;
+      activityBadge = "GAUNTLET";
+      activityIcon = "bolt";
+    } else if (Boolean(won)) {
+      activityText = `${displayName} won against ${(opponentName as string) ?? "AI"} · ${Math.round(Number(avgScore) || 0)} pts`;
+      activityBadge = "WIN";
+      activityIcon = "trophy";
+      activityTopic = (topic as string) || null;
+    } else {
+      activityText = `${displayName} lost to ${(opponentName as string) ?? "AI"} · "${(topic as string) ?? ""}"`;
+      activityBadge = "LOSS";
+      activityIcon = "skull";
+      activityTopic = (topic as string) || null;
+    }
+    db.execute(sql`
+      INSERT INTO activity_events (text, badge, icon, topic, is_fake)
+      VALUES (${activityText}, ${activityBadge}, ${activityIcon}, ${activityTopic ?? null}, false)
+    `).catch(() => {});
+
     const newStreak = Boolean(won) ? (player[0].currentStreak ?? 0) + 1 : 0;
     const newBestStreak = Math.max(player[0].bestStreak ?? 0, newStreak);
     await db
