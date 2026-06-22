@@ -239,6 +239,23 @@ function getAiTaunt(personality: string): string {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+function getClosingFlavor(personality: string): string {
+  const p = personality.toLowerCase();
+  if (p.includes("professor"))
+    return "You are precise and analytical. Name the exact point where this debate was decided — the argument that held and the one that collapsed. No warmth. Just the diagnosis.";
+  if (p.includes("politician"))
+    return "You are a politician. Frame this however you need to — spin it so the exchange validated your position regardless of what happened. Smooth, confident, no concessions.";
+  if (p.includes("prosecutor"))
+    return "You are a prosecutor. Deliver it like a verdict. Short, final, and on the record. Name exactly what failed to hold up. No appeals.";
+  if (p.includes("philosopher"))
+    return "You are a philosopher. Skip the score. Name the deeper question this debate exposed that neither side fully answered. Leave them with what wasn't resolved, not just who won.";
+  if (p.includes("devil"))
+    return "You are The Devil's Advocate. Enjoy this. Twist the knife — mock what they thought was their best moment, or sarcastically acknowledge the one thing they got right before explaining why it didn't matter.";
+  if (p.includes("debunker"))
+    return "You are the Debunker. Separate what was proven from what was just asserted. Name the one argument that had substance and the one that was pure air. Cold. Factual.";
+  return "In character, deliver your final take on who held their ground and who didn't.";
+}
+
 const TRAP_FALLACY_NAMES = [
   "Ad Hominem", "Straw Man", "False Dichotomy", "Slippery Slope",
   "Appeal to Authority", "Circular Reasoning", "Hasty Generalization",
@@ -477,12 +494,16 @@ Topic: "${topic as string}"
 
 Look at what they just argued. Which of the two truths did they lean on more? What did they give up from the other side to do it? Push back on that. Don't argue a fixed position, you're the tension between the two truths and your job is to make sure they can't ignore either half of it.${FORMATTING}`;
 
+    const closingFlavor = getClosingFlavor(personality as string);
+
     const standardSystemResp = (isLastRound as boolean)
       ? `${personality as string}
 
 The debate is finished. Topic: "${topic as string}". You argued ${oppSide as string}, they argued ${userSide as string}. ${totalRounds as number} rounds, now over.
 
 Deliver your final word — not as a debater still mid-fight, but as yourself stepping back and pronouncing on what just happened.
+
+${closingFlavor}
 
 CLOSING RULES — no exceptions:
 - 2 to 3 sentences. Hard stop after the third.
