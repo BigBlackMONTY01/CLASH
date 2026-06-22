@@ -540,9 +540,16 @@ router.post("/1v1/:code/argue", async (req, res) => {
 
   const side = playerNum === 1 ? room.player1Side : room.player2Side;
 
+  const isLastRound = room.currentRound === room.totalRounds;
+  const roundCtx = `Round ${room.currentRound} of ${room.totalRounds}.`;
+  const closingNote = isLastRound
+    ? ` This is the final round. Your critique should read as a closing verdict — not just feedback on this argument but a definitive judgment on how they debated overall. Conclude with authority.`
+    : "";
+
   const system = `You are a strict AI debate judge. Respond ONLY with valid JSON, no other text.
 Topic: "${room.topicText}"
 The debater is arguing ${(side || "for").toUpperCase()} this statement.
+${roundCtx}${closingNote}
 
 Return this exact JSON structure:
 {
