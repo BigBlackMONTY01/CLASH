@@ -3449,14 +3449,6 @@ export default function App() {
     if (isPWA) return;
     try { if (localStorage.getItem("clash-install-dismissed")) return; } catch {}
 
-    if (isIOSSafari) {
-      const t = setTimeout(() => {
-        setInstallBannerType("ios");
-        setShowInstallBanner(true);
-      }, 8000);
-      return () => clearTimeout(t);
-    }
-
     const handler = (e: Event) => {
       e.preventDefault();
       deferredPromptRef.current = e;
