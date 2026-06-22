@@ -34,6 +34,15 @@ export async function ensurePlatformStats(): Promise<void> {
         totalTopics: base.topics,
       });
       logger.info({ ...base }, "platform_stats: initialized with deterministic baseline");
+    } else if (existing[0].totalDebates === 0) {
+      const base = deterministicBaseline();
+      await db.update(platformStats).set({
+        totalDebates: base.debates,
+        totalWins: base.wins,
+        totalTopics: base.topics,
+        updatedAt: new Date(),
+      });
+      logger.info({ ...base }, "platform_stats: reset zero row to deterministic baseline");
     }
   } catch (err) {
     logger.error({ err }, "platform_stats: failed to ensure row");
