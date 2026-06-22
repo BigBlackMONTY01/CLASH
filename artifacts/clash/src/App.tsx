@@ -3304,6 +3304,7 @@ export default function App() {
   const [pwaOs, setPwaOs] = useState<"ios"|"android"|"desktop">("ios");
   const deferredPromptRef = useRef<any>(null);
   const [serverWaking, setServerWaking] = useState(false);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [installBannerType, setInstallBannerType] = useState<"native"|"ios"|null>(null);
   const isIOSSafari = /iphone|ipad|ipod/i.test(navigator.userAgent) && /safari/i.test(navigator.userAgent) && !/crios|fxios|chrome/i.test(navigator.userAgent);
@@ -3471,9 +3472,21 @@ export default function App() {
     return () => window.removeEventListener("sw-updated", handler);
   }, []);
 
+  // Offline detection
+  useEffect(() => {
+    const goOffline = () => { setIsOffline(true); setServerWaking(false); };
+    const goOnline = () => setIsOffline(false);
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+    return () => {
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
+    };
+  }, []);
+
   // Register server-waking callback and keep-alive ping to prevent Render cold starts
   useEffect(() => {
-    _serverWakingFn = setServerWaking;
+    _serverWakingFn = (v) => { if (navigator.onLine) setServerWaking(v); };
     const ping = () => fetch(`${API}/api/health`).catch(() => {});
     ping();
     const iv = setInterval(ping, 10 * 60 * 1000);
@@ -7777,11 +7790,11 @@ export default function App() {
       </>
     )}
 
-    {/* SERVER WAKING BANNER */}
-    {serverWaking && (
+    {/* OFFLINE / SERVER WAKING BANNER */}
+    {(isOffline || serverWaking) && (
       <div className="server-waking-banner">
-        <span className="server-waking-dot" />
-        Server warming up — hang tight...
+        <span className="server-waking-dot" style={isOffline ? {background:"#888"} : undefined} />
+        {isOffline ? "You're offline — check your connection" : "Server warming up — hang tight..."}
       </div>
     )}
 
