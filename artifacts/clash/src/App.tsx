@@ -1592,6 +1592,8 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .pwa-nav-btn{background:none;border:none;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:color 0.18s;-webkit-tap-highlight-color:transparent;flex-shrink:0;}.pwa-nav-btn:hover{color:var(--text);}
 .server-waking-banner{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(10,10,10,0.95);border-bottom:1px solid rgba(230,57,70,0.25);color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;text-align:center;padding:7px 16px;pointer-events:none;}
 .server-waking-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#e63946;margin-right:8px;animation:pulse 1.2s ease-in-out infinite;}
+.back-online-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;background:#1a2e1a;border:1px solid rgba(60,200,80,0.35);color:rgba(100,220,110,0.9);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 18px;border-radius:20px;pointer-events:none;animation:backOnlineFadeIn 0.25s ease;}
+@keyframes backOnlineFadeIn{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 .install-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;background:#181818;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px max(env(safe-area-inset-bottom),14px) 16px;display:flex;align-items:center;gap:12px;transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.22,1,0.36,1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
 .install-banner.visible{transform:translateY(0);}
 .install-banner-icon{width:42px;height:42px;border-radius:10px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#fff;}
@@ -3305,6 +3307,7 @@ export default function App() {
   const deferredPromptRef = useRef<any>(null);
   const [serverWaking, setServerWaking] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [backOnline, setBackOnline] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [installBannerType, setInstallBannerType] = useState<"native"|"ios"|null>(null);
   const isIOSSafari = /iphone|ipad|ipod/i.test(navigator.userAgent) && /safari/i.test(navigator.userAgent) && !/crios|fxios|chrome/i.test(navigator.userAgent);
@@ -3475,12 +3478,19 @@ export default function App() {
   // Offline detection
   useEffect(() => {
     const goOffline = () => { setIsOffline(true); setServerWaking(false); };
-    const goOnline = () => setIsOffline(false);
+    let backOnlineTimer: ReturnType<typeof setTimeout>;
+    const goOnline = () => {
+      setIsOffline(false);
+      setBackOnline(true);
+      clearTimeout(backOnlineTimer);
+      backOnlineTimer = setTimeout(() => setBackOnline(false), 2500);
+    };
     window.addEventListener("offline", goOffline);
     window.addEventListener("online", goOnline);
     return () => {
       window.removeEventListener("offline", goOffline);
       window.removeEventListener("online", goOnline);
+      clearTimeout(backOnlineTimer);
     };
   }, []);
 
@@ -7788,6 +7798,11 @@ export default function App() {
           <button className="pp-logout" onClick={logoutFn}>Log Out</button>
         </div>
       </>
+    )}
+
+    {/* BACK ONLINE TOAST */}
+    {backOnline && (
+      <div className="back-online-toast">Back online</div>
     )}
 
     {/* OFFLINE / SERVER WAKING BANNER */}
