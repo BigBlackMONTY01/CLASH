@@ -7,19 +7,26 @@ import { logger } from "../lib/logger.js";
 const router = Router();
 
 const FAKE_INTERVAL_MIN_MS = 2 * 60 * 1000;
-const FAKE_INTERVAL_MAX_MS = 30 * 60 * 1000;
-const MAX_FAKE_ROWS = 4;
+const FAKE_INTERVAL_MAX_MS = 5 * 60 * 1000;
+const MAX_FAKE_ROWS = 20;
 const REAL_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 
 const FAKE_USERS = [
-  "mr_counterpoint", "gg_no_rebuttal", "SocraticSlap", "DebateDave_",
-  "HotTakeHannah", "TakeItOrLeave", "LogicBro99", "PhilosophyKing",
-  "FactDropper", "DebunkThis", "RebuttalKing", "CriticalMass_",
+  "PlatoBro", "PhilBuster99", "CriticalMass7", "SharptakE", "mr_counterpoint",
+  "gg_no_rebuttal", "SocraticSlap", "DebateDave_", "HotTakeHannah", "TakeItOrLeave",
+  "LogicBro99", "PhilosophyKing", "FactDropper", "DebunkThis", "RebuttalKing",
+  "NuanceNinja", "RhetoricRaj", "kira_debates", "SyllogismSam", "BurdenOfProof",
+  "FallacyFinder", "contrarian_irl", "ArgueKing88", "xoxodebater", "LogicLord",
+  "steelmanner", "NotYourFallacy", "EthosPathosBro", "WrongOpinions", "rebuttal_exe",
+  "JustAskingQ", "CriticalHit99", "DialecticalDave", "CounterPunchR", "PremisePusher",
+  "SoundArgument", "ThesisKing", "DebateMe_IRL", "DevilsAdvocate", "SteelManning",
 ];
+
 const FAKE_OPPONENTS = [
-  "The Debunker", "The Prosecutor", "The Professor",
-  "The Contrarian", "The Analyst", "The Realist",
+  "The Professor", "The Prosecutor", "The Philosopher",
+  "The Politician", "The Devil", "The Debunker",
 ];
+
 const FAKE_TOPICS = [
   "Affirmative action is necessary",
   "Cancel culture has gone too far",
@@ -33,25 +40,55 @@ const FAKE_TOPICS = [
   "Space exploration is worth the cost",
   "Meritocracy is a myth",
   "Democracy is in decline worldwide",
+  "Billionaires should not exist",
+  "War is never justified",
+  "Religion does more harm than good",
+  "Automation will destroy jobs",
+  "Capitalism needs to be replaced",
+  "Free speech has no limits",
+  "Drugs should be decriminalized",
+  "Nuclear energy is the future",
+  "Prisons do more harm than good",
+  "AI will make humans obsolete",
+  "Veganism is a moral obligation",
+  "Social media should be regulated",
+  "The US should have open borders",
 ];
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function weightedScore(): number {
+  const r = Math.random();
+  if (r < 0.10) return 40 + Math.floor(Math.random() * 15);
+  if (r < 0.35) return 55 + Math.floor(Math.random() * 10);
+  if (r < 0.70) return 65 + Math.floor(Math.random() * 11);
+  if (r < 0.90) return 76 + Math.floor(Math.random() * 10);
+  return 86 + Math.floor(Math.random() * 10);
+}
+
 function generateFakeEntry(): { text: string; badge: string; icon: string; topic: string | null } {
+  const player = pick(FAKE_USERS);
+  const opponent = pick(FAKE_OPPONENTS);
+  const topic = pick(FAKE_TOPICS);
   const rand = Math.random();
-  if (rand < 0.15) {
-    const streak = 3 + Math.floor(Math.random() * 5);
-    return { text: `${pick(FAKE_USERS)} is on a ${streak}-win streak`, badge: "STREAK", icon: "bolt", topic: null };
-  } else if (rand < 0.55) {
-    const topic = pick(FAKE_TOPICS);
-    return { text: `${pick(FAKE_USERS)} lost to ${pick(FAKE_OPPONENTS)} · "${topic}"`, badge: "LOSS", icon: "skull", topic };
-  } else {
-    const pts = 60 + Math.floor(Math.random() * 36);
-    const topic = pick(FAKE_TOPICS);
-    return { text: `${pick(FAKE_USERS)} won against ${pick(FAKE_OPPONENTS)} · ${pts} pts`, badge: "WIN", icon: "trophy", topic };
+
+  if (rand < 0.05) {
+    return { text: `${player} completed a full Gauntlet run`, badge: "GAUNTLET", icon: "bolt", topic: null };
   }
+  if (rand < 0.10) {
+    const streak = 3 + Math.floor(Math.random() * 5);
+    return { text: `${player} is on a ${streak}-win streak`, badge: "STREAK", icon: "bolt", topic: null };
+  }
+  if (rand < 0.15) {
+    return { text: `${player} collapsed against ${opponent} · "${topic}"`, badge: "COLLAPSE", icon: "skull", topic };
+  }
+  if (rand < 0.55) {
+    return { text: `${player} lost to ${opponent} · "${topic}"`, badge: "LOSS", icon: "skull", topic };
+  }
+  const score = weightedScore();
+  return { text: `${player} won against ${opponent} · ${score} pts`, badge: "WIN", icon: "trophy", topic };
 }
 
 function randomFakeInterval(): number {
@@ -98,8 +135,9 @@ export async function startFakeEntryJob(): Promise<void> {
     const result = await db.execute(sql`SELECT COUNT(*) AS cnt FROM activity_events WHERE is_fake = true`);
     const rows = (result as any).rows ?? result;
     const count = Number(rows[0]?.cnt ?? 0);
-    if (count === 0) {
-      await generateFakeEntryJob();
+    const needed = Math.max(0, MAX_FAKE_ROWS - count);
+    for (let i = 0; i < needed; i++) {
+      await generateFakeEntryJob().catch(() => {});
     }
   } catch {
     await generateFakeEntryJob().catch(() => {});
@@ -107,12 +145,11 @@ export async function startFakeEntryJob(): Promise<void> {
   scheduleFakeEntryJob();
 }
 
-// GET /api/activity/recent — returns latest activity entries (mix of fake and real)
+// GET /api/activity/recent — real entries always shown, fakes fill remaining slots, newest first
 router.get("/activity/recent", async (req, res) => {
   startFakeEntryJob().catch(() => {});
 
   try {
-    // Occasionally purge real entries older than 7 days
     if (Math.random() < 0.1) {
       db.execute(sql`
         DELETE FROM activity_events
@@ -121,14 +158,32 @@ router.get("/activity/recent", async (req, res) => {
       `).catch(() => {});
     }
 
-    const result = await db.execute(sql`
-      SELECT id, text, badge, icon, topic, created_at AS "createdAt"
-      FROM activity_events
-      ORDER BY created_at DESC
-      LIMIT 6
-    `);
-    const rows = (result as any).rows ?? result;
-    res.json(rows);
+    const [realResult, fakeResult] = await Promise.all([
+      db.execute(sql`
+        SELECT id, text, badge, icon, topic, created_at AS "createdAt"
+        FROM activity_events
+        WHERE is_fake = false
+        ORDER BY created_at DESC
+        LIMIT 5
+      `),
+      db.execute(sql`
+        SELECT id, text, badge, icon, topic, created_at AS "createdAt"
+        FROM activity_events
+        WHERE is_fake = true
+        ORDER BY created_at DESC
+        LIMIT 10
+      `),
+    ]);
+
+    const realRows: any[] = (realResult as any).rows ?? realResult;
+    const fakeRows: any[] = (fakeResult as any).rows ?? fakeResult;
+    const fakeFill = fakeRows.slice(0, Math.max(4, 12 - realRows.length));
+
+    const merged = [...realRows, ...fakeFill]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 12);
+
+    res.json(merged);
   } catch (err) {
     req.log.error({ err }, "activity/recent failed");
     res.json([]);

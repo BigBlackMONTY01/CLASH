@@ -2998,7 +2998,7 @@ interface SeasonSummary { id: number; name: string; startDate: string; endDate: 
 interface GlobalStats { totalDebates: number; globalWinRate: number; uniqueTopics: number; activePlayers: number; }
 interface RecentActivity { id: number; text: string; badge: string; icon: string; topic: string | null; createdAt: string; }
 
-const FEED_BADGE_CLASS: Record<string, string> = { WIN: "feed-win", LOSS: "feed-loss", STREAK: "feed-streak", GAUNTLET: "feed-streak" };
+const FEED_BADGE_CLASS: Record<string, string> = { WIN: "feed-win", LOSS: "feed-loss", STREAK: "feed-streak", GAUNTLET: "feed-streak", COLLAPSE: "feed-loss" };
 const FEED_ICON_MAP: Record<string, string> = { trophy: "🏆", skull: "💀", bolt: "⚡" };
 
 function buildRealFeedItems(activity: RecentActivity[]): FeedItem[] {
