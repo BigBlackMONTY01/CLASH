@@ -1,0 +1,27 @@
+1. Mid-debate coach tips on demand — "Whisper" already exists in code but isn't surfaced cleanly; make it a tap-to-reveal during the debate, not just post-round
+2. AI remembers earlier rounds — currently capped at 6 messages and no cross-round callback; AI should explicitly reference what the user said in rounds and use to clapback if needed
+3. Proper argument timer UX — timer runs but no visual urgency escalation (color shift, pulse) in the last 10 seconds
+4. Live word count — show a live character/word count while typing so users know when they're being concise vs. verbose
+5. AI opening taunts library — each opponent's opening taunt is generated fresh every time; a curated pool of sharp one-liners would be more memorable and consistent
+6. WebSockets instead of 2s polling — current polling creates visible lag and excess server load; SSE is partially in there but incomplete
+7. Spectator mode — let others watch live 1v1 rooms via a read-only view
+8. Room expiry warning — rooms expire silently; show a countdown and "room expiring soon" warning to both players
+9. Typing indicator — show "opponent is typing..." while the other player is writing their argument
+10. Rank decay — inactive players' MMR slowly drops, keeping the leaderboard competitive
+11. Card reveal animation — rarity reveal with a flip/glow effect instead of instantly appearing
+12. Card showcase on profile — a dedicated section showing a player's rarest/best cards
+13. Cards tied to specific topics — a "Free Will" card looks different from a "Capitalism" card; topic-themed art
+14. Card trading — let players gift or trade duplicates
+15. Legendary card requirement — Legendary should require a verifiable S-rank performance, not random chance
+16. Public profile URL — /player/username shareable page showing stats, recent debates, top cards
+17. Debate history log — scrollable list of past debates with topic, score, result, date
+18. Avatar system — currently only accent color; add silhouette avatars or AI-generated debate personas
+19. Topic history — show that a topic has been debated 847 times globally, with the win rate per side
+20. Custom topic input — let users type any topic, not just from the curated list
+21. Push notifications — "Someone challenged you to a 1v1", "Your rank changed", "New daily topic"
+22. Returning user prompt — "You last debated 5 days ago — pick up where you left off" on re-open
+23. App.tsx split into components — 8,500 lines in a single file is unmanageable; breaking into DebateArena, Verdict, Leaderboard, etc. would unlock proper code-splitting and faster loads
+24. Loading skeleton states — currently screens flash or show nothing while data loads; skeleton placeholders would feel much more polished
+25. Error boundaries with friendly UI — unhandled errors show a blank screen; a "something went wrong, try again" fallback is essential
+26. Password reset flow — currently there's no "forgot password" — a locked-out user has no recovery
+27. Argument draft autosave — if the browser closes mid-argument, the draft is lost; autosave to localStorageevery keystroke
