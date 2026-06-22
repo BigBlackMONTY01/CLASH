@@ -4,7 +4,7 @@ import { logger } from "./logger";
 
 const BASELINE_DEBATES = 52;
 const BASELINE_WINS = 30;
-const BASELINE_TOPICS = 22;
+const BASELINE_TOPICS = 0;
 
 export async function getPlatformStats(): Promise<{
   totalDebates: number;
