@@ -38,12 +38,12 @@ const HOW_STEPS = [
 ];
 
 const OPPONENTS = [
-  { icon: "🎓", name: "The Professor",  desc: "Calm, methodical, academic. Dismantles your logic with precision.",          diff: "medium",  diffLabel: "Medium"  },
-  { icon: "🏛️", name: "The Politician", desc: "Dodges, pivots, and spins. Masters emotional rhetoric.",                     diff: "medium",  diffLabel: "Medium"  },
-  { icon: "⚖️", name: "The Prosecutor", desc: "Aggressive, relentless. Finds your weakest point and hammers it.",           diff: "hard",    diffLabel: "Hard"    },
-  { icon: "🔮", name: "The Philosopher",desc: "Questions your fundamental assumptions. Makes you doubt everything.",         diff: "hard",    diffLabel: "Hard"    },
-  { icon: "😈", name: "The Devil",      desc: "Chaotic. Takes the most extreme opposing position. Unpredictable.",           diff: "easy",    diffLabel: "Easy"    },
-  { icon: "🔬", name: "The Debunker",   desc: "Data-obsessed. Demands sources. Fact-checks everything in real time.",       diff: "extreme", diffLabel: "Extreme" },
+  { icon: "🎓", name: "The Professor",  desc: "Calm, methodical. Exposes every gap. Won't let a single assertion slide.",                    diff: "medium",  diffLabel: "Medium"  },
+  { icon: "🏛️", name: "The Politician", desc: "Makes your strongest point sound like it proves their side. Infuriatingly smooth.",           diff: "medium",  diffLabel: "Medium"  },
+  { icon: "⚖️", name: "The Prosecutor", desc: "Relentless cross-examiner. Quotes your own words back at you. No exit is safe.",             diff: "hard",    diffLabel: "Hard"    },
+  { icon: "🔮", name: "The Philosopher",desc: "Opens every round with the question you can't dodge. Exposes what you didn't know you assumed.", diff: "hard",  diffLabel: "Hard"    },
+  { icon: "😈", name: "The Devil",      desc: "Chaotic. Takes the most extreme position always. Funnier than you'd like.",                    diff: "easy",    diffLabel: "Easy"    },
+  { icon: "🔬", name: "The Debunker",   desc: "Names your fallacy by name. Demands dates, sources, mechanisms. Has never lost.",              diff: "extreme", diffLabel: "Extreme" },
 ];
 
 const FEATURES = [
@@ -341,16 +341,16 @@ export default function Landing() {
 
       {/* HERO */}
       <section className="lp-hero">
-        <div className="lp-hero-eyebrow">The AI Debate Arena</div>
+        <div className="lp-hero-eyebrow">The Arena Is Open</div>
         <h1 className="lp-hero-title">
           ARGUE.<span className="line2">WIN.</span>
         </h1>
         <p className="lp-hero-sub">
-          Debate AI opponents that actually push back. Get scored on Logic, Persuasion, and Delivery.
-          Climb the ranks. Earn your title.
+          Six opponents. Three rounds. One judge that has never been impressed.
+          Find out where your argument actually falls apart.
         </p>
         <a className="lp-hero-cta" href={APP_URL}>
-          Start Debating →
+          Take a Side →
         </a>
         <span className="lp-hero-sub-cta">
           <span className="lp-live-dot" />
@@ -398,7 +398,7 @@ export default function Landing() {
       {/* OPPONENTS */}
       <section className="lp-section" style={{ paddingTop: 0 }}>
         <h2 className="lp-section-title">YOUR <span>OPPONENTS</span></h2>
-        <p className="lp-section-sub">Choose your challenger. Each one will tear apart your arguments differently.</p>
+        <p className="lp-section-sub">Six of them. Each one has a different way of making you look wrong.</p>
         <div className="lp-opp-grid">
           {OPPONENTS.map((opp) => (
             <div key={opp.name} className="lp-opp-card">
@@ -413,8 +413,8 @@ export default function Landing() {
 
       {/* FEATURES */}
       <section className="lp-section" style={{ paddingTop: 0 }}>
-        <h2 className="lp-section-title">BUILT TO <span>IMPROVE YOU</span></h2>
-        <p className="lp-section-sub">CLASH isn't just a game. It's a training ground.</p>
+        <h2 className="lp-section-title">BUILT <span>DIFFERENT</span></h2>
+        <p className="lp-section-sub">Every match is a mirror. Most people don't like what they see.</p>
         <div className="lp-feat-grid">
           {FEATURES.map((f) => (
             <div key={f.name} className="lp-feat-card">
@@ -429,7 +429,7 @@ export default function Landing() {
       {/* RANK SYSTEM */}
       <section className="lp-section" style={{ paddingTop: 0, textAlign: "center" }}>
         <h2 className="lp-section-title">THE <span>RANK SYSTEM</span></h2>
-        <p className="lp-section-sub">Every debate earns you a rank from S to F. Reach Clash Master and you've earned the right to call yourself a debater.</p>
+        <p className="lp-section-sub">Every debate gets graded. Not a participation ribbon — S through F. Most people land in the middle. The ones who don't remember every round they lost.</p>
         <div className="lp-ranks">
           {[["S","s"],["A","a"],["B","b"],["C","c"],["D","d"],["F","f"]].map(([r, cls]) => (
             <div key={r} className={`lp-rank ${cls}`}>{r}</div>
@@ -447,7 +447,7 @@ export default function Landing() {
       {lbData.length > 0 && (
         <section className="lp-section" style={{ paddingTop: 0 }}>
           <h2 className="lp-section-title">TOP <span>DEBATERS</span></h2>
-          <p className="lp-section-sub">Can you crack the top 10?</p>
+          <p className="lp-section-sub">These are the names on the board right now.</p>
           {lbData.map((entry, i) => {
             const rankCls = i === 0 ? "gold" : i === 1 ? "silver" : i === 2 ? "bronze" : "";
             const name = entry.username || `GUEST#${entry.deviceId.slice(-4).toUpperCase()}`;
@@ -469,12 +469,12 @@ export default function Landing() {
       {/* CTA SECTION */}
       <div className="lp-cta-section">
         <h2 className="lp-cta-title">READY TO <span>CLASH?</span></h2>
-        <p className="lp-cta-sub">Free. No download. No sign-up. Just you vs. the AI.</p>
+        <p className="lp-cta-sub">Free. No download. No sign-up. Pick a side and go.</p>
         <a className="lp-hero-cta" href={APP_URL}>
           Enter the Arena →
         </a>
         <div style={{ marginTop: "16px", fontFamily: "'Barlow Condensed',sans-serif", fontSize: "11px", letterSpacing: "2px", color: "var(--lp-dim)" }}>
-          Sign up to track your MMR, earn titles, and appear on the leaderboard.
+          Create an account to track your rank, build your record, and appear on the board.
         </div>
       </div>
 

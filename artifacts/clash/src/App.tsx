@@ -5330,15 +5330,15 @@ export default function App() {
                   <div className="home-duel-label red">VS AI</div>
                   <div className="reco-badge">Recommended</div>
                 </div>
-                <div className="home-duel-sub">Pick a topic. Pick a side. Argue.</div>
-                <div className="home-duel-cta red">Start Debate →</div>
+                <div className="home-duel-sub">You, an AI, three rounds. Go.</div>
+                <div className="home-duel-cta red">Pick a fight →</div>
               </button>
               <button
                 className="home-duel-card blue"
                 onClick={() => { setV1SubScreen(""); setV1Tab("play"); setRoomError(""); setRoomJoinCode(""); setScreen("multiplayer-lobby"); }}
               >
                 <div className="home-duel-label blue" style={{ marginBottom: "5px" }}>1V1</div>
-                <div className="home-duel-sub">Challenge a human. Real stakes.</div>
+                <div className="home-duel-sub">A real person. Neither of you goes easy.</div>
                 <div className="home-duel-cta blue">Find Match →</div>
               </button>
             </div>
@@ -5349,7 +5349,7 @@ export default function App() {
               >
                 <span className="home-mode-icon">🏆</span>
                 <div className="home-mode-title gold">Gauntlet</div>
-                <div className="home-mode-sub">6 opponents back-to-back</div>
+                <div className="home-mode-sub">Six fights. No breaks. No second chances.</div>
               </button>
               <button
                 className="home-mode-btn purple"
@@ -5391,7 +5391,7 @@ export default function App() {
               >
                 <span className="home-mode-icon" style={{fontSize:"16px"}}>⚖</span>
                 <div className="home-mode-title teal">Two-Truths</div>
-                <div className="home-mode-sub">Defend the nuance</div>
+                <div className="home-mode-sub">Hold two truths at once. Most can't.</div>
               </button>
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "2px", marginBottom: "6px" }}>
@@ -5401,7 +5401,7 @@ export default function App() {
 
           {/* TODAY'S CLASH — swipeable featured topic card */}
           <div>
-            <p className="section-label" style={{ marginBottom: "0" }}>Today's Clash</p>
+            <p className="section-label" style={{ marginBottom: "0" }}>Today's Fight</p>
             <div className="featured-wrap">
               <div
                 key={featuredKey}
@@ -5462,7 +5462,7 @@ export default function App() {
             </div>
             <div className="arena-stat">
               <span key={arenaDisplay.topics} className="as-val">{arenaDisplay.topics}</span>
-              <span className="as-lbl">Topics</span>
+              <span className="as-lbl">Topics Clashed</span>
             </div>
           </div>
 
@@ -5473,7 +5473,7 @@ export default function App() {
               <div className="live-feed-header">
                 <p className="section-label" style={{ marginBottom: 0 }}>
                   <span className="live-dot" />
-                  Live Activity
+                  Live in the Arena
                 </p>
               </div>
               <div key={feedKey} className="live-feed">
@@ -5532,7 +5532,7 @@ export default function App() {
           </div>
           {setupStep === 0 && (
             <>
-              <p className="section-label">Choose your opponent</p>
+              <p className="section-label">Who are you fighting?</p>
               {nemesisBot && (
                 <div className="nemesis-card" style={{ marginBottom: "16px", cursor: "pointer" }} onClick={() => { setSelectedAI(nemesisBot.id); setSetupStep(1); }}>
                   <div className="nemesis-icon">{nemesisBot.icon}</div>
@@ -5571,7 +5571,7 @@ export default function App() {
 
           {setupStep === 1 && (
             <>
-              <p className="section-label">Pick a topic</p>
+              <p className="section-label">What's the fight about?</p>
               {Object.keys(topicVotes).length > 0 && (() => {
                 const sorted = Object.entries(topicVotes).sort((a, b) => b[1] - a[1]).slice(0, 3);
                 return (
@@ -5605,7 +5605,7 @@ export default function App() {
                 })}
               </div>
               <div style={{ marginBottom: "24px" }}>
-                <p className="section-label" style={{ marginBottom: "10px" }}>Or write your own</p>
+                <p className="section-label" style={{ marginBottom: "10px" }}>Or bring your own topic</p>
                 <div style={{ display: "flex", gap: "8px" }}>
                   <input
                     type="text"
@@ -5644,7 +5644,7 @@ export default function App() {
 
           {setupStep === 2 && (
             <>
-              <p className="section-label">How many rounds?</p>
+              <p className="section-label">How long are you willing to fight?</p>
               <div className="rounds-pick">
                 {[1, 3, 5, 10].map((r) => (
                   <button key={r} className={`rounds-btn ${selectedRounds === r ? "selected" : ""}`} onClick={() => setSelectedRounds(r)}>
@@ -5666,17 +5666,17 @@ export default function App() {
                 </div>
               ) : (
                 <>
-                  <p className="section-label">Pick your side</p>
+                  <p className="section-label">Which side are you on?</p>
                   <div className="side-pick">
                     <button className={`side-btn for ${selectedSide === "for" ? "selected" : ""}`} onClick={() => setSelectedSide("for")}>
                       <span className="side-icon">✅</span>
                       <div className="side-label">For</div>
-                      <div className="side-sub">I agree with this</div>
+                      <div className="side-sub">Defend it</div>
                     </button>
                     <button className={`side-btn against ${selectedSide === "against" ? "selected" : ""}`} onClick={() => setSelectedSide("against")}>
                       <span className="side-icon">❌</span>
                       <div className="side-label">Against</div>
-                      <div className="side-sub">I disagree with this</div>
+                      <div className="side-sub">Tear it down</div>
                     </button>
                   </div>
                   <div
@@ -7207,9 +7207,9 @@ export default function App() {
       {screen === "gauntlet-intro" && (
         <div className="screen">
           <div className="gauntlet-intro-header">
-            <div className="gauntlet-intro-eyebrow">Challenge Mode</div>
+            <div className="gauntlet-intro-eyebrow">One Shot. No Respawn.</div>
             <h2 className="gauntlet-intro-title">⚔ THE GAUNTLET</h2>
-            <p className="gauntlet-intro-sub">Face all 6 opponents back-to-back. 3 rounds each. No respawn.</p>
+            <p className="gauntlet-intro-sub">All six opponents. Three rounds each. Lose once and it's over. Most people don't finish.</p>
           </div>
 
           <p className="section-label">Your opponents — in order</p>
