@@ -1,0 +1,62 @@
+Build a realistic background fake activity generator that keeps the server alive 
+Problem: The home screen stats and live activity need to stay fresh even when real users aren’t playing. Right now the fake activity is broken and doesn’t contribute to stats. 
+Solution: Generate realistic fake debate activity in the background, store it, and make it count toward the global stats. 
+What needs to happen: 
+1.	Fake Activity Generator (Backend Cron / Interval) 
+•	Every 2-5 minutes, generate a new fake debate entry 
+•	Each entry should include: 
+•	Random player name (use a list of 30-50 names: PlatoBro, PhilBuster99, CriticalMass7, SharptakE, etc.) 
+•	Random AI opponent (one of: The Professor, The Prosecutor, The Philosopher, The Politician, The Devil, The Debunker) 
+•	Random topic (pick from your existing topic pool) 
+•	Random outcome (60% win / 40% loss to make it feel realistic) 
+•	Random score (40-95 range, weighted toward 60-75) 
+•	Random rank (S/A/B/C/D/F based on score) 
+•	Timestamp (current time minus 2-120 seconds, so it appears to have just happened) 
+•	Event type: “win” / “loss” / “gauntlet_complete” / “collapse” (occasionally add drama) 
+2.	Store Fake Activity 
+•	Create a separate table or collection called fake_debates or activity_feed_cache 
+•	Store each generated entry with: playerName, opponent, topic, score, outcome, timestamp, eventType 
+•	Keep the last 20 entries (old ones auto-delete) 
+•	OR store in-memory and regenerate on server restart (simpler) 
+3.	Update Stats When Fake Activity is Generated 
+•	Whenever a fake entry is created: 
+•	Increment global “total debates” by 1 
+•	If win: increment “total wins” 
+•	If loss: increment “total losses” 
+•	Recalculate global win rate = (totalWins / totalDebates) * 100 
+•	Add topic to “unique topics” Set (no duplicates) 
+•	Store these aggregates in a separate global_stats table or in-memory object 
+•	Never decrement — only go up 
+4.	Merge Real + Fake Activity on Home Screen 
+•	GET /activity/recent should return: 
+•	Real debates from the DB (most recent first) 
+•	Fake debates from the activity cache (most recent first) 
+•	Merge and sort by timestamp (newest first) 
+•	Return the most recent 10-15 entries 
+•	The frontend can’t tell the difference 
+5.	Serve Aggregated Stats 
+•	GET /stats/global should return: 
+•	Debates Fought: sum of real + fake 
+•	Global Win Rate: (real wins + fake wins) / (real debates + fake debates) * 100 
+•	Topics Clashed: unique topics from real + fake 
+•	Update these numbers whenever fake activity is generated 
+6.	Keep the Server Alive 
+•	Run the generator on a 3-minute interval (or whatever feels natural) 
+•	Don’t generate during off-peak if you want to be realistic, OR always generate to keep engagement high 
+•	Optional: weight timestamps so entries appear spread throughout the day, not bunched up 
+7.	Avoid Duplication & Saturation 
+•	Don’t generate fake activity if the last entry is less than 30 seconds old (space them out) 
+•	Keep the fake activity pool at ~50 entries max (older ones get deleted) 
+•	Don’t let fake activity overwhelm real activity — cap it so real entries are always visible 
+Example flow: 
+•	Timer ticks every 3 minutes 
+•	Generator creates: { playerName: “SharptakE”, opponent: “The Debunker”, topic: “AI Ethics”, score: 78, outcome: “win”, timestamp: now, eventType: “win” } 
+•	Stats update: Debates: 1, Wins: 1, Win Rate: 100%, Topics: 1 
+•	3 minutes later, another entry generates: { playerName: “CriticalMass7”, opponent: “The Professor”, topic: “Free Will”, score: 52, outcome: “loss”, … } 
+•	Stats update: Debates: 2, Wins: 1, Win Rate: 50%, Topics: 2 
+•	User loads home screen → sees both entries in the feed + the aggregated stats reflecting both real and fake 
+Don’t break real data: 
+•	Real debates from logged-in users always take priority 
+•	Fake entries should only fill the feed when real activity is low 
+•	The stats should accurately reflect the mix — no hidden counts 
+Make it feel alive without being obvious.
