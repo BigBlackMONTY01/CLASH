@@ -482,12 +482,12 @@ Look at what they just argued. Which of the two truths did they lean on more? Wh
 ${diffInstr}${adaptiveNote}${overtimeNote}${fallacyTrapNote}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-This is your FINAL closing argument. Make it decisive and land your strongest point. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`
+This is Round ${round as number} of ${totalRounds as number} — the final round. The debate is over after this. Deliver a closing statement, not another rebuttal. Reference the full arc of this exchange: what the user got right, where their argument fell apart, and what the debate ultimately proved. Speak with the finality of someone who knows this is the last word. No new threads — close it out. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`
       : `${personality as string}
 ${diffInstr}${adaptiveNote}${overtimeNote}${fallacyTrapNote}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`;
+Round ${round as number} of ${totalRounds as number}. Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`;
 
     const systemResp = isTwoTruths ? twoTruthsSystemResp : standardSystemResp;
 
