@@ -470,9 +470,9 @@ Respond ONLY with valid JSON, no markdown:
       content: m.text,
     }));
 
-    // Cap history to last 6 messages to avoid context-length errors on later rounds
-    if (history.length > 6) {
-      history = history.slice(history.length - 6);
+    // Keep up to 12 messages (6 full rounds) so the AI has genuine cross-round memory
+    if (history.length > 12) {
+      history = history.slice(history.length - 12);
     }
 
     if (history.length > 0 && history[0].role === "assistant") {
@@ -520,7 +520,9 @@ FORMATTING:
 ${diffInstr}${adaptiveNote}${overtimeNote}${fallacyTrapNote}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-Round ${round as number} of ${totalRounds as number}. Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`;
+Round ${round as number} of ${totalRounds as number}. Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.
+
+CROSS-ROUND MEMORY: You have the full conversation history above. If the user contradicted something they said in an earlier round, quote it back and press on it. If their argument weakened between rounds, name it. Do not pretend each round is isolated — exploit continuity.${FORMATTING}`;
 
     const systemResp = isTwoTruths ? twoTruthsSystemResp : standardSystemResp;
 

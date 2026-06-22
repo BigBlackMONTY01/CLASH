@@ -161,6 +161,7 @@ padding:2px 8px;border-radius:3px;background:rgba(251,146,60,0.12);color:#fb923c
 
 .input-area{position:relative;}
 .timer-bar{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+@keyframes timerShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}40%{transform:translateX(3px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}.timer-bar.timer-critical{animation:timerShake 0.35s ease-in-out infinite;}.room-expiry-warn{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius);margin-bottom:10px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:#ef4444;}.return-prompt{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);border-radius:var(--radius);margin-bottom:16px;gap:14px;}.return-prompt-text{font-size:13px;color:var(--text-dim);line-height:1.4;}.return-prompt-actions{display:flex;gap:8px;flex-shrink:0;}.return-prompt-dismiss{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.25);font-size:16px;padding:0;line-height:1;transition:color 0.15s;}.return-prompt-dismiss:hover{color:rgba(255,255,255,0.5);}.whisper-reveal-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(168,85,247,0.07);border:1px solid rgba(168,85,247,0.22);border-radius:20px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#a855f7;margin-top:10px;transition:all 0.18s;width:fit-content;}.whisper-reveal-pill:hover{background:rgba(168,85,247,0.14);border-color:rgba(168,85,247,0.4);}.whisper-reveal-dot{width:6px;height:6px;border-radius:50%;background:#a855f7;animation:whisperDot 1.4s ease-in-out infinite;}.word-count{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:var(--text-dim);padding:0 8px;border-right:1px solid rgba(255,255,255,0.08);margin-right:4px;}
 .timer-countdown{font-family:'Bebas Neue',sans-serif;font-size:30px;min-width:44px;text-align:center;transition:color 0.3s;line-height:1;}
 .timer-countdown.pulse{animation:timerPulse 0.5s ease infinite alternate;}
 @keyframes timerPulse{from{opacity:1;transform:scale(1);}to{opacity:0.6;transform:scale(1.08);}}
@@ -3037,7 +3038,7 @@ interface Stats { wins: number; debates: number; bestScore: number; currentStrea
 interface RoomHighlight { text: string; type: "strong" | "weak" | "wrong" | "fallacy"; note: string; }
 interface RoomArgument { id: number; roomId: number; roundNum: number; playerNum: number; argumentText: string; score: number | null; logic: number | null; persuasion: number | null; delivery: number | null; rank: string | null; critique: string | null; highlights: string; }
 interface RoomTaunt { id: number; text: string; fromName: string; fromPlayerNum: 1 | 2; }
-interface RoomState { id: number; code: string; title?: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; speedRound: boolean; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; player1TypingAt: number | null; player2TypingAt: number | null; }
+interface RoomState { id: number; code: string; title?: string; topicText: string; topicCat: string; player1Id: number; player2Id: number | null; player1Side: string | null; player2Side: string | null; player1Ready: boolean; player2Ready: boolean; status: string; totalRounds: number; currentRound: number; speedRound: boolean; winnerPlayerNum: number | null; player1Score: number | null; player2Score: number | null; player1Rank: string | null; player2Rank: string | null; player1Name: string; player2Name: string | null; arguments: RoomArgument[]; playerNum: 1 | 2 | null; iq1: number | null; iq2: number | null; latestTaunt: RoomTaunt | null; player1TypingAt: number | null; player2TypingAt: number | null; expiresAt?: string; }
 interface V1HistoryEntry { code: string; title?: string; topic: string; opponentName: string; myScore: number | null; oppScore: number | null; won: boolean; date: string; myRank: string; myIQ: number | null; }
 interface DebateCard { id: number; playerId: number; debateId: number | null; opponentId: string; opponentName: string; topic: string; score: number; rank: string; rarity: string; bestQuote: string; createdAt: string; }
 
@@ -3374,6 +3375,8 @@ export default function App() {
   const [whisperMode, setWhisperMode] = useState(false);
   const [whisperFeedback, setWhisperFeedback] = useState<{score: number; text: string; tip: string} | null>(null);
   const [whisperLoading, setWhisperLoading] = useState(false);
+  const [showWhisperCard, setShowWhisperCard] = useState(false);
+  const [returnPrompt, setReturnPrompt] = useState<string | null>(null);
   const [critHit, setCritHit] = useState(false);
   const [pinnedAchs, setPinnedAchs] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem("clash-pinned-achs")||"[]"); } catch { return []; } });
   const [bookmarkedMatches, setBookmarkedMatches] = useState<Set<string>>(() => { try { return new Set(JSON.parse(localStorage.getItem("clash-bookmarks")||"[]")); } catch { return new Set(); } });
@@ -3435,6 +3438,20 @@ export default function App() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const submitArgumentRef = useRef<((forcedText?: string) => Promise<void>) | null>(null);
   const submitRoomArgRef = useRef<(() => Promise<void>) | null>(null);
+
+  useEffect(() => {
+    try {
+      const last = localStorage.getItem("clash-last-played");
+      if (last) {
+        const diffMs = Date.now() - Number(last);
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        if (diffDays >= 1) {
+          const label = diffDays === 1 ? "yesterday" : diffDays < 7 ? `${diffDays} days ago` : diffDays < 14 ? "last week" : `${Math.floor(diffDays / 7)} weeks ago`;
+          setReturnPrompt(`You last debated ${label} — ready to get back in the arena?`);
+        }
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if ("serviceWorker" in navigator && !import.meta.env.DEV) {
@@ -4245,6 +4262,7 @@ export default function App() {
     setGraveyardArgs([]);
     setWhisperFeedback(null);
     setWhisperLoading(false);
+    setShowWhisperCard(false);
     setWhisperMode(false);
     setScreen("matchmaking");
 
@@ -4286,6 +4304,7 @@ export default function App() {
         ] as [Promise<{ text: string }>, Promise<void>]);
         setMessages([{ role: "ai", text: result.text }]);
       }
+      try { localStorage.setItem("clash-last-played", String(Date.now())); } catch {}
       setScreen("debate");
     } catch (e) {
       console.error("[CLASH] debate/start failed:", e);
@@ -4375,6 +4394,7 @@ export default function App() {
           round: roundNumber,
         }).then(w => {
           setWhisperFeedback({ score: w.score, text: w.feedback, tip: w.tip ?? "" });
+          setShowWhisperCard(false);
           setWhisperLoading(false);
         }).catch(() => { setWhisperLoading(false); });
       }
@@ -4985,6 +5005,7 @@ export default function App() {
     setIsOvertime(true);
     setSelectedRounds((prev) => prev + 1);
     setVerdict(null);
+    try { localStorage.setItem("clash-last-played", String(Date.now())); } catch {}
     setScreen("debate");
   };
 
@@ -5233,6 +5254,12 @@ export default function App() {
       {/* HOME */}
       {screen === "home" && (
         <div className="screen home-screen">
+          {returnPrompt && (
+            <div className="return-prompt">
+              <span className="return-prompt-text">{returnPrompt}</span>
+              <button className="return-prompt-dismiss" onClick={() => setReturnPrompt(null)}>✕</button>
+            </div>
+          )}
           {sharedResult && (
             <div className="challenge-banner">
               <div className="challenge-header">⚡ Challenge Received</div>
@@ -5887,7 +5914,7 @@ export default function App() {
                   ? "var(--gold)"
                   : "var(--green)";
                 return (
-                  <div className="timer-bar">
+                  <div className={`timer-bar${isCritical ? " timer-critical" : ""}`}>
                     <span className={`timer-countdown${isCritical ? " pulse" : ""}`} style={{ color }}>{timeLeft}</span>
                     <div className="timer-track">
                       <div className="timer-fill" style={{ width: `${pct}%`, background: color }} />
@@ -5912,7 +5939,26 @@ export default function App() {
                         <div className="strength-bar-fill" style={{ width: `${s.score}%`, backgroundColor: s.color }} />
                       </div>
                     </div>
-                    {(whisperLoading || whisperFeedback) && (() => {
+                    {whisperLoading && (
+                      <div className="whisper-card">
+                        <div className="whisper-card-accent" />
+                        <div className="whisper-loading">
+                          <div className="whisper-loading-dots">
+                            <div className="whisper-loading-dot" />
+                            <div className="whisper-loading-dot" />
+                            <div className="whisper-loading-dot" />
+                          </div>
+                          <span className="whisper-loading-text">Coach is watching...</span>
+                        </div>
+                      </div>
+                    )}
+                    {!whisperLoading && whisperFeedback && !showWhisperCard && (
+                      <button className="whisper-reveal-pill" onClick={() => setShowWhisperCard(true)}>
+                        <span className="whisper-reveal-dot" />
+                        Coach has notes — tap to see
+                      </button>
+                    )}
+                    {!whisperLoading && whisperFeedback && showWhisperCard && (() => {
                       const sc = whisperFeedback?.score ?? 0;
                       const circumference = 2 * Math.PI * 22;
                       const offset = circumference - (sc / 100) * circumference;
@@ -5920,23 +5966,13 @@ export default function App() {
                       return (
                         <div className="whisper-card">
                           <div className="whisper-card-accent" />
-                          {whisperLoading ? (
-                            <div className="whisper-loading">
-                              <div className="whisper-loading-dots">
-                                <div className="whisper-loading-dot" />
-                                <div className="whisper-loading-dot" />
-                                <div className="whisper-loading-dot" />
-                              </div>
-                              <span className="whisper-loading-text">Coach is watching...</span>
-                            </div>
-                          ) : (
                             <div className="whisper-card-inner">
                               <div className="whisper-card-header">
                                 <div className="whisper-card-title">
                                   <span className="whisper-card-label">Whisper Coach</span>
                                   <span className="whisper-card-round">Round {roundScores.length}</span>
                                 </div>
-                                <button className="whisper-dismiss" onClick={() => setWhisperFeedback(null)}>✕</button>
+                                <button className="whisper-dismiss" onClick={() => { setWhisperFeedback(null); setShowWhisperCard(false); }}>✕</button>
                               </div>
                               <div className="whisper-card-body">
                                 <div className="whisper-score-ring">
@@ -5969,7 +6005,6 @@ export default function App() {
                                 </div>
                               </div>
                             </div>
-                          )}
                         </div>
                       );
                     })()}
@@ -6015,7 +6050,10 @@ export default function App() {
                   {(() => {
                     const overLimit = inputText.length > charLimit;
                     const nearLimit = inputText.length >= Math.floor(charLimit * 0.85);
+                    const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
                     return (
+                      <>
+                      {wordCount > 0 && <span className="word-count">{wordCount}w</span>}
                       <span className={`char-count${overLimit ? " danger" : nearLimit ? " warn" : ""}`}>
                         {inputText.length}/{charLimit}
                         {overLimit && (
@@ -6027,6 +6065,7 @@ export default function App() {
                           </span>
                         )}
                       </span>
+                      </>
                     );
                   })()}
                   <button
@@ -6911,6 +6950,16 @@ export default function App() {
                     placeholder={`Make your argument ${mySide?.toUpperCase() || ""}…`}
                     onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) submitRoomArg(); }}
                   />
+                  {currentRoom.expiresAt && (() => {
+                    const msLeft = new Date(currentRoom.expiresAt).getTime() - Date.now();
+                    const minsLeft = Math.floor(msLeft / 60000);
+                    if (minsLeft > 10 || minsLeft < 0) return null;
+                    return (
+                      <div className="room-expiry-warn">
+                        <span>Room expires in {minsLeft <= 1 ? "under 1 minute" : `${minsLeft} minutes`} — submit your argument.</span>
+                      </div>
+                    );
+                  })()}
                   {roomModerationWarning && (
                     <div className="room-moderation-warning">
                       <span className="room-mod-icon">⚠</span>

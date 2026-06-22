@@ -14,10 +14,10 @@ function getJwtPlayerId(authHeader: string | undefined): number | null {
   } catch { return null; }
 }
 
-function calcRarity(score: number, won: boolean, streak: number, opponentMmr?: number, playerMmr?: number): string {
-  if (score >= 95) return "Legendary";
-  if (score >= 90 || (won && opponentMmr && playerMmr && opponentMmr > playerMmr + 200)) return "Epic";
-  if (won && (streak >= 3 || score >= 80)) return "Rare";
+function calcRarity(score: number, won: boolean, streak: number, rank?: string, opponentMmr?: number, playerMmr?: number): string {
+  if (score >= 92 && rank === "S") return "Legendary";
+  if (score >= 88 || (won && opponentMmr && playerMmr && opponentMmr > playerMmr + 200)) return "Epic";
+  if (won && (streak >= 3 || score >= 78)) return "Rare";
   return "Common";
 }
 
@@ -37,6 +37,7 @@ router.post("/cards/generate", async (req, res) => {
     Number(score),
     Boolean(won),
     Number(streak) || 0,
+    String(rank || ""),
   );
 
   try {

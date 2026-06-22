@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import Landing from "./Landing";
 import App from "./App";
+import ErrorBoundary from "./ErrorBoundary";
 import "./index.css";
 
 document.documentElement.classList.add("dark");
@@ -50,5 +51,7 @@ const isPlay =
   pathname.startsWith("/play/");
 
 createRoot(document.getElementById("root")!).render(
-  isPlay ? <App /> : <Landing />
+  <ErrorBoundary>
+    {isPlay ? <App /> : <Landing />}
+  </ErrorBoundary>
 );
