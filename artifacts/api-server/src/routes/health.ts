@@ -12,4 +12,8 @@ router.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+router.get("/ping", (_req, res) => {
+  res.status(200).send("pong");
+});
+
 export default router;
