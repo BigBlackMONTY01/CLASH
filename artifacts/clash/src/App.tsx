@@ -3992,20 +3992,8 @@ export default function App() {
     };
   }, [screen]);
 
-  // Big 3 background ticker — recomputes deterministic baseline every minute so all clients stay in sync
-  useEffect(() => {
-    const iv = setInterval(() => {
-      const det = getDeterministicStats();
-      setArenaDisplay((prev) => ({
-        ...prev,
-        debates: Math.max(prev.debates, det.debates),
-        topics: Math.max(prev.topics, det.topics),
-      }));
-    }, 60 * 1000);
-    return () => clearInterval(iv);
-  }, []);
-
-  // Fake activity entry timer — runs once on mount, never resets on navigation
+  // Fake activity entry timer — runs once on mount, never resets on navigation.
+  // Each new fake WIN/LOSS event increments arenaDisplay in lockstep so stats and feed stay in sync.
   useEffect(() => {
     let fakeSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
     let timer: ReturnType<typeof setTimeout>;
@@ -4016,6 +4004,24 @@ export default function App() {
         const entry = generateFakeEntryForSlot(fakeSlot);
         setFakeFeedItems((prev) => [entry, ...prev].slice(0, 6));
         setFeedKey((k) => k + 1);
+
+        if (entry.badge === "WIN" || entry.badge === "LOSS") {
+          const isWin = entry.badge === "WIN";
+          const topicMatch = entry.text.match(/·\s*"([^"]+)"/);
+          const topic = topicMatch ? topicMatch[1] : null;
+          const isNewTopic = topic !== null && !seenTopicsRef.current.has(topic);
+          if (isNewTopic && topic) seenTopicsRef.current.add(topic);
+          setArenaDisplay((prev) => {
+            const newDebates = prev.debates + 1;
+            const prevWins = Math.round(prev.debates * prev.winRate / 100);
+            const newWins = prevWins + (isWin ? 1 : 0);
+            const newWinRate = newDebates > 0 ? Math.round((newWins / newDebates) * 100) : prev.winRate;
+            const newTopics = prev.topics + (isNewTopic ? 1 : 0);
+            saveCachedStats(newDebates, newWinRate, newTopics);
+            return { ...prev, debates: newDebates, winRate: newWinRate, topics: newTopics };
+          });
+        }
+
         schedule();
       }, delay);
     };
