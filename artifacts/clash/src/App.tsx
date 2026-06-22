@@ -1590,6 +1590,8 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 .pwa-step-text strong{color:var(--text);}
 .pwa-close-btn{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;line-height:1;padding:4px 6px;}
 .pwa-nav-btn{background:none;border:none;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;justify-content:center;width:32px;height:32px;transition:color 0.18s;-webkit-tap-highlight-color:transparent;flex-shrink:0;}.pwa-nav-btn:hover{color:var(--text);}
+.server-waking-banner{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(10,10,10,0.95);border-bottom:1px solid rgba(230,57,70,0.25);color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;text-align:center;padding:7px 16px;pointer-events:none;}
+.server-waking-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#e63946;margin-right:8px;animation:pulse 1.2s ease-in-out infinite;}
 .install-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;background:#181818;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px max(env(safe-area-inset-bottom),14px) 16px;display:flex;align-items:center;gap:12px;transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.22,1,0.36,1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
 .install-banner.visible{transform:translateY(0);}
 .install-banner-icon{width:42px;height:42px;border-radius:10px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:#fff;}
@@ -2818,11 +2820,35 @@ async function parseResponse(res: Response): Promise<unknown> {
   try { return JSON.parse(text); } catch { return { _raw: text }; }
 }
 
+// Module-level callback so retry logic can update React state without prop-drilling
+let _serverWakingFn: ((v: boolean) => void) | null = null;
+
+async function fetchWithRetry(url: string, init?: RequestInit): Promise<Response> {
+  const MAX = 3;
+  const DELAY = 4000;
+  let attempt = 0;
+  while (true) {
+    try {
+      const res = await fetch(url, init);
+      if (attempt > 0) _serverWakingFn?.(false);
+      return res;
+    } catch (err) {
+      attempt++;
+      if (attempt === 1) _serverWakingFn?.(true);
+      if (attempt >= MAX) {
+        _serverWakingFn?.(false);
+        throw err;
+      }
+      await new Promise(r => setTimeout(r, DELAY));
+    }
+  }
+}
+
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const url = `${API}/api${path}`;
   let res: Response;
   try {
-    res = await fetch(url, {
+    res = await fetchWithRetry(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -2843,7 +2869,7 @@ async function apiGet<T>(path: string): Promise<T> {
   const url = `${API}/api${path}`;
   let res: Response;
   try {
-    res = await fetch(url);
+    res = await fetchWithRetry(url);
   } catch (networkErr) {
     console.error(`[CLASH] GET ${url} — network error:`, networkErr);
     throw new Error(`Network error: ${(networkErr as Error).message}`);
@@ -2872,7 +2898,7 @@ async function apiAuthPost<T>(path: string, body: unknown): Promise<T> {
   const url = `${API}/api${path}`;
   let res: Response;
   try {
-    res = await fetch(url, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(body) });
+    res = await fetchWithRetry(url, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(body) });
   } catch {
     throw new Error("Connection failed — please try again.");
   }
@@ -2883,7 +2909,7 @@ async function apiAuthPost<T>(path: string, body: unknown): Promise<T> {
 
 async function apiAuthGet<T>(path: string): Promise<T> {
   const url = `${API}/api${path}`;
-  const res = await fetch(url, { headers: getAuthHeaders() });
+  const res = await fetchWithRetry(url, { headers: getAuthHeaders() });
   const data = await parseResponse(res) as Record<string, unknown>;
   if (!res.ok) throw new Error((data.error as string) || `HTTP ${res.status}`);
   return data as T;
@@ -2891,7 +2917,7 @@ async function apiAuthGet<T>(path: string): Promise<T> {
 
 async function apiAuthPatch<T>(path: string, body: unknown): Promise<T> {
   const url = `${API}/api${path}`;
-  const res = await fetch(url, { method: "PATCH", headers: getAuthHeaders(), body: JSON.stringify(body) });
+  const res = await fetchWithRetry(url, { method: "PATCH", headers: getAuthHeaders(), body: JSON.stringify(body) });
   const data = await parseResponse(res) as Record<string, unknown>;
   if (!res.ok) throw new Error((data.error as string) || `HTTP ${res.status}`);
   return data as T;
@@ -3277,6 +3303,7 @@ export default function App() {
   const [showPwaModal, setShowPwaModal] = useState(false);
   const [pwaOs, setPwaOs] = useState<"ios"|"android"|"desktop">("ios");
   const deferredPromptRef = useRef<any>(null);
+  const [serverWaking, setServerWaking] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [installBannerType, setInstallBannerType] = useState<"native"|"ios"|null>(null);
   const isIOSSafari = /iphone|ipad|ipod/i.test(navigator.userAgent) && /safari/i.test(navigator.userAgent) && !/crios|fxios|chrome/i.test(navigator.userAgent);
@@ -3442,6 +3469,18 @@ export default function App() {
     const handler = () => setShowUpdateBanner(true);
     window.addEventListener("sw-updated", handler);
     return () => window.removeEventListener("sw-updated", handler);
+  }, []);
+
+  // Register server-waking callback and keep-alive ping to prevent Render cold starts
+  useEffect(() => {
+    _serverWakingFn = setServerWaking;
+    const ping = () => fetch(`${API}/api/health`).catch(() => {});
+    ping();
+    const iv = setInterval(ping, 10 * 60 * 1000);
+    return () => {
+      _serverWakingFn = null;
+      clearInterval(iv);
+    };
   }, []);
 
   // PWA install prompt — native (Chrome/Edge) and iOS Safari
@@ -7736,6 +7775,14 @@ export default function App() {
           <button className="pp-logout" onClick={logoutFn}>Log Out</button>
         </div>
       </>
+    )}
+
+    {/* SERVER WAKING BANNER */}
+    {serverWaking && (
+      <div className="server-waking-banner">
+        <span className="server-waking-dot" />
+        Server warming up — hang tight...
+      </div>
     )}
 
     {/* PWA INSTALL BANNER */}
