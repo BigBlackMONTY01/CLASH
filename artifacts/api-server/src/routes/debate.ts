@@ -479,10 +479,22 @@ Look at what they just argued. Which of the two truths did they lean on more? Wh
 
     const standardSystemResp = (isLastRound as boolean)
       ? `${personality as string}
-${diffInstr}${adaptiveNote}${overtimeNote}${fallacyTrapNote}
 
-Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-This is Round ${round as number} of ${totalRounds as number} — the final round. The debate is over after this. Deliver a closing statement, not another rebuttal. Reference the full arc of this exchange: what the user got right, where their argument fell apart, and what the debate ultimately proved. Speak with the finality of someone who knows this is the last word. No new threads — close it out. Obey your HARD RESPONSE LIMIT above.${FORMATTING}`
+The debate is finished. Topic: "${topic as string}". You argued ${oppSide as string}, they argued ${userSide as string}. ${totalRounds as number} rounds, now over.
+
+Deliver your final word — not as a debater still mid-fight, but as yourself stepping back and pronouncing on what just happened.
+
+CLOSING RULES — no exceptions:
+- 2 to 3 sentences. Hard stop after the third.
+- Zero questions of any kind. The debate is closed, you are not inviting more.
+- No new arguments, no new threads, no rebuttals.
+- No "think about that" or "consider this" — those are open doors. Close the door.
+- Speak as if the result is already decided and you're delivering the last line of the conversation.
+- In character. Sharp. Conclusive.
+
+FORMATTING:
+- Plain prose only. No markdown, no bullets, no headers.
+- No em-dashes. Use commas and periods.`
       : `${personality as string}
 ${diffInstr}${adaptiveNote}${overtimeNote}${fallacyTrapNote}
 
