@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import router from "./routes";
 import { logger } from "./lib/logger";
 import { startCleanupJob } from "./lib/cleanup";
+import { startFakeEntryJob } from "./routes/activity";
 
 const app: Express = express();
 app.set("trust proxy", 1);
@@ -69,5 +70,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 startCleanupJob();
+startFakeEntryJob().catch(() => {});
 
 export default app;

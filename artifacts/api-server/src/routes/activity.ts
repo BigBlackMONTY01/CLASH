@@ -6,8 +6,8 @@ import { logger } from "../lib/logger.js";
 
 const router = Router();
 
-const FAKE_INTERVAL_MIN_MS = 11 * 60 * 1000;
-const FAKE_INTERVAL_MAX_MS = 20 * 60 * 1000;
+const FAKE_INTERVAL_MIN_MS = 2 * 60 * 1000;
+const FAKE_INTERVAL_MAX_MS = 30 * 60 * 1000;
 const MAX_FAKE_ROWS = 4;
 const REAL_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -91,7 +91,7 @@ function scheduleFakeEntryJob(): void {
 
 let jobStarted = false;
 
-async function startFakeEntryJob(): Promise<void> {
+export async function startFakeEntryJob(): Promise<void> {
   if (jobStarted) return;
   jobStarted = true;
   try {
