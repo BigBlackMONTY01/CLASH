@@ -3276,11 +3276,7 @@ export default function App() {
   const [featuredKey, setFeaturedKey] = useState(0);
   const [featuredDir, setFeaturedDir] = useState<1 | -1>(1);
   const touchStartX = useRef<number | null>(null);
-  const [feedItems, setFeedItems] = useState<FeedItem[]>(() => buildFeedItems());
-  const [fakeFeedItems, setFakeFeedItems] = useState<FeedItem[]>(() => {
-    const slot = Math.floor(Date.now() / FAKE_SLOT_MS);
-    return Array.from({ length: 4 }, (_, i) => generateFakeEntryForSlot(slot - i));
-  });
+  const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [feedKey, setFeedKey] = useState(0);
   const [tickMin, setTickMin] = useState(0);
   const [feedExpanded, setFeedExpanded] = useState(false);
@@ -3916,29 +3912,12 @@ export default function App() {
         target = { debates: 32, winRate: 65, topics: 43, activePlayers: 0 };
       }
 
-      // Compute the delta from the 4 initial fake entries already visible in the feed
-      const sl = Math.floor(Date.now() / FAKE_SLOT_MS);
-      const initFakes = Array.from({ length: 4 }, (_, i) => generateFakeEntryForSlot(sl - i));
-      const initWins = initFakes.filter(e => e.badge === "WIN").length;
-      const initTopics = new Set<string>();
-      for (const e of initFakes) {
-        const m = e.text.match(/·\s*"([^"]+)"/);
-        if (m) initTopics.add(m[1]);
-      }
-      const apiTarget = {
-        debates: target.debates + initFakes.length,
-        winRate: Math.round(
-          (Math.round(target.debates * target.winRate / 100) + initWins) /
-          (target.debates + initFakes.length) * 100
-        ),
-        topics: target.topics + initTopics.size,
-      };
       // Never animate DOWN — take the highest of: deterministic baseline, server value
       const det = getDeterministicStats();
       const finalTarget = {
-        debates: Math.max(det.debates, apiTarget.debates),
-        winRate: apiTarget.winRate || det.winRate,
-        topics: Math.max(det.topics, apiTarget.topics),
+        debates: Math.max(det.debates, target.debates),
+        winRate: target.winRate || det.winRate,
+        topics: Math.max(det.topics, target.topics),
       };
       prevApiDebatesRef.current = target.debates;
 
@@ -3992,42 +3971,6 @@ export default function App() {
     };
   }, [screen]);
 
-  // Fake activity entry timer — runs once on mount, never resets on navigation.
-  // Each new fake WIN/LOSS event increments arenaDisplay in lockstep so stats and feed stay in sync.
-  useEffect(() => {
-    let fakeSlot = Math.floor(Date.now() / FAKE_SLOT_MS);
-    let timer: ReturnType<typeof setTimeout>;
-    const schedule = () => {
-      const delay = (45 + Math.random() * 45) * 1000;
-      timer = setTimeout(() => {
-        fakeSlot++;
-        const entry = generateFakeEntryForSlot(fakeSlot);
-        setFakeFeedItems((prev) => [entry, ...prev].slice(0, 6));
-        setFeedKey((k) => k + 1);
-
-        if (entry.badge === "WIN" || entry.badge === "LOSS") {
-          const isWin = entry.badge === "WIN";
-          const topicMatch = entry.text.match(/·\s*"([^"]+)"/);
-          const topic = topicMatch ? topicMatch[1] : null;
-          const isNewTopic = topic !== null && !seenTopicsRef.current.has(topic);
-          if (isNewTopic && topic) seenTopicsRef.current.add(topic);
-          setArenaDisplay((prev) => {
-            const newDebates = prev.debates + 1;
-            const prevWins = Math.round(prev.debates * prev.winRate / 100);
-            const newWins = prevWins + (isWin ? 1 : 0);
-            const newWinRate = newDebates > 0 ? Math.round((newWins / newDebates) * 100) : prev.winRate;
-            const newTopics = prev.topics + (isNewTopic ? 1 : 0);
-            saveCachedStats(newDebates, newWinRate, newTopics);
-            return { ...prev, debates: newDebates, winRate: newWinRate, topics: newTopics };
-          });
-        }
-
-        schedule();
-      }, delay);
-    };
-    schedule();
-    return () => clearTimeout(timer);
-  }, []);
 
   // Load leaderboard when that screen opens, tab switches, or a registration just completed
   useEffect(() => {
@@ -5483,17 +5426,22 @@ export default function App() {
                 </p>
               </div>
               <div key={feedKey} className="live-feed">
-                {[...fakeFeedItems, ...feedItems]
-                  .sort((a, b) => (b.eventTime ?? 0) - (a.eventTime ?? 0))
-                  .slice(0, 4)
-                  .map((item, i) => (
-                  <div key={i} className={`feed-item${i === 0 ? " feed-item-new" : ""}`} style={{ animationDelay: `${i * 60}ms` }}>
-                    <span className="feed-icon">{item.icon}</span>
-                    <span className="feed-text" dangerouslySetInnerHTML={{ __html: item.text }} />
-                    <span className={`feed-badge ${item.badgeClass}`}>{item.badge}</span>
-                    <span className="feed-time">{item.eventTime !== undefined ? getFeedTimeLabel(item.eventTime) : item.time}</span>
-                  </div>
-                ))}
+                {feedItems.length === 0
+                  ? Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="feed-item" style={{ opacity: 0.3 }}>
+                      <span className="feed-icon">·</span>
+                      <span className="feed-text" style={{ background: "var(--surface2)", borderRadius: 4, height: 14, display: "block", width: `${55 + i * 15}%` }} />
+                    </div>
+                  ))
+                  : feedItems.slice(0, 4).map((item, i) => (
+                    <div key={i} className={`feed-item${i === 0 ? " feed-item-new" : ""}`} style={{ animationDelay: `${i * 60}ms` }}>
+                      <span className="feed-icon">{item.icon}</span>
+                      <span className="feed-text" dangerouslySetInnerHTML={{ __html: item.text }} />
+                      <span className={`feed-badge ${item.badgeClass}`}>{item.badge}</span>
+                      <span className="feed-time">{item.eventTime !== undefined ? getFeedTimeLabel(item.eventTime) : item.time}</span>
+                    </div>
+                  ))
+                }
               </div>
             </div>
 
