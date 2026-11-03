@@ -4,6 +4,10 @@ import Groq from "groq-sdk";
 import { db, players, rooms, roomArguments } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
 import { JWT_SECRET } from "./auth";
+import {
+  DEBATE_JUDGE_REASONING_RULES,
+  extractJsonObject,
+} from "../lib/debate-reasoning";
 
 const router = Router();
 const MODEL = "llama-3.3-70b-versatile";
@@ -387,7 +391,7 @@ router.post("/rooms/:code/argue", async (req, res) => {
   const playerId = await getPlayerId(req);
   if (!playerId) { res.status(401).json({ error: "Not authenticated" }); return; }
   const { code } = req.params;
-  const { argumentText } = req.body as { argumentText: string };
+  const argumentText = typeof req.body?.argumentText === "string" ? req.body.argumentText : "";
   if (!argumentText?.trim()) { res.status(400).json({ error: "Argument required" }); return; }
 
   const room = await db.select().from(rooms).where(eq(rooms.code, code.toUpperCase())).limit(1);
@@ -404,10 +408,19 @@ router.post("/rooms/:code/argue", async (req, res) => {
   if (existing.length) { res.status(400).json({ error: "You already submitted this round" }); return; }
 
   const side = playerNum === 1 ? r.player1Side : r.player2Side;
+  const earlierRows = await db.select().from(roomArguments)
+    .where(eq(roomArguments.roomId, r.id));
+  const argumentHistory = earlierRows
+    .filter((argument) => argument.roundNum <= r.currentRound)
+    .sort((a, b) => a.roundNum - b.roundNum || a.playerNum - b.playerNum)
+    .map((argument) => {
+      const argumentSide = argument.playerNum === 1 ? r.player1Side : r.player2Side;
+      return `Round ${argument.roundNum}, Player ${argument.playerNum} (${(argumentSide || "for").toUpperCase()}): ${JSON.stringify(argument.argumentText)}`;
+    })
+    .join("\n") || "No prior arguments.";
 
-  const system = `You are a strict AI debate judge. Respond ONLY with valid JSON, no other text.
-Topic: "${r.topicText}"
-The debater is arguing ${(side || "for").toUpperCase()} this statement.
+  const system = `You are a fair, rigorous debate judge. ${DEBATE_JUDGE_REASONING_RULES}
+Respond ONLY with valid JSON, no other text.
 
 Return this exact JSON structure:
 {
@@ -423,20 +436,54 @@ Return this exact JSON structure:
 }
 
 Ranks: S≥90 A≥80 B≥65 C≥50 D≥35 F<35
-Highlight types: strong=green(well-supported), weak=yellow(vague/unsubstantiated), wrong=red(factually incorrect), fallacy=orange(logical fallacy)
-Find 3-5 exact substrings from the argument text. Be precise and harsh.`;
+Highlight types: strong=well-supported, weak=unclear or unsupported, wrong=demonstrably false, fallacy=logical fallacy that meets its definition.
+Find 1-4 exact substrings from the current argument. Do not label a metaphor or analogy wrong merely because it is figurative.`;
 
   let judgment: any;
   try {
-    const raw = await claudeJSON(system, `Judge this debate argument:\n\n"${argumentText}"`);
-    const match = raw.match(/\{[\s\S]*\}/);
-    judgment = match ? JSON.parse(match[0]) : null;
+    const raw = await claudeJSON(
+      system,
+      `Topic: ${JSON.stringify(r.topicText)}\nThe debater is arguing ${(side || "for").toUpperCase()}.\nEarlier arguments, in order:\n${argumentHistory}\n\nAssess this latest argument in context:\n${JSON.stringify(argumentText)}`,
+    );
+    judgment = extractJsonObject(raw);
   } catch { judgment = null; }
 
-  if (!judgment) {
-    const s = 55 + Math.floor(Math.random() * 20);
-    judgment = { score: s, logic: s, persuasion: s, delivery: s, rank: scoreToRank(s), critique: "Argument noted.", highlights: [] };
+  const scoreFields = ["score", "logic", "persuasion", "delivery"];
+  if (
+    !judgment ||
+    scoreFields.some((field) => typeof judgment[field] !== "number" || !Number.isFinite(judgment[field])) ||
+    typeof judgment.critique !== "string" ||
+    !Array.isArray(judgment.highlights)
+  ) {
+    res.status(502).json({ error: "The Judge could not complete a reliable assessment. No score was saved; please retry." });
+    return;
   }
+
+  const clampScore = (value: number) => Math.round(Math.max(0, Math.min(100, value)));
+  judgment.score = clampScore(judgment.score);
+  judgment.logic = clampScore(judgment.logic);
+  judgment.persuasion = clampScore(judgment.persuasion);
+  judgment.delivery = clampScore(judgment.delivery);
+  judgment.rank = scoreToRank(judgment.score);
+  judgment.critique = judgment.critique.slice(0, 1200);
+  judgment.highlights = judgment.highlights
+    .filter(
+      (highlight: unknown) =>
+        !!highlight &&
+        typeof highlight === "object" &&
+        typeof (highlight as Record<string, unknown>).text === "string" &&
+        typeof (highlight as Record<string, unknown>).note === "string" &&
+        ["strong", "weak", "wrong", "fallacy"].includes(
+          String((highlight as Record<string, unknown>).type),
+        ),
+    )
+    .filter((highlight: { text: string }) => highlight.text.length > 0 && argumentText.includes(highlight.text))
+    .slice(0, 4)
+    .map((highlight: { text: string; type: string; note: string }) => ({
+      text: highlight.text.slice(0, 300),
+      type: highlight.type,
+      note: highlight.note.slice(0, 160),
+    }));
 
   const saved = await db.insert(roomArguments).values({
     roomId: r.id, roundNum: r.currentRound, playerNum,

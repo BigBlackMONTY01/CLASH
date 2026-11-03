@@ -102,7 +102,7 @@ async function generateFakeEntryJob(): Promise<void> {
       INSERT INTO activity_events (text, badge, icon, topic, is_fake)
       VALUES (${entry.text}, ${entry.badge}, ${entry.icon}, ${entry.topic ?? null}, true)
     `);
-    incrementPlatformStats(entry.badge === "WIN", entry.topic !== null).catch(() => {});
+    // Synthetic feed entries should not change real platform totals.
     await db.execute(sql`
       DELETE FROM activity_events
       WHERE is_fake = true

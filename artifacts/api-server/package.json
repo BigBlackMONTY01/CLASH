@@ -7,6 +7,7 @@
     "dev": "export NODE_ENV=development && pnpm run build && pnpm run start",
     "build": "node ./build.mjs",
     "start": "node --enable-source-maps ./dist/index.mjs",
+    "test:reasoning": "node --test tests/debate-reasoning.test.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
@@ -19,7 +20,7 @@
     "cors": "^2",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "^0.8.3",
-    "express": "^5",
+    "express": "^5.3.0",
     "express-rate-limit": "^8.5.1",
     "groq-sdk": "^0.9.1",
     "jsonwebtoken": "^9.0.3",

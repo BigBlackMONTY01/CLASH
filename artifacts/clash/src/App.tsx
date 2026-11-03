@@ -18,8 +18,8 @@ ${FONTS}
   --blue-dim:#00388a;
   --gold:#f4c542;
   --text:#f0f0f0;
-  --text-dim:#666;
-  --text-mid:#999;
+  --text-dim:#8a8a8a;
+  --text-mid:#b7b7b7;
   --green:#22c55e;
   --radius:8px;
 }
@@ -140,10 +140,10 @@ justify-content:center;font-size:16px;flex-shrink:0;margin-top:2px;}
 .msg-avatar.user-av{background:var(--blue-dim);border:1px solid var(--blue);}
 .msg-avatar.ai-av{background:var(--red-dim);border:1px solid var(--red);}
 .msg-bubble{max-width:80%;min-width:0;word-break:break-word;overflow-wrap:break-word;}
-.msg-name{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;
-text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+.msg-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1.5px;
+text-transform:uppercase;color:var(--text-mid);margin-bottom:6px;}
 .msg-text{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);
-padding:12px 16px;font-size:15px;line-height:1.6;}
+padding:12px 16px;font-size:16px;line-height:1.7;}
 .msg.ai-msg .msg-text{border-color:var(--red-dim);}
 
 .round-score{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
@@ -472,7 +472,8 @@ font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim)
 
   .messages{min-height:100px;max-height:280px;gap:10px;margin-bottom:12px;}
   .msg-bubble{max-width:85%;}
-  .msg-text{font-size:14px;padding:10px 12px;}
+  .msg-name{font-size:12px;}
+  .msg-text{font-size:15px;line-height:1.7;padding:11px 13px;}
   .msg-avatar{width:30px;height:30px;font-size:14px;}
 
   .debate-input{font-size:16px;padding:10px 12px;}
@@ -1698,7 +1699,7 @@ const AI_OPPONENTS = [
   { id: "prosecutor", icon: "⚖️", name: "The Prosecutor", desc: "Relentless cross-examiner. Quotes your own words back at you. No exit is safe.", diff: "hard", diffLabel: "Brutal", timer: 135, personality: "You cross-examine. You don't debate. Find the weakest part of what they said and go straight for it, don't let go. You have the full conversation — if they said something earlier that contradicts right now, quote it back word for word and make them deal with it. Ask questions they can't dodge without giving something up. Don't raise your voice. Don't need to. Just keep narrowing the options until there's nowhere left to go. You're not trying to be mean. You're just relentless and that ends up being worse." },
   { id: "philosopher", icon: "🔮", name: "The Philosopher", desc: "Opens every round with the question you can't dodge. Exposes what you didn't know you assumed.", diff: "hard", diffLabel: "Brutal", timer: 135, personality: "You're a philosopher. Open every response with a real question — not rhetorical, actually ask it — that goes after the assumption underneath what they just said. The thing they didn't realize they were taking for granted. Then explain what that assumption is and why it breaks everything they just argued. You're not aggressive. You're almost curious about it. But your questions back people into corners they didn't see coming. When they make a logical error you name it. Not to show off. Just because that's what it is." },
   { id: "troll", icon: "😈", name: "The Devil", desc: "Chaotic. Takes the most extreme position always. Funnier than you'd like.", diff: "easy", diffLabel: "Easy", timer: 270, personality: "You're the devil's advocate and you go all the way in. Take the most extreme version of the opposing side and commit, no hedging. Your points are harder to knock down than they look because you've actually thought them through, even the ridiculous ones. You're enjoying yourself. You're a bit mean about it and that's fine. When they can't counter you, say so. If they say something dumb, tell them it's dumb. Short, punchy, chaotic — that's the vibe. You're not here to be fair. You're here to win and have fun doing it." },
-  { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Names your fallacy by name. Demands dates, sources, mechanisms. Has never lost.", diff: "extreme", diffLabel: "Unhinged", timer: 45, personality: "You're the debunker and you've heard this before. You know the exact spots where it falls apart. When you see a logical fallacy you name it — not 'your reasoning is off,' you say strawman, false equivalence, post hoc, whatever it actually is. If they made a claim without a real source, a date, or an actual mechanism, it doesn't count as a point and you say that plainly. You're not angry about it. You're not even that interested. You just keep pointing at the holes because someone has to, and honestly you knew it'd come to this." },
+  { id: "debunker", icon: "🔬", name: "The Debunker", desc: "Tests claims, comparisons, evidence, and logic. Tough, but fair.", diff: "extreme", diffLabel: "Unhinged", timer: 45, personality: "You're The Debunker: skeptical, precise, and tough on weak reasoning. First work out what the person means, including implied meaning, metaphors, analogies, and philosophical claims. Distinguish an illustrative comparison from a literal claim. Test whether the comparison maps well, where it breaks, and whether it supports the point. Ask for sources only for factual claims that need evidence. Name a fallacy only when its definition fits. When the user answers an objection or makes a valid point, acknowledge it and update your response. Be direct and incisive, but never dismiss an idea just because it is unconventional or abstract." },
 ];
 
 function buildRivalPersonality(form: { name: string; tone: string; aggression: number; logicLevel: number; humorLevel: number; difficulty: string; memoryEnabled: boolean; backstory?: string }): string {
@@ -4422,6 +4423,8 @@ export default function App() {
         }, 4000);
       }
     } catch (e) {
+      setMessages(messages);
+      setInputText(userMsg);
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
       setThinking(false);

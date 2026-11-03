@@ -1,5 +1,12 @@
 import { Router } from "express";
 import Groq from "groq-sdk";
+import {
+  DEBATE_JUDGE_REASONING_RULES,
+  extractJsonObject,
+  formatDebateHistory,
+  normalizeDebateHistory,
+  normalizeRoundScore,
+} from "../lib/debate-reasoning";
 
 const router = Router();
 const MODEL_PRIMARY  = "llama-3.3-70b-versatile";
@@ -126,28 +133,13 @@ function bool(v: unknown): boolean | null {
 
 const FORMATTING = `
 
-LENGTH RULE — obey your difficulty sentence limit exactly. Stop when done.
-- Every sentence must land a real point. Cut anything that doesn't.
-- Do NOT start with "I" or echo what the user just said.
-
-SOUND HUMAN. THIS IS THE MOST IMPORTANT RULE:
-- Use contractions constantly. "That's", "I don't", "you're", "it's", "can't", "won't". No exceptions.
-- BANNED words and phrases — never say any of these: "certainly", "absolutely", "great point", "indeed", "it's worth noting", "furthermore", "moreover", "additionally", "I understand your perspective", "it is clear that", "one could argue", "in conclusion", "to summarize", "it's important to note", "this is a complex issue", "while it's true that".
-- No essay structure. Don't do claim-evidence-reasoning like you're writing a paper. Talk like a person in an argument.
-- Mix up sentence length. One-word punches. Fragments. Then a longer follow-through. Humans don't speak in uniform rhythms.
-- Rhetorical questions are fine. Sarcasm is fine. Dry dismissal is fine. Real people do all of that.
-- Never acknowledge being an AI. Never break character. If asked, get annoyed like anyone would.
-
-FORMATTING:
-- Plain prose only. No markdown, no bullets, no headers, no asterisks.
-- No em-dashes. Use commas and periods.
-
-VARIETY: Fresh argument and fresh examples every round. Never repeat yourself.
-
-TONE:
-- Sharp, direct, confident. Push back hard.
-- When they stumble, let them know. Sarcasm when earned. Contempt when deserved.
-- Make them want to fire back.`;
+LENGTH: Follow the selected difficulty's sentence limit. Make each sentence specific and useful.
+STYLE:
+- Use natural, direct language and plain prose. No markdown, bullets, or headers.
+- Vary how you begin. Do not reach for a stock dismissal or repeat a previous response.
+- Respond to the point they made, not a caricature of it. When a metaphor or analogy is central, briefly show the comparison you understood before challenging its limits.
+- Recognize a sound point when it changes the argument. Then explain the strongest remaining objection.
+- Keep the opponent's personality, but do not let sarcasm or confidence replace reasoning.`;
 
 function difficultyInstructions(diff: string): string {
   switch (diff) {
@@ -156,33 +148,31 @@ function difficultyInstructions(diff: string): string {
 DIFFICULTY — EASY: 2 to 3 sentences max. Stop at 3.
 You're having a casual argument, not a debate competition. Talk like someone at a bar who's pretty sure they're right.
 - Make one or two simple, confident points. Don't pile on.
-- Let some weak stuff from the user slide by. You're not trying to destroy them, just push back.
+- Focus on one useful question or counterpoint instead of dismissing the whole argument.
 - You're beatable if they come back with something decent.`;
     case "medium":
       return `
 DIFFICULTY — MEDIUM: 3 sentences. Each one has to actually do something.
-You're not here to chat, you're here to win. Stay focused and don't let sloppy reasoning slide.
-- Pick out the weakest thing they just said and call it out directly. Name it.
-- If they made a claim without backing it up, ask them where that's coming from. Don't let it stand.
-- Make your own point sharp enough that a vague response doesn't cut it as a rebuttal.`;
+Stay focused and challenge the actual reasoning.
+- Choose the most important strength or weakness in the latest point and explain why it matters.
+- Ask for evidence only when a factual claim or causal step needs support.
+- Make a specific counterargument that the user can answer.`;
     case "hard":
       return `
 DIFFICULTY — HARD: 3 to 4 sentences. Go after every weak spot, not just one.
-No warmup. No credit for effort. If their argument has a hole, you go straight through it.
-- Start with the single worst thing about what they just said. Specific, not general.
-- If they said something that contradicts an earlier round, bring it up. Pin them to it.
-- Ask one rhetorical question they genuinely can't dodge without giving something up.
-- If they didn't give any real evidence, say so plainly. Vague is the same as nothing.
-- Your own point needs to be tight enough that a weak rebuttal doesn't touch it.`;
+Be demanding but accurate.
+- Start with a specific point from their argument, whether it is strong or weak.
+- Use earlier rounds only when the exact context supports a contradiction or unresolved objection.
+- Name a fallacy only when the argument meets its definition; explain the flaw and its consequence.
+- Present a strong counterargument without pretending that a valid point was not made.`;
     case "extreme":
       return `
 DIFFICULTY — EXTREME: 3 to 5 sentences. Precise. Cold. Absolute.
-You've heard this argument a hundred times and you know exactly where it breaks.
-- Name the exact flaw in what they said. Not "your reasoning is weak" — name it. Strawman, false equivalence, post hoc, whatever it is.
-- If they didn't give dates, sources, or any real mechanism, that's not an argument. Tell them that plainly.
-- If they've contradicted themselves anywhere this debate, now's when you bring it out. Lay it out clearly.
-- Close on something so solid that the only way to answer it is to concede ground.
-- Your own points need to be specific and traceable. Nothing vague, nothing floating.`;
+Apply the strictest scrutiny to the reasoning, not the person.
+- Identify the argument's actual structure before testing its premises, causal links, evidence, and implications.
+- Distinguish an illustrative comparison from a claim that the two things are literally identical.
+- Cite an earlier contradiction only when you can accurately identify both statements.
+- End with the strongest unresolved question or counterpoint, not an unsupported declaration of victory.`;
     default:
       return "";
   }
@@ -269,32 +259,14 @@ const FALLBACK_OPENS = [
   "Interesting stance. Unfortunately for you, interesting doesn't mean correct. Here's why your position fails from the start.",
 ];
 
-const FALLBACK_ROUNDS = [
-  "That's an assertion, not an argument. You've told me what you believe but given me nothing to work with — no evidence, no mechanism, no reason to agree. Try again with something substantive.",
-  "You're relying on intuition where the facts cut against you. Your last point ignored the strongest counter-evidence entirely, which isn't a rebuttal — it's avoidance.",
-  "Weak. You restated your premise without advancing it. A real argument explains why your position holds even under the toughest objections, and you haven't done that yet.",
-  "The problem with that argument is that it proves too much. If your logic holds, it justifies positions you'd never accept. You need to draw a line, and you haven't.",
-  "You're arguing from analogy, and the analogy breaks down immediately under any pressure. The two situations are not equivalent, and you haven't shown why they are.",
-];
-
 function getFallbackOpen(): string {
   return FALLBACK_OPENS[Math.floor(Math.random() * FALLBACK_OPENS.length)];
-}
-
-function getFallbackRound(): string {
-  return FALLBACK_ROUNDS[Math.floor(Math.random() * FALLBACK_ROUNDS.length)];
 }
 
 const TWO_TRUTHS_FALLBACK_OPENS = [
   "This topic doesn't have two sides — it has two truths that both need defending. Most people pick one and pretend the other doesn't exist. Don't do that. Show me you can hold both at once.",
   "The easy move here is to collapse this into a simple argument. The hard move is to actually hold the tension. Let's see which one you go for.",
   "Both halves of this topic are real. If you emphasize one and ignore the other, I'll call it out immediately. The challenge is holding both without letting either one win.",
-];
-
-const TWO_TRUTHS_FALLBACK_ROUNDS = [
-  "You're leaning too hard on one side of this. The other truth is still sitting there, unaddressed. You need to pull it back into balance.",
-  "That argument collapses the nuance. You've picked a winner when both deserve to stand. Try again — hold both truths without letting one swallow the other.",
-  "You're treating this like a standard debate where one side has to lose. It doesn't. The nuance is the point. Defend it properly.",
 ];
 
 // POST /api/debate/start — AI opens the debate
@@ -347,10 +319,11 @@ router.post("/debate/round", async (req, res) => {
   const { personality, topic, userSide, oppSide, messages, userArgument, round, totalRounds, isLastRound, difficulty, adaptiveLevel, isOvertime, twoTruths, fallacyTrap } =
     req.body as Record<string, unknown>;
 
+  const conversationHistory = normalizeDebateHistory(messages);
   if (
     !str(personality) || !str(topic) || !str(userSide) || !str(oppSide) ||
     !str(userArgument) || !num(round) || !num(totalRounds) || bool(isLastRound) === null ||
-    !Array.isArray(messages)
+    conversationHistory === null
   ) {
     res.status(400).json({ error: "Invalid body" });
     return;
@@ -372,6 +345,8 @@ router.post("/debate/round", async (req, res) => {
     ? `\n\nSUDDEN DEATH OVERTIME: This is the tiebreaker round. Everything is on the line. Make this your most decisive, unforgettable argument.`
     : "";
   const isFallacyTrap = fallacyTrap === true && !isTwoTruths;
+  const conversationContext = formatDebateHistory(conversationHistory);
+  const scoreContext = `Conversation before this turn (earliest first):\n${conversationContext}\n\nLatest user argument:\n${JSON.stringify(userArgument)}`;
   const trapFallacy = isFallacyTrap
     ? TRAP_FALLACY_NAMES[Math.floor(Math.random() * TRAP_FALLACY_NAMES.length)]
     : "";
@@ -383,9 +358,9 @@ router.post("/debate/round", async (req, res) => {
 
 Topic: "${topic as string}"
 Round: ${round as number} of ${totalRounds as number}
+${scoreContext}
 
-User's argument:
-"${userArgument as string}"
+Evaluate the latest user argument in the context of the exchange above. Do not score the opponent's claims as if they were the user's.
 
 TWO-TRUTHS SCORING RUBRIC — score how well they held BOTH sides of the nuance:
 
@@ -414,9 +389,9 @@ Topic: "${topic as string}"
 User is arguing: ${userSide as string}
 Round: ${round as number} of ${totalRounds as number}
 Difficulty: ${diff}
+${scoreContext}
 
-User's argument:
-"${userArgument as string}"
+Evaluate the latest user argument in the context of the exchange above. Do not score the opponent's claims as if they were the user's.
 
 RANKED SCORING RUBRIC — use the full range, not just 60-75:
 
@@ -430,10 +405,9 @@ MANDATORY DISTRIBUTION RULES:
 - A typical assertion-only argument (no evidence, no specifics) scores 45-60. Not 65-75.
 - Only cite 70+ for arguments that include a real example, a specific counter-point, or a clear logical chain.
 - Only cite 85+ for arguments that would genuinely impress in a real debate round. Rare.
-- For "hard" difficulty: shift your scoring two tiers stricter (a 70 becomes a 50, a 65 becomes a 45).
-- For "extreme" difficulty: shift your scoring three tiers stricter (a 70 becomes a 40, a 60 becomes a 35). Only genuine expert-level arguments with specific evidence score above 50.
-- NEVER give the same score to consecutive rounds unless the argument quality is identical.
-- Spread scores. If round 1 was 58, round 2 should reflect whether the user improved or declined.
+- Do not penalize a conceptual explanation, metaphor, or analogy merely for lacking citations. Assess whether its mapping and reasoning support the point being made.
+- Apply the same score calibration at every difficulty. Difficulty changes the opponent's pressure, not the quality standard.
+- Scores may repeat when argument quality is comparable. Do not alter a score just to create variety.
 
 PROPAGANDA DETECTOR — also analyze each sentence in the argument:
 For each sentence, assign ONE tag:
@@ -465,15 +439,10 @@ Respond ONLY with valid JSON, no markdown:
 
     const scorePrompt = isTwoTruths ? twoTruthsScorePrompt : standardScorePrompt;
 
-    let history = (messages as { role: string; text: string }[]).map((m) => ({
-      role: (m.role === "ai" ? "assistant" : "user") as "user" | "assistant",
-      content: m.text,
+    let history = conversationHistory.map((message) => ({
+      role: message.role,
+      content: message.content,
     }));
-
-    // Keep up to 12 messages (6 full rounds) so the AI has genuine cross-round memory
-    if (history.length > 12) {
-      history = history.slice(history.length - 12);
-    }
 
     if (history.length > 0 && history[0].role === "assistant") {
       history = [{ role: "user", content: "Begin the debate." }, ...history];
@@ -487,12 +456,16 @@ Respond ONLY with valid JSON, no markdown:
 
 Topic: "${topic as string}"
 
+${DEBATE_JUDGE_REASONING_RULES}
+
 The user needs to close by holding both truths together, not by picking one. Look at what they just said and tell them honestly: where did they actually manage to hold the tension, and where did one truth end up winning over the other? Be direct. Leave them with one sharp observation about how close they got, or how far off they still are.${FORMATTING}`
       : `You're The Dialectician. You push on the tension, not on a side.
 
 Topic: "${topic as string}"
 
-Look at what they just argued. Which of the two truths did they lean on more? What did they give up from the other side to do it? Push back on that. Don't argue a fixed position, you're the tension between the two truths and your job is to make sure they can't ignore either half of it.${FORMATTING}`;
+${DEBATE_JUDGE_REASONING_RULES}
+
+Look at what they just argued in the context of the conversation. Which of the two truths did they lean on more, and what did they give up from the other side? Acknowledge any valid balance they achieved before pushing on what remains unresolved.${FORMATTING}`;
 
     const closingFlavor = getClosingFlavor(personality as string);
 
@@ -505,6 +478,8 @@ Deliver your final word — not as a debater still mid-fight, but as yourself st
 
 ${closingFlavor}
 
+${DEBATE_JUDGE_REASONING_RULES}
+
 CLOSING RULES — no exceptions:
 - 2 to 3 sentences. Hard stop after the third.
 - Zero questions of any kind. The debate is closed, you are not inviting more.
@@ -512,6 +487,7 @@ CLOSING RULES — no exceptions:
 - No "think about that" or "consider this" — those are open doors. Close the door.
 - Speak as if the result is already decided and you're delivering the last line of the conversation.
 - In character. Sharp. Conclusive.
+- If they made a valid point, say so before explaining what ultimately decided the result.
 
 FORMATTING:
 - Plain prose only. No markdown, no bullets, no headers.
@@ -520,37 +496,34 @@ FORMATTING:
 ${diffInstr}${adaptiveNote}${overtimeNote}${fallacyTrapNote}
 
 Topic: "${topic as string}". You argue ${oppSide as string}, user argues ${userSide as string}.
-Round ${round as number} of ${totalRounds as number}. Counter the user's last argument directly and sharply. Obey your HARD RESPONSE LIMIT above.
+Round ${round as number} of ${totalRounds as number}. Respond to the user's last argument directly. Obey your HARD RESPONSE LIMIT above.
 
-CROSS-ROUND MEMORY: You have the full conversation history above. If the user contradicted something they said in an earlier round, quote it back and press on it. If their argument weakened between rounds, name it. Do not pretend each round is isolated — exploit continuity.${FORMATTING}`;
+CROSS-ROUND MEMORY: Use the conversation history to identify a real contradiction, an unresolved objection, or a point the user has already answered. Do not claim a contradiction unless both statements support it. If the user has answered an earlier objection, acknowledge that and move to the next issue. ${DEBATE_JUDGE_REASONING_RULES}${FORMATTING}`;
 
     const systemResp = isTwoTruths ? twoTruthsSystemResp : standardSystemResp;
 
-    const [scoreResult, aiText] = await Promise.all([
+    const [scoreResult, aiTextResult] = await Promise.all([
       claudeText(
-        isTwoTruths
-          ? "You are a nuance debate judge scoring how well the debater held both truths. Respond only with valid JSON."
-          : "You are a ranked competitive debate judge. Use the full scoring range. Respond only with valid JSON.",
+        `You are a fair debate judge. ${DEBATE_JUDGE_REASONING_RULES}\nScore the user's latest argument using the supplied rubric. Respond only with valid JSON.`,
         scorePrompt,
         1000
       ).catch(() => null),
       claudeConversation(systemResp, [
         ...history,
         { role: "user", content: userArgument as string },
-      ], tokens).catch(() => isTwoTruths
-        ? TWO_TRUTHS_FALLBACK_ROUNDS[Math.floor(Math.random() * TWO_TRUTHS_FALLBACK_ROUNDS.length)]
-        : getFallbackRound()
-      ),
+      ], tokens).catch(() => null),
     ]);
 
-    let roundScore: { score: number; logic: number; persuasion: number; delivery: number; best: string; weak: string; propaganda?: Array<{sentence: string; tag: string}> } = {
-      score: 55, logic: 55, persuasion: 55, delivery: 55, best: "", weak: "", propaganda: [],
-    };
-    if (scoreResult) {
-      const jMatch = scoreResult.match(/\{[\s\S]*\}/);
-      if (jMatch) {
-        try { roundScore = JSON.parse(jMatch[0]); } catch { /* use default */ }
-      }
+    const parsedScore = scoreResult ? extractJsonObject(scoreResult) : null;
+    const roundScore = normalizeRoundScore(parsedScore);
+    const aiText = str(aiTextResult);
+    if (!roundScore || !aiText) {
+      req.log.warn(
+        { scoreAvailable: !!scoreResult, responseAvailable: !!aiTextResult },
+        "debate/round returned incomplete AI output",
+      );
+      res.status(502).json({ error: "The Judge could not complete a reliable response. Your turn was not scored; please retry." });
+      return;
     }
 
     const iq = Math.round(60 + roundScore.score * 0.9);
@@ -642,27 +615,30 @@ Respond ONLY with valid JSON:
 
   try {
     const vText = await claudeText(
-      "You are a ranked competitive debate judge. Respond only with valid JSON. Be decisive and game-like.",
+      `You are a fair, rigorous debate judge. ${DEBATE_JUDGE_REASONING_RULES}\nRespond only with valid JSON. Be decisive and game-like.`,
       prompt,
       500
     );
 
-    const jMatch = vText.match(/\{[\s\S]*\}/);
-    let judgeVerdict = {
-      verdict:
-        score >= 65
-          ? "Clean win — you controlled the tempo and your opponent had no answer for your key points."
-          : "Too much assertion, not enough substance. You got outgunned on every exchange that mattered.",
-      improve: "Back every claim with a specific example or statistic before moving to the next point.",
-      coach_worked: "Your opening argument established a clear position.",
-      coach_failed: "You relied too heavily on assertions without supporting evidence.",
-      coach_drill: "For each claim you make, immediately follow it with one real-world example.",
-    };
-    if (jMatch) {
-      try { judgeVerdict = { ...judgeVerdict, ...JSON.parse(jMatch[0]) }; } catch { /* use default */ }
+    const judgeVerdict = extractJsonObject(vText);
+    const verdictFields = ["verdict", "improve", "coach_worked", "coach_failed", "coach_drill"];
+    if (
+      !judgeVerdict ||
+      verdictFields.some((field) => typeof judgeVerdict[field] !== "string")
+    ) {
+      res.status(502).json({ error: "The Judge could not complete a reliable verdict. Please retry." });
+      return;
     }
 
-    res.json({ ...judgeVerdict, rank, outcome });
+    res.json({
+      verdict: (judgeVerdict.verdict as string).slice(0, 1200),
+      improve: (judgeVerdict.improve as string).slice(0, 500),
+      coach_worked: (judgeVerdict.coach_worked as string).slice(0, 1200),
+      coach_failed: (judgeVerdict.coach_failed as string).slice(0, 1200),
+      coach_drill: (judgeVerdict.coach_drill as string).slice(0, 500),
+      rank,
+      outcome,
+    });
   } catch (err) {
     req.log.error({ err }, "debate/verdict failed");
     res.status(500).json({ error: "AI error" });

@@ -4,6 +4,10 @@ import Groq from "groq-sdk";
 import { JWT_SECRET } from "./auth";
 import { db, players, debates } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import {
+  DEBATE_JUDGE_REASONING_RULES,
+  extractJsonObject,
+} from "../lib/debate-reasoning";
 
 const router = Router();
 const MODEL = "llama-3.3-70b-versatile";
@@ -525,7 +529,7 @@ router.post("/1v1/:code/argue", async (req, res) => {
   const callerId = getCallerId(req);
   if (!callerId) { res.status(401).json({ error: "Not authenticated" }); return; }
   const { code } = req.params;
-  const { argumentText } = req.body as { argumentText: string };
+  const argumentText = typeof req.body?.argumentText === "string" ? req.body.argumentText : "";
   if (!argumentText?.trim()) { res.status(400).json({ error: "Argument required" }); return; }
 
   const room = store.get(code.toUpperCase());
@@ -545,11 +549,16 @@ router.post("/1v1/:code/argue", async (req, res) => {
   const closingNote = isLastRound
     ? ` This is the final round. Your critique should read as a closing verdict — not just feedback on this argument but a definitive judgment on how they debated overall. Conclude with authority.`
     : "";
+  const argumentHistory = [...room.arguments]
+    .sort((a, b) => a.roundNum - b.roundNum || a.playerNum - b.playerNum)
+    .map((argument) => {
+      const argumentSide = argument.playerNum === 1 ? room.player1Side : room.player2Side;
+      return `Round ${argument.roundNum}, Player ${argument.playerNum} (${(argumentSide || "for").toUpperCase()}): ${JSON.stringify(argument.argumentText)}`;
+    })
+    .join("\n") || "No prior arguments.";
 
-  const system = `You are a strict AI debate judge. Respond ONLY with valid JSON, no other text.
-Topic: "${room.topicText}"
-The debater is arguing ${(side || "for").toUpperCase()} this statement.
-${roundCtx}${closingNote}
+  const system = `You are a fair, rigorous debate judge. ${DEBATE_JUDGE_REASONING_RULES}
+Respond ONLY with valid JSON, no other text.
 
 Return this exact JSON structure:
 {
@@ -565,8 +574,8 @@ Return this exact JSON structure:
 }
 
 Ranks: S>=90 A>=80 B>=65 C>=50 D>=35 F<35
-Highlight types: strong=green(well-supported), weak=yellow(vague), wrong=red(factually incorrect), fallacy=orange(logical fallacy)
-Find 3-5 exact substrings from the argument text.`;
+Highlight types: strong=well-supported, weak=unclear or unsupported, wrong=demonstrably false, fallacy=logical fallacy that meets its definition.
+Find 1-4 exact substrings from the current argument. Do not label metaphor or analogy as wrong merely because it is figurative.`;
 
   let judgment: any;
   try {
@@ -575,17 +584,53 @@ Find 3-5 exact substrings from the argument text.`;
       max_tokens: 600,
       messages: [
         { role: "system", content: system },
-        { role: "user", content: `Judge this debate argument:\n\n"${argumentText}"` },
+        {
+          role: "user",
+          content: `Topic: ${JSON.stringify(room.topicText)}\nThe debater is arguing ${(side || "for").toUpperCase()}.\n${roundCtx}${closingNote}\n\nEarlier arguments, in order:\n${argumentHistory}\n\nAssess this latest argument in context:\n${JSON.stringify(argumentText)}`,
+        },
       ],
     }).then(r => r.choices[0]?.message?.content);
-    const match = raw?.match(/\{[\s\S]*\}/);
-    judgment = match ? JSON.parse(match[0]) : null;
+    judgment = raw ? extractJsonObject(raw) : null;
   } catch { judgment = null; }
 
-  if (!judgment) {
-    const s = 55 + Math.floor(Math.random() * 20);
-    judgment = { score: s, logic: s, persuasion: s, delivery: s, rank: scoreToRank(s), critique: "Argument noted.", highlights: [] };
+  const scoreFields = ["score", "logic", "persuasion", "delivery"];
+  if (
+    !judgment ||
+    scoreFields.some((field) => typeof judgment[field] !== "number" || !Number.isFinite(judgment[field])) ||
+    typeof judgment.critique !== "string" ||
+    !Array.isArray(judgment.highlights)
+  ) {
+    res.status(502).json({ error: "The Judge could not complete a reliable assessment. No score was saved; please retry." });
+    return;
   }
+
+  const clampScore = (value: number) => Math.round(Math.max(0, Math.min(100, value)));
+  judgment.score = clampScore(judgment.score);
+  judgment.logic = clampScore(judgment.logic);
+  judgment.persuasion = clampScore(judgment.persuasion);
+  judgment.delivery = clampScore(judgment.delivery);
+  judgment.rank = scoreToRank(judgment.score);
+  judgment.critique = judgment.critique.slice(0, 1200);
+  judgment.highlights = judgment.highlights
+    .filter(
+      (highlight: unknown) =>
+        !!highlight &&
+        typeof highlight === "object" &&
+        typeof (highlight as Record<string, unknown>).text === "string" &&
+        typeof (highlight as Record<string, unknown>).note === "string" &&
+        ["strong", "weak", "wrong", "fallacy"].includes(
+          String((highlight as Record<string, unknown>).type),
+        ),
+    )
+    .filter((highlight: { text: string }) => highlight.text.length > 0 && argumentText.includes(highlight.text))
+    .slice(0, 4);
+  judgment.highlights = judgment.highlights.map(
+    (highlight: { text: string; type: string; note: string }) => ({
+      text: highlight.text.slice(0, 300),
+      type: highlight.type,
+      note: highlight.note.slice(0, 160),
+    }),
+  );
 
   const arg: InMemoryArg = {
     id: ++room.argCounter,
